@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <cn.jingzhuan.lib.chart.widget.LineChart
+        app:labelSeparation="4dp"
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+</layout>
