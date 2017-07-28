@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import java.util.List;
+
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.value.IDataSet;
@@ -43,5 +45,5 @@ public abstract class AbstractDataRenderer<T extends IDataSet> implements Render
 
     public abstract void addDataSet(T dataSet);
 
-//    public abstract void getDataSet();
+    public abstract List<T> getDataSet();
 }

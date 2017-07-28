@@ -46,4 +46,9 @@ public class LineChart extends BaseChart {
 
         mRenderer.addDataSet(line);
     }
+
+    public void setLine(Line line) {
+        mRenderer.getDataSet().clear();
+        addLine(line);
+    }
 }

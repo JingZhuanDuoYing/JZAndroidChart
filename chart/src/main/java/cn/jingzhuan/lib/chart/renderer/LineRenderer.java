@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -57,6 +58,11 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
     @Override
     public void addDataSet(Line line) {
         this.mLines.add(line);
+    }
+
+    @Override
+    public List<Line> getDataSet() {
+        return mLines;
     }
 
     @Override
