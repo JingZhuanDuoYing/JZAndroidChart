@@ -1,8 +1,10 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.view.View;
 
 import com.airbnb.epoxy.DataBindingEpoxyModel;
+import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;
 
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import cn.jingzhuan.lib.chart.value.MinuteLine;
 import cn.jingzhuan.lib.chart.value.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutMinuteChartBinding;
 
+import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
+
 /**
  * Created by Donglua on 17/7/26.
  */
@@ -21,6 +25,8 @@ import cn.jingzhuan.lib.chart.demo.databinding.LayoutMinuteChartBinding;
 public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
     final MinuteLine line;
+
+    @EpoxyAttribute(DoNotHash) View.OnClickListener onClickListener;
 
     public MinuteChartModel() {
 
@@ -71,6 +77,8 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
     protected void setDataBindingVariables(ViewDataBinding binding) {
         if (binding instanceof LayoutMinuteChartBinding) {
             ((LayoutMinuteChartBinding) binding).minuteChart.addLine(line);
+
+            ((LayoutMinuteChartBinding) binding).minuteChart.setOnClickListener(onClickListener);
         }
     }
 

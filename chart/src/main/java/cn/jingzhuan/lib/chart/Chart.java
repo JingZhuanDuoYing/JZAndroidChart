@@ -52,6 +52,7 @@ public abstract class Chart extends View {
 
     private OnViewportChangeListener mOnViewportChangeListener;
     private boolean mScaleXEnable = true;
+    private boolean mDoubleTapToZoom = false;
 
     /**
      * The current viewport. This rectangle represents the currently visible lib domain
@@ -327,7 +328,6 @@ public abstract class Chart extends View {
         }
     };
 
-
     /**
      * The gesture listener, used for handling simple gestures such as double touches, scrolls,
      * and flings.
@@ -346,11 +346,15 @@ public abstract class Chart extends View {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            mZoomer.forceFinished(true);
-            if (hitTest(e.getX(), e.getY(), mZoomFocalPoint)) {
-                mZoomer.startZoom(ZOOM_AMOUNT);
+
+            if (mDoubleTapToZoom) {
+
+                mZoomer.forceFinished(true);
+                if (hitTest(e.getX(), e.getY(), mZoomFocalPoint)) {
+                    mZoomer.startZoom(ZOOM_AMOUNT);
+                }
+                ViewCompat.postInvalidateOnAnimation(Chart.this);
             }
-            ViewCompat.postInvalidateOnAnimation(Chart.this);
             return true;
         }
 
@@ -603,14 +607,15 @@ public abstract class Chart extends View {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean retVal = mScaleGestureDetector.onTouchEvent(event);
-        retVal = mGestureDetector.onTouchEvent(event) || retVal;
-        return retVal || super.onTouchEvent(event);
-    }
 
+        boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
+
+        retVal = mGestureDetector.onTouchEvent(event) || retVal;
+
+        return retVal | super.onTouchEvent(event);
+    }
 
     protected void setupEdgeEffect(Context context) {
 
@@ -695,7 +700,6 @@ public abstract class Chart extends View {
         mEdgeEffectBottom.onRelease();
     }
 
-
     public AxisY getAxisLeft() {
         return mAxisLeft;
     }
@@ -722,5 +726,9 @@ public abstract class Chart extends View {
 
     public void setScaleXEnable(boolean mScaleXEnable) {
         this.mScaleXEnable = mScaleXEnable;
+    }
+
+    public void setDoubleTapToZoom(boolean doubleTapToZoom) {
+        this.mDoubleTapToZoom = doubleTapToZoom;
     }
 }

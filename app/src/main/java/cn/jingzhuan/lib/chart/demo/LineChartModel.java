@@ -67,6 +67,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
         if (binding instanceof LayoutLineChartBinding) {
             ((LayoutLineChartBinding) binding).lineChart.addLine(line);
+            ((LayoutLineChartBinding) binding).lineChart.setDoubleTapToZoom(true);
         }
     }
 }

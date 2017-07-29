@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.airbnb.epoxy.AutoModel;
 import com.airbnb.epoxy.EpoxyController;
@@ -23,6 +25,12 @@ public class DemoAdapterController extends EpoxyController {
 
         new LayoutDescTextBindingModel_().id("Minute").text("Minute Chart").addTo(this);
 
-        minuteChartModel.addTo(this);
+        minuteChartModel.onClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "Click", Toast.LENGTH_SHORT).show();
+            }
+        }).addTo(this);
+
     }
 }
