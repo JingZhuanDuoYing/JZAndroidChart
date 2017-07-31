@@ -24,11 +24,13 @@ import android.widget.OverScroller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 
 /**
@@ -53,6 +55,8 @@ public abstract class Chart extends View {
     private OnViewportChangeListener mOnViewportChangeListener;
     private boolean mScaleXEnable = true;
     private boolean mDoubleTapToZoom = false;
+
+    protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
 
     /**
      * The current viewport. This rectangle represents the currently visible lib domain
@@ -124,6 +128,8 @@ public abstract class Chart extends View {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
+        mTouchPointChangeListeners = new CopyOnWriteArrayList<>();
+
         try {
             List<Axis> axisList = new ArrayList<>(4);
             axisList.add(mAxisLeft);
@@ -161,6 +167,8 @@ public abstract class Chart extends View {
     }
 
     public abstract void initChart();
+
+    public abstract void highlightValue(Highlight highlight);
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -328,6 +336,8 @@ public abstract class Chart extends View {
         }
     };
 
+    protected abstract void onTouchPoint(float x, float y);
+
     /**
      * The gesture listener, used for handling simple gestures such as double touches, scrolls,
      * and flings.
@@ -337,10 +347,14 @@ public abstract class Chart extends View {
 
         @Override
         public boolean onDown(MotionEvent e) {
+
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
             ViewCompat.postInvalidateOnAnimation(Chart.this);
+
+            onTouchPoint(e.getX(), e.getY());
+
             return true;
         }
 
@@ -404,7 +418,7 @@ public abstract class Chart extends View {
                 mEdgeEffectBottomActive = true;
             }
 
-            Log.d("mGestureListener", "onScroll");
+            onTouchPoint(e2.getX(), e2.getY());
 
             notifyViewportChange();
 
@@ -414,6 +428,9 @@ public abstract class Chart extends View {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             fling((int) -velocityX, (int) -velocityY);
+
+            onTouchPoint(e2.getX(), e2.getY());
+
             notifyViewportChange();
 
             return true;
@@ -448,7 +465,6 @@ public abstract class Chart extends View {
                 mContentRect.height() / 2);
         ViewCompat.postInvalidateOnAnimation(this);
 
-        Log.d("mGestureListener", "onFling");
     }
 
 
@@ -595,7 +611,6 @@ public abstract class Chart extends View {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-
     /**
      * Sets the lib's current viewport.
      *
@@ -614,7 +629,7 @@ public abstract class Chart extends View {
 
         retVal = mGestureDetector.onTouchEvent(event) || retVal;
 
-        return retVal | super.onTouchEvent(event);
+        return retVal || super.onTouchEvent(event);
     }
 
     protected void setupEdgeEffect(Context context) {
@@ -731,4 +746,18 @@ public abstract class Chart extends View {
     public void setDoubleTapToZoom(boolean doubleTapToZoom) {
         this.mDoubleTapToZoom = doubleTapToZoom;
     }
+
+    public interface OnTouchPointChangeListener {
+        void touch(float x, float y);
+    }
+
+    public void addOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
+        this.mTouchPointChangeListeners.add(touchPointChangeListener);
+    }
+
+    public void removeOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
+        this.mTouchPointChangeListeners.remove(touchPointChangeListener);
+    }
+
+
 }

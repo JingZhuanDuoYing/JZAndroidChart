@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.value.Line;
 import cn.jingzhuan.lib.chart.value.PointValue;
@@ -39,7 +40,7 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
      */
     protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
-    public LineRenderer(Chart chart) {
+    public LineRenderer(final Chart chart) {
         super(chart);
 
         mLines = new CopyOnWriteArrayList<>();
@@ -52,7 +53,29 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
                 }
             }
         });
+
+        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
+            @Override
+            public void touch(float x, float y) {
+                for (Line line : mLines) {
+                    if (line.isHighlightdEnable()) {
+                        int index = (int) getDrawX(x) * line.getEntryCount();
+                        chart.highlightValue(new Highlight(x, y, index));
+                    }
+                }
+            }
+        });
     }
+
+    @Override
+    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+        if (highlights == null) return;
+
+        for (Highlight highlight : highlights) {
+            canvas.drawLine(highlight.getX(), 0, highlight.getX(), mContentRect.bottom, mRenderPaint);
+        }
+    }
+
 
     @Override
     public void addDataSet(Line line) {

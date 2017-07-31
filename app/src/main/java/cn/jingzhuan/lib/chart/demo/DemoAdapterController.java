@@ -31,6 +31,5 @@ public class DemoAdapterController extends EpoxyController {
                 Toast.makeText(v.getContext(), "Click", Toast.LENGTH_SHORT).show();
             }
         }).addTo(this);
-
     }
 }

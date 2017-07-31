@@ -25,6 +25,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
     protected List<T> mPointValues;
 
     private int mForceValueCount = -1;
+    private boolean isHighlightdEnable = false;
 
     @AxisDependency private int mDepsAxis = DEPENDENCY_BOTH;
     protected AxisY mAxisLeft;
@@ -94,8 +95,6 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
     public void calcViewportY(Viewport viewport) {
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
-
-        Log.d("Line", "calcViewportY");
 
         for (T e : getVisiblePoints(viewport)) {
             calcViewportMinMaxX(e);
@@ -265,5 +264,13 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         int to  = (int) (viewport.right * mPointValues.size());
 
         return mPointValues.subList(from, to);
+    }
+
+    public void setHighlightdEnable(boolean highlightdEnable) {
+        isHighlightdEnable = highlightdEnable;
+    }
+
+    public boolean isHighlightdEnable() {
+        return isHighlightdEnable;
     }
 }

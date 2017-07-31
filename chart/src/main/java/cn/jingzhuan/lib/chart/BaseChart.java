@@ -6,10 +6,13 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
@@ -23,6 +26,8 @@ public class BaseChart<T extends Line> extends Chart {
 
     protected AbstractDataRenderer<T> mRenderer;
     private List<Renderer> mAxisRenderers;
+
+    protected Highlight[] mHighlights;
 
     public BaseChart(Context context) {
         super(context);
@@ -52,13 +57,31 @@ public class BaseChart<T extends Line> extends Chart {
         mAxisRenderers.add(new AxisRenderer(this, mAxisRight));
     }
 
-
     @Override
     protected void drawAxis(Canvas canvas) {
         for (Renderer axisRenderer : mAxisRenderers) {
             axisRenderer.renderer(canvas);
         }
     }
+
+    @Override
+    protected void onTouchPoint(float x, float y) {
+        Log.d("onTouchPoint", "onTouchPoint = (" + x + ", " + y + ")");
+        for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
+            touchPointChangeListener.touch(x, y);
+        }
+    }
+
+    @Override
+    public void highlightValue(Highlight highlight) {
+
+        if (highlight == null) return;
+
+        mHighlights = new Highlight[] { highlight };
+
+        invalidate();
+    }
+
 
     public void setRenderer(AbstractDataRenderer<T> renderer) {
         this.mRenderer = renderer;
@@ -68,8 +91,15 @@ public class BaseChart<T extends Line> extends Chart {
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
+            mRenderer.renderHighlighted(canvas, getHighlights());
         }
     }
 
+    public Highlight[] getHighlights() {
+        return mHighlights;
+    }
 
+    public void setHighlights(Highlight[] highlights) {
+        this.mHighlights = highlights;
+    }
 }

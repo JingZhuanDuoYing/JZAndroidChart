@@ -69,13 +69,16 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         }
 
         line = new MinuteLine(values);
-
+        line.setHighlightdEnable(true);
         line.setLastClose(3136.62f);
     }
 
     @Override
     protected void setDataBindingVariables(ViewDataBinding binding) {
         if (binding instanceof LayoutMinuteChartBinding) {
+
+            ((LayoutMinuteChartBinding) binding).minuteChart.setScaleXEnable(false);
+
             ((LayoutMinuteChartBinding) binding).minuteChart.addLine(line);
 
             ((LayoutMinuteChartBinding) binding).minuteChart.setOnClickListener(onClickListener);

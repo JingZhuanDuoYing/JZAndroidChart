@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.renderer;
 
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -7,6 +8,7 @@ import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.value.IDataSet;
 
 /**
@@ -27,6 +29,8 @@ public abstract class AbstractDataRenderer<T extends IDataSet> implements Render
         mRenderPaint.setStyle(Paint.Style.STROKE);
     }
 
+    public abstract void renderHighlighted(Canvas canvas, Highlight[] highlights);
+
     /**
      * Computes the pixel offset for the given X lib value. This may be outside the view bounds.
      */
@@ -46,4 +50,5 @@ public abstract class AbstractDataRenderer<T extends IDataSet> implements Render
     public abstract void addDataSet(T dataSet);
 
     public abstract List<T> getDataSet();
+
 }
