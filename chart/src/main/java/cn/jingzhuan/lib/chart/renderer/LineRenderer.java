@@ -47,7 +47,6 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
         chart.setOnScaleListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                Log.d("Renderer", "viewport = " + viewport);
                 for (Line line : mLines) {
                     line.setViewport(viewport);
                 }

@@ -48,4 +48,6 @@ dependencies {
 apply plugin: 'com.github.dcendents.android-maven'
 
 group='cn.jingzhuan.lib'
+version = '0.0.1'
+
 

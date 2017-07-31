@@ -5,6 +5,8 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import cn.jingzhuan.lib.chart.value.LabelColorSetter;
+
 /**
  * Created by Donglua on 17/7/17.
  */
@@ -20,6 +22,8 @@ public class AxisY extends Axis {
     public final static int DEPENDENCY_BOTH = 25;
     private float mYMin;
     private float mYMax;
+
+    private LabelColorSetter mLabelColorSetter;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({DEPENDENCY_LEFT, DEPENDENCY_RIGHT, DEPENDENCY_BOTH})
@@ -47,5 +51,13 @@ public class AxisY extends Axis {
 
     public float getYMax() {
         return mYMax;
+    }
+
+    public LabelColorSetter getLabelColorSetter() {
+        return mLabelColorSetter;
+    }
+
+    public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
+        this.mLabelColorSetter = mLabelColorSetter;
     }
 }

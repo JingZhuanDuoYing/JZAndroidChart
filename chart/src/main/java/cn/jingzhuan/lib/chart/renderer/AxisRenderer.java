@@ -11,6 +11,7 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
+import cn.jingzhuan.lib.chart.value.LabelColorSetter;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -24,9 +25,9 @@ public class AxisRenderer implements Renderer {
 
     // Buffers used during drawing. These are defined as fields to avoid allocation during
     // draw calls.
-    private float[] mAxisPositionsBuffer = new float[]{};
+//    private float[] mAxisPositionsBuffer = new float[]{};
     private final char[] mLabelBuffer = new char[100];
-    private AxisAutoValues mStopsBuffer = new AxisAutoValues();
+//    private AxisAutoValues mStopsBuffer = new AxisAutoValues();
 
     private Paint mGridPaint;
     private Paint mLabelTextPaint;
@@ -70,40 +71,12 @@ public class AxisRenderer implements Renderer {
             computeAxisStopsX(
                     mCurrentViewport.left,
                     mCurrentViewport.right,
-                    mAxis,
-                    mStopsBuffer);
+                    (AxisX) mAxis,
+                    null);
 
         } else if (mAxis instanceof AxisY) {
 
             computeAxisStopsY((AxisY) mAxis);
-
-        }
-
-        // Avoid unnecessary allocations during drawing. Re-use allocated
-        // arrays and only reallocate if the number of values grows.
-        if (mAxisPositionsBuffer.length < mStopsBuffer.number) {
-            mAxisPositionsBuffer = new float[mStopsBuffer.number];
-        }
-
-        // Compute positions
-        if (mAxis instanceof AxisX) {
-            for (i = 0; i < mStopsBuffer.number; i++) {
-                mAxisPositionsBuffer[i] = getDrawX(mStopsBuffer.values[i]);
-            }
-            // Draws X labels
-            int labelOffset;
-            int labelLength;
-            mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
-            for (i = 0; i < mStopsBuffer.number; i++) {
-                // Do not use String.format in high-performance code such as onDraw code.
-                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, mStopsBuffer.values[i], mStopsBuffer.decimals);
-                labelOffset = mLabelBuffer.length - labelLength;
-                canvas.drawText(
-                        mLabelBuffer, labelOffset, labelLength,
-                        mAxisPositionsBuffer[i],
-                        mContentRect.bottom + mAxis.getLabelHeight() + mAxis.getLabelSeparation(),
-                        mLabelTextPaint);
-            }
 
         }
 
@@ -169,19 +142,21 @@ public class AxisRenderer implements Renderer {
         }
     }
 
-    private static void computeAxisStopsX(float start, float stop, Axis axis, AxisAutoValues outStops) {
+    private static void computeAxisStopsX(float start, float stop, AxisX axis, AxisAutoValues autoValues) {
         double range = stop - start;
         if (axis.getGridCount() == 0 || range <= 0) {
-            outStops.values = new float[]{};
-            outStops.number = 0;
+//            autoValues.values = new float[]{};
+//            autoValues.number = 0;
             return;
         }
-        outStops.number = axis.getGridCount();
-        if (outStops.values.length < outStops.number) {
-            // Ensure values contains at least number elements.
-            outStops.values = new float[outStops.number];
-        }
-        double rawInterval = range / outStops.number;
+
+        final int count = axis.getGridCount();
+//        autoValues.number = axis.getGridCount();
+//        if (autoValues.values.length < autoValues.number) {
+//            // Ensure values contains at least number elements.
+//            autoValues.values = new float[autoValues.number];
+//        }
+        double rawInterval = range / count;
 
         double interval = roundToOneSignificantFigure(rawInterval);
         double first = Math.ceil(start / interval) * interval;
@@ -189,15 +164,17 @@ public class AxisRenderer implements Renderer {
         double f;
         int i;
 
-        for (f = first, i = 0; i < outStops.number; f += interval, ++i) {
-            outStops.values[i] = (float) f;
+        axis.mLabelEntries = new float[count + 1];
+        for (f = first, i = 0; i < count + 1; f += interval, ++i) {
+//            autoValues.values[i] = (float) f;
+            axis.mLabelEntries[i] = (float) f;
         }
 
-        if (interval < 1) {
-            outStops.decimals = (int) Math.ceil(-Math.log10(interval));
-        } else {
-            outStops.decimals = 0;
-        }
+//        if (interval < 1) {
+//            autoValues.decimals = (int) Math.ceil(-Math.log10(interval));
+//        } else {
+//            autoValues.decimals = 0;
+//        }
     }
 
     /**
@@ -211,7 +188,6 @@ public class AxisRenderer implements Renderer {
         final long shifted = Math.round(num * magnitude);
         return shifted / magnitude;
     }
-
 
     /**
      * Computes the pixel offset for the given X lib value. This may be outside the view bounds.
@@ -300,92 +276,99 @@ public class AxisRenderer implements Renderer {
     }
 
 
-
-
     private void drawLabels(Canvas canvas) {
 
         float[] labels = mAxis.mLabelEntries;
-        if (labels != null && labels.length > 0) {
+        if (labels == null || labels.length < 1) {
+            return;
+        }
 
-            mLabelTextPaint.setColor(mAxis.getLabelTextColor());
-            mLabelTextPaint.setTextSize(mAxis.getLabelTextSize());
+        mLabelTextPaint.setColor(mAxis.getLabelTextColor());
+        mLabelTextPaint.setTextSize(mAxis.getLabelTextSize());
 
-            float x = 0f, y = 0f;
-            switch (mAxis.getAxisPosition()) {
-                case AxisX.TOP:
-                case AxisX.TOP_INSIDE:
-                    x = mContentRect.left;
-                    y = mContentRect.top;
-                    break;
-                case AxisX.BOTTOM:
-                case AxisX.BOTTOM_INSIDE:
-                    x = mContentRect.left;
-                    y = mContentRect.top + mContentRect.height();
-                    break;
-                case AxisY.LEFT_INSIDE:
-                case AxisY.LEFT_OUTSIDE:
-                    x = mContentRect.left;
-                    y = mContentRect.bottom;
-                    break;
-                case AxisY.RIGHT_INSIDE:
-                case AxisY.RIGHT_OUTSIDE:
-                    x = mContentRect.right;
-                    y = mContentRect.bottom;
-                    break;
+        float x = 0f, y = 0f;
+        switch (mAxis.getAxisPosition()) {
+            case AxisX.TOP:
+            case AxisX.TOP_INSIDE:
+                x = mContentRect.left;
+                y = mContentRect.top;
+                break;
+            case AxisX.BOTTOM:
+            case AxisX.BOTTOM_INSIDE:
+                x = mContentRect.left;
+                y = mContentRect.top + mContentRect.height();
+                break;
+            case AxisY.LEFT_INSIDE:
+            case AxisY.LEFT_OUTSIDE:
+                x = mContentRect.left;
+                y = mContentRect.bottom;
+                break;
+            case AxisY.RIGHT_INSIDE:
+            case AxisY.RIGHT_OUTSIDE:
+                x = mContentRect.right;
+                y = mContentRect.bottom;
+                break;
+        }
+        int labelOffset;
+        int labelLength;
+
+        if (mAxis instanceof AxisX) { // X轴
+            final float width = mContentRect.width() / (labels.length - 1);
+            for (int i = 0; i < labels.length; i++) {
+                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                labelOffset = mLabelBuffer.length - labelLength;
+//                    final float textWidth = mLabelTextPaint.measureText(mLabelBuffer, labelOffset, labelLength);
+
+                if (i == 0) {
+                    mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
+                } else if (i == labels.length - 1) {
+                    mLabelTextPaint.setTextAlign(Paint.Align.RIGHT);
+                } else {
+                    mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
+                }
+
+                canvas.drawText(mLabelBuffer, labelOffset, labelLength,
+                        x + i * width, // - textWidth * 0.5f,
+                        y + mLabelTextPaint.getTextSize(),
+                        mLabelTextPaint);
             }
-            int labelOffset;
-            int labelLength;
+        } else { // Y轴
 
-            if (mAxis instanceof AxisX) { // X轴
-                final float width = mContentRect.width() / (labels.length - 1);
-                for (int i = 0; i < labels.length; i++) {
-                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 0);
-                    labelOffset = mLabelBuffer.length - labelLength;
-                    final float textWidth = mLabelTextPaint.measureText(mLabelBuffer, labelOffset, labelLength);
-
-//                    AxisBase.LabelColorSetter colorSetter = ((AxisX) mAxis).getLabelColorSetter();
-//                    if (colorSetter != null) {
-//                        mLabelPaint.setColor(colorSetter.getColorByIndex(i));
-//                    }
-
-                    canvas.drawText(mLabelBuffer, labelOffset, labelLength,
-                            x + i * width - textWidth * 0.5f,
-                            y + mLabelTextPaint.getTextSize(),
-                            mLabelTextPaint);
+            final float height = mContentRect.height() / (labels.length - 1);
+            float separation = 0;
+            for (int i = 0; i < labels.length; i++) {
+                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                labelOffset = mLabelBuffer.length - labelLength;
+                switch (mAxis.getAxisPosition()) {
+                    case AxisY.LEFT_OUTSIDE:
+                    case AxisY.RIGHT_INSIDE:
+                        mLabelTextPaint.setTextAlign(Paint.Align.RIGHT);
+                        separation = -mAxis.getLabelSeparation();
+                        break;
+                    case AxisY.LEFT_INSIDE:
+                    case AxisY.RIGHT_OUTSIDE:
+                        mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
+                        separation = mAxis.getLabelSeparation();
+                        break;
                 }
-            } else { // Y轴
 
-                final float height = mContentRect.height() / (labels.length - 1);
-                float separation = 0;
-                for (int i = 0; i < labels.length; i++) {
-                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 0);
-                    labelOffset = mLabelBuffer.length - labelLength;
-                    switch (mAxis.getAxisPosition()) {
-                        case AxisY.LEFT_OUTSIDE:
-                        case AxisY.RIGHT_INSIDE:
-                            mLabelTextPaint.setTextAlign(Paint.Align.RIGHT);
-                            separation = -mAxis.getLabelSeparation();
-                            break;
-                        case AxisY.LEFT_INSIDE:
-                        case AxisY.RIGHT_OUTSIDE:
-                            mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
-                            separation = mAxis.getLabelSeparation();
-                            break;
-                    }
-
-                    float textHeightOffset = (mLabelTextPaint.descent() + mLabelTextPaint.ascent()) / 2;
-                    if (i == 0) { // Bottom
-                        textHeightOffset = mAxis.getLabelSeparation();
-                    } else if (i == labels.length - 1) { // Top
-                        textHeightOffset += textHeightOffset - mAxis.getLabelSeparation();
-                    }
-
-                    canvas.drawText(mLabelBuffer, labelOffset, labelLength,
-                            x + separation,
-                            y - i * height - textHeightOffset,
-                            mLabelTextPaint);
-
+                float textHeightOffset = (mLabelTextPaint.descent() + mLabelTextPaint.ascent()) / 2;
+                if (i == 0) { // Bottom
+                    textHeightOffset = mAxis.getLabelSeparation();
+                } else if (i == labels.length - 1) { // Top
+                    textHeightOffset += textHeightOffset - mAxis.getLabelSeparation();
                 }
+
+                LabelColorSetter colorSetter = ((AxisY) mAxis).getLabelColorSetter();
+                if (colorSetter != null) {
+                    mLabelTextPaint.setColor(colorSetter.getColorByIndex(i));
+                }
+
+                canvas.drawText(mLabelBuffer, labelOffset, labelLength,
+                        x + separation,
+                        y - i * height - textHeightOffset,
+                        mLabelTextPaint);
+
             }
         }
     }
