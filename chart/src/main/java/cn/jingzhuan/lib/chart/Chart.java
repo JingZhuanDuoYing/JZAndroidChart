@@ -170,6 +170,8 @@ public abstract class Chart extends View {
 
     public abstract void highlightValue(Highlight highlight);
 
+    public abstract void cleanHighlight();
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -330,8 +332,6 @@ public abstract class Chart extends View {
             lastSpanX = spanX;
 //            lastSpanY = spanY;
 
-            Log.d("Scale", "viewport width = " + getCurrentViewport().width());
-
             return true;
         }
     };
@@ -353,9 +353,19 @@ public abstract class Chart extends View {
             mScroller.forceFinished(true);
             ViewCompat.postInvalidateOnAnimation(Chart.this);
 
-            onTouchPoint(e.getX(), e.getY());
-
             return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            super.onShowPress(e);
+            onTouchPoint(e.getX(), e.getY());
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            cleanHighlight();
+            return super.onSingleTapConfirmed(e);
         }
 
         @Override
@@ -466,7 +476,6 @@ public abstract class Chart extends View {
         ViewCompat.postInvalidateOnAnimation(this);
 
     }
-
 
     /**
      * Computes the current scrollable surface size, in pixels. For example, if the entire lib
@@ -701,7 +710,6 @@ public abstract class Chart extends View {
             ViewCompat.postInvalidateOnAnimation(this);
         }
     }
-
 
     private void releaseEdgeEffects() {
         mEdgeEffectLeftActive

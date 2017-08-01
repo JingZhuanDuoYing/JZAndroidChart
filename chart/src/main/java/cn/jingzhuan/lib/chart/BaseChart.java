@@ -82,6 +82,12 @@ public class BaseChart<T extends Line> extends Chart {
         invalidate();
     }
 
+    @Override
+    public void cleanHighlight() {
+        mHighlights = null;
+
+        invalidate();
+    }
 
     public void setRenderer(AbstractDataRenderer<T> renderer) {
         this.mRenderer = renderer;
@@ -91,7 +97,7 @@ public class BaseChart<T extends Line> extends Chart {
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
-            mRenderer.renderHighlighted(canvas, getHighlights());
+            mRenderer.renderHighlighted(getHighlights());
         }
     }
 

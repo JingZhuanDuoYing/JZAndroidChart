@@ -25,20 +25,6 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
 
     private CopyOnWriteArrayList<Line> mLines;
 
-    /**
-     * Bitmap object used for drawing the paths (otherwise they are too long if
-     * rendered directly on the canvas)
-     */
-    protected WeakReference<Bitmap> mDrawBitmap;
-    /**
-     * on this canvas, the paths are rendered, it is initialized with the
-     * pathBitmap
-     */
-    protected Canvas mBitmapCanvas;
-    /**
-     * the bitmap configuration to be used
-     */
-    protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public LineRenderer(final Chart chart) {
         super(chart);
@@ -68,14 +54,13 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
     }
 
     @Override
-    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+    public void renderHighlighted(Highlight[] highlights) {
         if (highlights == null) return;
 
         for (Highlight highlight : highlights) {
-            canvas.drawLine(highlight.getX(), 0, highlight.getX(), mContentRect.bottom, mRenderPaint);
+            mBitmapCanvas.drawLine(highlight.getX(), 0, highlight.getX(), mContentRect.bottom, mRenderPaint);
         }
     }
-
 
     @Override
     public void addDataSet(Line line) {
@@ -88,31 +73,33 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
     }
 
     @Override
-    public void renderer(Canvas canvas) {
+    protected void renderDataSet(Canvas canvas) {
 
-        int width = mContentRect.width();
-        int height = mContentRect.height();
-
-        if (mDrawBitmap == null
-                || (mDrawBitmap.get().getWidth() != width)
-                || (mDrawBitmap.get().getHeight() != height)) {
-
-            if (width > 0 && height > 0) {
-
-                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-                mBitmapCanvas = new Canvas(mDrawBitmap.get());
-            } else
-                return;
-        }
-
-        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
+//        int width = mContentRect.width();
+//        int height = mContentRect.height();
+//
+//        if (mDrawBitmap == null
+//                || (mDrawBitmap.get().getWidth() != width)
+//                || (mDrawBitmap.get().getHeight() != height)) {
+//
+//            if (width > 0 && height > 0) {
+//
+//                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
+//                mBitmapCanvas = new Canvas(mDrawBitmap.get());
+//            } else
+//                return;
+//        }
+//
+//        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
 
         for (Line line : mLines) {
             if (line.isVisible()) {
                 drawDataSet(canvas, line);
             }
         }
-        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
+
+//        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
+
     }
 
     private void drawDataSet(Canvas canvas, Line line) {
