@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <cn.jingzhuan.lib.chart.widget.BarChart
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:id="@+id/barChart"
+        android:layout_height="200dp" />
+
+</layout>

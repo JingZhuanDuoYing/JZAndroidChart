@@ -69,7 +69,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         }
 
         line = new MinuteLine(values);
-        line.setHighlightdEnable(true);
+        line.setHighlightedEnable(true);
         line.setLastClose(3136.62f);
     }
 

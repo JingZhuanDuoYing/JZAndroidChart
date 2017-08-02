@@ -15,11 +15,12 @@ public class DemoAdapterController extends EpoxyController {
 
     @AutoModel LineChartModel_ lineChartModel;
     @AutoModel MinuteChartModel_ minuteChartModel;
+    @AutoModel BarChartModel_ barChartModel_;
 
     @Override
     protected void buildModels() {
 
-        new LayoutDescTextBindingModel_().id("Line").text("Line Chart").addTo(this);
+        new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
 
         lineChartModel.addTo(this);
 
@@ -31,5 +32,9 @@ public class DemoAdapterController extends EpoxyController {
                 Toast.makeText(v.getContext(), "Click", Toast.LENGTH_SHORT).show();
             }
         }).addTo(this);
+
+        new LayoutDescTextBindingModel_().id("Bar").text("Bar Chart").addTo(this);
+
+        barChartModel_.addTo(this);
     }
 }

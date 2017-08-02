@@ -13,7 +13,6 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.value.IDataSet;
-import cn.jingzhuan.lib.chart.value.Line;
 
 /**
  * Created by Donglua on 17/7/19.

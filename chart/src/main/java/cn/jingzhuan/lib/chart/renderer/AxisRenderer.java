@@ -83,9 +83,13 @@ public class AxisRenderer implements Renderer {
         // Draws lib container
         drawAxisLine(canvas);
 
-        drawGridLines(canvas);
+        if (mAxis.isGridLineEnable()) {
+            drawGridLines(canvas);
+        }
 
-        drawLabels(canvas);
+        if (mAxis.isLabelEnable()) {
+            drawLabels(canvas);
+        }
     }
 
     private static void computeAxisStopsY(AxisY axis) {

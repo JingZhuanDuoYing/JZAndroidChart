@@ -29,6 +29,8 @@ public class Axis extends Component {
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
     public float[] mLabelEntries = new float[]{};
+    private boolean gridLineEnable = true;
+    private boolean labelEnable = true;
 
     Axis(int axisPosition) {
         this.mAxisPosition = axisPosition;
@@ -145,4 +147,19 @@ public class Axis extends Component {
         this.mGridCount = mGridCount;
     }
 
+    public void setGridLineEnable(boolean gridLineEnable) {
+        this.gridLineEnable = gridLineEnable;
+    }
+
+    public boolean isGridLineEnable() {
+        return gridLineEnable;
+    }
+
+    public boolean isLabelEnable() {
+        return labelEnable;
+    }
+
+    public void setLabelEnable(boolean labelEnable) {
+        this.labelEnable = labelEnable;
+    }
 }

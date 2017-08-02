@@ -130,6 +130,9 @@ public abstract class Chart extends View {
 
         mTouchPointChangeListeners = new CopyOnWriteArrayList<>();
 
+        mAxisTop.setGridLineEnable(false);
+        mAxisTop.setLabelEnable(false);
+
         try {
             List<Axis> axisList = new ArrayList<>(4);
             axisList.add(mAxisLeft);

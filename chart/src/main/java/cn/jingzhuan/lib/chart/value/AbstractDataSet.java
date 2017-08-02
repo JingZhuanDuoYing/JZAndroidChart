@@ -1,16 +1,20 @@
 package cn.jingzhuan.lib.chart.value;
 
+import android.graphics.Color;
+
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
+import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
+
 /**
  * Created by Donglua on 17/7/20.
  */
 
-public abstract class AbstractDataSet<T extends PointValue> implements IDataSet {
+public abstract class AbstractDataSet<T extends Value> implements IDataSet {
 
     private boolean isVisible = true;
 
@@ -39,6 +43,14 @@ public abstract class AbstractDataSet<T extends PointValue> implements IDataSet 
 
     private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
     public Viewport mViewport;
+
+
+
+    @AxisDependency protected int mDepsAxis = DEPENDENCY_BOTH;
+    protected AxisY mAxisLeft;
+    protected AxisY mAxisRight;
+
+    private int mColor = Color.GRAY;
 
     @Override
     public boolean isVisible() {
@@ -88,4 +100,21 @@ public abstract class AbstractDataSet<T extends PointValue> implements IDataSet 
     public float getViewportYMax() {
         return mViewportYMax;
     }
+
+    public AxisY getAxisLeft() {
+        return mAxisLeft;
+    }
+
+    public AxisY getAxisRight() {
+        return mAxisRight;
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    public void setColor(int mLineColor) {
+        this.mColor = mLineColor;
+    }
+
 }

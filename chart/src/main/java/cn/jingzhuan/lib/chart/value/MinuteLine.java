@@ -9,7 +9,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
  * Created by Donglua on 17/7/26.
  */
 
-public class MinuteLine extends Line<PointValue> {
+public class MinuteLine extends LineDataSet<PointValue> {
 
     private float mLastClose = -1;
 

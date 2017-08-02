@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.value;
 
 
 import android.graphics.Color;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,25 +16,20 @@ import static cn.jingzhuan.lib.chart.component.AxisY.*;
  * Created by Donglua on 17/7/19.
  */
 
-public class Line<T extends PointValue> extends AbstractDataSet<T> {
+public class LineDataSet<T extends PointValue> extends AbstractDataSet<T> {
 
-    private int mLineColor = Color.GRAY;
     private int mLineThickness = 2;
 
     protected List<T> mPointValues;
 
     private int mForceValueCount = -1;
-    private boolean isHighlightdEnable = false;
+    private boolean isHighlightedEnable = false;
 
-    @AxisDependency private int mDepsAxis = DEPENDENCY_BOTH;
-    protected AxisY mAxisLeft;
-    protected AxisY mAxisRight;
-
-    public Line(List<T> pointValues) {
+    public LineDataSet(List<T> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
     }
 
-    public Line(List<T> pointValues, @AxisDependency int depsAxis) {
+    public LineDataSet(List<T> pointValues, @AxisDependency int depsAxis) {
         mPointValues = pointValues;
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
@@ -45,14 +39,6 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         this.mDepsAxis = depsAxis;
 
         calcMinMax();
-    }
-
-    public int getLineColor() {
-        return mLineColor;
-    }
-
-    public void setLineColor(int mLineColor) {
-        this.mLineColor = mLineColor;
     }
 
     public int getLineThickness() {
@@ -150,11 +136,11 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
 
     protected void calcMinMaxX(T e) {
 
-        if (e.getX() < mXMin)
-            mXMin = e.getX();
-
-        if (e.getX() > mXMax)
-            mXMax = e.getX();
+//        if (e.getX() < mXMin)
+//            mXMin = e.getX();
+//
+//        if (e.getX() > mXMax)
+//            mXMax = e.getX();
     }
 
     protected void calcMinMaxY(T e) {
@@ -176,15 +162,14 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         if (e == null)
             return false;
 
-        List<T> values = getValues();
-        if (values == null) {
-            values = new ArrayList<T>();
+        if (mPointValues == null) {
+            mPointValues = new ArrayList<T>();
         }
 
         calcMinMax(e);
 
         // add the entry
-        return values.add(e);
+        return mPointValues.add(e);
     }
 
     @Override
@@ -251,14 +236,6 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         calcViewportY(viewport);
     }
 
-    public AxisY getAxisLeft() {
-        return mAxisLeft;
-    }
-
-    public AxisY getAxisRight() {
-        return mAxisRight;
-    }
-
     protected List<T> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * mPointValues.size());
         int to  = (int) (viewport.right * mPointValues.size());
@@ -266,11 +243,11 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         return mPointValues.subList(from, to);
     }
 
-    public void setHighlightdEnable(boolean highlightdEnable) {
-        isHighlightdEnable = highlightdEnable;
+    public void setHighlightedEnable(boolean highlightedEnable) {
+        isHighlightedEnable = highlightedEnable;
     }
 
-    public boolean isHighlightdEnable() {
-        return isHighlightdEnable;
+    public boolean isHighlightedEnable() {
+        return isHighlightedEnable;
     }
 }

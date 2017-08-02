@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +15,13 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
-import cn.jingzhuan.lib.chart.value.Line;
+import cn.jingzhuan.lib.chart.value.LineDataSet;
 
 /**
  * Created by Donglua on 17/7/17.
  */
 
-public class BaseChart<T extends Line> extends Chart {
+public class BaseChart<T extends LineDataSet> extends Chart {
 
     protected AbstractDataRenderer<T> mRenderer;
     private List<Renderer> mAxisRenderers;
