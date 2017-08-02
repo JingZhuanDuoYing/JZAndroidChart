@@ -219,9 +219,12 @@ public abstract class Chart extends View {
 
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
+
+        drawLabels(canvas); // 坐标轴刻度在最上层
     }
 
     protected abstract void drawAxis(Canvas canvas);
+    protected abstract void drawLabels(Canvas canvas);
 
     protected abstract void render(Canvas canvas);
 

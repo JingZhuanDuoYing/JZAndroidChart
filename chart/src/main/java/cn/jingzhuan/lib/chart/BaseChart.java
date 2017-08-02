@@ -24,7 +24,7 @@ import cn.jingzhuan.lib.chart.data.IDataSet;
 public class BaseChart<T extends ChartData> extends Chart {
 
     protected AbstractDataRenderer mRenderer;
-    private List<Renderer> mAxisRenderers;
+    private List<AxisRenderer> mAxisRenderers;
 
     protected Highlight[] mHighlights;
 
@@ -60,6 +60,13 @@ public class BaseChart<T extends ChartData> extends Chart {
     protected void drawAxis(Canvas canvas) {
         for (Renderer axisRenderer : mAxisRenderers) {
             axisRenderer.renderer(canvas);
+        }
+    }
+
+    @Override
+    protected void drawLabels(Canvas canvas) {
+        for (AxisRenderer axisRenderer : mAxisRenderers) {
+            axisRenderer.drawLabels(canvas);
         }
     }
 

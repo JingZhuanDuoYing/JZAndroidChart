@@ -87,10 +87,8 @@ public class AxisRenderer implements Renderer {
             drawGridLines(canvas);
         }
 
-        if (mAxis.isLabelEnable()) {
-            drawLabels(canvas);
-        }
     }
+
 
     private static void computeAxisStopsY(AxisY axis) {
 
@@ -280,7 +278,9 @@ public class AxisRenderer implements Renderer {
     }
 
 
-    private void drawLabels(Canvas canvas) {
+    public void drawLabels(Canvas canvas) {
+
+        if (!mAxis.isLabelEnable()) return;
 
         float[] labels = mAxis.mLabelEntries;
         if (labels == null || labels.length < 1) {
