@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.value.MinuteLine;
-import cn.jingzhuan.lib.chart.value.PointValue;
+import cn.jingzhuan.lib.chart.data.MinuteLine;
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutMinuteChartBinding;
 
 import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;

@@ -2,28 +2,27 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.value.BarDataSet;
-import cn.jingzhuan.lib.chart.value.BarValue;
+import cn.jingzhuan.lib.chart.data.BarData;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.BarValue;
 
 /**
  * Created by Donglua on 17/8/1.
  */
 
-public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
+public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> {
 
-    private CopyOnWriteArrayList<BarDataSet> mBarDataSets;
+    private BarData mBarDataSets;
 
     public BarChartRenderer(Chart chart) {
         super(chart);
 
-        mBarDataSets = new CopyOnWriteArrayList<>();
+        mBarDataSets = new BarData();
 
         mRenderPaint.setStyle(Paint.Style.FILL);
 
@@ -88,18 +87,13 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     @Override
     public void addDataSet(BarDataSet dataSet) {
-
         if (dataSet == null) return;
-
-        if (mBarDataSets == null) {
-            mBarDataSets = new CopyOnWriteArrayList<>();
-        }
 
         mBarDataSets.add(dataSet);
     }
 
     @Override
     public List<BarDataSet> getDataSet() {
-        return mBarDataSets;
+        return mBarDataSets.getDataSets();
     }
 }

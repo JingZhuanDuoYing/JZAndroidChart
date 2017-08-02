@@ -1,4 +1,4 @@
-package cn.jingzhuan.lib.chart.value;
+package cn.jingzhuan.lib.chart.data;
 
 import java.util.ArrayList;
 import java.util.List;

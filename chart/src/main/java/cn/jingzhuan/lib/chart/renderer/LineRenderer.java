@@ -9,28 +9,29 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.IDataSet;
+import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import cn.jingzhuan.lib.chart.value.LineDataSet;
-import cn.jingzhuan.lib.chart.value.PointValue;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PointValue;
 
 /**
  * Created by Donglua on 17/7/19.
  */
 
-public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
+public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
 
-    private CopyOnWriteArrayList<LineDataSet> mLines;
-
+    private LineData lineData;
 
     public LineRenderer(final Chart chart) {
         super(chart);
 
-        mLines = new CopyOnWriteArrayList<>();
+        lineData = new LineData();
 
         chart.setOnScaleListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                for (LineDataSet line : mLines) {
+                for (LineDataSet line : getDataSet()) {
                     line.setViewport(viewport);
                 }
             }
@@ -39,7 +40,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
-                for (LineDataSet line : mLines) {
+                for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedEnable()) {
                         int index = (int) getDrawX(x) * line.getEntryCount();
                         chart.highlightValue(new Highlight(x, y, index));
@@ -59,42 +60,23 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     @Override
-    public void addDataSet(LineDataSet line) {
-        this.mLines.add(line);
+    public void addDataSet(LineDataSet dataSet) {
+        lineData.add(dataSet);
     }
 
     @Override
     public List<LineDataSet> getDataSet() {
-        return mLines;
+        return lineData.getDataSets();
     }
 
     @Override
     protected void renderDataSet(Canvas canvas) {
 
-//        int width = mContentRect.width();
-//        int height = mContentRect.height();
-//
-//        if (mDrawBitmap == null
-//                || (mDrawBitmap.get().getWidth() != width)
-//                || (mDrawBitmap.get().getHeight() != height)) {
-//
-//            if (width > 0 && height > 0) {
-//
-//                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-//                mBitmapCanvas = new Canvas(mDrawBitmap.get());
-//            } else
-//                return;
-//        }
-//
-//        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
-
-        for (LineDataSet line : mLines) {
+        for (LineDataSet line : getDataSet()) {
             if (line.isVisible()) {
                 drawDataSet(canvas, line);
             }
         }
-
-//        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
 
     }
 

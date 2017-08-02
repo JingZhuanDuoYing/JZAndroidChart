@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.value.LineDataSet;
-import cn.jingzhuan.lib.chart.value.PointValue;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutLineChartBinding;
 
 /**
@@ -19,7 +19,7 @@ import cn.jingzhuan.lib.chart.demo.databinding.LayoutLineChartBinding;
 @EpoxyModelClass(layout = R.layout.layout_line_chart)
 public abstract class LineChartModel extends DataBindingEpoxyModel {
 
-    private LineDataSet<PointValue> line;
+    private LineDataSet line;
 
     public LineChartModel() {
 
@@ -59,7 +59,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         for (Float value: floats) {
             values.add(new PointValue(value));
         }
-        line = new LineDataSet<>(values);
+        line = new LineDataSet(values);
     }
 
     @Override

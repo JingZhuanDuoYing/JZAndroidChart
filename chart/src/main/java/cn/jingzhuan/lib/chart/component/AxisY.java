@@ -5,7 +5,7 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import cn.jingzhuan.lib.chart.value.LabelColorSetter;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 
 /**
  * Created by Donglua on 17/7/17.

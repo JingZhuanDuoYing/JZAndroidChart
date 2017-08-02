@@ -6,24 +6,24 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
-import cn.jingzhuan.lib.chart.value.LineDataSet;
+import cn.jingzhuan.lib.chart.data.IDataSet;
 
 /**
  * Created by Donglua on 17/7/17.
  */
 
-public class BaseChart<T extends LineDataSet> extends Chart {
+public class BaseChart<T extends IDataSet> extends Chart {
 
-    protected AbstractDataRenderer<T> mRenderer;
+    protected AbstractDataRenderer<T, ? extends ChartData<T>> mRenderer;
     private List<Renderer> mAxisRenderers;
 
     protected Highlight[] mHighlights;
@@ -65,7 +65,6 @@ public class BaseChart<T extends LineDataSet> extends Chart {
 
     @Override
     protected void onTouchPoint(float x, float y) {
-        Log.d("onTouchPoint", "onTouchPoint = (" + x + ", " + y + ")");
         for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
             touchPointChangeListener.touch(x, y);
         }
@@ -88,7 +87,7 @@ public class BaseChart<T extends LineDataSet> extends Chart {
         invalidate();
     }
 
-    public void setRenderer(AbstractDataRenderer<T> renderer) {
+    public void setRenderer(AbstractDataRenderer<T, ChartData<T>> renderer) {
         this.mRenderer = renderer;
     }
 

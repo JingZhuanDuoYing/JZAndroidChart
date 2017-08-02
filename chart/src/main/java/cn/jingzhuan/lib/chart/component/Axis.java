@@ -9,7 +9,7 @@ import cn.jingzhuan.lib.chart.AxisAutoValues;
  * Created by Donglua on 17/7/17.
  */
 
-public class Axis extends Component {
+public class Axis extends AbstractComponent {
 
     protected int mAxisPosition;
 

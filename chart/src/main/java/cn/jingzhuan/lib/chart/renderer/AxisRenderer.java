@@ -11,7 +11,7 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
-import cn.jingzhuan.lib.chart.value.LabelColorSetter;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 
 /**
  * Created by Donglua on 17/7/17.

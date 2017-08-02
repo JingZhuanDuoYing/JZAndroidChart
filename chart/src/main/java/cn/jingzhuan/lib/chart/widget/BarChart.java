@@ -8,13 +8,13 @@ import android.util.AttributeSet;
 
 import cn.jingzhuan.lib.chart.BaseChart;
 import cn.jingzhuan.lib.chart.renderer.BarChartRenderer;
-import cn.jingzhuan.lib.chart.value.BarDataSet;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
 
 /**
  * Created by Donglua on 17/8/2.
  */
 
-public class BarChart extends BaseChart {
+public class BarChart extends BaseChart<BarDataSet> {
     public BarChart(Context context) {
         super(context);
     }

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
-import cn.jingzhuan.lib.chart.value.BarDataSet;
-import cn.jingzhuan.lib.chart.value.BarValue;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.BarValue;
 
 /**
  * Created by Donglua on 17/8/2.

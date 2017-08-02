@@ -6,7 +6,7 @@ import android.graphics.Paint;
  * Created by Donglua on 17/7/17.
  */
 
-public class Labels extends Component {
+public class Labels extends AbstractComponent {
 
     private float mLabelTextSize;
     private int mLabelSeparation;
