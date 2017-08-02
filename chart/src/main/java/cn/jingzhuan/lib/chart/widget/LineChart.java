@@ -15,7 +15,7 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
  * Created by Donglua on 17/7/19.
  */
 
-public class LineChart extends BaseChart<LineData> {
+public class LineChart extends BaseChart {
     public LineChart(Context context) {
         super(context);
     }

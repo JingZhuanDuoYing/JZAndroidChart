@@ -21,7 +21,7 @@ import cn.jingzhuan.lib.chart.data.IDataSet;
  * Created by Donglua on 17/7/17.
  */
 
-public class BaseChart<T extends ChartData> extends Chart {
+public class BaseChart extends Chart {
 
     protected AbstractDataRenderer mRenderer;
     private List<AxisRenderer> mAxisRenderers;

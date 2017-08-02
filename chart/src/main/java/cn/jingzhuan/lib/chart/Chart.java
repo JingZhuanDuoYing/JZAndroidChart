@@ -207,7 +207,7 @@ public abstract class Chart extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawAxis(canvas);
+        drawAxis(canvas); // 坐标轴刻度在最底层
 
         // Clips the next few drawing operations to the content area
         int clipRestoreCount = canvas.save();
