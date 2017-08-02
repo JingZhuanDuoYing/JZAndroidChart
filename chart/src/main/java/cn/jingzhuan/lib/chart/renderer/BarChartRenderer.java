@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.Log;
 
 import java.util.List;
@@ -19,16 +20,17 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     private CopyOnWriteArrayList<BarDataSet> mBarDataSets;
 
-
     public BarChartRenderer(Chart chart) {
         super(chart);
 
         mBarDataSets = new CopyOnWriteArrayList<>();
+
+        mRenderPaint.setStyle(Paint.Style.FILL);
+
     }
 
     @Override
     protected void renderDataSet(Canvas canvas) {
-        Log.d("drawBarDataSet", "renderDataSet");
 
         for (BarDataSet barDataSet : getDataSet()) {
             if (barDataSet.isVisible()) {
@@ -48,6 +50,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         float max = barDataSet.getYMax();
 
         float width = barDataSet.getBarWidth();
+        if (barDataSet.isAutoBarWidth()) {
+            width = mContentRect.width() / valueCount;
+        }
 
         BarValue barValue;
         for (int i = 0; i < valueCount; i++) {

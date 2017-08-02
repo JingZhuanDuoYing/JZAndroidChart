@@ -35,7 +35,7 @@ public abstract class BarChartModel extends DataBindingEpoxyModel {
         barValueList.add(new BarValue(15));
 
         barDataSet = new BarDataSet(barValueList);
-        barDataSet.setBarWidth(30);
+        barDataSet.setAutoBarWidth(true);
     }
 
     @Override

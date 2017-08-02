@@ -15,6 +15,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
     private List<BarValue> mBarValues;
     private float mBarWidth = 20;
+    private boolean mAutoBarWidth = false;
     private int mForceValueCount = -1;
 
     public BarDataSet(List<BarValue> mBarValues) {
@@ -148,4 +149,11 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         calcMinMax();
     }
 
+    public void setAutoBarWidth(boolean mAutoBarWidth) {
+        this.mAutoBarWidth = mAutoBarWidth;
+    }
+
+    public boolean isAutoBarWidth() {
+        return mAutoBarWidth;
+    }
 }
