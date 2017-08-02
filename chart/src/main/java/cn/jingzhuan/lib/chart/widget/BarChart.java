@@ -7,6 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import cn.jingzhuan.lib.chart.BaseChart;
+import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.renderer.BarChartRenderer;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 
@@ -14,7 +15,7 @@ import cn.jingzhuan.lib.chart.data.BarDataSet;
  * Created by Donglua on 17/8/2.
  */
 
-public class BarChart extends BaseChart<BarDataSet> {
+public class BarChart extends BaseChart<BarData> {
     public BarChart(Context context) {
         super(context);
     }

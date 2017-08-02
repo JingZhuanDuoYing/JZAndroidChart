@@ -21,9 +21,9 @@ import cn.jingzhuan.lib.chart.data.IDataSet;
  * Created by Donglua on 17/7/17.
  */
 
-public class BaseChart<T extends IDataSet> extends Chart {
+public class BaseChart<T extends ChartData> extends Chart {
 
-    protected AbstractDataRenderer<T, ? extends ChartData<T>> mRenderer;
+    protected AbstractDataRenderer mRenderer;
     private List<Renderer> mAxisRenderers;
 
     protected Highlight[] mHighlights;
@@ -87,7 +87,7 @@ public class BaseChart<T extends IDataSet> extends Chart {
         invalidate();
     }
 
-    public void setRenderer(AbstractDataRenderer<T, ChartData<T>> renderer) {
+    public void setRenderer(AbstractDataRenderer renderer) {
         this.mRenderer = renderer;
     }
 
