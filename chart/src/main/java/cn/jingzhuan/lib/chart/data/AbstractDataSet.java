@@ -50,9 +50,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int mColor = Color.GRAY;
 
-    @Override
-    public abstract void calcMinMax();
-
     public abstract void setValues(List<T> values);
 
     public abstract List<T> getValues();
@@ -101,8 +98,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return mColor;
     }
 
-    public void setColor(int mLineColor) {
-        this.mColor = mLineColor;
+    public void setColor(int barColor) {
+        this.mColor = barColor;
     }
 
 }

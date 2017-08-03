@@ -6,5 +6,6 @@ package cn.jingzhuan.lib.chart.data;
 
 public class BarData extends ChartData<BarDataSet> {
 
+    
 
 }

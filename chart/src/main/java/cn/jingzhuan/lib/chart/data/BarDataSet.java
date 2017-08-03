@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 
 /**
@@ -18,10 +19,16 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     private boolean mAutoBarWidth = false;
     private int mForceValueCount = -1;
 
-    public BarDataSet(List<BarValue> mBarValues) {
+    public BarDataSet(List<BarValue> barValues) {
+        this(barValues, AxisY.DEPENDENCY_BOTH);
+    }
+
+    public BarDataSet(List<BarValue> mBarValues, @AxisDependency int axisDependency) {
         this.mBarValues = mBarValues;
 
         calcMinMax();
+
+        mDepsAxis = axisDependency;
     }
 
     public BarDataSet() {

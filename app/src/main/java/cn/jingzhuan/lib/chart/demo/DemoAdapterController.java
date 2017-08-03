@@ -16,16 +16,15 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel LineChartModel_ lineChartModel;
     @AutoModel MinuteChartModel_ minuteChartModel;
     @AutoModel BarChartModel_ barChartModel_;
+    @AutoModel CombineChartModel_ combineChartModel_;
 
     @Override
     protected void buildModels() {
 
         new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
-
         lineChartModel.addTo(this);
 
         new LayoutDescTextBindingModel_().id("Minute").text("Minute Chart").addTo(this);
-
         minuteChartModel.onClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,7 +33,9 @@ public class DemoAdapterController extends EpoxyController {
         }).addTo(this);
 
         new LayoutDescTextBindingModel_().id("Bar").text("Bar Chart").addTo(this);
-
         barChartModel_.addTo(this);
+
+        new LayoutDescTextBindingModel_().id("Combine").text("Combine Chart").addTo(this);
+        combineChartModel_.addTo(this);
     }
 }
