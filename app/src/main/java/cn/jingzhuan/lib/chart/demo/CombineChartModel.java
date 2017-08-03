@@ -42,7 +42,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         barDataSet = new BarDataSet(barValueList, AxisY.DEPENDENCY_RIGHT);
         barDataSet.setAutoBarWidth(true);
-        barDataSet.setColor(Color.BLUE);
+        barDataSet.setColor(Color.DKGRAY);
 
 
         final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f,

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.graphics.Color;
 
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -45,6 +46,7 @@ public abstract class BarChartModel extends DataBindingEpoxyModel {
             LayoutBarChartBinding barBinding = (LayoutBarChartBinding) binding;
 
             barBinding.barChart.setDataSet(barDataSet);
+            barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
         }
     }
 }
