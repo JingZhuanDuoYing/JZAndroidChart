@@ -32,7 +32,7 @@ public abstract class BarChartModel extends DataBindingEpoxyModel {
         barValueList.add(new BarValue(11));
         barValueList.add(new BarValue(12));
         barValueList.add(new BarValue(12));
-        barValueList.add(new BarValue(13));
+        barValueList.add(new BarValue(13, Color.DKGRAY));
         barValueList.add(new BarValue(15));
 
         barDataSet = new BarDataSet(barValueList);

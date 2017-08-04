@@ -1,16 +1,13 @@
 package cn.jingzhuan.lib.chart.data;
 
-import android.graphics.Color;
-
 /**
  * Created by Donglua on 17/8/1.
  */
-
 public class BarValue implements Value {
 
     private float[] yValues;
 
-    private int mColor = -1;
+    private int mColor = 0;
 
     public BarValue(float[] yValues) {
         this.yValues = yValues;
@@ -23,6 +20,11 @@ public class BarValue implements Value {
 
     public BarValue(float yValue) {
         this.yValues = new float[] { yValue };
+    }
+
+    public BarValue(float yValue, int color) {
+        this.yValues = new float[] { yValue };
+        this.mColor = color;
     }
 
     public float[] getValues() {

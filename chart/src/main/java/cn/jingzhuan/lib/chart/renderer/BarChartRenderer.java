@@ -1,7 +1,9 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.List;
 
@@ -52,17 +54,16 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
             width = mContentRect.width() / valueCount;
         }
 
-        BarValue barValue;
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
-            barValue = barDataSet.getEntryForIndex(i);
+            BarValue barValue = barDataSet.getEntryForIndex(i);
 
-            if (barValue.getColor() > 0) {
-                mRenderPaint.setColor(barValue.getColor());
+            if (barValue.getColor() != 0) {
+                mRenderPaint.setColor(Color.BLUE);
             } else {
                 mRenderPaint.setColor(barDataSet.getColor());
             }
 
-            float x = getDrawX((i) / (valueCount - 0f));
+            float x = getDrawX(i / (valueCount - 0f));
 
             float top;
             float bottom = mContentRect.bottom;
