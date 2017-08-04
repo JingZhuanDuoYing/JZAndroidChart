@@ -54,7 +54,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
         }
 
         BarValue barValue;
-        for (int i = 0; i < valueCount; i++) {
+        for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             barValue = barDataSet.getEntryForIndex(i);
 
             float x = getDrawX((i) / (valueCount - 0f));

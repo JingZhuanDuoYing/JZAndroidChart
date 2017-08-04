@@ -163,4 +163,12 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     public boolean isAutoBarWidth() {
         return mAutoBarWidth;
     }
+
+    public void setForceValueCount(int forceValueCount) {
+        this.mForceValueCount = forceValueCount;
+    }
+
+    public int getForceValueCount() {
+        return mForceValueCount;
+    }
 }
