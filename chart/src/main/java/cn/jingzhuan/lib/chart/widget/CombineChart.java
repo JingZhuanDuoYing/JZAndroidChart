@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import java.util.List;
+
 import cn.jingzhuan.lib.chart.BaseChart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.LineData;
@@ -44,12 +46,23 @@ public class CombineChart extends BaseChart {
 
     public void addDataSet(BarDataSet barDataSet) {
         barDataSet.setChart(this);
-        mRenderer.addDataSet(barDataSet);
+        getRenderer().addDataSet(barDataSet);
     }
 
     public void addDataSet(LineDataSet lineDataSet) {
         lineDataSet.setChart(this);
-        mRenderer.addDataSet(lineDataSet);
+        getRenderer().addDataSet(lineDataSet);
     }
 
+    public List<LineDataSet> getLineDataSet() {
+        return getRenderer().getDataSet();
+    }
+
+    public List<BarDataSet> getBarDataSet() {
+        return getRenderer().getBarDataSet();
+    }
+
+    public CombineChartRenderer getRenderer() {
+        return (CombineChartRenderer) mRenderer;
+    }
 }

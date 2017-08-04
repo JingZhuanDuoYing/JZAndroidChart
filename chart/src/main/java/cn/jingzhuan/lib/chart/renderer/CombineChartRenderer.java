@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.IDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.widget.BarChart;
 
 /**
  * Created by Donglua on 17/8/2.
@@ -50,7 +51,12 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    public List<IDataSet> getDataSet() {
-        return null;
+    public List<LineDataSet> getDataSet() {
+        return lineRenderer.getDataSet();
     }
+
+    public List<BarDataSet> getBarDataSet() {
+        return barChartRenderer.getDataSet();
+    }
+
 }
