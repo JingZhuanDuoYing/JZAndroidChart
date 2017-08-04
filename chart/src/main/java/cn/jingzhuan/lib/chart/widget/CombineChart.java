@@ -54,6 +54,16 @@ public class CombineChart extends BaseChart {
         getRenderer().addDataSet(lineDataSet);
     }
 
+    public void setDataSet(BarDataSet barDataSet) {
+        getBarDataSet().clear();
+        addDataSet(barDataSet);
+    }
+
+    public void setDataSet(LineDataSet lineDataSet) {
+        getLineDataSet().clear();
+        addDataSet(lineDataSet);
+    }
+
     public List<LineDataSet> getLineDataSet() {
         return getRenderer().getDataSet();
     }
@@ -65,4 +75,5 @@ public class CombineChart extends BaseChart {
     public CombineChartRenderer getRenderer() {
         return (CombineChartRenderer) mRenderer;
     }
+
 }
