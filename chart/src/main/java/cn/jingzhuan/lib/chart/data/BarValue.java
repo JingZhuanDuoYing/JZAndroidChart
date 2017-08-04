@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Color;
+
 /**
  * Created by Donglua on 17/8/1.
  */
@@ -12,6 +14,11 @@ public class BarValue implements Value {
 
     public BarValue(float[] yValues) {
         this.yValues = yValues;
+    }
+
+    public BarValue(float[] yValues, int color) {
+        this.yValues = yValues;
+        this.mColor = color;
     }
 
     public BarValue(float yValue) {
