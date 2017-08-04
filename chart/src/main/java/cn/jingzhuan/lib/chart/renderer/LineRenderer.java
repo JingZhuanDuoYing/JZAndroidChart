@@ -94,7 +94,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
         float min = lineDataSet.getViewportYMin();
         float max = lineDataSet.getViewportYMax();
 
-        for (int i = 0; i < valueCount; i++) {
+        for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
             float xV = getDrawX(i / (valueCount - 1f));
