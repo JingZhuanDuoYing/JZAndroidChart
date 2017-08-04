@@ -41,7 +41,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
     private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet) {
 
         mRenderPaint.setStrokeWidth(barDataSet.getBarWidth());
-        mRenderPaint.setColor(barDataSet.getColor());
 
         int valueCount = barDataSet.getEntryCount();
 
@@ -56,6 +55,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
         BarValue barValue;
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             barValue = barDataSet.getEntryForIndex(i);
+
+            if (barValue.getColor() > 0) {
+                mRenderPaint.setColor(barValue.getColor());
+            } else {
+                mRenderPaint.setColor(barDataSet.getColor());
+            }
 
             float x = getDrawX((i) / (valueCount - 0f));
 
