@@ -58,7 +58,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
             BarValue barValue = barDataSet.getEntryForIndex(i);
 
             if (barValue.getColor() != 0) {
-                mRenderPaint.setColor(Color.BLUE);
+                mRenderPaint.setColor(barValue.getColor());
             } else {
                 mRenderPaint.setColor(barDataSet.getColor());
             }
