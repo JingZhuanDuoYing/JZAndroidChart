@@ -143,7 +143,7 @@ public class FloatUtils {
     public static int formatFloatValue(char[] formattedValue, float value, int decimalDigitsNumber) {
         return FloatUtils.formatFloat(formattedValue, value, formattedValue.length,
                 decimalDigitsNumber,
-                ',');
+                '.');
     }
 
     /**

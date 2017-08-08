@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -24,6 +25,7 @@ public class AxisY extends Axis {
     private float mYMax;
 
     private LabelColorSetter mLabelColorSetter;
+    private LabelValueFormatter mLabelValueFormatter;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({DEPENDENCY_LEFT, DEPENDENCY_RIGHT, DEPENDENCY_BOTH})
@@ -59,5 +61,13 @@ public class AxisY extends Axis {
 
     public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
         this.mLabelColorSetter = mLabelColorSetter;
+    }
+
+    public LabelValueFormatter getLabelValueFormatter() {
+        return mLabelValueFormatter;
+    }
+
+    public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
+        this.mLabelValueFormatter = mLabelValueFormatter;
     }
 }

@@ -1,8 +1,12 @@
 package cn.jingzhuan.lib.chart.renderer;
 
+import android.database.CharArrayBuffer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+
+import java.io.CharArrayWriter;
 
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
@@ -10,6 +14,7 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 
@@ -341,7 +346,18 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (labels.length - 1);
             float separation = 0;
             for (int i = 0; i < labels.length; i++) {
-                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                LabelValueFormatter labelValueFormatter = ((AxisY) mAxis).getLabelValueFormatter();
+                if (labelValueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                } else {
+                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    labelLength = labelCharArray.length;
+                    System.arraycopy(labelCharArray,
+                            0,
+                            mLabelBuffer,
+                            mLabelBuffer.length - labelLength,
+                            labelLength);
+                }
                 labelOffset = mLabelBuffer.length - labelLength;
                 switch (mAxis.getAxisPosition()) {
                     case AxisY.LEFT_OUTSIDE:
