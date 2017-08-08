@@ -81,13 +81,31 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
     protected void setDataBindingVariables(ViewDataBinding binding) {
         if (binding instanceof LayoutMinuteChartBinding) {
 
-            LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
+            final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
 
             minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new LabelValueFormatter() {
                 @Override
                 public String format(float value, int index) {
                     return String.format(Locale.ENGLISH, "%.2f%%",
                             (value - lastClose) / lastClose * 100);
+                }
+            });
+
+            minuteBinding.minuteChart.getAxisBottom().setGridCount(4);
+
+            minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new LabelValueFormatter() {
+                @Override
+                public String format(float value, int index) {
+                    if (index == 0) {
+                        return "9:30";
+                    }
+                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount()) {
+                        return "15:00";
+                    }
+                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount() / 2) {
+                        return "11:30/13:00";
+                    }
+                    return "";
                 }
             });
 

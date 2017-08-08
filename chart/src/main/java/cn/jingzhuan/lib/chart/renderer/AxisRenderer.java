@@ -324,9 +324,20 @@ public class AxisRenderer implements Renderer {
         if (mAxis instanceof AxisX) { // X轴
             final float width = mContentRect.width() / (labels.length - 1);
             for (int i = 0; i < labels.length; i++) {
-                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
+
+                if (labelValueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                } else {
+                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    labelLength = labelCharArray.length;
+                    System.arraycopy(labelCharArray,
+                            0,
+                            mLabelBuffer,
+                            mLabelBuffer.length - labelLength,
+                            labelLength);
+                }
                 labelOffset = mLabelBuffer.length - labelLength;
-//                    final float textWidth = mLabelTextPaint.measureText(mLabelBuffer, labelOffset, labelLength);
 
                 if (i == 0) {
                     mLabelTextPaint.setTextAlign(Paint.Align.LEFT);

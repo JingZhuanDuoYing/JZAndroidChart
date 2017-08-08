@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -27,6 +28,8 @@ public class Axis extends AbstractComponent {
     private float mAxisThickness = 2;
 
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
+
+    private LabelValueFormatter mLabelValueFormatter;
 
     public float[] mLabelEntries = new float[]{};
     private boolean gridLineEnable = true;
@@ -161,5 +164,13 @@ public class Axis extends AbstractComponent {
 
     public void setLabelEnable(boolean labelEnable) {
         this.labelEnable = labelEnable;
+    }
+
+    public LabelValueFormatter getLabelValueFormatter() {
+        return mLabelValueFormatter;
+    }
+
+    public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
+        this.mLabelValueFormatter = mLabelValueFormatter;
     }
 }

@@ -25,7 +25,6 @@ public class AxisY extends Axis {
     private float mYMax;
 
     private LabelColorSetter mLabelColorSetter;
-    private LabelValueFormatter mLabelValueFormatter;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({DEPENDENCY_LEFT, DEPENDENCY_RIGHT, DEPENDENCY_BOTH})
@@ -63,11 +62,4 @@ public class AxisY extends Axis {
         this.mLabelColorSetter = mLabelColorSetter;
     }
 
-    public LabelValueFormatter getLabelValueFormatter() {
-        return mLabelValueFormatter;
-    }
-
-    public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
-        this.mLabelValueFormatter = mLabelValueFormatter;
-    }
 }
