@@ -55,23 +55,28 @@ public class CombineChart extends BaseChart {
     }
 
     public void setDataSet(BarDataSet barDataSet) {
-        getBarDataSet().clear();
+        cleanAllDataSet();
+
         addDataSet(barDataSet);
     }
 
     public void setDataSet(LineDataSet lineDataSet) {
-        getLineDataSet().clear();
+        cleanAllDataSet();
+
         addDataSet(lineDataSet);
     }
 
     public void setLineData(List<LineDataSet> data) {
-        getLineDataSet().clear();
+        cleanAllDataSet();
+
         for (LineDataSet datum : data) {
             addDataSet(datum);
         }
     }
 
     public void setCombineData(CombineData combineData) {
+        cleanAllDataSet();
+
         List<LineDataSet> lineDataSets = combineData.getLineData();
         if (lineDataSets != null) {
             for (LineDataSet lineDataSet : lineDataSets) {
@@ -99,4 +104,16 @@ public class CombineChart extends BaseChart {
         return (CombineChartRenderer) mRenderer;
     }
 
+    public void cleanLineDataSet() {
+        getLineDataSet().clear();
+    }
+
+    public void cleanBarDataSet() {
+        getBarDataSet().clear();
+    }
+
+    public void cleanAllDataSet() {
+        cleanLineDataSet();
+        cleanBarDataSet();
+    }
 }
