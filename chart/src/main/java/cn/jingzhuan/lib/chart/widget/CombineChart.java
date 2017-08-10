@@ -10,7 +10,7 @@ import java.util.List;
 
 import cn.jingzhuan.lib.chart.BaseChart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
-import cn.jingzhuan.lib.chart.data.LineData;
+import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.renderer.CombineChartRenderer;
 
@@ -68,6 +68,22 @@ public class CombineChart extends BaseChart {
         getLineDataSet().clear();
         for (LineDataSet datum : data) {
             addDataSet(datum);
+        }
+    }
+
+    public void setCombineData(CombineData combineData) {
+        List<LineDataSet> lineDataSets = combineData.getLineData();
+        if (lineDataSets != null) {
+            for (LineDataSet lineDataSet : lineDataSets) {
+                addDataSet(lineDataSet);
+            }
+        }
+
+        List<BarDataSet> barDataSets = combineData.getBarData();
+        if (barDataSets != null) {
+            for (BarDataSet barDataSet : barDataSets) {
+                addDataSet(barDataSet);
+            }
         }
     }
 

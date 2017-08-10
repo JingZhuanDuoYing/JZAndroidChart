@@ -1,47 +1,35 @@
 package cn.jingzhuan.lib.chart.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Donglua on 17/8/2.
  */
 public class CombineData {
 
-    private BarData barData;
-    private LineData lineData;
-
-    private float mYMin = Float.MAX_VALUE;
-    private float mYMax = -Float.MAX_VALUE;
+    private List<BarDataSet> barData;
+    private List<LineDataSet> lineData;
 
     public CombineData() {
-        barData = new BarData();
-        lineData = new LineData();
+        barData = new ArrayList<>();
+        lineData = new ArrayList<>();
     }
 
-    public int getEntryCount() {
-        return Math.max(barData.getEntryCount(), lineData.getEntryCount());
+    public List<BarDataSet> getBarData() {
+        return barData;
     }
 
-    public void addDataSet(LineDataSet dataSet) {
-        lineData.add(dataSet);
-        lineData.calcMinMax();
-        calcMinMax();
+    public List<LineDataSet> getLineData() {
+        return lineData;
     }
 
     public void addDataSet(BarDataSet dataSet) {
-        barData.add(dataSet);
-        lineData.calcMinMax();
-        calcMinMax();
+        getBarData().add(dataSet);
     }
 
-    public void calcMinMax() {
-        mYMax = Math.max(barData.getMax(), lineData.getMax());
-        mYMin = Math.min(lineData.getMin(), lineData.getMin());
+    public void addDataSet(LineDataSet dataSet) {
+        getLineData().add(dataSet);
     }
 
-    public float getMax() {
-        return mYMax;
-    }
-
-    public float getMin() {
-        return mYMin;
-    }
 }
