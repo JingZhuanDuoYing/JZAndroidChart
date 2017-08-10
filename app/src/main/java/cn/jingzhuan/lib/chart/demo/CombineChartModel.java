@@ -30,15 +30,15 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         List<BarValue> barValueList = new ArrayList<>();
 
-        barValueList.add(new BarValue(11));
-        barValueList.add(new BarValue(10));
-        barValueList.add(new BarValue(11));
-        barValueList.add(new BarValue(13));
-        barValueList.add(new BarValue(11));
-        barValueList.add(new BarValue(12));
-        barValueList.add(new BarValue(12));
-        barValueList.add(new BarValue(13));
-        barValueList.add(new BarValue(15));
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(-2));
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(3));
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(2));
+        barValueList.add(new BarValue(2));
+        barValueList.add(new BarValue(3));
+        barValueList.add(new BarValue(5));
 
         barDataSet = new BarDataSet(barValueList, AxisY.DEPENDENCY_RIGHT);
         barDataSet.setAutoBarWidth(true);

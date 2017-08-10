@@ -63,7 +63,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
             float x = getDrawX(i / (valueCount - 0f));
 
             float top;
-            float bottom = mContentRect.bottom;
+            float bottom = calcHeight(0f, max, min);
 
             if (barValue.getValueCount() > 0) {
 
