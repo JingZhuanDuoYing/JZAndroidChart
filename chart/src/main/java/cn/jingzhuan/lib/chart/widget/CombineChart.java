@@ -64,6 +64,13 @@ public class CombineChart extends BaseChart {
         addDataSet(lineDataSet);
     }
 
+    public void setLineData(List<LineDataSet> data) {
+        getLineDataSet().clear();
+        for (LineDataSet datum : data) {
+            addDataSet(datum);
+        }
+    }
+
     public List<LineDataSet> getLineDataSet() {
         return getRenderer().getDataSet();
     }
