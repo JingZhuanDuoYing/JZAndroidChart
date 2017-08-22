@@ -1,40 +1,37 @@
 package cn.jingzhuan.lib.chart.renderer;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Path;
-import android.util.Log;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.IDataSet;
+import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import cn.jingzhuan.lib.chart.value.Line;
-import cn.jingzhuan.lib.chart.value.PointValue;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PointValue;
 
 /**
  * Created by Donglua on 17/7/19.
  */
 
-public class LineRenderer extends AbstractDataRenderer<Line> {
+public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
 
-    private CopyOnWriteArrayList<Line> mLines;
-
+    private LineData lineData;
 
     public LineRenderer(final Chart chart) {
         super(chart);
 
-        mLines = new CopyOnWriteArrayList<>();
+        lineData = new LineData();
 
         chart.setOnScaleListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                for (Line line : mLines) {
+                for (LineDataSet line : getDataSet()) {
                     line.setViewport(viewport);
                 }
             }
@@ -43,8 +40,8 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
-                for (Line line : mLines) {
-                    if (line.isHighlightdEnable()) {
+                for (LineDataSet line : getDataSet()) {
+                    if (line.isHighlightedEnable()) {
                         int index = (int) getDrawX(x) * line.getEntryCount();
                         chart.highlightValue(new Highlight(x, y, index));
                     }
@@ -63,61 +60,42 @@ public class LineRenderer extends AbstractDataRenderer<Line> {
     }
 
     @Override
-    public void addDataSet(Line line) {
-        this.mLines.add(line);
+    public void addDataSet(LineDataSet dataSet) {
+        lineData.add(dataSet);
     }
 
     @Override
-    public List<Line> getDataSet() {
-        return mLines;
+    public List<LineDataSet> getDataSet() {
+        return lineData.getDataSets();
     }
 
     @Override
     protected void renderDataSet(Canvas canvas) {
 
-//        int width = mContentRect.width();
-//        int height = mContentRect.height();
-//
-//        if (mDrawBitmap == null
-//                || (mDrawBitmap.get().getWidth() != width)
-//                || (mDrawBitmap.get().getHeight() != height)) {
-//
-//            if (width > 0 && height > 0) {
-//
-//                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-//                mBitmapCanvas = new Canvas(mDrawBitmap.get());
-//            } else
-//                return;
-//        }
-//
-//        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
-
-        for (Line line : mLines) {
+        for (LineDataSet line : getDataSet()) {
             if (line.isVisible()) {
                 drawDataSet(canvas, line);
             }
         }
 
-//        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
-
     }
 
-    private void drawDataSet(Canvas canvas, Line line) {
+    private void drawDataSet(Canvas canvas, LineDataSet lineDataSet) {
 
-        mRenderPaint.setStrokeWidth(line.getLineThickness());
-        mRenderPaint.setColor(line.getLineColor());
+        mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());
+        mRenderPaint.setColor(lineDataSet.getColor());
 
-        int valueCount = line.getEntryCount();
+        int valueCount = lineDataSet.getEntryCount();
 
         Path path = new Path();
         path.reset();
         boolean isFirst = true;
 
-        float min = line.getViewportYMin();
-        float max = line.getViewportYMax();
+        float min = lineDataSet.getViewportYMin();
+        float max = lineDataSet.getViewportYMax();
 
-        for (int i = 0; i < valueCount; i++) {
-            PointValue point = line.getEntryForIndex(i);
+        for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
+            PointValue point = lineDataSet.getEntryForIndex(i);
 
             float xV = getDrawX(i / (valueCount - 1f));
             float yV = (max - point.getValue()) / (max - min) * mContentRect.height();

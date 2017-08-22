@@ -1,18 +1,21 @@
-package cn.jingzhuan.lib.chart.value;
+package cn.jingzhuan.lib.chart.data;
+
+import android.graphics.Color;
 
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AbstractComponent;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+
+import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
 
 /**
  * Created by Donglua on 17/7/20.
  */
 
-public abstract class AbstractDataSet<T extends PointValue> implements IDataSet {
-
-    private boolean isVisible = true;
+public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
 
     /**
      * maximum y-value in the value array across all axes
@@ -40,18 +43,12 @@ public abstract class AbstractDataSet<T extends PointValue> implements IDataSet 
     private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
     public Viewport mViewport;
 
-    @Override
-    public boolean isVisible() {
-        return isVisible;
-    }
 
-    @Override
-    public void setVisible(boolean visible) {
-        this.isVisible = visible;
-    }
+    @AxisDependency protected int mDepsAxis = DEPENDENCY_BOTH;
+    protected AxisY mAxisLeft;
+    protected AxisY mAxisRight;
 
-    @Override
-    public abstract void calcMinMax();
+    private int mColor = Color.GRAY;
 
     public abstract void setValues(List<T> values);
 
@@ -88,4 +85,21 @@ public abstract class AbstractDataSet<T extends PointValue> implements IDataSet 
     public float getViewportYMax() {
         return mViewportYMax;
     }
+
+    public AxisY getAxisLeft() {
+        return mAxisLeft;
+    }
+
+    public AxisY getAxisRight() {
+        return mAxisRight;
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    public void setColor(int barColor) {
+        this.mColor = barColor;
+    }
+
 }

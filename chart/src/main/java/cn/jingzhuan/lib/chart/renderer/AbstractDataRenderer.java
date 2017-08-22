@@ -12,14 +12,14 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.value.IDataSet;
-import cn.jingzhuan.lib.chart.value.Line;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.IDataSet;
 
 /**
  * Created by Donglua on 17/7/19.
  */
 
-public abstract class AbstractDataRenderer<T extends IDataSet> implements Renderer {
+public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartData<DS>> implements Renderer {
 
     protected Viewport mViewport;
     protected Rect mContentRect;
@@ -95,8 +95,8 @@ public abstract class AbstractDataRenderer<T extends IDataSet> implements Render
                 - mContentRect.height() * (y - mViewport.top) / mViewport.height();
     }
 
-    public abstract void addDataSet(T dataSet);
+    public abstract void addDataSet(DS dataSet);
 
-    public abstract List<T> getDataSet();
+    public abstract List<DS> getDataSet();
 
 }

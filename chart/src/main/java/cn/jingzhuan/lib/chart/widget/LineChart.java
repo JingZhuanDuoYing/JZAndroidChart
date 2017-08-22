@@ -7,8 +7,9 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import cn.jingzhuan.lib.chart.BaseChart;
+import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.renderer.LineRenderer;
-import cn.jingzhuan.lib.chart.value.Line;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
 
 /**
  * Created by Donglua on 17/7/19.
@@ -40,15 +41,15 @@ public class LineChart extends BaseChart {
 
     }
 
-    public void addLine(Line line) {
+    public void addLine(LineDataSet lineDataSet) {
 
-        line.setChart(this);
+        lineDataSet.setChart(this);
 
-        mRenderer.addDataSet(line);
+        mRenderer.addDataSet(lineDataSet);
     }
 
-    public void setLine(Line line) {
+    public void setLine(LineDataSet lineDataSet) {
         mRenderer.getDataSet().clear();
-        addLine(line);
+        addLine(lineDataSet);
     }
 }

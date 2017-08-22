@@ -1,4 +1,4 @@
-package cn.jingzhuan.lib.chart.value;
+package cn.jingzhuan.lib.chart.data;
 
 import android.support.annotation.ColorInt;
 

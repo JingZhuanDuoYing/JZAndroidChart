@@ -1,14 +1,12 @@
 package cn.jingzhuan.lib.chart.component;
 
-abstract class Component {
+/**
+ * Created by Donglua on 17/8/2.
+ */
 
-  private boolean isEnable = true;
+public interface Component {
 
-  public void setEnable(boolean enable) {
-    isEnable = enable;
-  }
+    void setEnable(boolean enable);
 
-  public boolean isEnable() {
-    return isEnable;
-  }
+    boolean isEnable();
 }

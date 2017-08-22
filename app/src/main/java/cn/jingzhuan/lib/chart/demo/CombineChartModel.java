@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.graphics.Color;
 
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -9,19 +10,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.BarValue;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
-import cn.jingzhuan.lib.chart.demo.databinding.LayoutLineChartBinding;
+import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 
 /**
- * Created by Donglua on 17/7/26.
+ * Created by Donglua on 17/8/3.
  */
-@EpoxyModelClass(layout = R.layout.layout_line_chart)
-public abstract class LineChartModel extends DataBindingEpoxyModel {
+@EpoxyModelClass(layout = R.layout.layout_combine_chart)
+public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
+    private BarDataSet barDataSet;
     private LineDataSet line;
 
-    public LineChartModel() {
+    public CombineChartModel() {
+
+        List<BarValue> barValueList = new ArrayList<>();
+
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(-2));
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(3));
+        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(2));
+        barValueList.add(new BarValue(2));
+        barValueList.add(new BarValue(3));
+        barValueList.add(new BarValue(5));
+
+        barDataSet = new BarDataSet(barValueList, AxisY.DEPENDENCY_RIGHT);
+        barDataSet.setAutoBarWidth(true);
+        barDataSet.setColor(Color.DKGRAY);
+
 
         final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f,
                 3132.10f, 3131.55f, 3132.10f, 3133.30f, 3133.39f, 3133.02f, 3133.32f, 3132.60f,
@@ -59,15 +81,17 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         for (Float value: floats) {
             values.add(new PointValue(value));
         }
-        line = new LineDataSet(values);
+        line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
     }
 
     @Override
     protected void setDataBindingVariables(ViewDataBinding binding) {
 
-        if (binding instanceof LayoutLineChartBinding) {
-            ((LayoutLineChartBinding) binding).lineChart.addLine(line);
-            ((LayoutLineChartBinding) binding).lineChart.setDoubleTapToZoom(true);
-        }
+        LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) binding;
+
+        chartBinding.combineChart.addDataSet(barDataSet);
+        chartBinding.combineChart.addDataSet(line);
+
     }
+
 }

@@ -130,6 +130,9 @@ public abstract class Chart extends View {
 
         mTouchPointChangeListeners = new CopyOnWriteArrayList<>();
 
+        mAxisTop.setGridLineEnable(false);
+        mAxisTop.setLabelEnable(false);
+
         try {
             List<Axis> axisList = new ArrayList<>(4);
             axisList.add(mAxisLeft);
@@ -204,7 +207,7 @@ public abstract class Chart extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawAxis(canvas);
+        drawAxis(canvas); // 坐标轴刻度在最底层
 
         // Clips the next few drawing operations to the content area
         int clipRestoreCount = canvas.save();
@@ -216,9 +219,12 @@ public abstract class Chart extends View {
 
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
+
+        drawLabels(canvas); // 坐标轴刻度在最上层
     }
 
     protected abstract void drawAxis(Canvas canvas);
+    protected abstract void drawLabels(Canvas canvas);
 
     protected abstract void render(Canvas canvas);
 

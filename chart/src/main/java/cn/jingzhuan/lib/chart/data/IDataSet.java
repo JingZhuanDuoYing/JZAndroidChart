@@ -1,4 +1,4 @@
-package cn.jingzhuan.lib.chart.value;
+package cn.jingzhuan.lib.chart.data;
 
 /**
  * Created by Donglua on 17/7/19.
@@ -6,11 +6,10 @@ package cn.jingzhuan.lib.chart.value;
 
 public interface IDataSet {
 
-   boolean isVisible();
-   void setVisible(boolean visible);
-
    void calcMinMax();
 
    int getEntryCount();
 
+   float getYMin();
+   float getYMax();
 }

@@ -1,8 +1,5 @@
-package cn.jingzhuan.lib.chart.value;
+package cn.jingzhuan.lib.chart.data;
 
-
-import android.graphics.Color;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,25 +14,20 @@ import static cn.jingzhuan.lib.chart.component.AxisY.*;
  * Created by Donglua on 17/7/19.
  */
 
-public class Line<T extends PointValue> extends AbstractDataSet<T> {
+public class LineDataSet extends AbstractDataSet<PointValue> {
 
-    private int mLineColor = Color.GRAY;
     private int mLineThickness = 2;
 
-    protected List<T> mPointValues;
+    protected List<PointValue> mPointValues;
 
     private int mForceValueCount = -1;
-    private boolean isHighlightdEnable = false;
+    private boolean isHighlightedEnable = false;
 
-    @AxisDependency private int mDepsAxis = DEPENDENCY_BOTH;
-    protected AxisY mAxisLeft;
-    protected AxisY mAxisRight;
-
-    public Line(List<T> pointValues) {
+    public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
     }
 
-    public Line(List<T> pointValues, @AxisDependency int depsAxis) {
+    public LineDataSet(List<PointValue> pointValues, @AxisDependency int depsAxis) {
         mPointValues = pointValues;
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
@@ -47,14 +39,6 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         calcMinMax();
     }
 
-    public int getLineColor() {
-        return mLineColor;
-    }
-
-    public void setLineColor(int mLineColor) {
-        this.mLineColor = mLineColor;
-    }
-
     public int getLineThickness() {
         return mLineThickness;
     }
@@ -63,7 +47,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         this.mLineThickness = mLineThickness;
     }
 
-    public List<T> getLines() {
+    public List<PointValue> getLines() {
         return mPointValues;
     }
 
@@ -84,7 +68,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         mXMax = -Float.MAX_VALUE;
         mXMin = Float.MAX_VALUE;
 
-        for (T e : mPointValues) {
+        for (PointValue e : mPointValues) {
             calcMinMax(e);
         }
 
@@ -96,7 +80,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
-        for (T e : getVisiblePoints(viewport)) {
+        for (PointValue e : getVisiblePoints(viewport)) {
             calcViewportMinMaxX(e);
         }
 
@@ -114,13 +98,13 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
     }
 
     @Override
-    public void setValues(List<T> values) {
+    public void setValues(List<PointValue> values) {
         this.mPointValues = values;
         notifyDataSetChanged();
     }
 
     @Override
-    public List<T> getValues() {
+    public List<PointValue> getValues() {
         return mPointValues;
     }
 
@@ -130,7 +114,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
      *
      * @param e
      */
-    protected void calcMinMax(T e) {
+    protected void calcMinMax(PointValue e) {
 
         if (e == null)
             return;
@@ -140,7 +124,7 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         calcMinMaxY(e);
     }
 
-    protected void calcViewportMinMaxX(T e) {
+    protected void calcViewportMinMaxX(PointValue e) {
         if (e.getValue() < mViewportYMin)
             mViewportYMin = e.getValue();
 
@@ -148,16 +132,16 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
             mViewportYMax = e.getValue();
     }
 
-    protected void calcMinMaxX(T e) {
+    protected void calcMinMaxX(PointValue e) {
 
-        if (e.getX() < mXMin)
-            mXMin = e.getX();
-
-        if (e.getX() > mXMax)
-            mXMax = e.getX();
+//        if (e.getX() < mXMin)
+//            mXMin = e.getX();
+//
+//        if (e.getX() > mXMax)
+//            mXMax = e.getX();
     }
 
-    protected void calcMinMaxY(T e) {
+    protected void calcMinMaxY(PointValue e) {
 
         if (e.getValue() < mYMin)
             mYMin = e.getValue();
@@ -171,24 +155,23 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
     }
 
     @Override
-    public boolean addEntry(T e) {
+    public boolean addEntry(PointValue e) {
 
         if (e == null)
             return false;
 
-        List<T> values = getValues();
-        if (values == null) {
-            values = new ArrayList<T>();
+        if (mPointValues == null) {
+            mPointValues = new ArrayList<>();
         }
 
         calcMinMax(e);
 
         // add the entry
-        return values.add(e);
+        return mPointValues.add(e);
     }
 
     @Override
-    public boolean removeEntry(T e) {
+    public boolean removeEntry(PointValue e) {
 
         if (e == null)
             return false;
@@ -207,12 +190,12 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
     }
 
     @Override
-    public int getEntryIndex(T e) {
+    public int getEntryIndex(PointValue e) {
         return mPointValues.indexOf(e);
     }
 
     @Override
-    public T getEntryForIndex(int index) {
+    public PointValue getEntryForIndex(int index) {
         return mPointValues.get(index);
     }
 
@@ -251,26 +234,18 @@ public class Line<T extends PointValue> extends AbstractDataSet<T> {
         calcViewportY(viewport);
     }
 
-    public AxisY getAxisLeft() {
-        return mAxisLeft;
-    }
-
-    public AxisY getAxisRight() {
-        return mAxisRight;
-    }
-
-    protected List<T> getVisiblePoints(Viewport viewport) {
+    protected List<PointValue> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * mPointValues.size());
         int to  = (int) (viewport.right * mPointValues.size());
 
         return mPointValues.subList(from, to);
     }
 
-    public void setHighlightdEnable(boolean highlightdEnable) {
-        isHighlightdEnable = highlightdEnable;
+    public void setHighlightedEnable(boolean highlightedEnable) {
+        isHighlightedEnable = highlightedEnable;
     }
 
-    public boolean isHighlightdEnable() {
-        return isHighlightdEnable;
+    public boolean isHighlightedEnable() {
+        return isHighlightedEnable;
     }
 }

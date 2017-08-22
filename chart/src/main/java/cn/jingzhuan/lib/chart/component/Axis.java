@@ -4,12 +4,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 /**
  * Created by Donglua on 17/7/17.
  */
 
-public class Axis extends Component {
+public class Axis extends AbstractComponent {
 
     protected int mAxisPosition;
 
@@ -28,7 +29,11 @@ public class Axis extends Component {
 
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
+    private LabelValueFormatter mLabelValueFormatter;
+
     public float[] mLabelEntries = new float[]{};
+    private boolean gridLineEnable = true;
+    private boolean labelEnable = true;
 
     Axis(int axisPosition) {
         this.mAxisPosition = axisPosition;
@@ -145,4 +150,27 @@ public class Axis extends Component {
         this.mGridCount = mGridCount;
     }
 
+    public void setGridLineEnable(boolean gridLineEnable) {
+        this.gridLineEnable = gridLineEnable;
+    }
+
+    public boolean isGridLineEnable() {
+        return gridLineEnable;
+    }
+
+    public boolean isLabelEnable() {
+        return labelEnable;
+    }
+
+    public void setLabelEnable(boolean labelEnable) {
+        this.labelEnable = labelEnable;
+    }
+
+    public LabelValueFormatter getLabelValueFormatter() {
+        return mLabelValueFormatter;
+    }
+
+    public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
+        this.mLabelValueFormatter = mLabelValueFormatter;
+    }
 }

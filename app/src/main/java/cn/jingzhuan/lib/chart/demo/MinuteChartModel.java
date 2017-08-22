@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.util.Log;
 import android.view.View;
 
 import com.airbnb.epoxy.DataBindingEpoxyModel;
@@ -10,9 +11,11 @@ import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
-import cn.jingzhuan.lib.chart.value.MinuteLine;
-import cn.jingzhuan.lib.chart.value.PointValue;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
+import cn.jingzhuan.lib.chart.data.MinuteLine;
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutMinuteChartBinding;
 
 import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
@@ -25,6 +28,7 @@ import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
 public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
     final MinuteLine line;
+    final float lastClose = 3136.62f;
 
     @EpoxyAttribute(DoNotHash) View.OnClickListener onClickListener;
 
@@ -69,19 +73,48 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         }
 
         line = new MinuteLine(values);
-        line.setHighlightdEnable(true);
-        line.setLastClose(3136.62f);
+        line.setHighlightedEnable(true);
+        line.setLastClose(lastClose);
     }
 
     @Override
     protected void setDataBindingVariables(ViewDataBinding binding) {
         if (binding instanceof LayoutMinuteChartBinding) {
 
-            ((LayoutMinuteChartBinding) binding).minuteChart.setScaleXEnable(false);
+            final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
 
-            ((LayoutMinuteChartBinding) binding).minuteChart.addLine(line);
+            minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new LabelValueFormatter() {
+                @Override
+                public String format(float value, int index) {
+                    return String.format(Locale.ENGLISH, "%.2f%%",
+                            (value - lastClose) / lastClose * 100);
+                }
+            });
 
-            ((LayoutMinuteChartBinding) binding).minuteChart.setOnClickListener(onClickListener);
+            minuteBinding.minuteChart.getAxisBottom().setGridCount(4);
+
+            minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new LabelValueFormatter() {
+                @Override
+                public String format(float value, int index) {
+                    if (index == 0) {
+                        return "9:30";
+                    }
+                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount()) {
+                        return "15:00";
+                    }
+                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount() / 2) {
+                        return "11:30/13:00";
+                    }
+                    return "";
+                }
+            });
+
+            minuteBinding.minuteChart.setScaleXEnable(false);
+
+            minuteBinding.minuteChart.addLine(line);
+
+            minuteBinding.minuteChart.setOnClickListener(onClickListener);
+
         }
     }
 

@@ -1,8 +1,12 @@
 package cn.jingzhuan.lib.chart.renderer;
 
+import android.database.CharArrayBuffer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+
+import java.io.CharArrayWriter;
 
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
@@ -10,8 +14,9 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
-import cn.jingzhuan.lib.chart.value.LabelColorSetter;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -83,10 +88,12 @@ public class AxisRenderer implements Renderer {
         // Draws lib container
         drawAxisLine(canvas);
 
-        drawGridLines(canvas);
+        if (mAxis.isGridLineEnable()) {
+            drawGridLines(canvas);
+        }
 
-        drawLabels(canvas);
     }
+
 
     private static void computeAxisStopsY(AxisY axis) {
 
@@ -276,7 +283,9 @@ public class AxisRenderer implements Renderer {
     }
 
 
-    private void drawLabels(Canvas canvas) {
+    public void drawLabels(Canvas canvas) {
+
+        if (!mAxis.isLabelEnable()) return;
 
         float[] labels = mAxis.mLabelEntries;
         if (labels == null || labels.length < 1) {
@@ -315,9 +324,20 @@ public class AxisRenderer implements Renderer {
         if (mAxis instanceof AxisX) { // X轴
             final float width = mContentRect.width() / (labels.length - 1);
             for (int i = 0; i < labels.length; i++) {
-                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
+
+                if (labelValueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                } else {
+                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    labelLength = labelCharArray.length;
+                    System.arraycopy(labelCharArray,
+                            0,
+                            mLabelBuffer,
+                            mLabelBuffer.length - labelLength,
+                            labelLength);
+                }
                 labelOffset = mLabelBuffer.length - labelLength;
-//                    final float textWidth = mLabelTextPaint.measureText(mLabelBuffer, labelOffset, labelLength);
 
                 if (i == 0) {
                     mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
@@ -337,7 +357,18 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (labels.length - 1);
             float separation = 0;
             for (int i = 0; i < labels.length; i++) {
-                labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                LabelValueFormatter labelValueFormatter = ((AxisY) mAxis).getLabelValueFormatter();
+                if (labelValueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                } else {
+                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    labelLength = labelCharArray.length;
+                    System.arraycopy(labelCharArray,
+                            0,
+                            mLabelBuffer,
+                            mLabelBuffer.length - labelLength,
+                            labelLength);
+                }
                 labelOffset = mLabelBuffer.length - labelLength;
                 switch (mAxis.getAxisPosition()) {
                     case AxisY.LEFT_OUTSIDE:
