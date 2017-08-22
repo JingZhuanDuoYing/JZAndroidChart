@@ -20,12 +20,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     private BarChartRenderer barChartRenderer;
     private LineRenderer lineRenderer;
 
-    public CombineChartRenderer(Chart chart) {
+    public CombineChartRenderer(final Chart chart) {
         super(chart);
 
         lineRenderer = new LineRenderer(chart);
         barChartRenderer = new BarChartRenderer(chart);
-
     }
 
     @Override
@@ -36,7 +35,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void renderHighlighted(Highlight[] highlights) {
-
+        lineRenderer.renderHighlighted(highlights);
+        barChartRenderer.renderHighlighted(highlights);
     }
 
     @Override
