@@ -35,10 +35,6 @@ dependencies {
   testImplementation 'junit:junit:4.12'
   implementation 'com.android.support:support-annotations:25.3.1'
 
-  // Dagger2
-  implementation "com.google.dagger:dagger:$ver.daggerLibVersion"
-  annotationProcessor "com.google.dagger:dagger-compiler:$ver.daggerLibVersion"
-  compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 }
 
 
