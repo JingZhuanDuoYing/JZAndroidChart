@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
-import cn.jingzhuan.lib.chart.data.IDataSet;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -27,6 +26,7 @@ public class BaseChart extends Chart {
     private List<AxisRenderer> mAxisRenderers;
 
     protected Highlight[] mHighlights;
+    private HighlightStatusChangeListener mHighlightStatusChangeListener;
 
     public BaseChart(Context context) {
         super(context);
@@ -82,7 +82,12 @@ public class BaseChart extends Chart {
 
         if (highlight == null) return;
 
-        mHighlights = new Highlight[] { highlight };
+        final Highlight[] highlights = new Highlight[] { highlight };
+
+        if (this.mHighlights != null && mHighlightStatusChangeListener != null) {
+            mHighlightStatusChangeListener.onHighlightShow(highlights);
+        }
+        mHighlights = highlights;
 
         invalidate();
     }
@@ -90,6 +95,9 @@ public class BaseChart extends Chart {
     @Override
     public void cleanHighlight() {
         mHighlights = null;
+
+        if (mHighlightStatusChangeListener != null)
+            mHighlightStatusChangeListener.onHighlightHide();
 
         invalidate();
     }
@@ -111,6 +119,15 @@ public class BaseChart extends Chart {
     }
 
     public void setHighlights(Highlight[] highlights) {
+
         this.mHighlights = highlights;
+    }
+
+    public void setOnHighlightStatusChangeListener(HighlightStatusChangeListener mHighlightStatusChangeListener) {
+        this.mHighlightStatusChangeListener = mHighlightStatusChangeListener;
+    }
+
+    public HighlightStatusChangeListener getOnHighlightStatusChangeListener() {
+        return mHighlightStatusChangeListener;
     }
 }
