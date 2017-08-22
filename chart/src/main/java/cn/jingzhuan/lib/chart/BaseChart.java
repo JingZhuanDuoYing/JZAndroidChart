@@ -102,7 +102,7 @@ public class BaseChart extends Chart {
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
-            mRenderer.renderHighlighted(getHighlights());
+            mRenderer.renderHighlighted(canvas, getHighlights());
         }
     }
 

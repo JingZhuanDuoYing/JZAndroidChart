@@ -84,7 +84,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
     }
 
     @Override
-    public void renderHighlighted(Highlight[] highlights) {
+    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
 
     }
 

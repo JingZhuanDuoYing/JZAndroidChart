@@ -1,10 +1,14 @@
 package cn.jingzhuan.lib.chart.renderer;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
+import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
@@ -51,11 +55,19 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
     }
 
     @Override
-    public void renderHighlighted(Highlight[] highlights) {
+    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+
+        Log.d("LineRenderer", "highlights = " + highlights + " bitmap = " + mDrawBitmap);
+
         if (highlights == null) return;
 
         for (Highlight highlight : highlights) {
-            mBitmapCanvas.drawLine(highlight.getX(), 0, highlight.getX(), mContentRect.bottom, mRenderPaint);
+            (mBitmapCanvas == null ? canvas : mBitmapCanvas).drawLine(
+                    highlight.getX(),
+                    0,
+                    highlight.getX(),
+                    mContentRect.bottom,
+                    mRenderPaint);
         }
     }
 

@@ -25,7 +25,6 @@ public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartD
     protected Rect mContentRect;
     protected Paint mRenderPaint;
 
-
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
      * rendered directly on the canvas)
@@ -77,7 +76,7 @@ public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartD
 
     protected abstract void renderDataSet(Canvas canvas);
 
-    public abstract void renderHighlighted(Highlight[] highlights);
+    public abstract void renderHighlighted(Canvas canvas, Highlight[] highlights);
 
     /**
      * Computes the pixel offset for the given X lib value. This may be outside the view bounds.

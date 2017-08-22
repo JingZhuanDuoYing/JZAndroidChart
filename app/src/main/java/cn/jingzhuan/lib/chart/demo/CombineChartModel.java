@@ -82,6 +82,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
             values.add(new PointValue(value));
         }
         line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
+        line.setHighlightedEnable(true);
     }
 
     @Override

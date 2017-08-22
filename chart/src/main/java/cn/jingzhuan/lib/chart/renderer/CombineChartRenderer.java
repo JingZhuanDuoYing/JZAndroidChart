@@ -25,6 +25,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
         lineRenderer = new LineRenderer(chart);
         barChartRenderer = new BarChartRenderer(chart);
+
     }
 
     @Override
@@ -34,9 +35,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    public void renderHighlighted(Highlight[] highlights) {
-        lineRenderer.renderHighlighted(highlights);
-        barChartRenderer.renderHighlighted(highlights);
+    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+        lineRenderer.renderHighlighted(canvas, highlights);
+        barChartRenderer.renderHighlighted(canvas, highlights);
     }
 
     @Override
