@@ -35,6 +35,13 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
+    public void setHighlightColor(int highlightColor) {
+        super.setHighlightColor(highlightColor);
+        lineRenderer.setHighlightColor(highlightColor);
+        barChartRenderer.setHighlightColor(highlightColor);
+    }
+
+    @Override
     public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
         lineRenderer.renderHighlighted(canvas, highlights);
         barChartRenderer.renderHighlighted(canvas, highlights);

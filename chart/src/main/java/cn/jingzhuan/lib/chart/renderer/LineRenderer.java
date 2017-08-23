@@ -57,9 +57,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
     @Override
     public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
 
-        Log.d("LineRenderer", "highlights = " + highlights + " bitmap = " + mDrawBitmap);
-
         if (highlights == null) return;
+
+        mRenderPaint.setColor(getHighlightColor());
 
         for (Highlight highlight : highlights) {
             (mBitmapCanvas == null ? canvas : mBitmapCanvas).drawLine(

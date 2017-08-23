@@ -30,6 +30,7 @@ public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartD
      * rendered directly on the canvas)
      */
     protected WeakReference<Bitmap> mDrawBitmap;
+
     /**
      * on this canvas, the paths are rendered, it is initialized with the
      * pathBitmap
@@ -40,6 +41,7 @@ public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartD
      */
     protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
+    private int mHighlightColor = Color.WHITE;
 
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
@@ -98,4 +100,11 @@ public abstract class AbstractDataRenderer<DS extends IDataSet, T extends ChartD
 
     public abstract List<DS> getDataSet();
 
+    public void setHighlightColor(int highlightColor) {
+        this.mHighlightColor = highlightColor;
+    }
+
+    public int getHighlightColor() {
+        return mHighlightColor;
+    }
 }

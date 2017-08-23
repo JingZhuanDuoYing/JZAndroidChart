@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -125,6 +126,14 @@ public class BaseChart extends Chart {
         if (mRenderer != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
         }
+    }
+
+    public void setHighlightColor(int color) {
+        mRenderer.setHighlightColor(color);
+    }
+
+    public int getHighlightColor() {
+        return mRenderer.getHighlightColor();
     }
 
     public Highlight[] getHighlights() {
