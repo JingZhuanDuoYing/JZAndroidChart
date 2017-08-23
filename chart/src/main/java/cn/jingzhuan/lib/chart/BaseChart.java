@@ -143,4 +143,8 @@ public class BaseChart extends Chart {
     public HighlightStatusChangeListener getOnHighlightStatusChangeListener() {
         return mHighlightStatusChangeListener;
     }
+
+    public void setOnHighlightListener(OnHighlightListener mHighlightListener) {
+        this.mHighlightListener = mHighlightListener;
+    }
 }

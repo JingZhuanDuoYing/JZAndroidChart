@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 public interface HighlightStatusChangeListener {
 
     void onHighlightShow(Highlight[] highlights);
+
     void onHighlightHide();
 
 }
