@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.event;
 
+import android.graphics.Canvas;
+
 import cn.jingzhuan.lib.chart.component.Highlight;
 
 /**
@@ -8,6 +10,6 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 
 public interface OnHighlightRenderListener {
 
-    void highlight(Highlight[] highlights);
+    void highlight(Canvas canvas, Highlight[] highlights);
 
 }

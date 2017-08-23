@@ -122,7 +122,7 @@ public class BaseChart extends Chart {
         if (mRenderer != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
             if (getHighlights() != null && mHighlightListener != null) {
-                mHighlightListener.highlight(getHighlights());
+                mHighlightListener.highlight(canvas, getHighlights());
             }
         }
     }
