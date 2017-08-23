@@ -12,6 +12,7 @@ import java.util.List;
 
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
@@ -27,6 +28,7 @@ public class BaseChart extends Chart {
 
     protected Highlight[] mHighlights;
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
+    private OnHighlightListener mHighlightListener;
 
     public BaseChart(Context context) {
         super(context);
@@ -87,6 +89,11 @@ public class BaseChart extends Chart {
         if (this.mHighlights != null && mHighlightStatusChangeListener != null) {
             mHighlightStatusChangeListener.onHighlightShow(highlights);
         }
+
+        if (mHighlightListener != null) {
+            mHighlightListener.highlight(highlights);
+        }
+
         mHighlights = highlights;
 
         invalidate();
@@ -110,6 +117,12 @@ public class BaseChart extends Chart {
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
+            renderHighlighted(canvas);
+        }
+    }
+
+    public void renderHighlighted(Canvas canvas) {
+        if (mRenderer != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
         }
     }

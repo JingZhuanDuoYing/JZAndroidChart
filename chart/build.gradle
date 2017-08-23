@@ -40,10 +40,13 @@ dependencies {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+apply plugin: 'com.novoda.bintray-release'
 
-apply plugin: 'com.github.dcendents.android-maven'
-
-group='cn.jingzhuan.lib'
-version = '0.0.1'
-
-
+publish {
+  userOrg = 'donglua'
+  groupId = 'cn.jingzhuan.lib'
+  artifactId = 'chart'
+  publishVersion = '0.1.2'
+  desc = 'JingZhuan Android Chart'
+  website = 'https://github.com/donglua/JZAndroidChart'
+}
