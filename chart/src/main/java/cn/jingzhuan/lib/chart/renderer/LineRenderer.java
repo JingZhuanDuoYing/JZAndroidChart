@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
 
@@ -46,7 +47,15 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
             public void touch(float x, float y) {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedEnable()) {
-                        int index = (int) getDrawX(x) * line.getEntryCount();
+
+                        int index = 0;
+                        if (x > mContentRect.left) {
+                            index = (int) (line.getEntryCount()
+                                    * (x - mContentRect.left) * mViewport.width()
+                                    / mContentRect.width()
+                                    + mViewport.left);
+                        }
+                        if (index >= line.getValues().size()) index = line.getValues().size() - 1;
                         chart.highlightValue(new Highlight(x, y, index));
                     }
                 }
@@ -59,16 +68,30 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
 
         if (highlights == null) return;
 
+        mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());
 
         for (Highlight highlight : highlights) {
-            (mBitmapCanvas == null ? canvas : mBitmapCanvas).drawLine(
+
+            Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
+            c.drawLine(
                     highlight.getX(),
                     0,
                     highlight.getX(),
                     mContentRect.bottom,
                     mRenderPaint);
+
+            for (LineDataSet lineDataSet : getDataSet()) {
+                if (lineDataSet.isHighlightedHorizontalEnable()) {
+                    float min = lineDataSet.getViewportYMin();
+                    float max = lineDataSet.getViewportYMax();
+                    float value =  lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
+                    float y = (max - value) / (max - min) * mContentRect.height();
+                    canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
+                }
+            }
         }
+
     }
 
     @Override

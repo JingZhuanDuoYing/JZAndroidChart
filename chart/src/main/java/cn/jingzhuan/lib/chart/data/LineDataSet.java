@@ -22,6 +22,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     private int mForceValueCount = -1;
     private boolean isHighlightedEnable = false;
+    private boolean isHighlightedHorizontalEnable = false;
 
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
@@ -247,5 +248,13 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     public boolean isHighlightedEnable() {
         return isHighlightedEnable;
+    }
+
+    public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {
+        isHighlightedHorizontalEnable = highlightedHorizontalEnable;
+    }
+
+    public boolean isHighlightedHorizontalEnable() {
+        return isHighlightedHorizontalEnable;
     }
 }

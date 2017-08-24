@@ -118,8 +118,8 @@ public class BaseChart extends Chart {
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
-            renderHighlighted(canvas);
         }
+        renderHighlighted(canvas);
     }
 
     public void renderHighlighted(Canvas canvas) {
@@ -156,4 +156,5 @@ public class BaseChart extends Chart {
     public void setOnHighlightListener(OnHighlightListener mHighlightListener) {
         this.mHighlightListener = mHighlightListener;
     }
+
 }

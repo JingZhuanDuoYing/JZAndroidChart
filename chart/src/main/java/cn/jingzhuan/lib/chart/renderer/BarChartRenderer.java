@@ -85,6 +85,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
 
     @Override
     public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+        if (highlights == null) return;
+        mRenderPaint.setColor(getHighlightColor());
 
     }
 
