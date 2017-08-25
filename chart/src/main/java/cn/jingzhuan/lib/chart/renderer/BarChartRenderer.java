@@ -10,6 +10,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
 
 /**
  * Created by Donglua on 17/8/1.
@@ -19,12 +20,31 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
 
     private BarData mBarDataSets;
 
-    public BarChartRenderer(Chart chart) {
+    public BarChartRenderer(final Chart chart) {
         super(chart);
 
         mBarDataSets = new BarData();
 
-        mRenderPaint.setStyle(Paint.Style.FILL);
+
+        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
+            @Override
+            public void touch(float x, float y) {
+                for (BarDataSet dataSet : getDataSet()) {
+                    if (dataSet.isHighlightedEnable()) {
+
+                        int index = 0;
+                        if (x > mContentRect.left) {
+                            index = (int) (dataSet.getEntryCount()
+                                    * (x - mContentRect.left) * mViewport.width()
+                                    / mContentRect.width()
+                                    + mViewport.left);
+                        }
+                        if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
+                        chart.highlightValue(new Highlight(x, y, index));
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -40,6 +60,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
     private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet) {
 
         mRenderPaint.setStrokeWidth(barDataSet.getBarWidth());
+        mRenderPaint.setStyle(Paint.Style.FILL);
 
         int valueCount = barDataSet.getEntryCount();
 
@@ -87,6 +108,18 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> 
     public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
         if (highlights == null) return;
         mRenderPaint.setColor(getHighlightColor());
+        mRenderPaint.setStrokeWidth(2);
+
+        for (Highlight highlight : highlights) {
+
+            Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
+            c.drawLine(
+                    highlight.getX(),
+                    0,
+                    highlight.getX(),
+                    mContentRect.bottom,
+                    mRenderPaint);
+        }
 
     }
 

@@ -50,6 +50,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int mColor = Color.GRAY;
 
+
+    private boolean isHighlightedEnable = false;
+    private boolean isHighlightedHorizontalEnable = false;
+
+
     public abstract void setValues(List<T> values);
 
     public abstract List<T> getValues();
@@ -102,4 +107,20 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         this.mColor = barColor;
     }
 
+
+    public void setHighlightedEnable(boolean highlightedEnable) {
+        isHighlightedEnable = highlightedEnable;
+    }
+
+    public boolean isHighlightedEnable() {
+        return isHighlightedEnable;
+    }
+
+    public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {
+        isHighlightedHorizontalEnable = highlightedHorizontalEnable;
+    }
+
+    public boolean isHighlightedHorizontalEnable() {
+        return isHighlightedHorizontalEnable;
+    }
 }

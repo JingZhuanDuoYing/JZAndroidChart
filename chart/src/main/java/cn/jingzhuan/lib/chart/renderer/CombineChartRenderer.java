@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 
+import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -43,8 +44,12 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
-        lineRenderer.renderHighlighted(canvas, highlights);
-        barChartRenderer.renderHighlighted(canvas, highlights);
+        if (lineRenderer.getDataSet() != null && !lineRenderer.getDataSet().isEmpty()) {
+            lineRenderer.renderHighlighted(canvas, highlights);
+        }
+        if (barChartRenderer.getDataSet() != null && !barChartRenderer.getDataSet().isEmpty()) {
+            barChartRenderer.renderHighlighted(canvas, highlights);
+        }
     }
 
     @Override

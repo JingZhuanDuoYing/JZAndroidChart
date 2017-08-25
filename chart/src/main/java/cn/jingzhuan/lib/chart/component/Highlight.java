@@ -9,7 +9,7 @@ public class Highlight {
     private float x = Float.NaN;
     private float y = Float.NaN;
 
-    private int dataIndex;
+    private int dataIndex = 0;
 
     public Highlight(float x, float y, int dataIndex) {
         this.x = x;

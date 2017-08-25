@@ -46,7 +46,7 @@ publish {
   userOrg = 'donglua'
   groupId = 'cn.jingzhuan.lib'
   artifactId = 'chart'
-  publishVersion = '0.1.6'
+  publishVersion = '0.1.7'
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
 }
@@ -61,7 +61,7 @@ modifyPom {
   project {
     groupId "cn.jingzhuan.lib"
     artifactId "jzchart"
-    version "0.1.6"
+    version "0.2.1"
     name 'JZAndroidChart'
     description 'JZ Android Chart'
     url 'http://gitlab.jingzhuan.cn/Android/JZAndroidChart'
