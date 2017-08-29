@@ -135,27 +135,6 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         this.mBarWidth = mBarWidth;
     }
 
-    public void setChart(Chart chart) {
-        switch (mDepsAxis) {
-            case AxisY.DEPENDENCY_LEFT:
-                this.mAxisLeft = chart.getAxisLeft();
-                this.mAxisRight = null;
-                break;
-            case AxisY.DEPENDENCY_RIGHT:
-                this.mAxisLeft = null;
-                this.mAxisRight = chart.getAxisRight();
-                break;
-            case AxisY.DEPENDENCY_BOTH:
-                this.mAxisLeft = chart.getAxisLeft();
-                this.mAxisRight = chart.getAxisRight();
-                break;
-        }
-
-        this.mViewport = chart.getCurrentViewport();
-
-        calcMinMax();
-    }
-
     public void setAutoBarWidth(boolean mAutoBarWidth) {
         this.mAutoBarWidth = mAutoBarWidth;
     }

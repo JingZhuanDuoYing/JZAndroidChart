@@ -16,7 +16,7 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
  * Created by Donglua on 17/8/1.
  */
 
-public class BarChartRenderer extends AbstractDataRenderer<BarDataSet, BarData> {
+public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     private BarData mBarDataSets;
 

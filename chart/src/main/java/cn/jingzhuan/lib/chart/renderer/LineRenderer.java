@@ -24,7 +24,7 @@ import cn.jingzhuan.lib.chart.data.PointValue;
  * Created by Donglua on 17/7/19.
  */
 
-public class LineRenderer extends AbstractDataRenderer<LineDataSet, LineData> {
+public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private LineData lineData;
 
