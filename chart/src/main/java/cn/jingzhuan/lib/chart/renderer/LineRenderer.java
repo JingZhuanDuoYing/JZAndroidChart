@@ -1,20 +1,14 @@
 package cn.jingzhuan.lib.chart.renderer;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.IDataSet;
 import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
@@ -33,11 +27,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         lineData = new LineData();
 
-        chart.setOnScaleListener(new OnViewportChangeListener() {
+        chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
                 for (LineDataSet line : getDataSet()) {
-                    line.setViewport(viewport);
+                    line.onViewportChange(viewport);
                 }
             }
         });

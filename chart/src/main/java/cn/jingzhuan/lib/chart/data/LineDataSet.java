@@ -4,7 +4,6 @@ package cn.jingzhuan.lib.chart.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 
@@ -30,7 +29,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
 
-        setViewport(new Viewport());
+        onViewportChange(new Viewport());
 
         this.mDepsAxis = depsAxis;
 
@@ -206,7 +205,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
 
-    public void setViewport(Viewport viewport) {
+    public void onViewportChange(Viewport viewport) {
         this.mViewport = viewport;
 
         calcViewportY(viewport);

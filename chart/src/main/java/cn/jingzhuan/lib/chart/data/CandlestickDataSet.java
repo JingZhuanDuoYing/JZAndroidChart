@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.widget.CandlestickChart;
@@ -13,9 +15,12 @@ import java.util.List;
 
 public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
+  private final static float DEFAULT_CANDLESTICK_WIDTH = 30f;
+
   private List<CandlestickValue> candlestickValues;
   private CandlestickChart chart;
   private boolean mAutoWidth = true;
+  private float mCandleWidth = DEFAULT_CANDLESTICK_WIDTH;
 
   private int mDecreasingColor = Color.GREEN; // 阴线
   private int mIncreasingColor = Color.RED;   // 阳线
@@ -140,10 +145,19 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.get(index);
   }
 
-  public void setViewport(Viewport viewport) {
-    this.mViewport = viewport;
+  public void onViewportChange(Rect content, Viewport viewport) {
+
+    boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewport.width()) != 0;
+
+    Log.d("DataSet", needCalcCandleWidth + " isScaled = " + viewport.width() + " != " + mViewport.width() + " . . .. " + Float.compare(viewport.width(), mViewport.width()));
 
     calcViewportY(viewport);
+
+    if (needCalcCandleWidth) {
+      mCandleWidth = content.width() / (getVisibleCount(mViewport) + 1);
+    } else if (mViewport.width() >= 1) {
+      mCandleWidth = content.width() / (getEntryCount() + 1);
+    }
   }
 
   public void setAutoWidth(boolean mAutoWidth) {
@@ -169,4 +183,9 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   public void setIncreasingColor(int increasingColor) {
     this.mIncreasingColor = increasingColor;
   }
+
+  public float getCandleWidth() {
+    return mCandleWidth;
+  }
+
 }

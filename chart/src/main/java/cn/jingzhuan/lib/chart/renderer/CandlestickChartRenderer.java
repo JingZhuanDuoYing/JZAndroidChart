@@ -29,10 +29,10 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     chartData = new ChartData<>();
 
-    chart.setOnScaleListener(new OnViewportChangeListener() {
+    chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
         for (CandlestickDataSet dataSet : getDataSet()) {
-          dataSet.setViewport(viewport);
+          dataSet.onViewportChange(mContentRect, viewport);
         }
       }
     });
@@ -64,7 +64,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       mRenderPaint.setStyle(Paint.Style.FILL);
 
-      float candleWidth = mContentRect.width() / (candlestickDataSet.getVisibleCount(mViewport) + 1);
+      float candleWidth = candlestickDataSet.getCandleWidth();
 
       float xPosition = mContentRect.left + candleWidth * 0.5f
           + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f) - mViewport.left) / mViewport.width();

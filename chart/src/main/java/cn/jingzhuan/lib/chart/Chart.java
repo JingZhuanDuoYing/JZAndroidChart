@@ -39,9 +39,9 @@ import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 
 public abstract class Chart extends View {
 
-    protected AxisY mAxisLeft = new AxisY(AxisY.LEFT_INSIDE);
-    protected AxisY mAxisRight = new AxisY(AxisY.RIGHT_INSIDE);
-    protected AxisX mAxisTop = new AxisX(AxisX.TOP);
+    protected AxisY mAxisLeft   = new AxisY(AxisY.LEFT_INSIDE);
+    protected AxisY mAxisRight  = new AxisY(AxisY.RIGHT_INSIDE);
+    protected AxisX mAxisTop    = new AxisX(AxisX.TOP);
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     // State objects and values related to gesture tracking.
@@ -294,9 +294,9 @@ public abstract class Chart extends View {
         public void onScaleEnd(ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
 
-            if (mScaleXEnable) {
-                notifyViewportChange();
-            }
+            //if (mScaleXEnable) {
+            //    notifyViewportChange();
+            //}
         }
 
         @Override
@@ -310,7 +310,7 @@ public abstract class Chart extends View {
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
 //            float newHeight = lastSpanY / spanY * mCurrentViewport.height();
 
-            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.2) {
+            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.1) {
                 return true;
             }
 
@@ -333,8 +333,8 @@ public abstract class Chart extends View {
             mCurrentViewport.right = mCurrentViewport.left + newWidth;
 //            mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
             mCurrentViewport.constrainViewport();
-            ViewCompat.postInvalidateOnAnimation(Chart.this);
-
+            //ViewCompat.postInvalidateOnAnimation(Chart.this);
+            if (mScaleXEnable) notifyViewportChange();
             lastSpanX = spanX;
 //            lastSpanY = spanY;
 
@@ -436,7 +436,7 @@ public abstract class Chart extends View {
 
             onTouchPoint(e2.getX(), e2.getY());
 
-            notifyViewportChange();
+            //notifyViewportChange();
 
             return true;
         }
@@ -447,16 +447,16 @@ public abstract class Chart extends View {
 
             onTouchPoint(e2.getX(), e2.getY());
 
-            notifyViewportChange();
+            //notifyViewportChange();
 
             return true;
         }
-
     };
 
     private void notifyViewportChange() {
         if (mOnViewportChangeListener != null) {
             mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+            ViewCompat.postInvalidateOnAnimation(this);
         }
     }
 
@@ -479,8 +479,8 @@ public abstract class Chart extends View {
                 0, mSurfaceSizeBuffer.y - mContentRect.height(),
                 mContentRect.width() / 2,
                 mContentRect.height() / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
-
+        //ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     /**
@@ -519,7 +519,8 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
+        //ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     @Override
@@ -599,7 +600,8 @@ public abstract class Chart extends View {
         }
 
         if (needsInvalidate) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            //ViewCompat.postInvalidateOnAnimation(this);
+            notifyViewportChange();
         }
     }
 
@@ -623,7 +625,7 @@ public abstract class Chart extends View {
         y = Math.max(Viewport.AXIS_Y_MIN + curHeight, Math.min(y, Viewport.AXIS_Y_MAX));
 
         mCurrentViewport.set(x, y - curHeight, x + curWidth, y);
-        ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     /**
@@ -634,7 +636,7 @@ public abstract class Chart extends View {
     public void setCurrentViewport(RectF viewport) {
         mCurrentViewport = new Viewport(viewport);
         mCurrentViewport.constrainViewport();
-        ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     @Override
@@ -713,7 +715,8 @@ public abstract class Chart extends View {
         }
 
         if (needsInvalidate) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            //ViewCompat.postInvalidateOnAnimation(this);
+            notifyViewportChange();
         }
     }
 
@@ -745,7 +748,7 @@ public abstract class Chart extends View {
         return mAxisBottom;
     }
 
-    public void setOnScaleListener(OnViewportChangeListener onViewportChangeListener) {
+    public void setOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
         this.mOnViewportChangeListener = onViewportChangeListener;
     }
 
@@ -772,6 +775,5 @@ public abstract class Chart extends View {
     public void removeOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
         this.mTouchPointChangeListeners.remove(touchPointChangeListener);
     }
-
 
 }
