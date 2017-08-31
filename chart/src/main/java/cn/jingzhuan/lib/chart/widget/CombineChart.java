@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.BaseChart;
@@ -54,6 +55,11 @@ public class CombineChart extends BaseChart {
         getRenderer().addDataSet(lineDataSet);
     }
 
+    public void addDataSet(CandlestickDataSet candlestickDataSet) {
+        candlestickDataSet.setChart(this);
+        getRenderer().addDataSet(candlestickDataSet);
+    }
+
     public void setDataSet(BarDataSet barDataSet) {
         cleanAllDataSet();
 
@@ -64,6 +70,12 @@ public class CombineChart extends BaseChart {
         cleanAllDataSet();
 
         addDataSet(lineDataSet);
+    }
+
+    public void setDataSet(CandlestickDataSet candlestickDataSet) {
+        cleanAllDataSet();
+
+        addDataSet(candlestickDataSet);
     }
 
     public void setLineData(List<LineDataSet> data) {
@@ -88,6 +100,13 @@ public class CombineChart extends BaseChart {
         if (barDataSets != null) {
             for (BarDataSet barDataSet : barDataSets) {
                 addDataSet(barDataSet);
+            }
+        }
+
+        List<CandlestickDataSet> candlestickDataSets = combineData.getCandlestickData();
+        if (candlestickDataSets != null) {
+            for (CandlestickDataSet candlestickDataSet : candlestickDataSets) {
+                addDataSet(candlestickDataSet);
             }
         }
     }

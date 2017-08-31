@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,19 +21,21 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     private BarChartRenderer barChartRenderer;
     private LineRenderer lineRenderer;
+    private CandlestickChartRenderer candlestickChartRenderer;
 
     public CombineChartRenderer(final Chart chart) {
         super(chart);
 
         lineRenderer = new LineRenderer(chart);
         barChartRenderer = new BarChartRenderer(chart);
-
+        candlestickChartRenderer = new CandlestickChartRenderer(chart);
     }
 
     @Override
     protected void renderDataSet(Canvas canvas) {
         barChartRenderer.renderDataSet(canvas);
         lineRenderer.renderDataSet(canvas);
+        candlestickChartRenderer.renderDataSet(canvas);
     }
 
     @Override
@@ -40,6 +43,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         super.setHighlightColor(highlightColor);
         lineRenderer.setHighlightColor(highlightColor);
         barChartRenderer.setHighlightColor(highlightColor);
+        candlestickChartRenderer.setHighlightColor(highlightColor);
     }
 
     @Override
@@ -50,6 +54,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         if (barChartRenderer.getDataSet() != null && !barChartRenderer.getDataSet().isEmpty()) {
             barChartRenderer.renderHighlighted(canvas, highlights);
         }
+        if (candlestickChartRenderer.getDataSet() != null && !candlestickChartRenderer.getDataSet().isEmpty()) {
+            candlestickChartRenderer.renderHighlighted(canvas, highlights);
+        }
     }
 
     @Override
@@ -59,6 +66,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             lineRenderer.addDataSet((LineDataSet) dataSet);
         } else if (dataSet instanceof BarDataSet) {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
+        } else if (dataSet instanceof CandlestickDataSet) {
+            candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
         }
 
     }

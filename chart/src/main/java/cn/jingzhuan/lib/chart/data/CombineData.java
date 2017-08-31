@@ -10,10 +10,12 @@ public class CombineData {
 
     private List<BarDataSet> barData;
     private List<LineDataSet> lineData;
+    private List<CandlestickDataSet> candlestickData;
 
     public CombineData() {
         barData = new ArrayList<>();
         lineData = new ArrayList<>();
+        candlestickData = new ArrayList<>();
     }
 
     public List<BarDataSet> getBarData() {
@@ -24,12 +26,20 @@ public class CombineData {
         return lineData;
     }
 
+    public List<CandlestickDataSet> getCandlestickData() {
+        return candlestickData;
+    }
+
     public void addDataSet(BarDataSet dataSet) {
         getBarData().add(dataSet);
     }
 
     public void addDataSet(LineDataSet dataSet) {
         getLineData().add(dataSet);
+    }
+
+    public void addDataSet(CandlestickDataSet dataSet) {
+        getCandlestickData().add(dataSet);
     }
 
 }
