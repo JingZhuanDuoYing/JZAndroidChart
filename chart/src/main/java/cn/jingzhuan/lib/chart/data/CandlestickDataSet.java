@@ -28,6 +28,8 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   public CandlestickDataSet(List<CandlestickValue> candlestickValues, @AxisY.AxisDependency int axisDependency) {
     this.candlestickValues = candlestickValues;
 
+    this.mViewport = new Viewport();
+
     calcMinMax();
 
     mDepsAxis = axisDependency;
@@ -74,6 +76,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     if (e.getHigh() > mViewportYMax)
       mViewportYMax = e.getHigh();
+  }
+
+  public int getVisibleCount(Viewport viewport) {
+    return getVisiblePoints(viewport).size();
   }
 
   protected List<CandlestickValue> getVisiblePoints(Viewport viewport) {
@@ -132,6 +138,12 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   @Override public CandlestickValue getEntryForIndex(int index) {
     return candlestickValues.get(index);
+  }
+
+  public void setViewport(Viewport viewport) {
+    this.mViewport = viewport;
+
+    calcViewportY(viewport);
   }
 
   public void setAutoWidth(boolean mAutoWidth) {

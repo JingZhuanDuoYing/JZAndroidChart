@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by Donglua on 17/8/2.
  */
 
-public abstract class ChartData<T extends IDataSet> {
+public class ChartData<T extends IDataSet> {
 
     private List<T> chartData;
 
