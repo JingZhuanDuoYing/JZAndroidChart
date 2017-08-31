@@ -32,10 +32,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
         for (CandlestickDataSet dataSet : getDataSet()) {
-          dataSet.onViewportChange(mContentRect, viewport);
+          dataSet.onViewportChange(mContentRect);
         }
       }
     });
+
   }
 
   @Override protected void renderDataSet(Canvas canvas) {
@@ -66,8 +67,12 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       float candleWidth = candlestickDataSet.getCandleWidth();
 
+      if (candleWidth < 0) {
+        candleWidth = mContentRect.width() / valueCount;
+      }
+
       float xPosition = mContentRect.left + candleWidth * 0.5f
-          + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f) - mViewport.left) / mViewport.width();
+          + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f)  - mViewport.left) / mViewport.width();
 
       float highY  = (max - candlestickValue.getHigh())  / (max - min) * mContentRect.height();
       float lowY   = (max - candlestickValue.getLow())   / (max - min) * mContentRect.height();

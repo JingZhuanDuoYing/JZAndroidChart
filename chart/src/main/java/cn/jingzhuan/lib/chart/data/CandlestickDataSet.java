@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.data;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
+import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.widget.CandlestickChart;
@@ -15,16 +16,16 @@ import java.util.List;
 
 public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
-  private final static float DEFAULT_CANDLESTICK_WIDTH = 30f;
-
   private List<CandlestickValue> candlestickValues;
   private CandlestickChart chart;
   private boolean mAutoWidth = true;
-  private float mCandleWidth = DEFAULT_CANDLESTICK_WIDTH;
+  private float mCandleWidth = -1;
 
   private int mDecreasingColor = Color.GREEN; // 阴线
   private int mIncreasingColor = Color.RED;   // 阳线
   private int mNeutralColor = Color.WHITE;    // 十字线
+
+  private float mViewportWidth = 1f;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
@@ -54,7 +55,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
       calcMinMaxY(e);
     }
 
-    calcViewportY(mViewport);
+    calcViewportY();
 
     if (mAxisLeft != null) {
       mAxisLeft.setYMax(mYMax);
@@ -66,11 +67,11 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     }
   }
 
-  private void calcViewportY(Viewport viewport) {
+  private void calcViewportY() {
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    for (CandlestickValue e : getVisiblePoints(viewport)) {
+    for (CandlestickValue e : getVisiblePoints(mViewport)) {
       calcViewportMinMaxX(e);
     }
   }
@@ -145,19 +146,16 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.get(index);
   }
 
-  public void onViewportChange(Rect content, Viewport viewport) {
+  public void onViewportChange(Rect content) {
 
-    boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewport.width()) != 0;
+    boolean needCalcCandleWidth = Float.compare(mViewport.width(), mViewportWidth) != 0;
 
-    Log.d("DataSet", needCalcCandleWidth + " isScaled = " + viewport.width() + " != " + mViewport.width() + " . . .. " + Float.compare(viewport.width(), mViewport.width()));
-
-    calcViewportY(viewport);
+    calcViewportY();
 
     if (needCalcCandleWidth) {
       mCandleWidth = content.width() / (getVisibleCount(mViewport) + 1);
-    } else if (mViewport.width() >= 1) {
-      mCandleWidth = content.width() / (getEntryCount() + 1);
     }
+    mViewportWidth = mViewport.width();
   }
 
   public void setAutoWidth(boolean mAutoWidth) {

@@ -447,8 +447,6 @@ public abstract class Chart extends View {
 
             onTouchPoint(e2.getX(), e2.getY());
 
-            //notifyViewportChange();
-
             return true;
         }
     };
