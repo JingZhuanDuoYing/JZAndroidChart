@@ -17,12 +17,11 @@ import java.util.List;
 public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   private List<CandlestickValue> candlestickValues;
-  private CandlestickChart chart;
   private boolean mAutoWidth = true;
   private float mCandleWidth = -1;
 
-  private int mDecreasingColor = Color.GREEN; // 阴线
-  private int mIncreasingColor = Color.RED;   // 阳线
+  private int mIncreasingColor = 0xFFf84b4b;   // 阳线
+  private int mDecreasingColor = 0xFF1deb5b; // 阴线
   private int mNeutralColor = Color.WHITE;    // 十字线
 
   private float mViewportWidth = 1f;
@@ -186,4 +185,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return mCandleWidth;
   }
 
+  public int getNeutralColor() {
+    return mNeutralColor;
+  }
 }

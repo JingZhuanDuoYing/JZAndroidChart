@@ -61,7 +61,7 @@ modifyPom {
   project {
     groupId "cn.jingzhuan.lib"
     artifactId "jzchart"
-    version "0.2.2"
+    version "0.2.3"
     name 'JZAndroidChart'
     description 'JZ Android Chart'
     url 'http://gitlab.jingzhuan.cn/Android/JZAndroidChart'

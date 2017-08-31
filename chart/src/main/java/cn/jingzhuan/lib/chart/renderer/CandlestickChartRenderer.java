@@ -61,7 +61,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     path.reset();
 
     for (int i = 0; i < valueCount; i++) {
-      CandlestickValue candlestickValue = candlestickDataSet.getEntryForIndex(i);
+      CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
       mRenderPaint.setStyle(Paint.Style.FILL);
 
@@ -74,10 +74,10 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       float xPosition = mContentRect.left + candleWidth * 0.5f
           + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f)  - mViewport.left) / mViewport.width();
 
-      float highY  = (max - candlestickValue.getHigh())  / (max - min) * mContentRect.height();
-      float lowY   = (max - candlestickValue.getLow())   / (max - min) * mContentRect.height();
-      float openY  = (max - candlestickValue.getOpen())  / (max - min) * mContentRect.height();
-      float closeY = (max - candlestickValue.getClose()) / (max - min) * mContentRect.height();
+      float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
+      float lowY   = (max - candlestick.getLow())   / (max - min) * mContentRect.height();
+      float openY  = (max - candlestick.getOpen())  / (max - min) * mContentRect.height();
+      float closeY = (max - candlestick.getClose()) / (max - min) * mContentRect.height();
 
       mBodyBuffers[0] = xPosition - candleWidth * 0.4f;
       mBodyBuffers[1] = closeY;
@@ -89,19 +89,23 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mLowerShadowBuffers[0] = xPosition;
       mLowerShadowBuffers[2] = xPosition;
 
-      if (Float.compare(candlestickValue.getOpen(), candlestickValue.getClose()) > 0) {
+      if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 
         mUpperShadowBuffers[1] = highY;
         mUpperShadowBuffers[3] = openY;
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = closeY;
 
-      } else if (Float.compare(candlestickValue.getOpen(), candlestickValue.getClose()) < 0) {
+        mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
+
+      } else if (Float.compare(candlestick.getOpen(), candlestick.getClose()) < 0) { // 阳线
 
         mUpperShadowBuffers[1] = highY;
         mUpperShadowBuffers[3] = closeY;
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = openY;
+
+        mRenderPaint.setColor(candlestickDataSet.getIncreasingColor());
 
       } else {
 
@@ -110,6 +114,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = mUpperShadowBuffers[3];
 
+        mRenderPaint.setColor(candlestickDataSet.getNeutralColor());
       }
 
       canvas.drawRect(mBodyBuffers[0],
