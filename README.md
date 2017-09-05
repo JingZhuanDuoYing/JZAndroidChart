@@ -1,7 +1,3 @@
 # JingZhuan Android Chart
-
-[![](https://jitpack.io/v/donglua/JZAndroidChart.svg)](https://jitpack.io/#donglua/JZAndroidChart)
-
-## Usage
-
-## 
+[ ![Download](https://api.bintray.com/packages/donglua/maven/chart/images/download.svg) ](https://bintray.com/donglua/maven/chart/_latestVersion)
+ 
