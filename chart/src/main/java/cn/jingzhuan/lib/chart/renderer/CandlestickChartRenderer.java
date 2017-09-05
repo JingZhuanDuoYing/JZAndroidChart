@@ -3,9 +3,12 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -24,7 +27,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   private float[] mBodyBuffers = new float[4];
   private ChartData<CandlestickDataSet> chartData;
 
-  public CandlestickChartRenderer(Chart chart) {
+  public CandlestickChartRenderer(final Chart chart) {
     super(chart);
 
     chartData = new ChartData<>();
@@ -37,6 +40,27 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     });
 
+    chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
+      @Override
+      public void touch(float x, float y) {
+        for (CandlestickDataSet dataSet : getDataSet()) {
+          if (dataSet.isHighlightedEnable()) {
+
+            float candleWidth = dataSet.getCandleWidth();
+            float valueCount = dataSet.getEntryCount();
+            int index = 0;
+            float xPosition = x;
+            if (x > mContentRect.left) {
+              index = (int) (((x - mContentRect.left + candleWidth * 0.5f) * mViewport.width()
+                  / (mContentRect.width() - candleWidth) + mViewport.left) * (valueCount - 1f));
+              xPosition = dataSet.getEntryForIndex(index).getX();
+            }
+            if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
+            chart.highlightValue(new Highlight(xPosition, y, index));
+          }
+        }
+      }
+    });
   }
 
   @Override protected void renderDataSet(Canvas canvas) {
@@ -89,6 +113,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mLowerShadowBuffers[0] = xPosition;
       mLowerShadowBuffers[2] = xPosition;
 
+      candlestick.setX(xPosition);
+
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 
         mUpperShadowBuffers[1] = highY;
@@ -130,7 +156,22 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   }
 
-  @Override public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+  @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+
+    for (Highlight highlight : highlights) {
+      Log.d("highlight", "getDataIndex" + highlight.getDataIndex());
+
+      mRenderPaint.setColor(getHighlightColor());
+      mRenderPaint.setStrokeWidth(2);
+
+      Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
+      c.drawLine(
+          highlight.getX(),
+          0,
+          highlight.getX(),
+          mContentRect.bottom,
+          mRenderPaint);
+    }
 
   }
 

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.graphics.Color;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCandlestickChartBinding;
@@ -116,6 +117,8 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
   @Override protected void setDataBindingVariables(ViewDataBinding binding) {
     LayoutCandlestickChartBinding b = (LayoutCandlestickChartBinding) binding;
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
+    dataSet.setHighlightedEnable(true);
+    b.candlestickChart.setHighlightColor(Color.BLACK);
     b.candlestickChart.setDataSet(dataSet);
   }
 

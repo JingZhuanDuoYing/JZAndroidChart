@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 
+import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+    public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
         if (lineRenderer.getDataSet() != null && !lineRenderer.getDataSet().isEmpty()) {
             lineRenderer.renderHighlighted(canvas, highlights);
         }

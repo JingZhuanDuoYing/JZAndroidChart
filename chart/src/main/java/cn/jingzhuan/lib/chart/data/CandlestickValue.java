@@ -11,6 +11,11 @@ public class CandlestickValue implements Value {
   private float open = 0f;
   private float close = 0f;
 
+  private float x = 0f;
+  private float y = 0f;
+
+
+
   public CandlestickValue(float high, float low, float open, float close) {
     this.high = high;
     this.low = low;
@@ -48,5 +53,21 @@ public class CandlestickValue implements Value {
 
   public void setClose(float close) {
     this.close = close;
+  }
+
+  public void setX(float x) {
+    this.x = x;
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public void setY(float y) {
+    this.y = y;
+  }
+
+  public float getY() {
+    return y;
   }
 }

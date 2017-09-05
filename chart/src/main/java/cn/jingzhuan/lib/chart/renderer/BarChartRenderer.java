@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import android.support.annotation.NonNull;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -105,8 +106,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     }
 
     @Override
-    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
-        if (highlights == null) return;
+    public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+
         mRenderPaint.setColor(getHighlightColor());
         mRenderPaint.setStrokeWidth(2);
 

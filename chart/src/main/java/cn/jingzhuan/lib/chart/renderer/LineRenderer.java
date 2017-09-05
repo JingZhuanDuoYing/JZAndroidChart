@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
+import android.support.annotation.NonNull;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -58,7 +59,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     @Override
-    public void renderHighlighted(Canvas canvas, Highlight[] highlights) {
+    public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
         if (highlights == null) return;
 

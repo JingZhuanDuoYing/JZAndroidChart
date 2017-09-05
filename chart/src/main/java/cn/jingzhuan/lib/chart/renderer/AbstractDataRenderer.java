@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import android.support.annotation.NonNull;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
 
     protected abstract void renderDataSet(Canvas canvas);
 
-    public abstract void renderHighlighted(Canvas canvas, Highlight[] highlights);
+    public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
     /**
      * Computes the pixel offset for the given X lib value. This may be outside the view bounds.

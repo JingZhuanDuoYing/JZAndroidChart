@@ -123,7 +123,7 @@ public class BaseChart extends Chart {
     }
 
     public void renderHighlighted(Canvas canvas) {
-        if (mRenderer != null) {
+        if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
         }
     }
