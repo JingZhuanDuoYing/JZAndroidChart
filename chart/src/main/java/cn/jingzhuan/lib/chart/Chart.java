@@ -12,16 +12,20 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.OverScroller;
 
+import cn.jingzhuan.lib.chart.utils.ForceAlign;
+import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,6 +58,7 @@ public abstract class Chart extends View {
 
     private OnViewportChangeListener mOnViewportChangeListener;
     private boolean mScaleXEnable = true;
+    private boolean mDraggingToMoveEnable = true;
     private boolean mDoubleTapToZoom = false;
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
@@ -291,15 +296,6 @@ public abstract class Chart extends View {
         }
 
         @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            super.onScaleEnd(detector);
-
-            //if (mScaleXEnable) {
-            //    notifyViewportChange();
-            //}
-        }
-
-        @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
 
             if (!mScaleXEnable) return false;
@@ -390,6 +386,9 @@ public abstract class Chart extends View {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+            if (!isDraggingToMoveEnable()) return super.onScroll(e1, e2, distanceX, distanceY);
+
             // Scrolling uses math based on the viewport (as opposed to math using pixels).
             /**
              * Pixel offset is the offset in screen pixels, while viewport offset is the
@@ -398,6 +397,7 @@ public abstract class Chart extends View {
              * additional information about the viewport, see the comments for
              * {@link mCurrentViewport}.
              */
+
             float viewportOffsetX = distanceX * mCurrentViewport.width() / mContentRect.width();
             float viewportOffsetY = -distanceY * mCurrentViewport.height() / mContentRect.height();
             computeScrollSurfaceSize(mSurfaceSizeBuffer);
@@ -443,6 +443,8 @@ public abstract class Chart extends View {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
+
             fling((int) -velocityX, (int) -velocityY);
 
             onTouchPoint(e2.getX(), e2.getY());
@@ -477,8 +479,8 @@ public abstract class Chart extends View {
                 0, mSurfaceSizeBuffer.y - mContentRect.height(),
                 mContentRect.width() / 2,
                 mContentRect.height() / 2);
-        //ViewCompat.postInvalidateOnAnimation(this);
-        notifyViewportChange();
+        ViewCompat.postInvalidateOnAnimation(this);
+        //notifyViewportChange();
     }
 
     /**
@@ -517,8 +519,61 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        //ViewCompat.postInvalidateOnAnimation(this);
-        notifyViewportChange();
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    public void zoomOut(@XForce int forceAlignX) {
+        mScrollerStartViewport.set(mCurrentViewport);
+        mZoomer.forceFinished(true);
+        mZoomer.startZoom(-ZOOM_AMOUNT);
+
+        float forceX;
+        switch (forceAlignX) {
+            case ForceAlign.LEFT:
+                forceX = mCurrentViewport.left;
+                break;
+            case ForceAlign.RIGHT:
+                forceX = mCurrentViewport.right;
+                break;
+            case ForceAlign.CENTER:
+                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                break;
+            default:
+                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                break;
+        }
+        mZoomFocalPoint.set(forceX,
+                (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    /**
+     * Smoothly zooms the lib in one step.
+     */
+    public void zoomIn(@XForce int forceAlignX) {
+        mScrollerStartViewport.set(mCurrentViewport);
+        mZoomer.forceFinished(true);
+        mZoomer.startZoom(ZOOM_AMOUNT);
+
+        float forceX;
+        switch (forceAlignX) {
+            case ForceAlign.LEFT:
+                forceX = mCurrentViewport.left;
+                break;
+            case ForceAlign.RIGHT:
+                forceX = mCurrentViewport.right;
+                break;
+            case ForceAlign.CENTER:
+                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                break;
+            default:
+                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                break;
+        }
+
+        mZoomFocalPoint.set(forceX,
+            (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     @Override
@@ -642,7 +697,7 @@ public abstract class Chart extends View {
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
 
-        retVal = mGestureDetector.onTouchEvent(event) || retVal;
+        retVal = mGestureDetector.onTouchEvent(event)  || retVal;
 
         return retVal || super.onTouchEvent(event);
     }
@@ -754,8 +809,8 @@ public abstract class Chart extends View {
         return mScaleXEnable;
     }
 
-    public void setScaleXEnable(boolean mScaleXEnable) {
-        this.mScaleXEnable = mScaleXEnable;
+    public void setScaleXEnable(boolean scaleXEnable) {
+        this.mScaleXEnable = scaleXEnable;
     }
 
     public void setDoubleTapToZoom(boolean doubleTapToZoom) {
@@ -772,6 +827,14 @@ public abstract class Chart extends View {
 
     public void removeOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
         this.mTouchPointChangeListeners.remove(touchPointChangeListener);
+    }
+
+    public void setDraggingToMoveEnable(boolean draggingToMoveEnable) {
+        this.mDraggingToMoveEnable = draggingToMoveEnable;
+    }
+
+    public boolean isDraggingToMoveEnable() {
+        return mDraggingToMoveEnable;
     }
 
 }
