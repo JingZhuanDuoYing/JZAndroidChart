@@ -387,7 +387,10 @@ public abstract class Chart extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
-            if (!isDraggingToMoveEnable()) return super.onScroll(e1, e2, distanceX, distanceY);
+            if (!isDraggingToMoveEnable()) {
+                onTouchPoint(e2.getX(), e2.getY());
+                return super.onScroll(e1, e2, distanceX, distanceY);
+            }
 
             // Scrolling uses math based on the viewport (as opposed to math using pixels).
             /**
