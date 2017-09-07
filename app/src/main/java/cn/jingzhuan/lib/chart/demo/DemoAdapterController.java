@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.demo;
 
+import android.content.Context;
+import android.util.LayoutDirection;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -18,6 +20,13 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel BarChartModel_ barChartModel_;
     @AutoModel CombineChartModel_ combineChartModel_;
     @AutoModel CandlestickChartModel_ candlestickChartModel_;
+    @AutoModel ViewPagerModel_ viewPagerModel_;
+
+    private Context context;
+
+    public DemoAdapterController(Context context) {
+        this.context = context;
+    }
 
     @Override
     protected void buildModels() {
@@ -41,5 +50,8 @@ public class DemoAdapterController extends EpoxyController {
 
         new LayoutDescTextBindingModel_().id("Candlestick").text("Candlestick Chart").addTo(this);
         candlestickChartModel_.addTo(this);
+
+        new LayoutDescTextBindingModel_().id("View Pager").text("ViewPager").addTo(this);
+        viewPagerModel_.pagerAdapter(new ChartViewPagerAdapter(context)).addTo(this);
     }
 }

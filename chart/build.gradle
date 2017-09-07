@@ -46,60 +46,60 @@ publish {
   userOrg = 'donglua'
   groupId = 'cn.jingzhuan.lib'
   artifactId = 'chart'
-  publishVersion = "0.2.7"
+  publishVersion = "0.2.10-test1"
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
 }
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-apply plugin: 'com.bmuschko.nexus'
-modifyPom {
-  project {
-    groupId "cn.jingzhuan.lib"
-    artifactId "jzchart"
-    version "0.2.5"
-    name 'JZAndroidChart'
-
-    description 'JZ Android Chart'
-    url 'http://gitlab.jingzhuan.cn/Android/JZAndroidChart'
-    inceptionYear '2017'
-
-    scm {
-      url 'https://github.com/bmuschko/gradle-nexus-plugin'
-      connection 'scm:http://gitlab.jingzhuan.cn/Android/JZAndroidChart.git'
-      developerConnection 'scm:http://gitlab.jingzhuan.cn/Android/JZAndroidChart.git'
-    }
-
-    licenses {
-      license {
-        name 'The Apache Software License, Version 2.0'
-        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-        distribution 'repo'
-      }
-    }
-
-    developers {
-      developer {
-        id 'JingZhuan'
-        name 'donglua'
-        email '927878309@qq.com'
-      }
-    }
-  }
-}
-
-extraArchive {
-  sources = false
-  tests = true
-  javadoc = false
-}
-
-nexus {
-  sign = false
-  repositoryUrl = 'http://139.199.187.58:8081/nexus/content/repositories/internal/'
-  snapshotRepositoryUrl = 'http://139.199.187.58:8081/nexus/content/repositories/snapshots/'
-}
+//
+//
+//// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//
+//
+//apply plugin: 'com.bmuschko.nexus'
+//modifyPom {
+//  project {
+//    groupId "cn.jingzhuan.lib"
+//    artifactId "jzchart"
+//    version "0.2.5"
+//    name 'JZAndroidChart'
+//
+//    description 'JZ Android Chart'
+//    url 'http://gitlab.jingzhuan.cn/Android/JZAndroidChart'
+//    inceptionYear '2017'
+//
+//    scm {
+//      url 'https://github.com/bmuschko/gradle-nexus-plugin'
+//      connection 'scm:http://gitlab.jingzhuan.cn/Android/JZAndroidChart.git'
+//      developerConnection 'scm:http://gitlab.jingzhuan.cn/Android/JZAndroidChart.git'
+//    }
+//
+//    licenses {
+//      license {
+//        name 'The Apache Software License, Version 2.0'
+//        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//        distribution 'repo'
+//      }
+//    }
+//
+//    developers {
+//      developer {
+//        id 'JingZhuan'
+//        name 'donglua'
+//        email '927878309@qq.com'
+//      }
+//    }
+//  }
+//}
+//
+//extraArchive {
+//  sources = false
+//  tests = true
+//  javadoc = false
+//}
+//
+//nexus {
+//  sign = false
+//  repositoryUrl = 'http://139.199.187.58:8081/nexus/content/repositories/internal/'
+//  snapshotRepositoryUrl = 'http://139.199.187.58:8081/nexus/content/repositories/snapshots/'
+//}

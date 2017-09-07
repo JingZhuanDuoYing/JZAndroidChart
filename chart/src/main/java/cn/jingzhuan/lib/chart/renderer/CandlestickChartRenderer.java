@@ -53,9 +53,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             if (x > mContentRect.left) {
               index = (int) (((x - mContentRect.left + candleWidth * 0.5f) * mViewport.width()
                   / (mContentRect.width() - candleWidth) + mViewport.left) * (valueCount - 1f));
+
+              if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
+
               xPosition = dataSet.getEntryForIndex(index).getX();
             }
-            if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
             chart.highlightValue(new Highlight(xPosition, y, index));
           }
         }
@@ -85,7 +87,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     path.reset();
 
     for (int i = 0; i < valueCount; i++) {
-      CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
+      final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
       mRenderPaint.setStyle(Paint.Style.FILL);
 
@@ -159,13 +161,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
     for (Highlight highlight : highlights) {
-      Log.d("highlight", "getDataIndex" + highlight.getDataIndex());
 
       mRenderPaint.setColor(getHighlightColor());
       mRenderPaint.setStrokeWidth(2);
 
-      Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
-      c.drawLine(
+      canvas.drawLine(
           highlight.getX(),
           0,
           highlight.getX(),

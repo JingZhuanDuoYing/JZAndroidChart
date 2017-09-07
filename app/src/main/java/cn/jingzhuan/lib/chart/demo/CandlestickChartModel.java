@@ -5,19 +5,25 @@ import android.graphics.Color;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCandlestickChartBinding;
+import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
+import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyDataBindingLayouts;
 import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
+
 /**
  * Created by donglua on 8/29/17.
  */
-@EpoxyModelClass(layout = R.layout.layout_candlestick_chart)
+@EpoxyModelClass(layout = R.layout.layout_combine_chart)
 public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
 
   List<CandlestickValue> candlestickValues = new ArrayList<>();
+  @EpoxyAttribute(DoNotHash) HighlightStatusChangeListener highlightStatusChangeListener;
 
   public CandlestickChartModel() {
 
@@ -115,12 +121,12 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
   }
 
   @Override protected void setDataBindingVariables(ViewDataBinding binding) {
-    LayoutCandlestickChartBinding b = (LayoutCandlestickChartBinding) binding;
+    LayoutCombineChartBinding b = (LayoutCombineChartBinding) binding;
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
     dataSet.setHighlightedEnable(true);
-    b.candlestickChart.setHighlightColor(Color.BLACK);
-    b.candlestickChart.setDataSet(dataSet);
+    b.combineChart.setHighlightColor(Color.BLACK);
+    b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
+    b.combineChart.setDataSet(dataSet);
   }
-
 
 }

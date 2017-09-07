@@ -87,7 +87,7 @@ public class BaseChart extends Chart {
 
         final Highlight[] highlights = new Highlight[] { highlight };
 
-        if (this.mHighlights != null && mHighlightStatusChangeListener != null) {
+        if (mHighlightStatusChangeListener != null) {
             mHighlightStatusChangeListener.onHighlightShow(highlights);
         }
 

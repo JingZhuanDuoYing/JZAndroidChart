@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DemoAdapterController controller = new DemoAdapterController();
+        DemoAdapterController controller = new DemoAdapterController(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 

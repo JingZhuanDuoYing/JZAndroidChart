@@ -118,6 +118,9 @@ public class CombineChart extends BaseChart {
     public List<BarDataSet> getBarDataSet() {
         return getRenderer().getBarDataSet();
     }
+    public List<CandlestickDataSet> getCandlestickDataSet() {
+        return getRenderer().getCandlestickDataSet();
+    }
 
     public CombineChartRenderer getRenderer() {
         return (CombineChartRenderer) mRenderer;
@@ -131,8 +134,13 @@ public class CombineChart extends BaseChart {
         getBarDataSet().clear();
     }
 
+    public void cleanCandlestickDataSet() {
+        getCandlestickDataSet().clear();
+    }
+
     public void cleanAllDataSet() {
         cleanLineDataSet();
         cleanBarDataSet();
+        cleanCandlestickDataSet();
     }
 }

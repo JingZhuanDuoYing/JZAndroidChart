@@ -82,4 +82,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return barChartRenderer.getDataSet();
     }
 
+    public List<CandlestickDataSet> getCandlestickDataSet() {
+        return candlestickChartRenderer.getDataSet();
+    }
+
 }

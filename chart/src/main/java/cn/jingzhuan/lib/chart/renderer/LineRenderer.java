@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -21,7 +22,7 @@ import cn.jingzhuan.lib.chart.data.PointValue;
 
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
-    private LineData lineData;
+    private ChartData<LineDataSet> lineData;
 
     public LineRenderer(final Chart chart) {
         super(chart);
@@ -60,8 +61,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
-
-        if (highlights == null) return;
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());

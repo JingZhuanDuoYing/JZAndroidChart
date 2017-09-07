@@ -1,9 +1,12 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 
+import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -31,6 +34,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
     final float lastClose = 3136.62f;
 
     @EpoxyAttribute(DoNotHash) View.OnClickListener onClickListener;
+    @EpoxyAttribute(DoNotHash) HighlightStatusChangeListener highlightStatusChangeListener;
 
     public MinuteChartModel() {
 
@@ -108,6 +112,10 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
                     return "";
                 }
             });
+
+            minuteBinding.minuteChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
+
+            minuteBinding.minuteChart.setHighlightColor(Color.BLACK);
 
             minuteBinding.minuteChart.setScaleXEnable(false);
 

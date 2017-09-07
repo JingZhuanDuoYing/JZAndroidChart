@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+  <android.support.v4.view.ViewPager
+      android:id="@+id/view_pager"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="240dp" />
+
+</layout>
