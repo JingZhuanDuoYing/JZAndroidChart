@@ -4,11 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -50,15 +48,18 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float valueCount = dataSet.getEntryCount();
             int index = 0;
             float xPosition = x;
+            float yPosition = -1;
             if (x > mContentRect.left) {
               index = (int) (((x - mContentRect.left + candleWidth * 0.5f) * mViewport.width()
                   / (mContentRect.width() - candleWidth) + mViewport.left) * (valueCount - 1f));
 
               if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
 
-              xPosition = dataSet.getEntryForIndex(index).getX();
+              final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
+              xPosition = candlestickValue.getX();
+              yPosition = candlestickValue.getClose();
             }
-            chart.highlightValue(new Highlight(xPosition, y, index));
+            chart.highlightValue(new Highlight(xPosition, yPosition, index));
           }
         }
       }
