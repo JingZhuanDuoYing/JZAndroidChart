@@ -7,8 +7,8 @@ package cn.jingzhuan.lib.chart.data;
 public class PointValue implements Value {
 
     private float value;
-//    private float x;
-//    private float y;
+    private float x;
+    private float y;
 
     public PointValue(float value) {
         this.value = value;
@@ -25,19 +25,19 @@ public class PointValue implements Value {
         this.value = value;
     }
 
-//    public float getX() {
-//        return x;
-//    }
+    public float getX() {
+        return x;
+    }
 
-//    public void setX(float x) {
-//        this.x = x;
-//    }
+    public void setX(float x) {
+        this.x = x;
+    }
 
-//    public float getY() {
-//        return y;
-//    }
+    public float getY() {
+        return y;
+    }
 
-//    public void setY(float y) {
-//        this.y = y;
-//    }
+    public void setY(float y) {
+        this.y = y;
+    }
 }

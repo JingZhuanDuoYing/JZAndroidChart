@@ -9,6 +9,9 @@ public class BarValue implements Value {
 
     private int mColor = 0;
 
+    private float x;
+    private float y;
+
     public BarValue(float[] yValues) {
         this.yValues = yValues;
     }
@@ -52,5 +55,21 @@ public class BarValue implements Value {
 
     public void setColor(int color) {
         mColor = color;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 }

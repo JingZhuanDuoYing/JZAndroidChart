@@ -41,7 +41,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                                     + mViewport.left);
                         }
                         if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
-                        chart.highlightValue(new Highlight(x, y, index));
+                        BarValue barValue = dataSet.getEntryForIndex(index);
+                        chart.highlightValue(new Highlight(barValue.getX(), barValue.getY(), index));
                     }
                 }
             }
@@ -92,6 +93,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 top = calcHeight(barValue.getValues()[0], max, min);
 
                 if (barValue.getValueCount() >= 2) bottom = calcHeight(barValue.getValues()[1], max, min);
+
+                barValue.setX(x + width * 0.5f);
+                barValue.setY(top);
 
                 canvas.drawRect(x,
                         top,

@@ -57,7 +57,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
               final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
               xPosition = candlestickValue.getX();
-              yPosition = candlestickValue.getClose();
+              yPosition = candlestickValue.getY();
             }
             chart.highlightValue(new Highlight(xPosition, yPosition, index));
           }
@@ -117,6 +117,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mLowerShadowBuffers[2] = xPosition;
 
       candlestick.setX(xPosition);
+      candlestick.setY(closeY);
 
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 
@@ -166,12 +167,15 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mRenderPaint.setColor(getHighlightColor());
       mRenderPaint.setStrokeWidth(2);
 
-      canvas.drawLine(
-          highlight.getX(),
-          0,
-          highlight.getX(),
-          mContentRect.bottom,
-          mRenderPaint);
+      canvas.drawLine(highlight.getX(),
+                      mContentRect.top,
+                      highlight.getX(),
+                      mContentRect.bottom, mRenderPaint);
+
+      canvas.drawLine(mContentRect.left,
+                      highlight.getY(),
+                      mContentRect.right,
+                      highlight.getY(), mRenderPaint);
     }
 
   }

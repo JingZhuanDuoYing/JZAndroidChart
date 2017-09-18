@@ -7,4 +7,5 @@ package cn.jingzhuan.lib.chart.data;
 public interface Value {
 
 
+
 }

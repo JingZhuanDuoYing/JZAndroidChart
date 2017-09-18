@@ -43,6 +43,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             public void touch(float x, float y) {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedEnable()) {
+                        float xPositionMax = line.getEntryForIndex(line.getValues().size() - 1).getX();
 
                         int index = 0;
                         if (x > mContentRect.left) {
@@ -52,6 +53,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                                     + mViewport.left);
                         }
                         if (index >= line.getValues().size()) index = line.getValues().size() - 1;
+                        if (x > xPositionMax) x = xPositionMax;
                         chart.highlightValue(new Highlight(x, y, index));
                     }
                 }
@@ -128,6 +130,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
             float xV = getDrawX(i / (valueCount - 1f));
             float yV = (max - point.getValue()) / (max - min) * mContentRect.height();
+
+            point.setX(xV);
+            point.setY(yV);
 
             if (isFirst) {
                 isFirst = false;
