@@ -126,6 +126,14 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return isHighlightedHorizontalEnable;
     }
 
+    protected static void setAxisViewportY(AxisY axis, float min, float max) {
+
+        if (axis != null) {
+
+            axis.setYMin(min);
+            axis.setYMax(max);
+        }
+    }
 
     public void setChart(Chart chart) {
         switch (mDepsAxis) {

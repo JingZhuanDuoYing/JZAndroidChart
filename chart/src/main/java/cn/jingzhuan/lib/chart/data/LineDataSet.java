@@ -85,15 +85,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
     }
 
-    protected static void setAxisViewportY(AxisY axis, float min, float max) {
-
-        if (axis != null) {
-
-            axis.setYMin(min);
-            axis.setYMax(max);
-        }
-    }
-
     @Override
     public void setValues(List<PointValue> values) {
         this.mPointValues = values;

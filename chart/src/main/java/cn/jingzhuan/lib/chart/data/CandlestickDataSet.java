@@ -56,14 +56,8 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     calcViewportY();
 
-    if (mAxisLeft != null) {
-      mAxisLeft.setYMax(mYMax);
-      mAxisLeft.setYMin(mYMin);
-    }
-    if (mAxisRight != null) {
-      mAxisRight.setYMax(mYMax);
-      mAxisRight.setYMin(mYMin);
-    }
+
+
   }
 
   private void calcViewportY() {
@@ -72,6 +66,16 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     for (CandlestickValue e : getVisiblePoints(mViewport)) {
       calcViewportMinMaxX(e);
+    }
+
+    switch (mDepsAxis) {
+      case AxisY.DEPENDENCY_BOTH:
+      case AxisY.DEPENDENCY_LEFT:
+        setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
+        break;
+      case AxisY.DEPENDENCY_RIGHT:
+        setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
+        break;
     }
   }
 
