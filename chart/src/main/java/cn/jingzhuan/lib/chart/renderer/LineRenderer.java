@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
@@ -122,8 +123,19 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         path.reset();
         boolean isFirst = true;
 
-        float min = lineDataSet.getViewportYMin();
-        float max = lineDataSet.getViewportYMax();
+        float min, max;
+        switch (lineDataSet.getAxisDependency()) {
+            case AxisY.DEPENDENCY_RIGHT:
+                min = lineDataSet.getAxisRight().getYMin();
+                max = lineDataSet.getAxisRight().getYMax();
+                break;
+            case AxisY.DEPENDENCY_BOTH:
+            case AxisY.DEPENDENCY_LEFT:
+            default:
+                min = lineDataSet.getAxisLeft().getYMin();
+                max = lineDataSet.getAxisLeft().getYMax();
+                break;
+        }
 
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);

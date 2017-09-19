@@ -26,7 +26,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         mBarDataSets = new BarData();
 
-
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {

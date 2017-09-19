@@ -94,7 +94,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.subList(from, to);
   }
 
-  private void calcMinMaxY(CandlestickValue e) {
+  public void calcMinMaxY(CandlestickValue e) {
     if (e.getLow() < mYMin)
       mYMin = e.getLow();
 

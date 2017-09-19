@@ -111,7 +111,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
      *
      * @param e
      */
-    protected void calcMinMax(PointValue e) {
+    public void calcMinMax(PointValue e) {
 
         if (e == null)
             return;

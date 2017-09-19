@@ -68,6 +68,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     public abstract T getEntryForIndex(int index);
 
+    @AxisDependency
     public int getAxisDependency() {
         return mAxisDependency;
     }

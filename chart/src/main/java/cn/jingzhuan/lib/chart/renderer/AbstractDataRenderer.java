@@ -107,4 +107,5 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
     public int getHighlightColor() {
         return mHighlightColor;
     }
+
 }

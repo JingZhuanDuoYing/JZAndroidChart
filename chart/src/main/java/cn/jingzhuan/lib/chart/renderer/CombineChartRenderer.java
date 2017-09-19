@@ -34,6 +34,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     protected void renderDataSet(Canvas canvas) {
+
         barChartRenderer.renderDataSet(canvas);
         lineRenderer.renderDataSet(canvas);
         candlestickChartRenderer.renderDataSet(canvas);

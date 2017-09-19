@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
@@ -76,8 +77,22 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   private void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet) {
 
-    float min = candlestickDataSet.getViewportYMin();
-    float max = candlestickDataSet.getViewportYMax();
+    //float min = candlestickDataSet.getViewportYMin();
+    //float max = candlestickDataSet.getViewportYMax();
+
+    float min, max;
+    switch (candlestickDataSet.getAxisDependency()) {
+      case AxisY.DEPENDENCY_RIGHT:
+        min = candlestickDataSet.getAxisRight().getYMin();
+        max = candlestickDataSet.getAxisRight().getYMax();
+        break;
+      case AxisY.DEPENDENCY_BOTH:
+      case AxisY.DEPENDENCY_LEFT:
+      default:
+        min = candlestickDataSet.getAxisLeft().getYMin();
+        max = candlestickDataSet.getAxisLeft().getYMax();
+        break;
+    }
 
     mRenderPaint.setStrokeWidth(5);
     mRenderPaint.setColor(candlestickDataSet.getColor());

@@ -71,7 +71,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         }
     }
 
-    private void calcMinMaxY(BarValue e) {
+    public void calcMinMaxY(BarValue e) {
 
         if (e == null) return;
 
