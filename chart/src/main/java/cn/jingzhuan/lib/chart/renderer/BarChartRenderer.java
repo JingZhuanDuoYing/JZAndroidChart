@@ -48,6 +48,14 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         });
     }
 
+    public void calcMaxMin() {
+        for (BarDataSet barDataSet : getDataSet()) {
+            barDataSet.calcMinMax();
+            setMax(barDataSet.getViewportYMax());
+            setMin(barDataSet.getViewportYMin());
+        }
+    }
+
     @Override
     protected void renderDataSet(Canvas canvas) {
 

@@ -55,9 +55,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     }
 
     calcViewportY();
-
-
-
   }
 
   private void calcViewportY() {

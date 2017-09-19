@@ -33,9 +33,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                for (LineDataSet line : getDataSet()) {
-                    line.onViewportChange(viewport);
-                }
+                calcMaxMin(viewport);
             }
         });
 
@@ -60,6 +58,15 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
         });
+    }
+
+    protected void calcMaxMin(Viewport viewport) {
+        resetMaxMin();
+        for (LineDataSet line : getDataSet()) {
+            line.onViewportChange(viewport);
+            setMax(line.getViewportYMax());
+            setMin(line.getViewportYMin());
+        }
     }
 
     @Override

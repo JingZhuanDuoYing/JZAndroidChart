@@ -33,9 +33,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
-        for (CandlestickDataSet dataSet : getDataSet()) {
-          dataSet.onViewportChange(mContentRect);
-        }
+        calcMaxMin();
       }
     });
 
@@ -65,6 +63,14 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         }
       }
     });
+  }
+
+  public void calcMaxMin() {
+    for (CandlestickDataSet dataSet : getDataSet()) {
+      dataSet.onViewportChange(mContentRect);
+      setMax(dataSet.getViewportYMax());
+      setMin(dataSet.getViewportYMin());
+    }
   }
 
   @Override protected void renderDataSet(Canvas canvas) {

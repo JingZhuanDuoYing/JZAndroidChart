@@ -59,7 +59,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
             calcMinMaxY(e);
         }
 
-//        calcViewportY(mViewport);
+        //calcViewportY(mViewport);
 
         if (mAxisLeft != null) {
             mAxisLeft.setYMax(mYMax);

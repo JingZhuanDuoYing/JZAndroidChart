@@ -25,6 +25,9 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
     protected Rect mContentRect;
     protected Paint mRenderPaint;
 
+    private float min = Integer.MAX_VALUE;
+    private float max = -Integer.MAX_VALUE;
+
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
      * rendered directly on the canvas)
@@ -108,4 +111,24 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
         return mHighlightColor;
     }
 
+    public void resetMaxMin() {
+      min = Integer.MAX_VALUE;
+      max = -Integer.MAX_VALUE;
+    }
+
+    public float getMax() {
+      return max;
+    }
+
+    public float getMin() {
+      return min;
+    }
+
+    public void setMin(float min) {
+      this.min = min;
+    }
+
+    public void setMax(float max) {
+      this.max = max;
+    }
 }
