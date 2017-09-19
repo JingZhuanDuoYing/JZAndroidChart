@@ -23,4 +23,7 @@ public abstract class ViewPagerModel extends DataBindingEpoxyModel {
 
   }
 
+  @Override public boolean shouldSaveViewState() {
+    return true;
+  }
 }
