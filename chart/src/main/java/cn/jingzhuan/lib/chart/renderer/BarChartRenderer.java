@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -142,8 +143,21 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         mBarDataSets.add(dataSet);
     }
 
+    @Override public void removeDataSet(BarDataSet dataSet) {
+        if (dataSet == null) return;
+        mBarDataSets.remove(dataSet);
+    }
+
+    @Override public void clearDataSet() {
+        mBarDataSets.clear();
+    }
+
     @Override
-    public List<BarDataSet> getDataSet() {
+    protected List<BarDataSet> getDataSet() {
         return mBarDataSets.getDataSets();
+    }
+
+    @Override public ChartData<BarDataSet> getChartData() {
+        return mBarDataSets;
     }
 }

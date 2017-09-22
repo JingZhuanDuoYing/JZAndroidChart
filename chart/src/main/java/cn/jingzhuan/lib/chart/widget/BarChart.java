@@ -7,7 +7,6 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import cn.jingzhuan.lib.chart.BaseChart;
-import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.renderer.BarChartRenderer;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 
@@ -39,6 +38,7 @@ public class BarChart extends BaseChart {
         super.initChart();
 
         mRenderer = new BarChartRenderer(this);
+        mRenderer.getChartData().setChart(this);
     }
 
     public void addDataSet(BarDataSet barDataSet) {
@@ -49,7 +49,7 @@ public class BarChart extends BaseChart {
     }
 
     public void setDataSet(BarDataSet barDataSet) {
-        mRenderer.getDataSet().clear();
+        mRenderer.clearDataSet();
         addDataSet(barDataSet);
     }
 

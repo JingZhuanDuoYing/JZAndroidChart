@@ -3,10 +3,8 @@ package cn.jingzhuan.lib.chart.data;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
-import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.widget.CandlestickChart;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     calcMinMax();
 
-    mDepsAxis = axisDependency;
+    setAxisDependency(axisDependency);
   }
 
   @Override public void calcMinMax() {
@@ -53,7 +51,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     for (CandlestickValue e : candlestickValues) {
       calcMinMaxY(e);
     }
-
     calcViewportY();
   }
 
@@ -62,21 +59,21 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     mViewportYMin = Float.MAX_VALUE;
 
     for (CandlestickValue e : getVisiblePoints(mViewport)) {
-      calcViewportMinMaxX(e);
+      calcViewportMinMax(e);
     }
 
-    switch (mDepsAxis) {
-      case AxisY.DEPENDENCY_BOTH:
-      case AxisY.DEPENDENCY_LEFT:
-        setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-        break;
-      case AxisY.DEPENDENCY_RIGHT:
-        setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
-        break;
-    }
+    //switch (mDepsAxis) {
+    //  case AxisY.DEPENDENCY_BOTH:
+    //  case AxisY.DEPENDENCY_LEFT:
+    //    setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
+    //    break;
+    //  case AxisY.DEPENDENCY_RIGHT:
+    //    setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
+    //    break;
+    //}
   }
 
-  private void calcViewportMinMaxX(CandlestickValue e) {
+  private void calcViewportMinMax(CandlestickValue e) {
     if (e.getLow() < mViewportYMin)
       mViewportYMin = e.getLow();
 
@@ -146,7 +143,9 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.get(index);
   }
 
-  public void onViewportChange(Rect content) {
+  public void onViewportChange(Viewport viewport, Rect content) {
+
+    mViewport = viewport;
 
     boolean needCalcCandleWidth = Float.compare(mViewport.width(), mViewportWidth) != 0;
 

@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -19,7 +21,7 @@ import cn.jingzhuan.lib.chart.data.IDataSet;
  * Created by Donglua on 17/7/19.
  */
 
-public abstract class AbstractDataRenderer<D extends IDataSet> implements Renderer {
+public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements Renderer {
 
     protected Viewport mViewport;
     protected Rect mContentRect;
@@ -100,8 +102,11 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
     }
 
     public abstract void addDataSet(D dataSet);
+    public abstract void removeDataSet(D dataSet);
+    public abstract void clearDataSet();
 
-    public abstract List<D> getDataSet();
+    protected abstract List<D> getDataSet();
+    public abstract ChartData<D> getChartData();
 
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;

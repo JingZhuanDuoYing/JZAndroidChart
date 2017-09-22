@@ -33,7 +33,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                calcMaxMin(viewport);
+                for (LineDataSet line : getDataSet()) {
+                    line.onViewportChange(viewport);
+                }
+                lineData.calcMinMax();
             }
         });
 
@@ -58,15 +61,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
         });
-    }
-
-    protected void calcMaxMin(Viewport viewport) {
-        resetMaxMin();
-        for (LineDataSet line : getDataSet()) {
-            line.onViewportChange(viewport);
-            setMax(line.getViewportYMax());
-            setMin(line.getViewportYMin());
-        }
     }
 
     @Override
@@ -101,11 +95,24 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     @Override
     public void addDataSet(LineDataSet dataSet) {
         lineData.add(dataSet);
+        lineData.calcMinMax();
+    }
+
+    @Override public void removeDataSet(LineDataSet dataSet) {
+        lineData.remove(dataSet);
+    }
+
+    @Override public void clearDataSet() {
+        lineData.clear();
     }
 
     @Override
-    public List<LineDataSet> getDataSet() {
+    protected List<LineDataSet> getDataSet() {
         return lineData.getDataSets();
+    }
+
+    @Override public ChartData<LineDataSet> getChartData() {
+        return lineData;
     }
 
     @Override

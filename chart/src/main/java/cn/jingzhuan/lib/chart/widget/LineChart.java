@@ -37,6 +37,7 @@ public class LineChart extends BaseChart {
         super.initChart();
 
         mRenderer = new LineRenderer(this);
+        mRenderer.getChartData().setChart(this);
 
     }
 
@@ -48,7 +49,7 @@ public class LineChart extends BaseChart {
     }
 
     public void setLine(LineDataSet lineDataSet) {
-        mRenderer.getDataSet().clear();
+        mRenderer.clearDataSet();
         addLine(lineDataSet);
     }
 }

@@ -1,5 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
+import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.widget.CombineChart;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,9 +14,15 @@ public class ChartData<T extends IDataSet> {
 
     private List<T> chartData;
 
-    private float min = Float.MAX_VALUE;
-    private float max = -Float.MAX_VALUE;
+    private float leftMin = Float.MAX_VALUE;
+    private float leftMax = -Float.MAX_VALUE;
+    private float rightMin = Float.MAX_VALUE;
+    private float rightMax = -Float.MAX_VALUE;
+
     private int entryCount = 0;
+
+    private AxisY leftAxis;
+    private AxisY rightAxis;
 
     public ChartData() {
         this.chartData = new CopyOnWriteArrayList<>();
@@ -33,34 +42,66 @@ public class ChartData<T extends IDataSet> {
     }
 
     public boolean remove(T e) {
-        if (e == null) return false;
+        return e != null && getDataSets().remove(e);
+    }
 
-        return getDataSets().remove(e);
+    public void clear() {
+        getDataSets().clear();
     }
 
     public void calcMinMax() {
+        leftMin = Float.MAX_VALUE;
+        leftMax = -Float.MAX_VALUE;
+        rightMin = Float.MAX_VALUE;
+        rightMax = -Float.MAX_VALUE;
+
         for (T t : getDataSets()) {
-            if (t.getYMax() > max) {
-                max = t.getYMax();
+
+            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
+                if (t.getViewportYMax() > leftMax) {
+                    leftMax = t.getViewportYMax();
+                }
+                if (t.getViewportYMin() < leftMin) {
+                    leftMin = t.getViewportYMin();
+                }
             }
-            if (t.getYMin() < min) {
-                min = t.getYMin();
+            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
+                if (t.getViewportYMax() > rightMax) {
+                    rightMax = t.getViewportYMax();
+                }
+                if (t.getViewportYMin() < rightMin) {
+                    rightMin = t.getViewportYMin();
+                }
             }
+
             if (t.getEntryCount() > entryCount) {
                 entryCount = t.getEntryCount();
             }
         }
+        if (leftAxis != null) {
+            leftAxis.setYMin(leftMin);
+            leftAxis.setYMax(leftMax);
+        }
+        if (rightAxis != null) {
+            rightAxis.setYMin(rightMin);
+            rightAxis.setYMax(rightMax);
+        }
     }
 
-    public float getMin() {
-        return min;
+    public float getLeftMin() {
+        return leftMin;
     }
 
-    public float getMax() {
-        return max;
+    public float getLeftMax() {
+        return leftMax;
     }
 
     public int getEntryCount() {
         return entryCount;
+    }
+
+    public void setChart(Chart chart) {
+        this.leftAxis = chart.getAxisLeft();
+        this.rightAxis = chart.getAxisRight();
     }
 }

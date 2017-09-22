@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Donglua on 17/8/2.
  */
-public class CombineData {
+public class CombineData extends ChartData<AbstractDataSet> {
 
     private List<BarDataSet> barData;
     private List<LineDataSet> lineData;

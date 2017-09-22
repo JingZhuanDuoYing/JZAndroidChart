@@ -43,6 +43,7 @@ public class CombineChart extends BaseChart {
         super.initChart();
 
         mRenderer = new CombineChartRenderer(this);
+        mRenderer.getChartData().setChart(this);
     }
 
     public void addDataSet(BarDataSet barDataSet) {
@@ -52,11 +53,13 @@ public class CombineChart extends BaseChart {
 
     public void addDataSet(LineDataSet lineDataSet) {
         lineDataSet.setChart(this);
+
         getRenderer().addDataSet(lineDataSet);
     }
 
     public void addDataSet(CandlestickDataSet candlestickDataSet) {
         candlestickDataSet.setChart(this);
+        getRenderer().getChartData().setChart(this);
         getRenderer().addDataSet(candlestickDataSet);
     }
 

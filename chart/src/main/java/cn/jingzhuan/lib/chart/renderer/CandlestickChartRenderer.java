@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -33,7 +34,10 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
-        calcMaxMin();
+        for (CandlestickDataSet dataSet : getDataSet()) {
+          dataSet.onViewportChange(viewport, mContentRect);
+        }
+        chartData.calcMinMax();
       }
     });
 
@@ -65,13 +69,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     });
   }
 
-  public void calcMaxMin() {
-    for (CandlestickDataSet dataSet : getDataSet()) {
-      dataSet.onViewportChange(mContentRect);
-      setMax(dataSet.getViewportYMax());
-      setMin(dataSet.getViewportYMin());
-    }
-  }
 
   @Override protected void renderDataSet(Canvas canvas) {
     for (CandlestickDataSet candlestickDataSet : getDataSet()) {
@@ -82,9 +79,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   }
 
   private void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet) {
-
-    //float min = candlestickDataSet.getViewportYMin();
-    //float max = candlestickDataSet.getViewportYMax();
 
     float min, max;
     switch (candlestickDataSet.getAxisDependency()) {
@@ -205,7 +199,19 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     chartData.add(dataSet);
   }
 
+  @Override public void removeDataSet(CandlestickDataSet dataSet) {
+    chartData.remove(dataSet);
+  }
+
+  @Override public void clearDataSet() {
+    chartData.clear();
+  }
+
   @Override public List<CandlestickDataSet> getDataSet() {
     return chartData.getDataSets();
+  }
+
+  @Override public ChartData<CandlestickDataSet> getChartData() {
+    return chartData;
   }
 }

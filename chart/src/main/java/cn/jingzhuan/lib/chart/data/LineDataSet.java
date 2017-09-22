@@ -31,7 +31,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
         onViewportChange(new Viewport());
 
-        this.mDepsAxis = depsAxis;
+        setAxisDependency(depsAxis);
 
         calcMinMax();
     }
@@ -78,11 +78,8 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         mViewportYMin = Float.MAX_VALUE;
 
         for (PointValue e : getVisiblePoints(viewport)) {
-            calcViewportMinMaxX(e);
+            calcViewportMinMax(e);
         }
-
-        setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-        setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
     }
 
     @Override
@@ -112,7 +109,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         calcMinMaxY(e);
     }
 
-    protected void calcViewportMinMaxX(PointValue e) {
+    protected void calcViewportMinMax(PointValue e) {
         if (e.getValue() < mViewportYMin)
             mViewportYMin = e.getValue();
 

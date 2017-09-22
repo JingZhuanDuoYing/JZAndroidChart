@@ -47,7 +47,7 @@ public class MinuteLine extends LineDataSet {
         mViewportYMin = Float.MAX_VALUE;
 
         for (PointValue e : getVisiblePoints(viewport)) {
-            calcViewportMinMaxX(e);
+            calcViewportMinMax(e);
         }
 
         if (mLastClose > 0) {

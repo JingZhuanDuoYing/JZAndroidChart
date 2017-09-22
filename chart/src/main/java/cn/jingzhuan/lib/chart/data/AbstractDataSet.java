@@ -44,8 +44,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
     public Viewport mViewport;
 
-
-    @AxisDependency protected int mDepsAxis = DEPENDENCY_BOTH;
     protected AxisY mAxisLeft;
     protected AxisY mAxisRight;
 
@@ -136,7 +134,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
     public void setChart(Chart chart) {
-        switch (mDepsAxis) {
+        switch (mAxisDependency) {
             case AxisY.DEPENDENCY_LEFT:
                 this.mAxisLeft = chart.getAxisLeft();
                 this.mAxisRight = null;

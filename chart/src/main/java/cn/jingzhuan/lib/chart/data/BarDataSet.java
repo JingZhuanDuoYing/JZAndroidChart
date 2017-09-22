@@ -28,7 +28,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
         calcMinMax();
 
-        mDepsAxis = axisDependency;
+        setAxisDependency(axisDependency);
     }
 
     public BarDataSet() {
