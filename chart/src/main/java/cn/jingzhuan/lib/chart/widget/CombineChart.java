@@ -115,14 +115,14 @@ public class CombineChart extends BaseChart {
     }
 
     public List<LineDataSet> getLineDataSet() {
-        return getRenderer().getDataSet();
+        return getRenderer().getChartData().getLineData();
     }
 
     public List<BarDataSet> getBarDataSet() {
-        return getRenderer().getBarDataSet();
+        return getRenderer().getChartData().getBarData();
     }
     public List<CandlestickDataSet> getCandlestickDataSet() {
-        return getRenderer().getCandlestickDataSet();
+        return getRenderer().getChartData().getCandlestickData();
     }
 
     public CombineChartRenderer getRenderer() {

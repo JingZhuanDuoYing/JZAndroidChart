@@ -47,15 +47,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 //barChartRenderer.calcMaxMin();
                 //candlestickChartRenderer.calcMaxMin();
                 //
-                for (LineDataSet lineDataSet : combineData.getLineData()) {
-                    lineDataSet.onViewportChange(viewport);
-                }
+//                for (LineDataSet lineDataSet : combineData.getLineData()) {
+//                    lineDataSet.onViewportChange(viewport);
+//                }
                 //for (BarDataSet barDataSet : combineData.getBarData()) {
                 //    barDataSet.calcMinMax();
                 //}
-                for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
-                    candlestickDataSet.onViewportChange(viewport, mContentRect);
-                }
+//                for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
+//                    candlestickDataSet.onViewportChange(viewport, mContentRect);
+//                }
                 //if (!lineRenderer.getDataSet().isEmpty()) {
                 //    setMax(Math.max(lineRenderer.getMax(), getMax()));
                 //    setMin(Math.min(lineRenderer.getMin(), getMin()));
@@ -68,9 +68,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 //    setMax(Math.max(candlestickChartRenderer.getMax(), getMax()));
                 //    setMin(Math.min(candlestickChartRenderer.getMin(), getMin()));
                 //}
+
+                combineData.calcDataSetMinMax(viewport, mContentRect);
                 combineData.calcMinMax();
                 //chart.getAxisLeft().setYMax(getMax());
                 //chart.getAxisLeft().setYMin(getMin());
+
+                Log.d("ChartRenderer",  "calcMinMax, " + combineData.getLeftMin() + ", " + combineData.getLeftMax());
+                Log.d("ChartRenderer",  "viewport = " + viewport);
+
             }
         });
     }
@@ -107,8 +113,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
 
+//        combineData.calcMinMax();
         combineData.add(dataSet);
-        combineData.calcMinMax();
 
         if (dataSet instanceof LineDataSet) {
             lineRenderer.addDataSet((LineDataSet) dataSet);
@@ -116,6 +122,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
         } else if (dataSet instanceof CandlestickDataSet) {
             candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
+            Log.d("calcCandlestick", "instanceof CandlestickDataSet");
         }
 
     }
@@ -142,20 +149,20 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    public List<LineDataSet> getDataSet() {
-        return lineRenderer.getDataSet();
+    protected List<AbstractDataSet> getDataSet() {
+        return combineData.getDataSets();
     }
 
-    @Override public ChartData getChartData() {
+    @Override public CombineData getChartData() {
         return combineData;
     }
 
-    public List<BarDataSet> getBarDataSet() {
-        return barChartRenderer.getDataSet();
-    }
+//    public List<BarDataSet> getBarDataSet() {
+//        return barChartRenderer.getDataSet();
+//    }
 
-    public List<CandlestickDataSet> getCandlestickDataSet() {
-        return candlestickChartRenderer.getDataSet();
-    }
+//    public List<CandlestickDataSet> getCandlestickDataSet() {
+//        return candlestickChartRenderer.getDataSet();
+//    }
 
 }

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.widget.CombineChart;
 import java.util.List;
@@ -14,15 +15,15 @@ public class ChartData<T extends IDataSet> {
 
     private List<T> chartData;
 
-    private float leftMin = Float.MAX_VALUE;
-    private float leftMax = -Float.MAX_VALUE;
-    private float rightMin = Float.MAX_VALUE;
-    private float rightMax = -Float.MAX_VALUE;
+    protected float leftMin = Float.MAX_VALUE;
+    protected float leftMax = -Float.MAX_VALUE;
+    protected float rightMin = Float.MAX_VALUE;
+    protected float rightMax = -Float.MAX_VALUE;
 
     private int entryCount = 0;
 
-    private AxisY leftAxis;
-    private AxisY rightAxis;
+    protected AxisY leftAxis;
+    protected AxisY rightAxis;
 
     public ChartData() {
         this.chartData = new CopyOnWriteArrayList<>();

@@ -100,10 +100,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     @Override public void removeDataSet(LineDataSet dataSet) {
         lineData.remove(dataSet);
+        lineData.calcMinMax();
     }
 
     @Override public void clearDataSet() {
         lineData.clear();
+        lineData.calcMinMax();
     }
 
     @Override

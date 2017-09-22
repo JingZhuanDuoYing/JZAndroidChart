@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -197,14 +198,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   @Override public void addDataSet(CandlestickDataSet dataSet) {
     chartData.add(dataSet);
+//    chartData.calcMinMax();
   }
 
   @Override public void removeDataSet(CandlestickDataSet dataSet) {
     chartData.remove(dataSet);
+//    chartData.calcMinMax();
   }
 
   @Override public void clearDataSet() {
     chartData.clear();
+//    chartData.calcMinMax();
   }
 
   @Override public List<CandlestickDataSet> getDataSet() {
