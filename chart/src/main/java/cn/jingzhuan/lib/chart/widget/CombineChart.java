@@ -43,23 +43,17 @@ public class CombineChart extends BaseChart {
         super.initChart();
 
         mRenderer = new CombineChartRenderer(this);
-        mRenderer.getChartData().setChart(this);
     }
 
     public void addDataSet(BarDataSet barDataSet) {
-        barDataSet.setChart(this);
         getRenderer().addDataSet(barDataSet);
     }
 
     public void addDataSet(LineDataSet lineDataSet) {
-        lineDataSet.setChart(this);
-
         getRenderer().addDataSet(lineDataSet);
     }
 
     public void addDataSet(CandlestickDataSet candlestickDataSet) {
-        candlestickDataSet.setChart(this);
-        getRenderer().getChartData().setChart(this);
         getRenderer().addDataSet(candlestickDataSet);
     }
 
@@ -121,6 +115,7 @@ public class CombineChart extends BaseChart {
     public List<BarDataSet> getBarDataSet() {
         return getRenderer().getChartData().getBarData();
     }
+
     public List<CandlestickDataSet> getCandlestickDataSet() {
         return getRenderer().getChartData().getCandlestickData();
     }
@@ -130,7 +125,7 @@ public class CombineChart extends BaseChart {
     }
 
     public void cleanLineDataSet() {
-        getLineDataSet().clear();
+        getRenderer().getChartData().getLineData().clear();
     }
 
     public void cleanBarDataSet() {
@@ -142,8 +137,6 @@ public class CombineChart extends BaseChart {
     }
 
     public void cleanAllDataSet() {
-        cleanLineDataSet();
-        cleanBarDataSet();
-        cleanCandlestickDataSet();
+        getRenderer().clearDataSet();
     }
 }

@@ -42,10 +42,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     protected float mViewportYMax = -Float.MAX_VALUE;
 
     private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
-    public Viewport mViewport;
-
-    protected AxisY mAxisLeft;
-    protected AxisY mAxisRight;
 
     private int mColor = Color.GRAY;
 
@@ -91,14 +87,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return mViewportYMax;
     }
 
-    public AxisY getAxisLeft() {
-        return mAxisLeft;
-    }
-
-    public AxisY getAxisRight() {
-        return mAxisRight;
-    }
-
     public int getColor() {
         return mColor;
     }
@@ -124,33 +112,4 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return isHighlightedHorizontalEnable;
     }
 
-    protected static void setAxisViewportY(AxisY axis, float min, float max) {
-
-        if (axis != null) {
-
-            axis.setYMin(min);
-            axis.setYMax(max);
-        }
-    }
-
-    public void setChart(Chart chart) {
-        switch (mAxisDependency) {
-            case AxisY.DEPENDENCY_LEFT:
-                this.mAxisLeft = chart.getAxisLeft();
-                this.mAxisRight = null;
-                break;
-            case AxisY.DEPENDENCY_RIGHT:
-                this.mAxisLeft = null;
-                this.mAxisRight = chart.getAxisRight();
-                break;
-            case AxisY.DEPENDENCY_BOTH:
-                this.mAxisLeft = chart.getAxisLeft();
-                this.mAxisRight = chart.getAxisRight();
-                break;
-        }
-
-        this.mViewport = chart.getCurrentViewport();
-
-        calcMinMax();
-    }
 }

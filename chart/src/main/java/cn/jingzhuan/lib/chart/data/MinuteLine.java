@@ -30,8 +30,8 @@ public class MinuteLine extends LineDataSet {
     }
 
     @Override
-    public void calcMinMax() {
-        super.calcMinMax();
+    public void calcMinMax(Viewport viewport) {
+        super.calcMinMax(viewport);
 
         if (mLastClose > 0) {
             float maxDiff = Math.max(Math.abs(mYMin - mLastClose), Math.abs(mYMax - mLastClose));
@@ -57,8 +57,8 @@ public class MinuteLine extends LineDataSet {
             mViewportYMax = mLastClose + maxDiff;
         }
 
-        setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-        setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
+        //setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
+        //setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
     }
 }
 

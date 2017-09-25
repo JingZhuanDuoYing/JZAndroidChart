@@ -4,12 +4,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -26,19 +27,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   private float[] mUpperShadowBuffers = new float[4];
   private float[] mLowerShadowBuffers = new float[4];
   private float[] mBodyBuffers = new float[4];
-  private ChartData<CandlestickDataSet> chartData;
+  private CandlestickData chartData;
 
   public CandlestickChartRenderer(final Chart chart) {
     super(chart);
-
-    chartData = new ChartData<>();
 
     chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
         for (CandlestickDataSet dataSet : getDataSet()) {
           dataSet.onViewportChange(viewport, mContentRect);
         }
-        chartData.calcMinMax();
+        chartData.setMinMax();
       }
     });
 
@@ -73,25 +72,28 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   @Override protected void renderDataSet(Canvas canvas) {
     for (CandlestickDataSet candlestickDataSet : getDataSet()) {
-      if (candlestickDataSet.isVisible()) {
-        drawDataSet(canvas, candlestickDataSet);
-      }
+      renderDataSet(canvas, candlestickDataSet);
     }
   }
 
-  private void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet) {
+  @Override protected void renderDataSet(Canvas canvas, CandlestickDataSet dataSet) {
+    if (dataSet.isVisible()) {
+      drawDataSet(canvas, dataSet);
+    }
+  }
 
+  protected void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet) {
     float min, max;
     switch (candlestickDataSet.getAxisDependency()) {
       case AxisY.DEPENDENCY_RIGHT:
-        min = candlestickDataSet.getAxisRight().getYMin();
-        max = candlestickDataSet.getAxisRight().getYMax();
+        min = chartData.getRightMin();
+        max = chartData.getRightMax();
         break;
       case AxisY.DEPENDENCY_BOTH:
       case AxisY.DEPENDENCY_LEFT:
       default:
-        min = candlestickDataSet.getAxisLeft().getYMin();
-        max = candlestickDataSet.getAxisLeft().getYMax();
+        min = chartData.getLeftMin();
+        max = chartData.getLeftMax();
         break;
     }
 
@@ -198,17 +200,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   @Override public void addDataSet(CandlestickDataSet dataSet) {
     chartData.add(dataSet);
-//    chartData.calcMinMax();
+    chartData.calcMaxMin(mViewport, mContentRect);
   }
 
   @Override public void removeDataSet(CandlestickDataSet dataSet) {
     chartData.remove(dataSet);
-//    chartData.calcMinMax();
+    chartData.calcMaxMin(mViewport, mContentRect);
   }
 
   @Override public void clearDataSet() {
     chartData.clear();
-//    chartData.calcMinMax();
+    chartData.calcMaxMin(mViewport, mContentRect);
   }
 
   @Override public List<CandlestickDataSet> getDataSet() {
@@ -216,6 +218,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   }
 
   @Override public ChartData<CandlestickDataSet> getChartData() {
+    if (chartData == null)
+      chartData = new CandlestickData();
     return chartData;
   }
 }

@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 /**
@@ -8,7 +9,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 public interface IDataSet {
 
-  void calcMinMax();
+  void calcMinMax(Viewport viewport);
 
   int getEntryCount();
 

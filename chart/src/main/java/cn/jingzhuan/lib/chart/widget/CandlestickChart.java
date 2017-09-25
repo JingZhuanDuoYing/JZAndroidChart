@@ -44,7 +44,8 @@ public class CandlestickChart extends BaseChart {
 
   public void addDataSet(CandlestickDataSet candlestickDataSet) {
 
-    candlestickDataSet.setChart(this);
+    //candlestickDataSet.setChart(this);
+    candlestickDataSet.calcMinMax(getCurrentViewport());
 
     mRenderer.addDataSet(candlestickDataSet);
   }

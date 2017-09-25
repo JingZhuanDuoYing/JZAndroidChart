@@ -31,14 +31,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   public CandlestickDataSet(List<CandlestickValue> candlestickValues, @AxisY.AxisDependency int axisDependency) {
     this.candlestickValues = candlestickValues;
 
-    this.mViewport = new Viewport();
-
-    calcMinMax();
-
     setAxisDependency(axisDependency);
   }
 
-  @Override public void calcMinMax() {
+  @Override public void calcMinMax(Viewport viewport) {
 
     if (candlestickValues == null || candlestickValues.isEmpty())
       return;
@@ -51,26 +47,16 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     for (CandlestickValue e : candlestickValues) {
       calcMinMaxY(e);
     }
-    calcViewportY();
+    calcViewportY(viewport);
   }
 
-  private void calcViewportY() {
+  private void calcViewportY(Viewport viewport) {
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    for (CandlestickValue e : getVisiblePoints(mViewport)) {
+    for (CandlestickValue e : getVisiblePoints(viewport)) {
       calcViewportMinMax(e);
     }
-
-    //switch (mDepsAxis) {
-    //  case AxisY.DEPENDENCY_BOTH:
-    //  case AxisY.DEPENDENCY_LEFT:
-    //    setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-    //    break;
-    //  case AxisY.DEPENDENCY_RIGHT:
-    //    setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
-    //    break;
-    //}
   }
 
   private void calcViewportMinMax(CandlestickValue e) {
@@ -106,7 +92,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   @Override public void setValues(List<CandlestickValue> values) {
     this.candlestickValues = values;
-    calcMinMax();
+    //setMinMax();
   }
 
   @Override public List<CandlestickValue> getValues() {
@@ -145,16 +131,16 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public void onViewportChange(Viewport viewport, Rect content) {
 
-    mViewport = viewport;
+    //mViewport = viewport;
 
-    boolean needCalcCandleWidth = Float.compare(mViewport.width(), mViewportWidth) != 0;
+    boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewportWidth) != 0;
 
-    calcViewportY();
+    calcViewportY(viewport);
 
     if (needCalcCandleWidth) {
-      mCandleWidth = content.width() / (getVisibleCount(mViewport) + 1);
+      mCandleWidth = content.width() / (getVisibleCount(viewport) + 1);
     }
-    mViewportWidth = mViewport.width();
+    mViewportWidth = viewport.width();
   }
 
   public void setAutoWidth(boolean mAutoWidth) {

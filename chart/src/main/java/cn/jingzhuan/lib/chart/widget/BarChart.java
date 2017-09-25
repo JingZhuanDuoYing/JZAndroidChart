@@ -38,12 +38,9 @@ public class BarChart extends BaseChart {
         super.initChart();
 
         mRenderer = new BarChartRenderer(this);
-        mRenderer.getChartData().setChart(this);
     }
 
     public void addDataSet(BarDataSet barDataSet) {
-
-        barDataSet.setChart(this);
 
         mRenderer.addDataSet(barDataSet);
     }

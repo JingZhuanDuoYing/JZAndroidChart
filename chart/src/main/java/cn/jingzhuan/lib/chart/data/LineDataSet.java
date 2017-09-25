@@ -29,11 +29,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
 
-        onViewportChange(new Viewport());
+        //onViewportChange(new Viewport());
 
         setAxisDependency(depsAxis);
 
-        calcMinMax();
+        //setMinMax(new Viewport());
     }
 
     public int getLineThickness() {
@@ -55,7 +55,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
     @Override
-    public void calcMinMax() {
+    public void calcMinMax(Viewport viewport) {
 
         if (mPointValues == null || mPointValues.isEmpty())
             return;
@@ -65,12 +65,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         mXMax = -Float.MAX_VALUE;
         mXMin = Float.MAX_VALUE;
 
-        for (PointValue e : mPointValues) {
-            calcMinMax(e);
-        }
+        //for (PointValue e : mPointValues) {
+        //    setMinMax(e);
+        //}
 
-        calcViewportY(mViewport);
-
+        calcViewportY(viewport);
     }
 
     public void calcViewportY(Viewport viewport) {
@@ -85,7 +84,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     @Override
     public void setValues(List<PointValue> values) {
         this.mPointValues = values;
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     @Override
@@ -135,9 +134,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
             mYMax = e.getValue();
     }
 
-    public void notifyDataSetChanged() {
-        calcMinMax();
-    }
 
     @Override
     public boolean addEntry(PointValue e) {
@@ -167,9 +163,9 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         // remove the entry
         boolean removed = mPointValues.remove(e);
 
-        if (removed) {
-            calcMinMax();
-        }
+        //if (removed) {
+        //    setMinMax();
+        //}
 
         return removed;
     }
@@ -193,11 +189,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
 
-    public void onViewportChange(Viewport viewport) {
-        this.mViewport = viewport;
-
-        calcViewportY(viewport);
-    }
+    //public void onViewportChange(Viewport viewport) {
+    //    this.mViewport = viewport;
+    //
+    //    calcViewportY(viewport);
+    //}
 
     protected List<PointValue> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * mPointValues.size());

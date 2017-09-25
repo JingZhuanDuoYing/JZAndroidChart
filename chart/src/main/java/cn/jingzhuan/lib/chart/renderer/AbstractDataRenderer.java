@@ -27,9 +27,6 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     protected Rect mContentRect;
     protected Paint mRenderPaint;
 
-    private float min = Integer.MAX_VALUE;
-    private float max = -Integer.MAX_VALUE;
-
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
      * rendered directly on the canvas)
@@ -51,6 +48,8 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
         this.mContentRect = chart.getContentRect();
+
+        getChartData().setChart(chart);
 
         mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRenderPaint.setStyle(Paint.Style.STROKE);
@@ -82,6 +81,7 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
 
     protected abstract void renderDataSet(Canvas canvas);
+    protected abstract void renderDataSet(Canvas canvas, D dataSet);
 
     public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
@@ -116,24 +116,4 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
         return mHighlightColor;
     }
 
-    public void resetMaxMin() {
-      min = Integer.MAX_VALUE;
-      max = -Integer.MAX_VALUE;
-    }
-
-    public float getMax() {
-      return max;
-    }
-
-    public float getMin() {
-      return min;
-    }
-
-    public void setMin(float min) {
-      this.min = min;
-    }
-
-    public void setMax(float max) {
-      this.max = max;
-    }
 }

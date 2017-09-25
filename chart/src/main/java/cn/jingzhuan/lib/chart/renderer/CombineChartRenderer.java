@@ -7,10 +7,8 @@ import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
-import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -33,8 +31,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public CombineChartRenderer(final Chart chart) {
         super(chart);
 
-        combineData = new CombineData();
-
         lineRenderer = new LineRenderer(chart);
         barChartRenderer = new BarChartRenderer(chart);
         candlestickChartRenderer = new CandlestickChartRenderer(chart);
@@ -51,7 +47,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 //                    lineDataSet.onViewportChange(viewport);
 //                }
                 //for (BarDataSet barDataSet : combineData.getBarData()) {
-                //    barDataSet.calcMinMax();
+                //    barDataSet.setMinMax();
                 //}
 //                for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
 //                    candlestickDataSet.onViewportChange(viewport, mContentRect);
@@ -70,11 +66,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 //}
 
                 combineData.calcDataSetMinMax(viewport, mContentRect);
-                combineData.calcMinMax();
                 //chart.getAxisLeft().setYMax(getMax());
                 //chart.getAxisLeft().setYMin(getMin());
 
-                Log.d("ChartRenderer",  "calcMinMax, " + combineData.getLeftMin() + ", " + combineData.getLeftMax());
+                Log.d("ChartRenderer",  "setMinMax, " + combineData.getLeftMin() + ", " + combineData.getLeftMax());
                 Log.d("ChartRenderer",  "viewport = " + viewport);
 
             }
@@ -84,9 +79,19 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     protected void renderDataSet(Canvas canvas) {
 
-        barChartRenderer.renderDataSet(canvas);
-        lineRenderer.renderDataSet(canvas);
-        candlestickChartRenderer.renderDataSet(canvas);
+        for (BarDataSet barDataSet : getChartData().getBarData()) {
+            barChartRenderer.renderDataSet(canvas, barDataSet);
+        }
+        for (LineDataSet lineDataSet : getChartData().getLineData()) {
+            lineRenderer.renderDataSet(canvas, lineDataSet);
+        }
+        for (CandlestickDataSet candlestickDataSet : getChartData().getCandlestickData()) {
+            Log.d("ChartRenderer",  "getChartData().getCandlestickData().size() = " + getChartData().getCandlestickData().size());
+            candlestickChartRenderer.drawDataSet(canvas, candlestickDataSet);
+        }
+    }
+
+    @Override protected void renderDataSet(Canvas canvas, AbstractDataSet dataSet) {
     }
 
     @Override
@@ -113,7 +118,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
 
-//        combineData.calcMinMax();
         combineData.add(dataSet);
 
         if (dataSet instanceof LineDataSet) {
@@ -122,22 +126,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
         } else if (dataSet instanceof CandlestickDataSet) {
             candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
-            Log.d("calcCandlestick", "instanceof CandlestickDataSet");
         }
 
+        combineData.calcDataSetMinMax(mViewport, mContentRect);
     }
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {
 
         combineData.remove(dataSet);
-
-        if (dataSet instanceof LineDataSet) {
-            lineRenderer.removeDataSet((LineDataSet) dataSet);
-        } else if (dataSet instanceof BarDataSet) {
-            barChartRenderer.removeDataSet((BarDataSet) dataSet);
-        } else if (dataSet instanceof CandlestickDataSet) {
-            candlestickChartRenderer.removeDataSet((CandlestickDataSet) dataSet);
-        }
+        combineData.calcDataSetMinMax(mViewport, mContentRect);
     }
 
     @Override public void clearDataSet() {
@@ -146,6 +143,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.clearDataSet();
         barChartRenderer.clearDataSet();
         candlestickChartRenderer.clearDataSet();
+
+        combineData.calcDataSetMinMax(mViewport, mContentRect);
     }
 
     @Override
@@ -154,15 +153,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public CombineData getChartData() {
+        if (combineData == null) combineData = new CombineData();
         return combineData;
     }
-
-//    public List<BarDataSet> getBarDataSet() {
-//        return barChartRenderer.getDataSet();
-//    }
-
-//    public List<CandlestickDataSet> getCandlestickDataSet() {
-//        return candlestickChartRenderer.getDataSet();
-//    }
 
 }
