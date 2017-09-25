@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import cn.jingzhuan.lib.chart.BaseChart;
-import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.renderer.CandlestickChartRenderer;
 
@@ -39,18 +38,20 @@ public class CandlestickChart extends BaseChart {
     super.initChart();
 
     mRenderer = new CandlestickChartRenderer(this);
+    mRenderer.getChartData().setChart(this);
   }
 
 
   public void addDataSet(CandlestickDataSet candlestickDataSet) {
 
-    candlestickDataSet.setChart(this);
+    //candlestickDataSet.setChart(this);
+    candlestickDataSet.calcMinMax(getCurrentViewport());
 
     mRenderer.addDataSet(candlestickDataSet);
   }
 
   public void setDataSet(CandlestickDataSet candlestickDataSet) {
-    mRenderer.getDataSet().clear();
+    mRenderer.clearDataSet();
     addDataSet(candlestickDataSet);
   }
 }

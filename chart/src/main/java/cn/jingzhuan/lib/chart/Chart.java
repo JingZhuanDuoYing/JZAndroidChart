@@ -459,8 +459,8 @@ public abstract class Chart extends View {
     private void notifyViewportChange() {
         if (mOnViewportChangeListener != null) {
             mOnViewportChangeListener.onViewportChange(mCurrentViewport);
-            ViewCompat.postInvalidateOnAnimation(this);
         }
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     private void fling(int velocityX, int velocityY) {

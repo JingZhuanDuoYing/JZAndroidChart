@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -23,8 +25,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     public BarChartRenderer(final Chart chart) {
         super(chart);
-
-        mBarDataSets = new BarData();
 
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
@@ -48,11 +48,11 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         });
     }
 
-    public void calcMaxMin() {
+    public void calcMaxMin(Viewport viewport) {
         for (BarDataSet barDataSet : getDataSet()) {
-            barDataSet.calcMinMax();
-            setMax(barDataSet.getViewportYMax());
-            setMin(barDataSet.getViewportYMin());
+            barDataSet.calcMinMax(viewport);
+            //setMax(barDataSet.getViewportYMax());
+            //setMin(barDataSet.getViewportYMin());
         }
     }
 
@@ -60,9 +60,13 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     protected void renderDataSet(Canvas canvas) {
 
         for (BarDataSet barDataSet : getDataSet()) {
-            if (barDataSet.isVisible()) {
-                drawBarDataSet(canvas, barDataSet);
-            }
+            renderDataSet(canvas, barDataSet);
+        }
+    }
+
+    @Override protected void renderDataSet(Canvas canvas, BarDataSet dataSet) {
+        if (dataSet.isVisible()) {
+            drawBarDataSet(canvas, dataSet);
         }
     }
 
@@ -138,12 +142,28 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     @Override
     public void addDataSet(BarDataSet dataSet) {
         if (dataSet == null) return;
-
         mBarDataSets.add(dataSet);
+        mBarDataSets.setMinMax();
+    }
+
+    @Override public void removeDataSet(BarDataSet dataSet) {
+        if (dataSet == null) return;
+        mBarDataSets.remove(dataSet);
+        mBarDataSets.setMinMax();
+    }
+
+    @Override public void clearDataSet() {
+        mBarDataSets.clear();
+        mBarDataSets.setMinMax();
     }
 
     @Override
-    public List<BarDataSet> getDataSet() {
+    protected List<BarDataSet> getDataSet() {
         return mBarDataSets.getDataSets();
+    }
+
+    @Override public BarData getChartData() {
+        if (mBarDataSets == null) mBarDataSets = new BarData();
+        return mBarDataSets;
     }
 }

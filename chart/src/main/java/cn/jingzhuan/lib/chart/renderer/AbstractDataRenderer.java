@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -19,14 +21,11 @@ import cn.jingzhuan.lib.chart.data.IDataSet;
  * Created by Donglua on 17/7/19.
  */
 
-public abstract class AbstractDataRenderer<D extends IDataSet> implements Renderer {
+public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements Renderer {
 
     protected Viewport mViewport;
     protected Rect mContentRect;
     protected Paint mRenderPaint;
-
-    private float min = Integer.MAX_VALUE;
-    private float max = -Integer.MAX_VALUE;
 
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
@@ -49,6 +48,8 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
         this.mContentRect = chart.getContentRect();
+
+        getChartData().setChart(chart);
 
         mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRenderPaint.setStyle(Paint.Style.STROKE);
@@ -80,6 +81,7 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
 
 
     protected abstract void renderDataSet(Canvas canvas);
+    protected abstract void renderDataSet(Canvas canvas, D dataSet);
 
     public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
@@ -100,8 +102,11 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
     }
 
     public abstract void addDataSet(D dataSet);
+    public abstract void removeDataSet(D dataSet);
+    public abstract void clearDataSet();
 
-    public abstract List<D> getDataSet();
+    protected abstract List<D> getDataSet();
+    public abstract ChartData<D> getChartData();
 
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;
@@ -111,24 +116,4 @@ public abstract class AbstractDataRenderer<D extends IDataSet> implements Render
         return mHighlightColor;
     }
 
-    public void resetMaxMin() {
-      min = Integer.MAX_VALUE;
-      max = -Integer.MAX_VALUE;
-    }
-
-    public float getMax() {
-      return max;
-    }
-
-    public float getMin() {
-      return min;
-    }
-
-    public void setMin(float min) {
-      this.min = min;
-    }
-
-    public void setMax(float max) {
-      this.max = max;
-    }
 }

@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,9 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     public BarDataSet(List<BarValue> mBarValues, @AxisDependency int axisDependency) {
         this.mBarValues = mBarValues;
 
-        calcMinMax();
+        calcMinMax(new Viewport());
 
-        mDepsAxis = axisDependency;
+        setAxisDependency(axisDependency);
     }
 
     public BarDataSet() {
@@ -45,7 +46,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     }
 
     @Override
-    public void calcMinMax() {
+    public void calcMinMax(Viewport viewport) {
 
         if (mBarValues == null || mBarValues.isEmpty())
             return;
@@ -59,16 +60,9 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
             calcMinMaxY(e);
         }
 
-        //calcViewportY(mViewport);
+        mViewportYMax = mYMax;
+        mViewportYMin = mYMin;
 
-        if (mAxisLeft != null) {
-            mAxisLeft.setYMax(mYMax);
-            mAxisLeft.setYMin(mYMin);
-        }
-        if (mAxisRight != null) {
-            mAxisRight.setYMax(mYMax);
-            mAxisRight.setYMin(mYMin);
-        }
     }
 
     public void calcMinMaxY(BarValue e) {
@@ -85,7 +79,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     public void setValues(List<BarValue> values) {
         this.mBarValues = values;
 
-        calcMinMax();
+        //setMinMax();
     }
 
     @Override

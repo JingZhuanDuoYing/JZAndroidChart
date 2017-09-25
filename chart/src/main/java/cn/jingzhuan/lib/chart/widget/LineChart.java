@@ -37,18 +37,20 @@ public class LineChart extends BaseChart {
         super.initChart();
 
         mRenderer = new LineRenderer(this);
+        mRenderer.getChartData().setChart(this);
 
     }
 
     public void addLine(LineDataSet lineDataSet) {
 
-        lineDataSet.setChart(this);
+        //lineDataSet.setChart(this);
+        lineDataSet.calcMinMax(getCurrentViewport());
 
         mRenderer.addDataSet(lineDataSet);
     }
 
     public void setLine(LineDataSet lineDataSet) {
-        mRenderer.getDataSet().clear();
+        mRenderer.clearDataSet();
         addLine(lineDataSet);
     }
 }

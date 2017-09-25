@@ -28,12 +28,13 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     public LineRenderer(final Chart chart) {
         super(chart);
 
-        lineData = new LineData();
-
         chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                calcMaxMin(viewport);
+                for (LineDataSet line : getDataSet()) {
+                    line.calcViewportY(viewport);
+                }
+                lineData.setMinMax();
             }
         });
 
@@ -58,15 +59,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
         });
-    }
-
-    protected void calcMaxMin(Viewport viewport) {
-        resetMaxMin();
-        for (LineDataSet line : getDataSet()) {
-            line.onViewportChange(viewport);
-            setMax(line.getViewportYMax());
-            setMin(line.getViewportYMin());
-        }
     }
 
     @Override
@@ -101,22 +93,42 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     @Override
     public void addDataSet(LineDataSet dataSet) {
         lineData.add(dataSet);
+        lineData.calcMaxMin(mViewport, mContentRect);
+    }
+
+    @Override public void removeDataSet(LineDataSet dataSet) {
+        lineData.remove(dataSet);
+        lineData.calcMaxMin(mViewport, mContentRect);
+    }
+
+    @Override public void clearDataSet() {
+        lineData.clear();
+        lineData.calcMaxMin(mViewport, mContentRect);
     }
 
     @Override
-    public List<LineDataSet> getDataSet() {
+    protected List<LineDataSet> getDataSet() {
         return lineData.getDataSets();
+    }
+
+    @Override public ChartData<LineDataSet> getChartData() {
+        if (lineData == null) lineData = new LineData();
+        return lineData;
     }
 
     @Override
     protected void renderDataSet(Canvas canvas) {
 
         for (LineDataSet line : getDataSet()) {
-            if (line.isVisible()) {
-                drawDataSet(canvas, line);
-            }
+            renderDataSet(canvas, line);
         }
 
+    }
+
+    @Override protected void renderDataSet(Canvas canvas, LineDataSet dataSet) {
+        if (dataSet.isVisible()) {
+            drawDataSet(canvas, dataSet);
+        }
     }
 
     private void drawDataSet(Canvas canvas, LineDataSet lineDataSet) {
@@ -133,14 +145,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         float min, max;
         switch (lineDataSet.getAxisDependency()) {
             case AxisY.DEPENDENCY_RIGHT:
-                min = lineDataSet.getAxisRight().getYMin();
-                max = lineDataSet.getAxisRight().getYMax();
+                min = lineData.getRightMin();
+                max = lineData.getRightMax();
                 break;
             case AxisY.DEPENDENCY_BOTH:
             case AxisY.DEPENDENCY_LEFT:
             default:
-                min = lineDataSet.getAxisLeft().getYMin();
-                max = lineDataSet.getAxisLeft().getYMax();
+                min = lineData.getLeftMin();
+                max = lineData.getLeftMax();
                 break;
         }
 

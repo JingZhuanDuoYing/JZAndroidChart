@@ -3,10 +3,8 @@ package cn.jingzhuan.lib.chart.data;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
-import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.widget.CandlestickChart;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +31,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   public CandlestickDataSet(List<CandlestickValue> candlestickValues, @AxisY.AxisDependency int axisDependency) {
     this.candlestickValues = candlestickValues;
 
-    this.mViewport = new Viewport();
-
-    calcMinMax();
-
-    mDepsAxis = axisDependency;
+    setAxisDependency(axisDependency);
   }
 
-  @Override public void calcMinMax() {
+  @Override public void calcMinMax(Viewport viewport) {
 
     if (candlestickValues == null || candlestickValues.isEmpty())
       return;
@@ -53,30 +47,19 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     for (CandlestickValue e : candlestickValues) {
       calcMinMaxY(e);
     }
-
-    calcViewportY();
+    calcViewportY(viewport);
   }
 
-  private void calcViewportY() {
+  private void calcViewportY(Viewport viewport) {
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    for (CandlestickValue e : getVisiblePoints(mViewport)) {
-      calcViewportMinMaxX(e);
-    }
-
-    switch (mDepsAxis) {
-      case AxisY.DEPENDENCY_BOTH:
-      case AxisY.DEPENDENCY_LEFT:
-        setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-        break;
-      case AxisY.DEPENDENCY_RIGHT:
-        setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
-        break;
+    for (CandlestickValue e : getVisiblePoints(viewport)) {
+      calcViewportMinMax(e);
     }
   }
 
-  private void calcViewportMinMaxX(CandlestickValue e) {
+  private void calcViewportMinMax(CandlestickValue e) {
     if (e.getLow() < mViewportYMin)
       mViewportYMin = e.getLow();
 
@@ -109,7 +92,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   @Override public void setValues(List<CandlestickValue> values) {
     this.candlestickValues = values;
-    calcMinMax();
+    //setMinMax();
   }
 
   @Override public List<CandlestickValue> getValues() {
@@ -146,16 +129,18 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.get(index);
   }
 
-  public void onViewportChange(Rect content) {
+  public void onViewportChange(Viewport viewport, Rect content) {
 
-    boolean needCalcCandleWidth = Float.compare(mViewport.width(), mViewportWidth) != 0;
+    //mViewport = viewport;
 
-    calcViewportY();
+    boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewportWidth) != 0;
+
+    calcViewportY(viewport);
 
     if (needCalcCandleWidth) {
-      mCandleWidth = content.width() / (getVisibleCount(mViewport) + 1);
+      mCandleWidth = content.width() / (getVisibleCount(viewport) + 1);
     }
-    mViewportWidth = mViewport.width();
+    mViewportWidth = viewport.width();
   }
 
   public void setAutoWidth(boolean mAutoWidth) {
