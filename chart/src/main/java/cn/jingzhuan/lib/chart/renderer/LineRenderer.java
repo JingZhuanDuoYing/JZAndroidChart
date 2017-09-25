@@ -121,12 +121,15 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     @Override protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
         for (LineDataSet dataSet : getDataSet()) {
             if (dataSet.isVisible()) {
-                drawDataSet(canvas, dataSet);
+                drawDataSet(canvas, dataSet,
+                        chartData.getLeftMax(), chartData.getLeftMin(),
+                        chartData.getRightMax(), chartData.getRightMin());
             }
         }
     }
 
-    private void drawDataSet(Canvas canvas, LineDataSet lineDataSet) {
+    private void drawDataSet(Canvas canvas, LineDataSet lineDataSet,
+        float lMax, float lMin, float rMax, float rMin) {
 
         mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());
         mRenderPaint.setColor(lineDataSet.getColor());
@@ -140,14 +143,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         float min, max;
         switch (lineDataSet.getAxisDependency()) {
             case AxisY.DEPENDENCY_RIGHT:
-                min = lineData.getRightMin();
-                max = lineData.getRightMax();
+                min = rMin;
+                max = rMax;
                 break;
             case AxisY.DEPENDENCY_BOTH:
             case AxisY.DEPENDENCY_LEFT:
             default:
-                min = lineData.getLeftMin();
-                max = lineData.getLeftMax();
+                min = lMin;
+                max = lMax;
                 break;
         }
 
