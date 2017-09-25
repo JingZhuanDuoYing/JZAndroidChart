@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.support.annotation.NonNull;
 
 import android.util.Log;
+import android.widget.TextView;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -34,10 +35,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     chart.setOnViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
-        for (CandlestickDataSet dataSet : getDataSet()) {
-          dataSet.onViewportChange(viewport, mContentRect);
-        }
-        chartData.setMinMax();
+        chartData.calcMaxMin(viewport, mContentRect);
       }
     });
 
@@ -70,30 +68,34 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   }
 
 
+
+  @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
+    for (CandlestickDataSet dataSet : chartData.getDataSets()) {
+      if (dataSet.isVisible()) {
+        drawDataSet(canvas, dataSet,
+            chartData.getLeftMax(), chartData.getLeftMin(),
+            chartData.getRightMax(), chartData.getRightMin());
+      }
+    }
+  }
+
   @Override protected void renderDataSet(Canvas canvas) {
-    for (CandlestickDataSet candlestickDataSet : getDataSet()) {
-      renderDataSet(canvas, candlestickDataSet);
-    }
+    renderDataSet(canvas, getChartData());
   }
 
-  @Override protected void renderDataSet(Canvas canvas, CandlestickDataSet dataSet) {
-    if (dataSet.isVisible()) {
-      drawDataSet(canvas, dataSet);
-    }
-  }
-
-  protected void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet) {
+  private void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet,
+      float lMax, float lMin, float rMax, float rMin) {
     float min, max;
     switch (candlestickDataSet.getAxisDependency()) {
       case AxisY.DEPENDENCY_RIGHT:
-        min = chartData.getRightMin();
-        max = chartData.getRightMax();
+        min = rMin;
+        max = rMax;
         break;
       case AxisY.DEPENDENCY_BOTH:
       case AxisY.DEPENDENCY_LEFT:
       default:
-        min = chartData.getLeftMin();
-        max = chartData.getLeftMax();
+        min = lMin;
+        max = lMax;
         break;
     }
 

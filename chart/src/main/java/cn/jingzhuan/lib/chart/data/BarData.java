@@ -15,6 +15,7 @@ public class BarData extends ChartData<BarDataSet> {
     leftMin = Float.MAX_VALUE;
     rightMax = -Float.MAX_VALUE;
     rightMin = Float.MAX_VALUE;
+
     for (BarDataSet barDataSet : getDataSets()) {
       barDataSet.calcMinMax(viewport);
 

@@ -39,23 +39,20 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     if (candlestickValues == null || candlestickValues.isEmpty())
       return;
 
-    mYMax = -Float.MAX_VALUE;
-    mYMin = Float.MAX_VALUE;
-    mXMax = -Float.MAX_VALUE;
-    mXMin = Float.MAX_VALUE;
+    //mYMax = -Float.MAX_VALUE;
+    //mYMin = Float.MAX_VALUE;
+    //mXMax = -Float.MAX_VALUE;
+    //mXMin = Float.MAX_VALUE;
 
-    for (CandlestickValue e : candlestickValues) {
-      calcMinMaxY(e);
-    }
-    calcViewportY(viewport);
-  }
-
-  private void calcViewportY(Viewport viewport) {
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
     for (CandlestickValue e : getVisiblePoints(viewport)) {
-      calcViewportMinMax(e);
+      if (e.getLow() < mViewportYMin)
+        mViewportYMin = e.getLow();
+
+      if (e.getHigh() > mViewportYMax)
+        mViewportYMax = e.getHigh();
     }
   }
 
@@ -135,7 +132,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewportWidth) != 0;
 
-    calcViewportY(viewport);
+    calcMinMax(viewport);
 
     if (needCalcCandleWidth) {
       mCandleWidth = content.width() / (getVisibleCount(viewport) + 1);
@@ -169,6 +166,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public float getCandleWidth() {
     return mCandleWidth;
+  }
+
+  public void setCandleWidth(float mCandleWidth) {
+    this.mCandleWidth = mCandleWidth;
   }
 
   public int getNeutralColor() {

@@ -23,7 +23,7 @@ import cn.jingzhuan.lib.chart.data.PointValue;
 
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
-    private ChartData<LineDataSet> lineData;
+    private LineData lineData;
 
     public LineRenderer(final Chart chart) {
         super(chart);
@@ -31,10 +31,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
-                for (LineDataSet line : getDataSet()) {
-                    line.calcViewportY(viewport);
-                }
-                lineData.setMinMax();
+                lineData.calcMaxMin(viewport, mContentRect);
             }
         });
 
@@ -118,16 +115,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     @Override
     protected void renderDataSet(Canvas canvas) {
-
-        for (LineDataSet line : getDataSet()) {
-            renderDataSet(canvas, line);
-        }
-
+        renderDataSet(canvas, getChartData());
     }
 
-    @Override protected void renderDataSet(Canvas canvas, LineDataSet dataSet) {
-        if (dataSet.isVisible()) {
-            drawDataSet(canvas, dataSet);
+    @Override protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
+        for (LineDataSet dataSet : getDataSet()) {
+            if (dataSet.isVisible()) {
+                drawDataSet(canvas, dataSet);
+            }
         }
     }
 

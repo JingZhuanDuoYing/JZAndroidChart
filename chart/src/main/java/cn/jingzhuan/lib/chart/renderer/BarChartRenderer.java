@@ -59,14 +59,14 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     @Override
     protected void renderDataSet(Canvas canvas) {
 
-        for (BarDataSet barDataSet : getDataSet()) {
-            renderDataSet(canvas, barDataSet);
-        }
+        renderDataSet(canvas, getChartData());
     }
 
-    @Override protected void renderDataSet(Canvas canvas, BarDataSet dataSet) {
-        if (dataSet.isVisible()) {
-            drawBarDataSet(canvas, dataSet);
+    @Override protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData) {
+        for (BarDataSet dataSet : getDataSet()) {
+            if (dataSet.isVisible()) {
+                drawBarDataSet(canvas, dataSet);
+            }
         }
     }
 
@@ -77,8 +77,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         int valueCount = barDataSet.getEntryCount();
 
-        float min = barDataSet.getYMin();
-        float max = barDataSet.getYMax();
+        float min = barDataSet.getViewportYMin();
+        float max = barDataSet.getViewportYMax();
 
         float width = barDataSet.getBarWidth();
         if (barDataSet.isAutoBarWidth()) {
