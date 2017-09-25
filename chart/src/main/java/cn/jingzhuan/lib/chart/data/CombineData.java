@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
 
+import android.util.Log;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -33,6 +34,20 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return candlestickData.getDataSets();
     }
 
+
+    public BarData getBarChartData() {
+        return barData;
+    }
+
+    public LineData getLineChartData() {
+        return lineData;
+    }
+
+    public CandlestickData getCandlestickChartData() {
+        return candlestickData;
+    }
+
+
     public boolean addDataSet(BarDataSet dataSet) {
         return barData.add(dataSet);
     }
@@ -52,11 +67,10 @@ public class CombineData extends ChartData<AbstractDataSet> {
         rightMax = -Float.MAX_VALUE;
 
         candlestickData.calcMaxMin(viewport, content);
-        leftMin = candlestickData.leftMin;
-        leftMax = candlestickData.leftMax;
-        rightMin = candlestickData.rightMin;
-        rightMax = candlestickData.rightMax;
-
+        leftMin = Math.min(candlestickData.leftMin, leftMin);
+        leftMax = Math.max(candlestickData.leftMax, leftMax);
+        rightMin = Math.min(candlestickData.rightMin, rightMin);
+        rightMax = Math.max(candlestickData.rightMax, rightMax);
 
         lineData.calcMaxMin(viewport, content);
         leftMin = Math.min(lineData.leftMin, leftMin);
@@ -69,6 +83,24 @@ public class CombineData extends ChartData<AbstractDataSet> {
         leftMax = Math.max(barData.leftMax, leftMax);
         rightMin = Math.min(barData.rightMin, rightMin);
         rightMax = Math.max(barData.rightMax, rightMax);
+
+        barData.setLeftMax(leftMax);
+        lineData.setLeftMax(leftMax);
+        candlestickData.setLeftMax(leftMax);
+
+        barData.setLeftMin(leftMin);
+        lineData.setLeftMin(leftMin);
+        candlestickData.setLeftMin(leftMin);
+
+        barData.setRightMax(rightMax);
+        lineData.setRightMax(rightMax);
+        candlestickData.setRightMax(rightMax);
+
+        barData.setRightMin(rightMin);
+        lineData.setRightMin(rightMin);
+        candlestickData.setRightMin(rightMin);
+
+        Log.d("drawDataSet", "leftMin = " + leftMin + ", leftMax = " + leftMax);
 
         setMinMax();
     }

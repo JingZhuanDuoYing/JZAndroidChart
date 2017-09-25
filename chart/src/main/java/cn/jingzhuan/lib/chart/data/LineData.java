@@ -15,6 +15,7 @@ public class LineData extends ChartData<LineDataSet> {
     leftMin = Float.MAX_VALUE;
     rightMax = -Float.MAX_VALUE;
     rightMin = Float.MAX_VALUE;
+
     for (LineDataSet lineDataSet : getDataSets()) {
       lineDataSet.calcMinMax(viewport);
       if (lineDataSet.getAxisDependency() == AxisY.DEPENDENCY_BOTH || lineDataSet.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
@@ -26,5 +27,6 @@ public class LineData extends ChartData<LineDataSet> {
         rightMin = Math.min(rightMin, lineDataSet.getViewportYMin());
       }
     }
+    setMinMax();
   }
 }

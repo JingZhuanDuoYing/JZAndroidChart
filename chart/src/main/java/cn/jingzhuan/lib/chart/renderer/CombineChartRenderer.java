@@ -7,6 +7,7 @@ import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
@@ -37,40 +38,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
         chart.setOnViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
-                //resetMaxMin();
-
-                //lineRenderer.calcMaxMin(viewport);
-                //barChartRenderer.calcMaxMin();
-                //candlestickChartRenderer.calcMaxMin();
-                //
-//                for (LineDataSet lineDataSet : combineData.getLineData()) {
-//                    lineDataSet.onViewportChange(viewport);
-//                }
-                //for (BarDataSet barDataSet : combineData.getBarData()) {
-                //    barDataSet.setMinMax();
-                //}
-//                for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
-//                    candlestickDataSet.onViewportChange(viewport, mContentRect);
-//                }
-                //if (!lineRenderer.getDataSet().isEmpty()) {
-                //    setMax(Math.max(lineRenderer.getMax(), getMax()));
-                //    setMin(Math.min(lineRenderer.getMin(), getMin()));
-                //}
-                //if (!barChartRenderer.getDataSet().isEmpty()) {
-                //    setMax(Math.max(barChartRenderer.getMax(), getMax()));
-                //    setMin(Math.min(barChartRenderer.getMin(), getMin()));
-                //}
-                //if (!candlestickChartRenderer.getDataSet().isEmpty()) {
-                //    setMax(Math.max(candlestickChartRenderer.getMax(), getMax()));
-                //    setMin(Math.min(candlestickChartRenderer.getMin(), getMin()));
-                //}
 
                 combineData.calcDataSetMinMax(viewport, mContentRect);
-                //chart.getAxisLeft().setYMax(getMax());
-                //chart.getAxisLeft().setYMin(getMin());
-
-                Log.d("ChartRenderer",  "setMinMax, " + combineData.getLeftMin() + ", " + combineData.getLeftMax());
-                Log.d("ChartRenderer",  "viewport = " + viewport);
 
             }
         });
@@ -79,19 +48,13 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     protected void renderDataSet(Canvas canvas) {
 
-        for (BarDataSet barDataSet : getChartData().getBarData()) {
-            barChartRenderer.renderDataSet(canvas, barDataSet);
-        }
-        for (LineDataSet lineDataSet : getChartData().getLineData()) {
-            lineRenderer.renderDataSet(canvas, lineDataSet);
-        }
-        for (CandlestickDataSet candlestickDataSet : getChartData().getCandlestickData()) {
-            Log.d("ChartRenderer",  "getChartData().getCandlestickData().size() = " + getChartData().getCandlestickData().size());
-            candlestickChartRenderer.drawDataSet(canvas, candlestickDataSet);
-        }
+        barChartRenderer.renderDataSet(canvas, getChartData().getBarChartData());
+        lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
+        candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
     }
 
-    @Override protected void renderDataSet(Canvas canvas, AbstractDataSet dataSet) {
+    @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
+        // ignore
     }
 
     @Override

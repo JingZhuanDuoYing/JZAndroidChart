@@ -130,6 +130,22 @@ public class ChartData<T extends IDataSet> {
         return leftMax;
     }
 
+    public void setLeftMin(float leftMin) {
+        this.leftMin = leftMin;
+    }
+
+    public void setLeftMax(float leftMax) {
+        this.leftMax = leftMax;
+    }
+
+    public void setRightMin(float rightMin) {
+        this.rightMin = rightMin;
+    }
+
+    public void setRightMax(float rightMax) {
+        this.rightMax = rightMax;
+    }
+
     public int getEntryCount() {
         return entryCount;
     }

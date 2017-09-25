@@ -81,7 +81,8 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
 
     protected abstract void renderDataSet(Canvas canvas);
-    protected abstract void renderDataSet(Canvas canvas, D dataSet);
+
+    protected abstract void renderDataSet(Canvas canvas, ChartData<D> chartData);
 
     public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
