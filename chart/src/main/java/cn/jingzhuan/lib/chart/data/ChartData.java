@@ -46,11 +46,16 @@ public class ChartData<T extends IDataSet> {
         return e != null && getDataSets().remove(e);
     }
 
-    public void clear() {
-        getDataSets().clear();
-    }
+  public void clear() {
+    getDataSets().clear();
 
-    public void setMinMax() {
+    leftMin = Float.MAX_VALUE;
+    leftMax = -Float.MAX_VALUE;
+    rightMin = Float.MAX_VALUE;
+    rightMax = -Float.MAX_VALUE;
+  }
+
+  public void setMinMax() {
         leftMin = Float.MAX_VALUE;
         leftMax = -Float.MAX_VALUE;
         rightMin = Float.MAX_VALUE;

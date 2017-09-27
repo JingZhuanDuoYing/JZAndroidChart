@@ -107,7 +107,26 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer.clearDataSet();
         candlestickChartRenderer.clearDataSet();
 
+        combineData.getBarChartData().clear();
+        combineData.getLineChartData().clear();
+        combineData.getCandlestickChartData().clear();
+
         combineData.calcDataSetMinMax(mViewport, mContentRect);
+    }
+
+    public void cleanLineDataSet() {
+        lineRenderer.clearDataSet();
+        combineData.getLineChartData().clear();
+    }
+
+    public void cleanBarDataSet() {
+        lineRenderer.clearDataSet();
+        combineData.getBarChartData().clear();
+    }
+
+    public void cleanCandlestickDataSet() {
+        candlestickChartRenderer.clearDataSet();
+        combineData.getCandlestickChartData().clear();
     }
 
     @Override

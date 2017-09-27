@@ -125,15 +125,15 @@ public class CombineChart extends BaseChart {
     }
 
     public void cleanLineDataSet() {
-        getRenderer().getChartData().getLineData().clear();
+        getRenderer().getChartData().getLineChartData().clear();
     }
 
     public void cleanBarDataSet() {
-        getBarDataSet().clear();
+        getRenderer().getChartData().getBarChartData().clear();
     }
 
     public void cleanCandlestickDataSet() {
-        getCandlestickDataSet().clear();
+        getRenderer().getChartData().getCandlestickData().clear();
     }
 
     public void cleanAllDataSet() {
