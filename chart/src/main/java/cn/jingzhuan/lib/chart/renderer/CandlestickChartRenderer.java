@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
@@ -148,6 +149,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
         mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
 
+
       } else if (Float.compare(candlestick.getOpen(), candlestick.getClose()) < 0) { // 阳线
 
         mUpperShadowBuffers[1] = highY;
@@ -165,6 +167,14 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[3] = mUpperShadowBuffers[3];
 
         mRenderPaint.setColor(candlestickDataSet.getNeutralColor());
+      }
+
+      if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT && i > 0) {
+        final CandlestickValue previousValue = candlestickDataSet.getEntryForIndex(i - 1);
+        boolean isLimitUp = Float.compare((candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.095f) > 0;
+        if (isLimitUp) {
+          mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());
+        }
       }
 
       canvas.drawRect(mBodyBuffers[0],

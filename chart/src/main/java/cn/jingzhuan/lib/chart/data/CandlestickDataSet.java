@@ -21,6 +21,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mIncreasingColor = 0xFFf84b4b;   // 阳线
   private int mDecreasingColor = 0xFF1deb5b; // 阴线
   private int mNeutralColor = Color.WHITE;    // 十字线
+  private int mLimitUpColor = Color.TRANSPARENT;
 
   private float mViewportWidth = 1f;
 
@@ -174,5 +175,13 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public int getNeutralColor() {
     return mNeutralColor;
+  }
+
+  public void setLimitUpColor(int mLimitUpColor) {
+    this.mLimitUpColor = mLimitUpColor;
+  }
+
+  public int getLimitUpColor() {
+    return mLimitUpColor;
   }
 }
