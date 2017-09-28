@@ -9,6 +9,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.GestureDetectorCompat;
@@ -838,6 +840,42 @@ public abstract class Chart extends View {
 
     public boolean isDraggingToMoveEnable() {
         return mDraggingToMoveEnable;
+    }
+
+    public void moveLeft() {
+        moveLeft(0.1f);
+    }
+
+    public void moveRight() {
+        moveRight(0.1f);
+    }
+
+    public void moveLeft(@FloatRange(from = 0f, to = 1.0f) float percent) {
+        float moveDistance = mCurrentViewport.width() * percent;
+        boolean canMoveLeft = (mCurrentViewport.left - moveDistance > Viewport.AXIS_X_MIN);
+
+        if (canMoveLeft) {
+            mCurrentViewport.left = mCurrentViewport.left - moveDistance;
+            mCurrentViewport.right = mCurrentViewport.right - moveDistance;
+        } else {
+            mCurrentViewport.left = mCurrentViewport.left - moveDistance;
+        }
+        mCurrentViewport.constrainViewport();
+        notifyViewportChange();
+    }
+
+    public void moveRight(@FloatRange(from = 0f, to = 1.0f) float percent) {
+        float moveDistance = mCurrentViewport.width() * percent;
+        boolean canMoveRight = (mCurrentViewport.right + moveDistance < Viewport.AXIS_X_MAX);
+
+        if (canMoveRight) {
+            mCurrentViewport.left = mCurrentViewport.left + moveDistance;
+            mCurrentViewport.right = mCurrentViewport.right + moveDistance;
+        } else {
+            mCurrentViewport.right = mCurrentViewport.right + moveDistance;
+        }
+        mCurrentViewport.constrainViewport();
+        notifyViewportChange();
     }
 
 }

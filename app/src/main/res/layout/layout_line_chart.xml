@@ -4,10 +4,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <cn.jingzhuan.lib.chart.widget.LineChart
-        app:labelSeparation="4dp"
-        android:id="@+id/lineChart"
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <cn.jingzhuan.lib.chart.widget.LineChart
+            app:labelSeparation="4dp"
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
         android:layout_height="200dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <Button
+                android:id="@+id/bt_move_left"
+                android:text="move left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <Button
+                android:id="@+id/bt_move_right"
+                android:text="move right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </layout>
