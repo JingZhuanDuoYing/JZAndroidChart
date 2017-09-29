@@ -34,7 +34,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   public CandlestickChartRenderer(final Chart chart) {
     super(chart);
 
-    chart.setOnViewportChangeListener(new OnViewportChangeListener() {
+    chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
         chartData.calcMaxMin(viewport, mContentRect);
       }

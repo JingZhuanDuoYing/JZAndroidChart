@@ -58,12 +58,13 @@ public abstract class Chart extends View {
     private PointF mZoomFocalPoint = new PointF();
     private RectF mScrollerStartViewport = new RectF(); // Used only for zooms and flings.
 
-    private OnViewportChangeListener mOnViewportChangeListener;
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
     private boolean mDoubleTapToZoom = false;
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
+    private List<OnViewportChangeListener> mOnViewportChangeListeners;
+    protected OnViewportChangeListener mInternalViewportChangeListener;
 
     /**
      * The current viewport. This rectangle represents the currently visible lib domain
@@ -136,6 +137,7 @@ public abstract class Chart extends View {
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
         mTouchPointChangeListeners = new CopyOnWriteArrayList<>();
+        mOnViewportChangeListeners = new CopyOnWriteArrayList<>();
 
         mAxisTop.setGridLineEnable(false);
         mAxisTop.setLabelEnable(false);
@@ -459,8 +461,13 @@ public abstract class Chart extends View {
     };
 
     private void notifyViewportChange() {
-        if (mOnViewportChangeListener != null) {
-            mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+        if (mInternalViewportChangeListener != null) {
+            mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
+        }
+        if (mOnViewportChangeListeners != null) {
+            for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
+                mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+            }
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -806,8 +813,8 @@ public abstract class Chart extends View {
         return mAxisBottom;
     }
 
-    public void setOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
-        this.mOnViewportChangeListener = onViewportChangeListener;
+    public void addOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
+        this.mOnViewportChangeListeners.add(onViewportChangeListener);
     }
 
     public boolean isScaleXEnable() {
@@ -878,4 +885,8 @@ public abstract class Chart extends View {
         notifyViewportChange();
     }
 
+    public void setInternalViewportChangeListener(
+        OnViewportChangeListener mInternalViewportChangeListener) {
+        this.mInternalViewportChangeListener = mInternalViewportChangeListener;
+    }
 }

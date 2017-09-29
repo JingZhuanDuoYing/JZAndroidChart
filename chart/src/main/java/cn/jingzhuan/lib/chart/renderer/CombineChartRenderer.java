@@ -36,11 +36,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer = new BarChartRenderer(chart);
         candlestickChartRenderer = new CandlestickChartRenderer(chart);
 
-        chart.setOnViewportChangeListener(new OnViewportChangeListener() {
+        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
 
                 combineData.calcDataSetMinMax(viewport, mContentRect);
-
             }
         });
     }

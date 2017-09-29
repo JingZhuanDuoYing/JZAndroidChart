@@ -83,29 +83,43 @@ public class CombineChart extends BaseChart {
         }
     }
 
-    public void setCombineData(CombineData combineData) {
+    public void setCombineData(final CombineData combineData) {
         cleanAllDataSet();
 
-        List<LineDataSet> lineDataSets = combineData.getLineData();
-        if (lineDataSets != null) {
-            for (LineDataSet lineDataSet : lineDataSets) {
-                addDataSet(lineDataSet);
-            }
+        for (LineDataSet lineDataSet : combineData.getLineData()) {
+            getRenderer().addDataSet(lineDataSet);
+        }
+        for (BarDataSet barDataSet : combineData.getBarData()) {
+            getRenderer().addDataSet(barDataSet);
+        }
+        for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
+            getRenderer().addDataSet(candlestickDataSet);
         }
 
-        List<BarDataSet> barDataSets = combineData.getBarData();
-        if (barDataSets != null) {
-            for (BarDataSet barDataSet : barDataSets) {
-                addDataSet(barDataSet);
-            }
-        }
+        //this.getRenderer().getChartData()
+        //
+        //List<LineDataSet> lineDataSets = combineData.getLineData();
+        //if (lineDataSets != null) {
+        //    for (LineDataSet lineDataSet : lineDataSets) {
+        //        addDataSet(lineDataSet);
+        //    }
+        //}
+        //
+        //List<BarDataSet> barDataSets = combineData.getBarData();
+        //if (barDataSets != null) {
+        //    for (BarDataSet barDataSet : barDataSets) {
+        //        addDataSet(barDataSet);
+        //    }
+        //}
+        //
+        //List<CandlestickDataSet> candlestickDataSets = combineData.getCandlestickData();
+        //if (candlestickDataSets != null) {
+        //    for (CandlestickDataSet candlestickDataSet : candlestickDataSets) {
+        //        addDataSet(candlestickDataSet);
+        //    }
+        //}
 
-        List<CandlestickDataSet> candlestickDataSets = combineData.getCandlestickData();
-        if (candlestickDataSets != null) {
-            for (CandlestickDataSet candlestickDataSet : candlestickDataSets) {
-                addDataSet(candlestickDataSet);
-            }
-        }
+
     }
 
     public List<LineDataSet> getLineDataSet() {

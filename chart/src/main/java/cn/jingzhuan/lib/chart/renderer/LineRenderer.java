@@ -28,7 +28,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     public LineRenderer(final Chart chart) {
         super(chart);
 
-        chart.setOnViewportChangeListener(new OnViewportChangeListener() {
+        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
                 lineData.calcMaxMin(viewport, mContentRect);
