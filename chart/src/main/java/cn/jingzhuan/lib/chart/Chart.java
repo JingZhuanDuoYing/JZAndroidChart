@@ -531,7 +531,7 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -585,7 +585,7 @@ public abstract class Chart extends View {
 
         mZoomFocalPoint.set(forceX,
             (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     @Override
