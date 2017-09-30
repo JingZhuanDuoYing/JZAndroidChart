@@ -109,6 +109,9 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     protected abstract List<D> getDataSet();
     public abstract ChartData<D> getChartData();
 
+    public abstract void calcDataSetMinMax();
+
+
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;
     }

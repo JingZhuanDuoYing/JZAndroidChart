@@ -9,5 +9,4 @@ import android.graphics.Canvas;
 public interface Renderer {
 
     void renderer(Canvas canvas);
-
 }

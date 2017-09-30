@@ -61,6 +61,7 @@ public abstract class Chart extends View {
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
     private boolean mDoubleTapToZoom = false;
+    private boolean mScaleGestureEnable = true;
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
@@ -294,6 +295,8 @@ public abstract class Chart extends View {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+            if (!mScaleGestureEnable) return super.onScaleBegin(scaleGestureDetector);
+
             lastSpanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
 //            lastSpanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
             return true;
@@ -303,6 +306,7 @@ public abstract class Chart extends View {
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
 
             if (!mScaleXEnable) return false;
+            if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
             float spanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
             float spanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
@@ -518,7 +522,7 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
+        notifyViewportChange();
     }
 
     /**
@@ -699,7 +703,7 @@ public abstract class Chart extends View {
      * @see #getCurrentViewport()
      */
     public void setCurrentViewport(RectF viewport) {
-        mCurrentViewport = new Viewport(viewport);
+        mCurrentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom);
         mCurrentViewport.constrainViewport();
         notifyViewportChange();
     }
@@ -889,4 +893,14 @@ public abstract class Chart extends View {
         OnViewportChangeListener mInternalViewportChangeListener) {
         this.mInternalViewportChangeListener = mInternalViewportChangeListener;
     }
+
+    public void setScaleGestureEnable(boolean mScaleGestureEnable) {
+        this.mScaleGestureEnable = mScaleGestureEnable;
+    }
+
+    public boolean isScaleGestureEnable() {
+        return mScaleGestureEnable;
+    }
 }
+
+

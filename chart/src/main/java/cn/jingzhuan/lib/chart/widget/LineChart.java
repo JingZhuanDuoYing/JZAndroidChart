@@ -42,10 +42,6 @@ public class LineChart extends BaseChart {
     }
 
     public void addLine(LineDataSet lineDataSet) {
-
-        //lineDataSet.setChart(this);
-        lineDataSet.calcMinMax(getCurrentViewport());
-
         mRenderer.addDataSet(lineDataSet);
     }
 

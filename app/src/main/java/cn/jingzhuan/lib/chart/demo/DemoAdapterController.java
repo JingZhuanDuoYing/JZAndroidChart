@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.content.Context;
 import android.util.LayoutDirection;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 

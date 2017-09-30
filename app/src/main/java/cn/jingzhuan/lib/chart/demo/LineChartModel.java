@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.demo;
 import android.databinding.ViewDataBinding;
 
 import android.view.View;
+import cn.jingzhuan.lib.chart.Viewport;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 
@@ -13,6 +14,8 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutLineChartBinding;
+
+import static cn.jingzhuan.lib.chart.Viewport.*;
 
 /**
  * Created by Donglua on 17/7/26.
@@ -68,8 +71,10 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
         if (binding instanceof LayoutLineChartBinding) {
             final LayoutLineChartBinding bd = ((LayoutLineChartBinding) binding);
-            bd.lineChart.addLine(line);
+            bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
             bd.lineChart.setDoubleTapToZoom(true);
+            bd.lineChart.addLine(line);
+
             bd.btMoveLeft.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     bd.lineChart.moveLeft();

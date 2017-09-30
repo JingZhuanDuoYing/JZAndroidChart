@@ -38,8 +38,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
-
-                combineData.calcDataSetMinMax(viewport, mContentRect);
+                mViewport = viewport;
+                calcDataSetMinMax();
             }
         });
     }
@@ -90,12 +90,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
         }
 
-        combineData.calcDataSetMinMax(mViewport, mContentRect);
+        calcDataSetMinMax();
     }
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {
 
         combineData.remove(dataSet);
+        combineData.calcDataSetMinMax(mViewport, mContentRect);
+    }
+
+    @Override
+    public void calcDataSetMinMax() {
         combineData.calcDataSetMinMax(mViewport, mContentRect);
     }
 
@@ -110,7 +115,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         combineData.getLineChartData().clear();
         combineData.getCandlestickChartData().clear();
 
-        combineData.calcDataSetMinMax(mViewport, mContentRect);
+        calcDataSetMinMax();
     }
 
     public void cleanLineDataSet() {

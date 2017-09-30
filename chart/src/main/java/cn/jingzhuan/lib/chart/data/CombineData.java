@@ -100,8 +100,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         lineData.setRightMin(rightMin);
         candlestickData.setRightMin(rightMin);
 
-        Log.d("drawDataSet", "leftMin = " + leftMin + ", leftMax = " + leftMax);
-
         setMinMax();
     }
 

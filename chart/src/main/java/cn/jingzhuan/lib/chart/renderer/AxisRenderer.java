@@ -357,7 +357,7 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (labels.length - 1);
             float separation = 0;
             for (int i = 0; i < labels.length; i++) {
-                LabelValueFormatter labelValueFormatter = ((AxisY) mAxis).getLabelValueFormatter();
+                LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
                 if (labelValueFormatter == null) {
                     labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
                 } else {

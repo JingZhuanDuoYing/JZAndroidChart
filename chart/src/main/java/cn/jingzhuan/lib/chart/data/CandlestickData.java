@@ -23,7 +23,6 @@ public class CandlestickData extends ChartData<CandlestickDataSet> {
     rightMax = -Float.MAX_VALUE;
     rightMin = Float.MAX_VALUE;
 
-    int i = 0;
 
     for (CandlestickDataSet candlestickDataSet : getDataSets()) {
 
@@ -46,11 +45,7 @@ public class CandlestickData extends ChartData<CandlestickDataSet> {
           rightMin = Math.min(rightMin, candlestickDataSet.getViewportYMin());
           rightMax = Math.max(rightMax, candlestickDataSet.getViewportYMax());
         }
-        Log.d("drawDataSet", "-- CandlestickData leftMin = " + leftMin + ", leftMax = " + leftMax);
-        i ++;
     }
-    Log.d("drawDataSet", i + "-->>>>>>>>>>>>>>>>>> CandlestickData leftMin = " + leftMin + ", leftMax = " + leftMax);
-
   }
 
 }
