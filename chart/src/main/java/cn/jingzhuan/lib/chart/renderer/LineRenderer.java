@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.View;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
@@ -69,8 +71,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         for (Highlight highlight : highlights) {
-
             Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
+
             c.drawLine(
                     highlight.getX(),
                     0,
@@ -78,13 +80,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                     mContentRect.bottom,
                     mRenderPaint);
 
+            // Horizontal
             for (LineDataSet lineDataSet : getDataSet()) {
                 if (lineDataSet.isHighlightedHorizontalEnable()) {
                     float min = lineDataSet.getViewportYMin();
                     float max = lineDataSet.getViewportYMax();
                     float value =  lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
                     float y = (max - value) / (max - min) * mContentRect.height();
-                    canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
+                    c.drawLine(0, y, mContentRect.right, y, mRenderPaint);
                 }
             }
         }

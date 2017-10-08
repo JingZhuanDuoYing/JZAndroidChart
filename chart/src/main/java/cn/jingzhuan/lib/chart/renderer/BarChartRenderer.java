@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -118,6 +119,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         mRenderPaint.setColor(getHighlightColor());
         mRenderPaint.setStrokeWidth(2);
+        mRenderPaint.setStyle(Paint.Style.STROKE);
         if (mDashedHighlightPhase > 0) {
             mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
         }
@@ -134,7 +136,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         }
 
         mRenderPaint.setPathEffect(null);
-
     }
 
     @Override

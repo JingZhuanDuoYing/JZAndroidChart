@@ -2,12 +2,12 @@ package cn.jingzhuan.lib.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +50,7 @@ public class BaseChart extends Chart {
 
     @Override
     public void initChart() {
+        //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         mAxisRenderers = new ArrayList<>(4);
 
@@ -160,5 +161,6 @@ public class BaseChart extends Chart {
     public void enableHighlightDashPathEffect(float intervals[], float phase) {
         this.mRenderer.enableDashPathEffect(intervals, phase);
     }
+
 
 }

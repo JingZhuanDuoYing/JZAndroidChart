@@ -90,6 +90,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) binding;
 
+        chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         chartBinding.combineChart.addDataSet(barDataSet);
         chartBinding.combineChart.addDataSet(line);
 

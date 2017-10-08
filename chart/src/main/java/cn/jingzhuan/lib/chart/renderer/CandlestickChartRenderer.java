@@ -196,6 +196,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     mRenderPaint.setColor(getHighlightColor());
     mRenderPaint.setStrokeWidth(2);
+    mRenderPaint.setStyle(Paint.Style.STROKE);
     if (mDashedHighlightPhase > 0) {
       mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
     }

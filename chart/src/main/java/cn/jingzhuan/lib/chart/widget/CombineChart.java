@@ -153,4 +153,5 @@ public class CombineChart extends BaseChart {
     public void cleanAllDataSet() {
         getRenderer().clearDataSet();
     }
+
 }

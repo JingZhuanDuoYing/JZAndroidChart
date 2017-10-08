@@ -66,14 +66,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+
+        Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
+
         if (lineRenderer.getDataSet() != null && !lineRenderer.getDataSet().isEmpty()) {
-            lineRenderer.renderHighlighted(canvas, highlights);
+            lineRenderer.renderHighlighted(c, highlights);
         }
         if (barChartRenderer.getDataSet() != null && !barChartRenderer.getDataSet().isEmpty()) {
-            barChartRenderer.renderHighlighted(canvas, highlights);
+            barChartRenderer.renderHighlighted(c, highlights);
         }
         if (candlestickChartRenderer.getDataSet() != null && !candlestickChartRenderer.getDataSet().isEmpty()) {
-            candlestickChartRenderer.renderHighlighted(canvas, highlights);
+            candlestickChartRenderer.renderHighlighted(c, highlights);
         }
     }
 
@@ -143,4 +146,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return combineData;
     }
 
+    @Override public void enableDashPathEffect(float[] intervals, float phase) {
+        super.enableDashPathEffect(intervals, phase);
+        this.lineRenderer.enableDashPathEffect(intervals, phase);
+        this.barChartRenderer.enableDashPathEffect(intervals, phase);
+        this.candlestickChartRenderer.enableDashPathEffect(intervals, phase);
+    }
 }
