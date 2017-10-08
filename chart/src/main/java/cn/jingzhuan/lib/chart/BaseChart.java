@@ -157,4 +157,8 @@ public class BaseChart extends Chart {
         this.mHighlightListener = mHighlightListener;
     }
 
+    public void enableHighlightDashPathEffect(float intervals[], float phase) {
+        this.mRenderer.enableDashPathEffect(intervals, phase);
+    }
+
 }

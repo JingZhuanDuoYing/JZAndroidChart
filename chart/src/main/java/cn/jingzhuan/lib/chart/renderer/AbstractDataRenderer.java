@@ -15,7 +15,6 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.IDataSet;
 
 /**
  * Created by Donglua on 17/7/19.
@@ -26,6 +25,9 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     protected Viewport mViewport;
     protected Rect mContentRect;
     protected Paint mRenderPaint;
+
+    protected float mDashedHighlightIntervals[] = null;
+    protected float mDashedHighlightPhase = -1;
 
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
@@ -120,4 +122,8 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
         return mHighlightColor;
     }
 
+    public void enableDashPathEffect(float intervals[], float phase) {
+        this.mDashedHighlightIntervals = intervals;
+        this.mDashedHighlightPhase = phase;
+    }
 }

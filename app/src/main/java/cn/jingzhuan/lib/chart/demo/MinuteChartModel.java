@@ -121,6 +121,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
             minuteBinding.minuteChart.setOnClickListener(onClickListener);
 
+            minuteBinding.minuteChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         }
     }
 

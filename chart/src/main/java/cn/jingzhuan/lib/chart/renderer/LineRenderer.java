@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -63,6 +64,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());
+        if (mDashedHighlightPhase > 0) {
+            mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
+        }
 
         for (Highlight highlight : highlights) {
 
@@ -84,7 +88,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
         }
-
+        mRenderPaint.setPathEffect(null);
     }
 
     @Override
