@@ -374,7 +374,8 @@ public abstract class Chart extends View {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             cleanHighlight();
-            return super.onSingleTapConfirmed(e);
+            performClick();
+            return true;
         }
 
         @Override
@@ -712,7 +713,7 @@ public abstract class Chart extends View {
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
 
-        retVal = mGestureDetector.onTouchEvent(event)  || retVal;
+        retVal = mGestureDetector.onTouchEvent(event) || retVal;
 
         return retVal || super.onTouchEvent(event);
     }
