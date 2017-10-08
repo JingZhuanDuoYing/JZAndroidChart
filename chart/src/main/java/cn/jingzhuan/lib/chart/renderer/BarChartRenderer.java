@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
 import android.support.annotation.NonNull;
@@ -117,6 +118,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         mRenderPaint.setColor(getHighlightColor());
         mRenderPaint.setStrokeWidth(2);
+        if (mDashedHighlightPhase > 0) {
+            mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
+        }
 
         for (Highlight highlight : highlights) {
 
@@ -128,6 +132,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                     mContentRect.bottom,
                     mRenderPaint);
         }
+
+        mRenderPaint.setPathEffect(null);
 
     }
 

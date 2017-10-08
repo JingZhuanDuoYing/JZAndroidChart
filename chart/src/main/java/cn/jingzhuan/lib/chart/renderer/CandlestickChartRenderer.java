@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
@@ -193,10 +194,13 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
-    for (Highlight highlight : highlights) {
+    mRenderPaint.setColor(getHighlightColor());
+    mRenderPaint.setStrokeWidth(2);
+    if (mDashedHighlightPhase > 0) {
+      mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
+    }
 
-      mRenderPaint.setColor(getHighlightColor());
-      mRenderPaint.setStrokeWidth(2);
+    for (Highlight highlight : highlights) {
 
       canvas.drawLine(highlight.getX(),
                       mContentRect.top,
@@ -209,6 +213,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                       highlight.getY(), mRenderPaint);
     }
 
+    mRenderPaint.setPathEffect(null);
   }
 
   @Override public void addDataSet(CandlestickDataSet dataSet) {
