@@ -65,13 +65,16 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
     }
 
-    protected List<BarValue> getVisiblePoints(Viewport viewport) {
+    public List<BarValue> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * mBarValues.size());
         int to  = (int) (viewport.right * mBarValues.size());
 
         return mBarValues.subList(from, to);
     }
 
+    public int getVisibleValueCount(Viewport viewport) {
+        return getVisiblePoints(viewport).size();
+    }
 
     public void calcMinMaxY(BarValue e) {
 
