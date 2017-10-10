@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 
+import android.graphics.Shader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     protected List<PointValue> mPointValues;
 
     private int mForceValueCount = -1;
+    private Shader shader;
+
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
     }
@@ -202,4 +205,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         return mPointValues.subList(from, to);
     }
 
+    public Shader getShader() {
+        return shader;
+    }
+
+    public void setShader(Shader shader) {
+        this.shader = shader;
+    }
 }

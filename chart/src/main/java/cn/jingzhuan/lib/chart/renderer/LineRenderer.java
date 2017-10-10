@@ -181,6 +181,20 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 path.lineTo(xV, yV);
             }
         }
+
+        // draw shader area
+        if (lineDataSet.getShader() != null) {
+            mRenderPaint.setStyle(Paint.Style.FILL);
+            path.lineTo(lineDataSet.getValues().get(lineDataSet.getValues().size() - 1).getX(), mContentRect.bottom);
+            path.lineTo(0, mContentRect.bottom);
+            path.lineTo(0, lineDataSet.getValues().get(0).getY());
+            path.close();
+            mRenderPaint.setShader(lineDataSet.getShader());
+            canvas.drawPath(path, mRenderPaint);
+            mRenderPaint.setShader(null);
+            mRenderPaint.setStyle(Paint.Style.STROKE);
+        }
+
         canvas.drawPath(path, mRenderPaint);
     }
 

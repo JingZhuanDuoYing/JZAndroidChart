@@ -2,6 +2,8 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.view.View;
 
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
@@ -78,6 +80,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         line.setHighlightedEnable(true);
         line.setHighlightedHorizontalEnable(true);
         line.setLastClose(lastClose);
+
     }
 
     @Override
@@ -117,6 +120,8 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
             minuteBinding.minuteChart.setHighlightColor(Color.BLACK);
 
             minuteBinding.minuteChart.setScaleXEnable(false);
+
+            line.setShader(new LinearGradient(0, 0, 0, 0, 0x10000000, 0x10000000, Shader.TileMode.REPEAT));
 
             minuteBinding.minuteChart.addLine(line);
 
