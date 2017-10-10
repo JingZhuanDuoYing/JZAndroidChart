@@ -113,7 +113,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     for (int i = 0; i < valueCount; i++) {
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
-      mRenderPaint.setStyle(Paint.Style.FILL);
+      mRenderPaint.setStyle(candlestick.getPaintStyle());
 
       float candleWidth = candlestickDataSet.getCandleWidth();
 
@@ -149,8 +149,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = closeY;
 
-        mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
-
+        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+          mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
+        } else {
+          mRenderPaint.setColor(candlestick.getColor());
+        }
 
       } else if (Float.compare(candlestick.getOpen(), candlestick.getClose()) < 0) { // 阳线
 
@@ -159,8 +162,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = openY;
 
-        mRenderPaint.setColor(candlestickDataSet.getIncreasingColor());
-
+        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+          mRenderPaint.setColor(candlestickDataSet.getIncreasingColor());
+        } else {
+          mRenderPaint.setColor(candlestick.getColor());
+        }
       } else {
 
         mUpperShadowBuffers[1] = highY;
@@ -168,7 +174,12 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = mUpperShadowBuffers[3];
 
-        mRenderPaint.setColor(candlestickDataSet.getNeutralColor());
+
+        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+          mRenderPaint.setColor(candlestickDataSet.getNeutralColor());
+        } else {
+          mRenderPaint.setColor(candlestick.getColor());
+        }
       }
 
       if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT && i > 0) {

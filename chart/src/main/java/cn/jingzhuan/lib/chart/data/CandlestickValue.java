@@ -1,10 +1,15 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+
 /**
  * Created by donglua on 8/29/17.
  */
 
 public class CandlestickValue implements Value {
+
+  public final static int COLOR_NONE = Color.TRANSPARENT;
 
   private float high = 0f;
   private float low = 0f;
@@ -14,13 +19,40 @@ public class CandlestickValue implements Value {
   private float x = 0f;
   private float y = 0f;
 
-
+  private Paint.Style mPaintStyle = Paint.Style.FILL;
+  private int color = COLOR_NONE;
 
   public CandlestickValue(float high, float low, float open, float close) {
     this.high = high;
     this.low = low;
     this.open = open;
     this.close = close;
+  }
+
+  public CandlestickValue(float high, float low, float open, float close, int color) {
+    this.high = high;
+    this.low = low;
+    this.open = open;
+    this.close = close;
+    this.color = color;
+  }
+
+  public CandlestickValue(float high, float low, float open, float close, Paint.Style mPaintStyle,
+      int color) {
+    this.high = high;
+    this.low = low;
+    this.open = open;
+    this.close = close;
+    this.mPaintStyle = mPaintStyle;
+    this.color = color;
+  }
+
+  public CandlestickValue(float high, float low, float open, float close, Paint.Style mPaintStyle) {
+    this.high = high;
+    this.low = low;
+    this.open = open;
+    this.close = close;
+    this.mPaintStyle = mPaintStyle;
   }
 
   public float getHigh() {
@@ -69,5 +101,21 @@ public class CandlestickValue implements Value {
 
   public float getY() {
     return y;
+  }
+
+  public void setPaintStyle(Paint.Style mPaintStyle) {
+    this.mPaintStyle = mPaintStyle;
+  }
+
+  public Paint.Style getPaintStyle() {
+    return mPaintStyle;
+  }
+
+  public int getColor() {
+    return color;
+  }
+
+  public void setColor(int color) {
+    this.color = color;
   }
 }
