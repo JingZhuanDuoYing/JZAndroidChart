@@ -24,6 +24,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mLimitUpColor = Color.TRANSPARENT;
 
   private float mViewportWidth = 1f;
+  private int maxVisibleEntry = 100;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
@@ -49,11 +50,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     mViewportYMin = Float.MAX_VALUE;
 
     for (CandlestickValue e : getVisiblePoints(viewport)) {
-      if (e.getLow() < mViewportYMin)
-        mViewportYMin = e.getLow();
-
-      if (e.getHigh() > mViewportYMax)
-        mViewportYMax = e.getHigh();
+      calcViewportMinMax(e);
     }
   }
 
@@ -73,6 +70,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     int from = (int) (viewport.left * candlestickValues.size());
     int to  = (int) (viewport.right * candlestickValues.size());
 
+    if (maxVisibleEntry > 0 && to - from > maxVisibleEntry) {
+      from = to - maxVisibleEntry;
+      viewport.left = from / (float) candlestickValues.size();
+    }
     return candlestickValues.subList(from, to);
   }
 
@@ -183,5 +184,13 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public int getLimitUpColor() {
     return mLimitUpColor;
+  }
+
+  public int getMaxVisibleEntry() {
+    return maxVisibleEntry;
+  }
+
+  public void setMaxVisibleEntry(int maxVisibleEntry) {
+    this.maxVisibleEntry = maxVisibleEntry;
   }
 }

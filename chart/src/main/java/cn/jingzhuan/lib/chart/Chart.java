@@ -464,7 +464,7 @@ public abstract class Chart extends View {
         }
     };
 
-    private void notifyViewportChange() {
+    protected void notifyViewportChange() {
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
         }

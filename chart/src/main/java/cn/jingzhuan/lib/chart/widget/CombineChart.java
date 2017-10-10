@@ -55,6 +55,7 @@ public class CombineChart extends BaseChart {
 
     public void addDataSet(CandlestickDataSet candlestickDataSet) {
         getRenderer().addDataSet(candlestickDataSet);
+        notifyViewportChange();
     }
 
     public void setDataSet(BarDataSet barDataSet) {
@@ -87,13 +88,13 @@ public class CombineChart extends BaseChart {
         cleanAllDataSet();
 
         for (LineDataSet lineDataSet : combineData.getLineData()) {
-            getRenderer().addDataSet(lineDataSet);
+            addDataSet(lineDataSet);
         }
         for (BarDataSet barDataSet : combineData.getBarData()) {
-            getRenderer().addDataSet(barDataSet);
+            addDataSet(barDataSet);
         }
         for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
-            getRenderer().addDataSet(candlestickDataSet);
+            addDataSet(candlestickDataSet);
         }
 
         //this.getRenderer().getChartData()
