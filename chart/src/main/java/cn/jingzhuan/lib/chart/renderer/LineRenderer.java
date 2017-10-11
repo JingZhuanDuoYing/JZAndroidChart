@@ -183,7 +183,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         // draw shader area
-        if (lineDataSet.getShader() != null) {
+        if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
             mRenderPaint.setStyle(Paint.Style.FILL);
             Path shaderPath = new Path(path);
             shaderPath.lineTo(lineDataSet.getValues().get(lineDataSet.getValues().size() - 1).getX(), mContentRect.bottom);
