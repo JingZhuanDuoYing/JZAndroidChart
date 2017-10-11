@@ -53,15 +53,16 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
         mYMax = -Float.MAX_VALUE;
         mYMin = Float.MAX_VALUE;
+
+        mViewportYMax = -Float.MAX_VALUE;
+        mViewportYMin = Float.MAX_VALUE;
+
         mXMax = -Float.MAX_VALUE;
         mXMin = Float.MAX_VALUE;
 
         for (BarValue e : getVisiblePoints(viewport)) {
             calcMinMaxY(e);
         }
-
-        mViewportYMax = mYMax;
-        mViewportYMin = mYMin;
 
     }
 
@@ -81,8 +82,8 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         if (e == null) return;
 
         for (float v : e.getValues()) {
-            if (v < mYMin) mYMin = v;
-            if (v > mYMax) mYMax = v;
+            if (v < mViewportYMin) mViewportYMin = v;
+            if (v > mViewportYMax) mViewportYMax = v;
         }
     }
 

@@ -22,11 +22,11 @@ public class BarValue implements Value {
     }
 
     public BarValue(float yValue) {
-        this.yValues = new float[] { yValue };
+        this.yValues = new float[] { yValue, 0f };
     }
 
     public BarValue(float yValue, int color) {
-        this.yValues = new float[] { yValue };
+        this.yValues = new float[] { yValue, 0f };
         this.mColor = color;
     }
 
