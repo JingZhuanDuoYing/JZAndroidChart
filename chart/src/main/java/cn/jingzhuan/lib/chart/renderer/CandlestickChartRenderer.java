@@ -121,25 +121,29 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         candleWidth = mContentRect.width() / candlestickDataSet.getVisibleCount(mViewport);
       }
 
-      float xPosition = mContentRect.left + candleWidth * 0.5f
-          + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f)  - mViewport.left) / mViewport.width();
+      //float xPosition = mContentRect.left + candleWidth * 0.5f
+      //    + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f)  - mViewport.left) / mViewport.width();
+
+      float xPosition = getDrawX(i / (valueCount + 0f));
 
       float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
       float lowY   = (max - candlestick.getLow())   / (max - min) * mContentRect.height();
       float openY  = (max - candlestick.getOpen())  / (max - min) * mContentRect.height();
       float closeY = (max - candlestick.getClose()) / (max - min) * mContentRect.height();
 
-      mBodyBuffers[0] = xPosition - candleWidth * 0.4f;
+      mBodyBuffers[0] = xPosition;
       mBodyBuffers[1] = closeY;
-      mBodyBuffers[2] = xPosition + candleWidth * 0.4f;
+      mBodyBuffers[2] = xPosition + candleWidth;
       mBodyBuffers[3] = openY;
 
-      mUpperShadowBuffers[0] = xPosition;
-      mUpperShadowBuffers[2] = xPosition;
-      mLowerShadowBuffers[0] = xPosition;
-      mLowerShadowBuffers[2] = xPosition;
+      final float candlestickCenterX = xPosition + candleWidth * 0.5f;
 
-      candlestick.setX(xPosition);
+      mUpperShadowBuffers[0] = candlestickCenterX;
+      mUpperShadowBuffers[2] = candlestickCenterX;
+      mLowerShadowBuffers[0] = candlestickCenterX;
+      mLowerShadowBuffers[2] = candlestickCenterX;
+
+      candlestick.setX(candlestickCenterX);
       candlestick.setY(closeY);
 
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
