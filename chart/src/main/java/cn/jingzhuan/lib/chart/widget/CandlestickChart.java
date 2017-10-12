@@ -38,7 +38,6 @@ public class CandlestickChart extends BaseChart {
     super.initChart();
 
     mRenderer = new CandlestickChartRenderer(this);
-    mRenderer.getChartData().setChart(this);
   }
 
 

@@ -56,34 +56,6 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void setMinMax() {
-        leftMin = Float.MAX_VALUE;
-        leftMax = -Float.MAX_VALUE;
-        rightMin = Float.MAX_VALUE;
-        rightMax = -Float.MAX_VALUE;
-
-        for (T t : getDataSets()) {
-
-            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
-                if (t.getViewportYMax() > leftMax) {
-                    leftMax = t.getViewportYMax();
-                }
-                if (t.getViewportYMin() < leftMin) {
-                    leftMin = t.getViewportYMin();
-                }
-            }
-            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
-                if (t.getViewportYMax() > rightMax) {
-                    rightMax = t.getViewportYMax();
-                }
-                if (t.getViewportYMin() < rightMin) {
-                    rightMin = t.getViewportYMin();
-                }
-            }
-
-            if (t.getEntryCount() > entryCount) {
-                entryCount = t.getEntryCount();
-            }
-        }
         if (leftAxis != null && leftMin != Float.MAX_VALUE) {
             leftAxis.setYMin(leftMin);
             leftAxis.setYMax(leftMax);
@@ -95,7 +67,12 @@ public class ChartData<T extends IDataSet> {
     }
 
     public void calcMaxMin(Viewport viewport, Rect content) {
-        for (T t : chartData) {
+        leftMin = Float.MAX_VALUE;
+        leftMax = -Float.MAX_VALUE;
+        rightMin = Float.MAX_VALUE;
+        rightMax = -Float.MAX_VALUE;
+
+        for (T t : getDataSets()) {
             t.calcMinMax(viewport);
             if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
                 leftMax = Math.max(leftMax, t.getViewportYMax());
@@ -109,14 +86,7 @@ public class ChartData<T extends IDataSet> {
                 entryCount = t.getEntryCount();
             }
         }
-        if (leftAxis != null && leftMin != Float.MAX_VALUE) {
-            leftAxis.setYMin(leftMin);
-            leftAxis.setYMax(leftMax);
-        }
-        if (rightAxis != null && rightMin != Float.MAX_VALUE) {
-            rightAxis.setYMin(rightMin);
-            rightAxis.setYMax(rightMax);
-        }
+        setMinMax();
     }
 
     public float getLeftMin() {

@@ -260,6 +260,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   }
 
   @Override public void calcDataSetMinMax() {
-    chartData.calcMaxMin(mViewport, mContentRect);
+    getChartData().calcMaxMin(mViewport, mContentRect);
   }
 }

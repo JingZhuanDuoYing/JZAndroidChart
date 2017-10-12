@@ -39,7 +39,7 @@ public class BarValue implements Value {
     }
 
     public void setValues(float yValue) {
-        this.yValues = new float[] { yValue };
+        this.yValues = new float[] { yValue, 0f };
     }
 
     public int getValueCount() {
