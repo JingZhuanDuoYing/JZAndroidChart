@@ -32,11 +32,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
 
-        //onViewportChange(new Viewport());
-
         setAxisDependency(depsAxis);
-
-        //setMinMax(new Viewport());
     }
 
     public int getLineThickness() {
@@ -71,6 +67,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
     public void calcViewportY(Viewport viewport) {
+
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
