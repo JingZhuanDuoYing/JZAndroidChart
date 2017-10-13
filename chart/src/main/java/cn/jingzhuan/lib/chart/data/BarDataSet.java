@@ -19,6 +19,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
     private float mBarWidth = 20;
     private boolean mAutoBarWidth = false;
     private int mForceValueCount = -1;
+    private float strokeThickness = 2;
 
     public BarDataSet(List<BarValue> barValues) {
         this(barValues, AxisY.DEPENDENCY_BOTH);
@@ -143,5 +144,13 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
     public int getForceValueCount() {
         return mForceValueCount;
+    }
+
+    public float getStrokeThickness() {
+        return strokeThickness;
+    }
+
+    public void setStrokeThickness(float strokeThickness) {
+        this.strokeThickness = strokeThickness;
     }
 }

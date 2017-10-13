@@ -79,7 +79,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
         float lMax, float lMin, float rMax, float rMin) {
 
-        mRenderPaint.setStrokeWidth(barDataSet.getBarWidth());
+        mRenderPaint.setStrokeWidth(barDataSet.getStrokeThickness());
         mRenderPaint.setStyle(Paint.Style.FILL);
 
         int valueCount = barDataSet.getEntryCount();
@@ -106,6 +106,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             BarValue barValue = barDataSet.getEntryForIndex(i);
 
+            if (barValue.getValues().length < 1 || Float.isNaN(barValue.getValues()[0])) continue;
+
             if (barValue.getColor() != 0) {
                 mRenderPaint.setColor(barValue.getColor());
             } else {
@@ -125,12 +127,15 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 barValue.setX(x + width * 0.5f);
                 barValue.setY(top);
 
+                mRenderPaint.setStyle(barValue.getPaintStyle());
+
                 canvas.drawRect(x,
                         top,
                         x + width,
                         bottom, mRenderPaint);
             }
         }
+        mRenderPaint.setStyle(Paint.Style.FILL);
     }
 
     private float calcHeight(float value, float max, float min) {

@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Paint;
+
 /**
  * Created by Donglua on 17/8/1.
  */
@@ -11,6 +13,7 @@ public class BarValue implements Value {
 
     private float x;
     private float y;
+    private Paint.Style mPaintStyle = Paint.Style.FILL;
 
     public BarValue(float[] yValues) {
         this.yValues = yValues;
@@ -19,6 +22,29 @@ public class BarValue implements Value {
     public BarValue(float[] yValues, int color) {
         this.yValues = yValues;
         this.mColor = color;
+    }
+
+    public BarValue(float value1, float value2, int color) {
+        this.yValues = new float[] {value1, value2};
+        this.mColor = color;
+    }
+
+    public BarValue(float value1, float value2, int color, Paint.Style paintStyle) {
+        this.yValues = new float[] {value1, value2};
+        this.mColor = color;
+        this.mPaintStyle = paintStyle;
+    }
+
+    public BarValue(float value, int color, Paint.Style paintStyle) {
+        this.yValues = new float[] {value, 0f};
+        this.mColor = color;
+        this.mPaintStyle = paintStyle;
+    }
+
+    public BarValue(float[] values, int color, Paint.Style paintStyle) {
+        this.yValues = values;
+        this.mColor = color;
+        this.mPaintStyle = paintStyle;
     }
 
     public BarValue(float yValue) {
@@ -72,4 +98,13 @@ public class BarValue implements Value {
     public void setY(float y) {
         this.y = y;
     }
+
+    public void setPaintStyle(Paint.Style mPaintStyle) {
+        this.mPaintStyle = mPaintStyle;
+    }
+
+    public Paint.Style getPaintStyle() {
+        return mPaintStyle;
+    }
+
 }
