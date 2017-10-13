@@ -99,7 +99,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void removeDataSet(AbstractDataSet dataSet) {
 
         combineData.remove(dataSet);
-        combineData.calcDataSetMinMax(mViewport, mContentRect);
+        calcDataSetMinMax();
     }
 
     @Override

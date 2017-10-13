@@ -29,17 +29,17 @@ public class MinuteLine extends LineDataSet {
         this.mLastClose = lastClose;
     }
 
-    @Override
-    public void calcMinMax(Viewport viewport) {
-        super.calcMinMax(viewport);
-
-        if (mLastClose > 0) {
-            float maxDiff = Math.max(Math.abs(mYMin - mLastClose), Math.abs(mYMax - mLastClose));
-            maxDiff = Math.max(mLastClose * 0.01f, maxDiff);
-            mYMin = mLastClose - maxDiff;
-            mYMax = mLastClose + maxDiff;
-        }
-    }
+    //@Override
+    //public void calcMinMax(Viewport viewport) {
+    //    super.calcMinMax(viewport);
+    //
+    //    if (mLastClose > 0) {
+    //        float maxDiff = Math.max(Math.abs(mYMin - mLastClose), Math.abs(mYMax - mLastClose));
+    //        maxDiff = Math.max(mLastClose * 0.01f, maxDiff);
+    //        mYMin = mLastClose - maxDiff;
+    //        mYMax = mLastClose + maxDiff;
+    //    }
+    //}
 
     @Override
     public void calcViewportY(Viewport viewport) {

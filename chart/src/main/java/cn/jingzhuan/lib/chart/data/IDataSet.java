@@ -13,10 +13,6 @@ public interface IDataSet {
 
   int getEntryCount();
 
-  float getYMin();
-
-  float getYMax();
-
   float getViewportYMin();
 
   float getViewportYMax();

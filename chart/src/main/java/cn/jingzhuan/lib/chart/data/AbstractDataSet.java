@@ -17,26 +17,16 @@ import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
  */
 
 public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
-
-    /**
-     * maximum y-value in the value array across all axes
-     */
-    protected float mYMax = -Float.MAX_VALUE;
-
-    /**
-     * the minimum y-value in the value array across all axes
-     */
-    protected float mYMin = Float.MAX_VALUE;
-
-    /**
-     * maximum x-value in the value array
-     */
-    protected float mXMax = -Float.MAX_VALUE;
-
-    /**
-     * minimum x-value in the value array
-     */
-    protected float mXMin = Float.MAX_VALUE;
+    //
+    ///**
+    // * maximum y-value in the value array across all axes
+    // */
+    //protected float mYMax = -Float.MAX_VALUE;
+    //
+    ///**
+    // * the minimum y-value in the value array across all axes
+    // */
+    //protected float mYMin = Float.MAX_VALUE;
 
     protected float mViewportYMin = Float.MAX_VALUE;
     protected float mViewportYMax = -Float.MAX_VALUE;
@@ -69,14 +59,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     public void setAxisDependency(@AxisDependency int mAxisDependency) {
         this.mAxisDependency = mAxisDependency;
-    }
-
-    public float getYMax() {
-        return mYMax;
-    }
-
-    public float getYMin() {
-        return mYMin;
     }
 
     public float getViewportYMin() {

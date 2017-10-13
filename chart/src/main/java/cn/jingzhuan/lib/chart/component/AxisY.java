@@ -21,8 +21,8 @@ public class AxisY extends Axis {
     public final static int DEPENDENCY_LEFT = 23;
     public final static int DEPENDENCY_RIGHT = 24;
     public final static int DEPENDENCY_BOTH = 25;
-    private float mYMin = Integer.MAX_VALUE;
-    private float mYMax = -Integer.MAX_VALUE;
+    private float mYMin = Float.MAX_VALUE;
+    private float mYMax = -Float.MAX_VALUE;
 
     private LabelColorSetter mLabelColorSetter;
 

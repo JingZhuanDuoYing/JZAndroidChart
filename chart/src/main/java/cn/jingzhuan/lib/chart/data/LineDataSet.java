@@ -32,11 +32,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null)
             mPointValues = new ArrayList<>();
 
-        //onViewportChange(new Viewport());
-
         setAxisDependency(depsAxis);
-
-        //setMinMax(new Viewport());
     }
 
     public int getLineThickness() {
@@ -63,11 +59,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null || mPointValues.isEmpty())
             return;
 
-        mYMax = -Float.MAX_VALUE;
-        mYMin = Float.MAX_VALUE;
-        mXMax = -Float.MAX_VALUE;
-        mXMin = Float.MAX_VALUE;
-
         //for (PointValue e : mPointValues) {
         //    setMinMax(e);
         //}
@@ -76,6 +67,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
     public void calcViewportY(Viewport viewport) {
+
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
@@ -96,20 +88,20 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
 
-    /**
-     * Updates the min and max x and y value of this DataSet based on the given Entry.
-     *
-     * @param e
-     */
-    public void calcMinMax(PointValue e) {
-
-        if (e == null)
-            return;
-
-        calcMinMaxX(e);
-
-        calcMinMaxY(e);
-    }
+    ///**
+    // * Updates the min and max x and y value of this DataSet based on the given Entry.
+    // *
+    // * @param e
+    // */
+    //public void calcMinMax(PointValue e) {
+    //
+    //    if (e == null)
+    //        return;
+    //
+    //    calcMinMaxX(e);
+    //
+    //    calcMinMaxY(e);
+    //}
 
     protected void calcViewportMinMax(PointValue e) {
         if (e.getValue() < mViewportYMin)
@@ -119,23 +111,23 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
             mViewportYMax = e.getValue();
     }
 
-    protected void calcMinMaxX(PointValue e) {
+    //protected void calcMinMaxX(PointValue e) {
+    //
+    //    if (e.getX() < mXMin)
+    //        mXMin = e.getX();
+    //
+    //    if (e.getX() > mXMax)
+    //        mXMax = e.getX();
+    //}
 
-//        if (e.getX() < mXMin)
-//            mXMin = e.getX();
-//
-//        if (e.getX() > mXMax)
-//            mXMax = e.getX();
-    }
-
-    protected void calcMinMaxY(PointValue e) {
-
-        if (e.getValue() < mYMin)
-            mYMin = e.getValue();
-
-        if (e.getValue() > mYMax)
-            mYMax = e.getValue();
-    }
+    //protected void calcMinMaxY(PointValue e) {
+    //
+    //    if (e.getValue() < mYMin)
+    //        mYMin = e.getValue();
+    //
+    //    if (e.getValue() > mYMax)
+    //        mYMax = e.getValue();
+    //}
 
 
     @Override
@@ -148,7 +140,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
             mPointValues = new ArrayList<>();
         }
 
-        calcMinMax(e);
+        calcViewportMinMax(e);
 
         // add the entry
         return mPointValues.add(e);

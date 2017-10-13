@@ -7,7 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -27,6 +29,14 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     public BarChartRenderer(final Chart chart) {
         super(chart);
+
+        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
+            @Override
+            public void onViewportChange(Viewport viewport) {
+                mViewport = viewport;
+                calcDataSetMinMax();
+            }
+        });
 
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
@@ -57,22 +67,36 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData) {
-        for (BarDataSet dataSet : getDataSet()) {
+        for (BarDataSet dataSet : chartData.getDataSets()) {
             if (dataSet.isVisible()) {
-                drawBarDataSet(canvas, dataSet);
+                drawBarDataSet(canvas, dataSet,
+                    chartData.getLeftMax(), chartData.getLeftMin(),
+                    chartData.getRightMax(), chartData.getRightMin());
             }
         }
     }
 
-    private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet) {
+    private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
+        float lMax, float lMin, float rMax, float rMin) {
 
         mRenderPaint.setStrokeWidth(barDataSet.getBarWidth());
         mRenderPaint.setStyle(Paint.Style.FILL);
 
         int valueCount = barDataSet.getEntryCount();
 
-        float min = barDataSet.getViewportYMin();
-        float max = barDataSet.getViewportYMax();
+        float min, max;
+        switch (barDataSet.getAxisDependency()) {
+            case AxisY.DEPENDENCY_RIGHT:
+                min = rMin;
+                max = rMax;
+                break;
+            case AxisY.DEPENDENCY_BOTH:
+            case AxisY.DEPENDENCY_LEFT:
+            default:
+                min = lMin;
+                max = lMax;
+                break;
+        }
 
         float width = barDataSet.getBarWidth();
         if (barDataSet.isAutoBarWidth()) {
@@ -91,13 +115,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             float x = getDrawX(i / (valueCount + 0f));
 
             float top;
-            float bottom = calcHeight(0f, max, min);
+            float bottom = calcHeight(0, max, min);
 
             if (barValue.getValueCount() > 0) {
 
                 top = calcHeight(barValue.getValues()[0], max, min);
-
-                if (barValue.getValueCount() >= 2) bottom = calcHeight(barValue.getValues()[1], max, min);
+                if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
 
                 barValue.setX(x + width * 0.5f);
                 barValue.setY(top);
@@ -142,18 +165,19 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     public void addDataSet(BarDataSet dataSet) {
         if (dataSet == null) return;
         mBarDataSets.add(dataSet);
-        mBarDataSets.setMinMax();
+        calcDataSetMinMax();
     }
 
     @Override public void removeDataSet(BarDataSet dataSet) {
         if (dataSet == null) return;
         mBarDataSets.remove(dataSet);
-        mBarDataSets.setMinMax();
+        calcDataSetMinMax();
+
     }
 
     @Override public void clearDataSet() {
         mBarDataSets.clear();
-        mBarDataSets.setMinMax();
+        calcDataSetMinMax();
     }
 
     @Override
@@ -167,8 +191,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     }
 
     @Override public void calcDataSetMinMax() {
-        for (BarDataSet barDataSet : getDataSet()) {
-            barDataSet.calcMinMax(mViewport);
-        }
+        getChartData().calcMaxMin(mViewport, mContentRect);
     }
 }

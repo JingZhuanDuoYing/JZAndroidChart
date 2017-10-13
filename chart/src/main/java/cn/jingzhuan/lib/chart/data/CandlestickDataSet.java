@@ -23,7 +23,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mNeutralColor = Color.WHITE;    // 十字线
   private int mLimitUpColor = Color.TRANSPARENT;
 
-  private float mViewportWidth = 1f;
   private int maxVisibleEntry = 100;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
@@ -40,11 +39,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     if (candlestickValues == null || candlestickValues.isEmpty())
       return;
-
-    //mYMax = -Float.MAX_VALUE;
-    //mYMin = Float.MAX_VALUE;
-    //mXMax = -Float.MAX_VALUE;
-    //mXMin = Float.MAX_VALUE;
 
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
@@ -77,21 +71,12 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return candlestickValues.subList(from, to);
   }
 
-  public void calcMinMaxY(CandlestickValue e) {
-    if (e.getLow() < mYMin)
-      mYMin = e.getLow();
-
-    if (e.getHigh() > mYMax)
-      mYMax = e.getHigh();
-  }
-
   @Override public int getEntryCount() {
     return candlestickValues.size();
   }
 
   @Override public void setValues(List<CandlestickValue> values) {
     this.candlestickValues = values;
-    //setMinMax();
   }
 
   @Override public List<CandlestickValue> getValues() {
@@ -106,7 +91,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
       candlestickValues = new ArrayList<>();
     }
 
-    calcMinMaxY(e);
+    calcViewportMinMax(e);
 
     // add the entry
     return candlestickValues.add(e);
@@ -115,7 +100,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   @Override public boolean removeEntry(CandlestickValue e) {
     if (e == null) return false;
 
-    calcMinMaxY(e);
+    calcViewportMinMax(e);
 
     return candlestickValues.remove(e);
   }
@@ -126,20 +111,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   @Override public CandlestickValue getEntryForIndex(int index) {
     return candlestickValues.get(index);
-  }
-
-  public void onViewportChange(Viewport viewport, Rect content) {
-
-    //mViewport = viewport;
-
-    boolean needCalcCandleWidth = Float.compare(viewport.width(), mViewportWidth) != 0;
-
-    calcMinMax(viewport);
-
-    if (needCalcCandleWidth) {
-      mCandleWidth = content.width() / (getVisibleCount(viewport) + 1);
-    }
-    mViewportWidth = viewport.width();
   }
 
   public void setAutoWidth(boolean mAutoWidth) {
@@ -176,6 +147,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public int getNeutralColor() {
     return mNeutralColor;
+  }
+
+  public void setNeutralColor(int mNeutralColor) {
+    this.mNeutralColor = mNeutralColor;
   }
 
   public void setLimitUpColor(int mLimitUpColor) {

@@ -26,13 +26,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
     public BarDataSet(List<BarValue> mBarValues, @AxisDependency int axisDependency) {
         this.mBarValues = mBarValues;
-
-        calcMinMax(new Viewport());
-
         setAxisDependency(axisDependency);
-    }
-
-    public BarDataSet() {
     }
 
     @Override
@@ -51,14 +45,8 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         if (mBarValues == null || mBarValues.isEmpty())
             return;
 
-        mYMax = -Float.MAX_VALUE;
-        mYMin = Float.MAX_VALUE;
-
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
-
-        mXMax = -Float.MAX_VALUE;
-        mXMin = Float.MAX_VALUE;
 
         for (BarValue e : getVisiblePoints(viewport)) {
             calcMinMaxY(e);
@@ -82,8 +70,8 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         if (e == null) return;
 
         for (float v : e.getValues()) {
-            if (v < mViewportYMin) mViewportYMin = v;
-            if (v > mViewportYMax) mViewportYMax = v;
+            mViewportYMin = Math.min(mViewportYMin, v);
+            mViewportYMax = Math.max(mViewportYMax, v);
         }
     }
 
