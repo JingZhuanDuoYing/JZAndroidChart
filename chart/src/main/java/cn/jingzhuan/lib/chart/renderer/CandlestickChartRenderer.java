@@ -48,14 +48,13 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         for (CandlestickDataSet dataSet : getDataSet()) {
           if (dataSet.isHighlightedEnable()) {
 
-            float candleWidth = dataSet.getCandleWidth();
             float valueCount = dataSet.getEntryCount();
             int index = 0;
             float xPosition = x;
             float yPosition = -1;
             if (x > mContentRect.left) {
-              index = (int) (((x - mContentRect.left + candleWidth * 0.5f) * mViewport.width()
-                  / (mContentRect.width() - candleWidth) + mViewport.left) * (valueCount - 1f));
+              index =
+                  (int) (((x - mContentRect.left) * mViewport.width() / mContentRect.width() + mViewport.left) * valueCount);
 
               if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
 
@@ -120,9 +119,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       if (candlestickDataSet.isAutoWidth()) {
         candleWidth = mContentRect.width() / candlestickDataSet.getVisibleCount(mViewport);
       }
-
-      //float xPosition = mContentRect.left + candleWidth * 0.5f
-      //    + (mContentRect.width() - candleWidth) * (i / (valueCount - 1f)  - mViewport.left) / mViewport.width();
 
       float xPosition = getDrawX(i / (valueCount + 0f));
 
