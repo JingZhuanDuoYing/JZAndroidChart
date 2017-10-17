@@ -10,17 +10,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.FloatRange;
-import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -308,7 +304,7 @@ public abstract class Chart extends View {
             if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
             float spanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
-            float spanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
+            //float spanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
 
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
 //            float newHeight = lastSpanY / spanY * mCurrentViewport.height();
@@ -337,7 +333,7 @@ public abstract class Chart extends View {
 //            mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
             mCurrentViewport.constrainViewport();
             //ViewCompat.postInvalidateOnAnimation(Chart.this);
-            if (mScaleXEnable) notifyViewportChange();
+            if (mScaleXEnable) triggerViewportChange();
             lastSpanX = spanX;
 //            lastSpanY = spanY;
 
@@ -451,7 +447,7 @@ public abstract class Chart extends View {
 
             onTouchPoint(e2.getX(), e2.getY());
 
-            //notifyViewportChange();
+            //triggerViewportChange();
 
             return true;
         }
@@ -468,7 +464,7 @@ public abstract class Chart extends View {
         }
     };
 
-    protected void notifyViewportChange() {
+    protected void triggerViewportChange() {
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
         }
@@ -500,7 +496,6 @@ public abstract class Chart extends View {
                 mContentRect.width() / 2,
                 mContentRect.height() / 2);
         ViewCompat.postInvalidateOnAnimation(this);
-        //notifyViewportChange();
     }
 
     /**
@@ -526,7 +521,7 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        notifyViewportChange();
+        triggerViewportChange();
     }
 
     /**
@@ -539,7 +534,7 @@ public abstract class Chart extends View {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        notifyViewportChange();
+        triggerViewportChange();
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -593,7 +588,7 @@ public abstract class Chart extends View {
 
         mZoomFocalPoint.set(forceX,
             (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        notifyViewportChange();
+        triggerViewportChange();
     }
 
     @Override
@@ -673,8 +668,7 @@ public abstract class Chart extends View {
         }
 
         if (needsInvalidate) {
-            //ViewCompat.postInvalidateOnAnimation(this);
-            notifyViewportChange();
+            triggerViewportChange();
         }
     }
 
@@ -698,7 +692,8 @@ public abstract class Chart extends View {
         y = Math.max(Viewport.AXIS_Y_MIN + curHeight, Math.min(y, Viewport.AXIS_Y_MAX));
 
         mCurrentViewport.set(x, y - curHeight, x + curWidth, y);
-        notifyViewportChange();
+        mCurrentViewport.constrainViewport();
+        triggerViewportChange();
     }
 
     /**
@@ -709,7 +704,7 @@ public abstract class Chart extends View {
     public void setCurrentViewport(RectF viewport) {
         mCurrentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom);
         mCurrentViewport.constrainViewport();
-        notifyViewportChange();
+        triggerViewportChange();
     }
 
     @Override
@@ -789,7 +784,7 @@ public abstract class Chart extends View {
 
         if (needsInvalidate) {
             //ViewCompat.postInvalidateOnAnimation(this);
-            notifyViewportChange();
+            triggerViewportChange();
         }
     }
 
@@ -858,39 +853,41 @@ public abstract class Chart extends View {
     }
 
     public void moveLeft() {
-        moveLeft(0.1f);
+        moveLeft(0.2f);
     }
 
     public void moveRight() {
-        moveRight(0.1f);
+        moveRight(0.2f);
     }
 
     public void moveLeft(@FloatRange(from = 0f, to = 1.0f) float percent) {
-        float moveDistance = mCurrentViewport.width() * percent;
-        boolean canMoveLeft = (mCurrentViewport.left - moveDistance > Viewport.AXIS_X_MIN);
+        releaseEdgeEffects();
+        computeScrollSurfaceSize(mSurfaceSizeBuffer);
+        mScrollerStartViewport.set(mCurrentViewport);
 
-        if (canMoveLeft) {
-            mCurrentViewport.left = mCurrentViewport.left - moveDistance;
-            mCurrentViewport.right = mCurrentViewport.right - moveDistance;
-        } else {
-            mCurrentViewport.left = mCurrentViewport.left - moveDistance;
+        float moveDistance = getWidth() * percent;
+        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
+            / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
         }
-        mCurrentViewport.constrainViewport();
-        notifyViewportChange();
+        mScroller.startScroll(startX, 0, (int) -moveDistance, 0, 300);
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void moveRight(@FloatRange(from = 0f, to = 1.0f) float percent) {
-        float moveDistance = mCurrentViewport.width() * percent;
-        boolean canMoveRight = (mCurrentViewport.right + moveDistance < Viewport.AXIS_X_MAX);
+        releaseEdgeEffects();
+        computeScrollSurfaceSize(mSurfaceSizeBuffer);
+        mScrollerStartViewport.set(mCurrentViewport);
 
-        if (canMoveRight) {
-            mCurrentViewport.left = mCurrentViewport.left + moveDistance;
-            mCurrentViewport.right = mCurrentViewport.right + moveDistance;
-        } else {
-            mCurrentViewport.right = mCurrentViewport.right + moveDistance;
+        float moveDistance = getWidth() * percent;
+        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
+            / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
         }
-        mCurrentViewport.constrainViewport();
-        notifyViewportChange();
+        mScroller.startScroll(startX, 0, (int) moveDistance, 0, 300);
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void setInternalViewportChangeListener(

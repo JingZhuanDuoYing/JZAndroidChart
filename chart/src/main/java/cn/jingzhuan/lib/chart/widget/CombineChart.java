@@ -55,7 +55,7 @@ public class CombineChart extends BaseChart {
 
     public void addDataSet(CandlestickDataSet candlestickDataSet) {
         getRenderer().addDataSet(candlestickDataSet);
-        notifyViewportChange();
+        triggerViewportChange();
     }
 
     public void setDataSet(BarDataSet barDataSet) {
