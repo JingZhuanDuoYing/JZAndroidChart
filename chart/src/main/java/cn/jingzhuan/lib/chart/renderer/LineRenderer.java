@@ -6,8 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
@@ -43,7 +41,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             @Override
             public void touch(float x, float y) {
                 for (LineDataSet line : getDataSet()) {
-                    if (line.isHighlightedEnable()) {
+                    if (line.isHighlightedVerticalEnable()) {
                         float xPositionMax = line.getEntryForIndex(line.getValues().size() - 1).getX();
 
                         int index = 0;

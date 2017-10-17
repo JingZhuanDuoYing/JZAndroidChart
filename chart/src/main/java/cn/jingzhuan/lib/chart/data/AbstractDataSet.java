@@ -2,31 +2,16 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 
-import cn.jingzhuan.lib.chart.Chart;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.component.AbstractComponent;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
-
-import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
 
 /**
  * Created by Donglua on 17/7/20.
  */
 
 public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
-    //
-    ///**
-    // * maximum y-value in the value array across all axes
-    // */
-    //protected float mYMax = -Float.MAX_VALUE;
-    //
-    ///**
-    // * the minimum y-value in the value array across all axes
-    // */
-    //protected float mYMin = Float.MAX_VALUE;
 
     protected float mViewportYMin = Float.MAX_VALUE;
     protected float mViewportYMax = -Float.MAX_VALUE;
@@ -36,7 +21,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     private int mColor = Color.GRAY;
 
 
-    private boolean isHighlightedEnable = false;
+    private boolean isHighlightedVerticalEnable = false;
     private boolean isHighlightedHorizontalEnable = false;
 
 
@@ -78,12 +63,12 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
 
-    public void setHighlightedEnable(boolean highlightedEnable) {
-        isHighlightedEnable = highlightedEnable;
+    public void setHighlightedVerticalEnable(boolean highlightedVerticalEnable) {
+        isHighlightedVerticalEnable = highlightedVerticalEnable;
     }
 
-    public boolean isHighlightedEnable() {
-        return isHighlightedEnable;
+    public boolean isHighlightedVerticalEnable() {
+        return isHighlightedVerticalEnable;
     }
 
     public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {

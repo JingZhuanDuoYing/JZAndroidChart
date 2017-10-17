@@ -7,8 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 
-import android.util.Log;
-import android.widget.TextView;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -46,7 +44,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       @Override
       public void touch(float x, float y) {
         for (CandlestickDataSet dataSet : getDataSet()) {
-          if (dataSet.isHighlightedEnable()) {
+          if (dataSet.isHighlightedVerticalEnable()) {
 
             float valueCount = dataSet.getEntryCount();
             int index = 0;
@@ -216,15 +214,24 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     for (Highlight highlight : highlights) {
 
-      canvas.drawLine(highlight.getX(),
-                      mContentRect.top,
-                      highlight.getX(),
-                      mContentRect.bottom, mRenderPaint);
+      for (CandlestickDataSet dataSet : getDataSet()) {
+        if (dataSet.isHighlightedVerticalEnable()) {
+          canvas.drawLine(highlight.getX(),
+                          mContentRect.top,
+                          highlight.getX(),
+                          mContentRect.bottom,
+                          mRenderPaint);
+        }
+        if (dataSet.isHighlightedHorizontalEnable()) {
+          canvas.drawLine(mContentRect.left,
+                          highlight.getY(),
+                          mContentRect.right,
+                          highlight.getY(),
+                          mRenderPaint);
+        }
+      }
 
-      canvas.drawLine(mContentRect.left,
-                      highlight.getY(),
-                      mContentRect.right,
-                      highlight.getY(), mRenderPaint);
+
     }
 
     mRenderPaint.setPathEffect(null);

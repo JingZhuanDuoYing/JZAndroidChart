@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -17,7 +16,6 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
-import cn.jingzhuan.lib.chart.data.LineDataSet;
 
 /**
  * Created by Donglua on 17/8/1.
@@ -42,7 +40,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             @Override
             public void touch(float x, float y) {
                 for (BarDataSet dataSet : getDataSet()) {
-                    if (dataSet.isHighlightedEnable()) {
+                    if (dataSet.isHighlightedVerticalEnable()) {
 
                         int index = 0;
                         if (x > mContentRect.left) {

@@ -4,12 +4,10 @@ import android.databinding.ViewDataBinding;
 import android.graphics.Color;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
-import cn.jingzhuan.lib.chart.demo.databinding.LayoutCandlestickChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
-import com.airbnb.epoxy.EpoxyDataBindingLayouts;
 import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +121,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
   @Override protected void setDataBindingVariables(ViewDataBinding binding) {
     LayoutCombineChartBinding b = (LayoutCombineChartBinding) binding;
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
-    dataSet.setHighlightedEnable(true);
+    dataSet.setHighlightedVerticalEnable(true);
     dataSet.setMaxVisibleEntry(20);
     b.combineChart.setHighlightColor(Color.BLACK);
     b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);

@@ -77,7 +77,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         }
 
         line = new MinuteLine(values);
-        line.setHighlightedEnable(true);
+        line.setHighlightedVerticalEnable(true);
         line.setHighlightedHorizontalEnable(true);
         line.setLastClose(lastClose);
 
