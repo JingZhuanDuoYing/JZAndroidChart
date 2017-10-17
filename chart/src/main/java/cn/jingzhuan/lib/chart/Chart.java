@@ -371,6 +371,10 @@ public abstract class Chart extends View {
             onTouchPoint(e.getX(), e.getY());
         }
 
+        @Override public void onLongPress(MotionEvent e) {
+            performLongClick();
+        }
+
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             cleanHighlight();
