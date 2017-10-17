@@ -24,6 +24,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mLimitUpColor = Color.TRANSPARENT;
 
   private int maxVisibleEntry = 100;
+  private float strokeThickness = 5;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
@@ -167,5 +168,13 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public void setMaxVisibleEntry(int maxVisibleEntry) {
     this.maxVisibleEntry = maxVisibleEntry;
+  }
+
+  public float getStrokeThickness() {
+    return strokeThickness;
+  }
+
+  public void setStrokeThickness(float strokeThickness) {
+    this.strokeThickness = strokeThickness;
   }
 }

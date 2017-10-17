@@ -99,7 +99,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         break;
     }
 
-    mRenderPaint.setStrokeWidth(5);
+    mRenderPaint.setStrokeWidth(candlestickDataSet.getStrokeThickness());
     mRenderPaint.setColor(candlestickDataSet.getColor());
 
     int valueCount = candlestickDataSet.getEntryCount();
