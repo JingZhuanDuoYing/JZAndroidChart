@@ -110,8 +110,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     for (int i = 0; i < valueCount; i++) {
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
-      mRenderPaint.setStyle(candlestick.getPaintStyle());
-
       float candleWidth = candlestickDataSet.getCandleWidth();
 
       if (candlestickDataSet.isAutoWidth()) {
@@ -155,6 +153,12 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
           mRenderPaint.setColor(candlestick.getColor());
         }
 
+        if (candlestick.getPaintStyle() != null) {
+          mRenderPaint.setStyle(candlestick.getPaintStyle());
+        } else {
+          mRenderPaint.setStyle(candlestickDataSet.getDecreasingPaintStyle());
+        }
+
       } else if (Float.compare(candlestick.getOpen(), candlestick.getClose()) < 0) { // 阳线
 
         mUpperShadowBuffers[1] = highY;
@@ -167,13 +171,18 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         } else {
           mRenderPaint.setColor(candlestick.getColor());
         }
+
+        if (candlestick.getPaintStyle() != null) {
+          mRenderPaint.setStyle(candlestick.getPaintStyle());
+        } else {
+          mRenderPaint.setStyle(candlestickDataSet.getIncreasingPaintStyle());
+        }
       } else {
 
         mUpperShadowBuffers[1] = highY;
         mUpperShadowBuffers[3] = openY;
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = mUpperShadowBuffers[3];
-
 
         if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
           mRenderPaint.setColor(candlestickDataSet.getNeutralColor());

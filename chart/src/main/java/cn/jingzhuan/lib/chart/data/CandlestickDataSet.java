@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
@@ -25,6 +26,8 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   private int maxVisibleEntry = 100;
   private float strokeThickness = 5;
+  private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
+  private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
@@ -176,5 +179,21 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public void setStrokeThickness(float strokeThickness) {
     this.strokeThickness = strokeThickness;
+  }
+
+  public Paint.Style getIncreasingPaintStyle() {
+    return mIncreasingPaintStyle;
+  }
+
+  public void setIncreasingPaintStyle(Paint.Style increasingPaintStyle) {
+    this.mIncreasingPaintStyle = increasingPaintStyle;
+  }
+
+  public Paint.Style getDecreasingPaintStyle() {
+    return mDecreasingPaintStyle;
+  }
+
+  public void setDecreasingPaintStyle(Paint.Style decreasingPaintStyle) {
+    this.mDecreasingPaintStyle = decreasingPaintStyle;
   }
 }

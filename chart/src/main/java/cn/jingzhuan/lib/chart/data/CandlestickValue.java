@@ -19,7 +19,7 @@ public class CandlestickValue implements Value {
   private float x = 0f;
   private float y = 0f;
 
-  private Paint.Style mPaintStyle = Paint.Style.FILL;
+  private Paint.Style mPaintStyle = null;
   private int color = COLOR_NONE;
 
   public CandlestickValue(float high, float low, float open, float close) {
