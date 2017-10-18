@@ -98,7 +98,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         float width = barDataSet.getBarWidth();
         if (barDataSet.isAutoBarWidth()) {
-            width = mContentRect.width() / barDataSet.getVisibleValueCount(mViewport);
+            int visibleValueCount;
+            if (barDataSet.getForceValueCount() > 0) {
+                width = mContentRect.width() / barDataSet.getEntryCount();
+            } else if ((visibleValueCount = barDataSet.getVisibleValueCount(mViewport)) > 0) {
+                width = mContentRect.width() / visibleValueCount;
+            }
         }
 
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
