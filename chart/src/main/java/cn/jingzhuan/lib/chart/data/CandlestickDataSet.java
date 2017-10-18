@@ -2,8 +2,6 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import java.util.ArrayList;
@@ -60,11 +58,11 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
       mViewportYMax = e.getHigh();
   }
 
-  public int getVisibleCount(Viewport viewport) {
+  @Override public int getVisibleValueCount(Viewport viewport) {
     return getVisiblePoints(viewport).size();
   }
 
-  protected List<CandlestickValue> getVisiblePoints(Viewport viewport) {
+  @Override public List<CandlestickValue> getVisiblePoints(Viewport viewport) {
     int from = (int) (viewport.left * candlestickValues.size());
     int to  = (int) (viewport.right * candlestickValues.size());
 

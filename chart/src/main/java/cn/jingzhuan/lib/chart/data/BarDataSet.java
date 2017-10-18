@@ -4,7 +4,6 @@ import cn.jingzhuan.lib.chart.Viewport;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
@@ -53,17 +52,6 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
             calcMinMaxY(e);
         }
 
-    }
-
-    public List<BarValue> getVisiblePoints(Viewport viewport) {
-        int from = (int) (viewport.left * mBarValues.size());
-        int to  = (int) (viewport.right * mBarValues.size());
-
-        return mBarValues.subList(from, to);
-    }
-
-    public int getVisibleValueCount(Viewport viewport) {
-        return getVisiblePoints(viewport).size();
     }
 
     public void calcMinMaxY(BarValue e) {

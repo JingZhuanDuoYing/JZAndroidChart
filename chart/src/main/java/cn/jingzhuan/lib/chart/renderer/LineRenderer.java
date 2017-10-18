@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
@@ -164,20 +165,22 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 break;
         }
 
+        final float width = mContentRect.width() / lineDataSet.getVisibleValueCount(mViewport);
+
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
-            float xV = getDrawX(i / (valueCount - 1f));
-            float yV = (max - point.getValue()) / (max - min) * mContentRect.height();
+            float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
+            float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
-            point.setX(xV);
-            point.setY(yV);
+            point.setX(xPosition);
+            point.setY(yPosition);
 
             if (isFirst) {
                 isFirst = false;
-                path.moveTo(xV, yV);
+                path.moveTo(xPosition, yPosition);
             } else  {
-                path.lineTo(xV, yV);
+                path.lineTo(xPosition, yPosition);
             }
         }
 

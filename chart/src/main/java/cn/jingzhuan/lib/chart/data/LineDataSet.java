@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.component.AxisY;
 
 import static cn.jingzhuan.lib.chart.component.AxisY.*;
 
@@ -181,20 +180,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     public int getForceValueCount() {
         return mForceValueCount;
-    }
-
-
-    //public void onViewportChange(Viewport viewport) {
-    //    this.mViewport = viewport;
-    //
-    //    calcViewportY(viewport);
-    //}
-
-    protected List<PointValue> getVisiblePoints(Viewport viewport) {
-        int from = (int) (viewport.left * mPointValues.size());
-        int to  = (int) (viewport.right * mPointValues.size());
-
-        return mPointValues.subList(from, to);
     }
 
     public Shader getShader() {

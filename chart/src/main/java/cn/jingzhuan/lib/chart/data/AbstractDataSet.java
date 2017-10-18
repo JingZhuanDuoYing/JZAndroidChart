@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -77,6 +78,19 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     public boolean isHighlightedHorizontalEnable() {
         return isHighlightedHorizontalEnable;
+    }
+
+
+
+    public List<T> getVisiblePoints(Viewport viewport) {
+        int from = (int) (viewport.left * getValues().size());
+        int to  = (int) (viewport.right * getValues().size());
+
+        return getValues().subList(from, to);
+    }
+
+    public int getVisibleValueCount(Viewport viewport) {
+        return (int) ((viewport.right - viewport.left) * getEntryCount());
     }
 
 }
