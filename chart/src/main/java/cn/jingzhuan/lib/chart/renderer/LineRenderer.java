@@ -139,7 +139,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
     }
 
-    private void drawDataSet(Canvas canvas, LineDataSet lineDataSet,
+    private void drawDataSet(Canvas canvas, final LineDataSet lineDataSet,
         float lMax, float lMin, float rMax, float rMin) {
 
         mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());

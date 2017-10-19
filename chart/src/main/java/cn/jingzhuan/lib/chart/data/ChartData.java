@@ -4,8 +4,9 @@ import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Donglua on 17/8/2.
@@ -13,41 +14,47 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChartData<T extends IDataSet> {
 
-    private List<T> chartData;
+  private List<T> chartData;
 
-    protected float leftMin = Float.MAX_VALUE;
-    protected float leftMax = -Float.MAX_VALUE;
-    protected float rightMin = Float.MAX_VALUE;
-    protected float rightMax = -Float.MAX_VALUE;
+  protected float leftMin = Float.MAX_VALUE;
+  protected float leftMax = -Float.MAX_VALUE;
+  protected float rightMin = Float.MAX_VALUE;
+  protected float rightMax = -Float.MAX_VALUE;
 
-    private int entryCount = 0;
+  private int entryCount = 0;
 
-    protected AxisY leftAxis;
-    protected AxisY rightAxis;
+  protected AxisY leftAxis;
+  protected AxisY rightAxis;
 
-    public ChartData() {
-        this.chartData = new CopyOnWriteArrayList<>();
+  public ChartData() {
+    this.chartData = Collections.synchronizedList(new ArrayList<T>());
+  }
+
+  public List<T> getDataSets() {
+    if (chartData == null) {
+      chartData = Collections.synchronizedList(new ArrayList<T>());
     }
+    return chartData;
+  }
 
-    public List<T> getDataSets() {
-        if (chartData == null) {
-            chartData = new CopyOnWriteArrayList<>();
-        }
-        return chartData;
+  public boolean add(T e) {
+    if (e == null) return false;
+
+    synchronized (this) {
+      return getDataSets().add(e);
     }
+  }
 
-    public boolean add(T e) {
-        if (e == null) return false;
-
-        return getDataSets().add(e);
+  public boolean remove(T e) {
+    synchronized (this) {
+      return e != null && getDataSets().remove(e);
     }
-
-    public boolean remove(T e) {
-        return e != null && getDataSets().remove(e);
-    }
+  }
 
   public void clear() {
-    getDataSets().clear();
+    synchronized (this) {
+      getDataSets().clear();
+    }
 
     leftMin = Float.MAX_VALUE;
     leftMax = -Float.MAX_VALUE;
@@ -56,77 +63,79 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void setMinMax() {
-        if (leftAxis != null && leftMin != Float.MAX_VALUE) {
-            leftAxis.setYMin(leftMin);
-            leftAxis.setYMax(leftMax);
-        }
-        if (rightAxis != null && rightMin != Float.MAX_VALUE) {
-            rightAxis.setYMin(rightMin);
-            rightAxis.setYMax(rightMax);
-        }
+    if (leftAxis != null && leftMin != Float.MAX_VALUE) {
+      leftAxis.setYMin(leftMin);
+      leftAxis.setYMax(leftMax);
     }
-
-    public void calcMaxMin(Viewport viewport, Rect content) {
-        leftMin = Float.MAX_VALUE;
-        leftMax = -Float.MAX_VALUE;
-        rightMin = Float.MAX_VALUE;
-        rightMax = -Float.MAX_VALUE;
-
-        for (T t : getDataSets()) {
-            t.calcMinMax(viewport);
-            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
-                leftMax = Math.max(leftMax, t.getViewportYMax());
-                leftMin = Math.min(leftMin, t.getViewportYMin());
-            }
-            if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
-                rightMax = Math.max(rightMax, t.getViewportYMax());
-                rightMin = Math.min(rightMin, t.getViewportYMin());
-            }
-            if (t.getEntryCount() > entryCount) {
-                entryCount = t.getEntryCount();
-            }
-        }
-        setMinMax();
+    if (rightAxis != null && rightMin != Float.MAX_VALUE) {
+      rightAxis.setYMin(rightMin);
+      rightAxis.setYMax(rightMax);
     }
+  }
 
-    public float getLeftMin() {
-        return leftMin;
-    }
+  public void calcMaxMin(Viewport viewport, Rect content) {
+    leftMin = Float.MAX_VALUE;
+    leftMax = -Float.MAX_VALUE;
+    rightMin = Float.MAX_VALUE;
+    rightMax = -Float.MAX_VALUE;
 
-    public float getRightMax() {
-        return rightMax;
+    for (T t : getDataSets()) {
+      t.calcMinMax(viewport);
+      if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH
+          || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
+        leftMax = Math.max(leftMax, t.getViewportYMax());
+        leftMin = Math.min(leftMin, t.getViewportYMin());
+      }
+      if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH
+          || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
+        rightMax = Math.max(rightMax, t.getViewportYMax());
+        rightMin = Math.min(rightMin, t.getViewportYMin());
+      }
+      if (t.getEntryCount() > entryCount) {
+        entryCount = t.getEntryCount();
+      }
     }
+    setMinMax();
+  }
 
-    public float getRightMin() {
-        return rightMin;
-    }
+  public float getLeftMin() {
+    return leftMin;
+  }
 
-    public float getLeftMax() {
-        return leftMax;
-    }
+  public float getRightMax() {
+    return rightMax;
+  }
 
-    public void setLeftMin(float leftMin) {
-        this.leftMin = leftMin;
-    }
+  public float getRightMin() {
+    return rightMin;
+  }
 
-    public void setLeftMax(float leftMax) {
-        this.leftMax = leftMax;
-    }
+  public float getLeftMax() {
+    return leftMax;
+  }
 
-    public void setRightMin(float rightMin) {
-        this.rightMin = rightMin;
-    }
+  public void setLeftMin(float leftMin) {
+    this.leftMin = leftMin;
+  }
 
-    public void setRightMax(float rightMax) {
-        this.rightMax = rightMax;
-    }
+  public void setLeftMax(float leftMax) {
+    this.leftMax = leftMax;
+  }
 
-    public int getEntryCount() {
-        return entryCount;
-    }
+  public void setRightMin(float rightMin) {
+    this.rightMin = rightMin;
+  }
 
-    public void setChart(Chart chart) {
-        this.leftAxis = chart.getAxisLeft();
-        this.rightAxis = chart.getAxisRight();
-    }
+  public void setRightMax(float rightMax) {
+    this.rightMax = rightMax;
+  }
+
+  public int getEntryCount() {
+    return entryCount;
+  }
+
+  public void setChart(Chart chart) {
+    this.leftAxis = chart.getAxisLeft();
+    this.rightAxis = chart.getAxisRight();
+  }
 }
