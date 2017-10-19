@@ -7,6 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.BaseChart;
@@ -53,6 +54,10 @@ public class CombineChart extends BaseChart {
         getRenderer().addDataSet(lineDataSet);
     }
 
+    public void addDataSet(ScatterDataSet scatterDataSet) {
+        getRenderer().addDataSet(scatterDataSet);
+    }
+
     public void addDataSet(CandlestickDataSet candlestickDataSet) {
         getRenderer().addDataSet(candlestickDataSet);
         triggerViewportChange();
@@ -74,6 +79,11 @@ public class CombineChart extends BaseChart {
         cleanAllDataSet();
 
         addDataSet(candlestickDataSet);
+    }
+    public void setDataSet(ScatterDataSet scatterDataSet) {
+        cleanAllDataSet();
+
+        addDataSet(scatterDataSet);
     }
 
     public void setLineData(List<LineDataSet> data) {

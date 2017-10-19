@@ -26,6 +26,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     private BarChartRenderer barChartRenderer;
     private LineRenderer lineRenderer;
     private CandlestickChartRenderer candlestickChartRenderer;
+    private ScatterChartRenderer scatterChartRenderer;
 
     private CombineData combineData;
 
@@ -35,6 +36,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer = new LineRenderer(chart);
         barChartRenderer = new BarChartRenderer(chart);
         candlestickChartRenderer = new CandlestickChartRenderer(chart);
+        scatterChartRenderer = new ScatterChartRenderer(chart);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
@@ -48,8 +50,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected void renderDataSet(Canvas canvas) {
 
         barChartRenderer.renderDataSet(canvas, getChartData().getBarChartData());
-        lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
         candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
+        lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
+        scatterChartRenderer.renderDataSet(canvas, getChartData().getScatterChartData());
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
@@ -62,6 +65,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setHighlightColor(highlightColor);
         barChartRenderer.setHighlightColor(highlightColor);
         candlestickChartRenderer.setHighlightColor(highlightColor);
+        scatterChartRenderer.setHighlightColor(highlightColor);
     }
 
     @Override
@@ -77,6 +81,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
         if (candlestickChartRenderer.getDataSet() != null && !candlestickChartRenderer.getDataSet().isEmpty()) {
             candlestickChartRenderer.renderHighlighted(c, highlights);
+        }
+        if (scatterChartRenderer.getDataSet() != null && !scatterChartRenderer.getDataSet().isEmpty()) {
+            scatterChartRenderer.renderHighlighted(c, highlights);
         }
     }
 
