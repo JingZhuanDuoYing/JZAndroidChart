@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
 
@@ -98,6 +99,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
         } else if (dataSet instanceof CandlestickDataSet) {
             candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
+        } else if (dataSet instanceof ScatterDataSet) {
+            scatterChartRenderer.addDataSet((ScatterDataSet) dataSet);
         }
 
         calcDataSetMinMax();

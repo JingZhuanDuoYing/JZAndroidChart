@@ -72,17 +72,18 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
       Log.d("drawDataSet", "drawDataSet x = " + xPosition + ", y = " + yPosition);
 
-      //if (dataSet.getShape() != null) {
-      //  int saveId = canvas.save();
-      //  dataSet.getShape().setBounds((int) xPosition, (int) yPosition, dataSet.getShape().getIntrinsicWidth(), dataSet.getShape().getIntrinsicHeight());
-      //  canvas.translate(xPosition + dataSet.getDrawOffsetX(), yPosition + dataSet.getDrawOffsetY());
-      //  dataSet.getShape().draw(canvas);
-      //  canvas.restoreToCount(saveId);
-      //}
+      if (dataSet.getShape() != null) {
+        int x = (int) (xPosition + dataSet.getDrawOffsetX());
+        int y = (int) (xPosition + dataSet.getDrawOffsetY());
+        dataSet.getShape().setBounds(x,
+                                     y,
+                                     x + dataSet.getShape().getIntrinsicWidth(),
+                                     y + dataSet.getShape().getIntrinsicHeight());
+        int saveId = canvas.save();
+        dataSet.getShape().draw(canvas);
+        canvas.restoreToCount(saveId);
+      }
 
-      mRenderPaint.setColor(Color.BLACK);
-      mRenderPaint.setStrokeWidth(20);
-      canvas.drawPoint(xPosition, yPosition, mRenderPaint);
     }
 
   }
