@@ -16,6 +16,8 @@ public class CandlestickValue implements Value {
   private float open = 0f;
   private float close = 0f;
 
+  private long time = -1;
+
   private float x = 0f;
   private float y = 0f;
 
@@ -28,6 +30,13 @@ public class CandlestickValue implements Value {
     this.open = open;
     this.close = close;
   }
+  public CandlestickValue(float high, float low, float open, float close, long time) {
+    this.high = high;
+    this.low = low;
+    this.open = open;
+    this.close = close;
+    this.time = time;
+  }
 
   public CandlestickValue(float high, float low, float open, float close, int color) {
     this.high = high;
@@ -35,6 +44,15 @@ public class CandlestickValue implements Value {
     this.open = open;
     this.close = close;
     this.color = color;
+  }
+
+  public CandlestickValue(float high, float low, float open, float close, long time, int color) {
+    this.high = high;
+    this.low = low;
+    this.open = open;
+    this.close = close;
+    this.color = color;
+    this.time = time;
   }
 
   public CandlestickValue(float high, float low, float open, float close, Paint.Style mPaintStyle,
@@ -117,5 +135,13 @@ public class CandlestickValue implements Value {
 
   public void setColor(int color) {
     this.color = color;
+  }
+
+  public void setTime(long time) {
+    this.time = time;
+  }
+
+  public long getTime() {
+    return time;
   }
 }
