@@ -60,7 +60,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return candlestickData.add(dataSet);
     }
 
-    public void calcDataSetMinMax(Viewport viewport, Rect content) {
+    @Override public void calcMaxMin(Viewport viewport, Rect content) {
         leftMin = Float.MAX_VALUE;
         leftMax = -Float.MAX_VALUE;
         rightMin = Float.MAX_VALUE;

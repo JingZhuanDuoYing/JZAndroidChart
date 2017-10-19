@@ -102,11 +102,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         calcDataSetMinMax();
     }
 
-    @Override
-    public void calcDataSetMinMax() {
-        combineData.calcDataSetMinMax(mViewport, mContentRect);
-    }
-
     @Override public void clearDataSet() {
         combineData.clear();
 
@@ -114,26 +109,26 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer.clearDataSet();
         candlestickChartRenderer.clearDataSet();
 
-        combineData.getBarChartData().clear();
-        combineData.getLineChartData().clear();
-        combineData.getCandlestickChartData().clear();
+        getChartData().getBarChartData().clear();
+        getChartData().getLineChartData().clear();
+        getChartData().getCandlestickChartData().clear();
 
         calcDataSetMinMax();
     }
 
     public void cleanLineDataSet() {
         lineRenderer.clearDataSet();
-        combineData.getLineChartData().clear();
+        getChartData().getLineChartData().clear();
     }
 
     public void cleanBarDataSet() {
         lineRenderer.clearDataSet();
-        combineData.getBarChartData().clear();
+        getChartData().getBarChartData().clear();
     }
 
     public void cleanCandlestickDataSet() {
         candlestickChartRenderer.clearDataSet();
-        combineData.getCandlestickChartData().clear();
+        getChartData().getCandlestickChartData().clear();
     }
 
     @Override

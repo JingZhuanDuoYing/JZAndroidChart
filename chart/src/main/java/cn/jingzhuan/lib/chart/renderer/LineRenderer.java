@@ -120,15 +120,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         return lineData;
     }
 
-    @Override public void calcDataSetMinMax() {
-        lineData.calcMaxMin(mViewport, mContentRect);
-    }
-
-    @Override
-    protected void renderDataSet(Canvas canvas) {
-        renderDataSet(canvas, getChartData());
-    }
-
     @Override protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
         for (LineDataSet dataSet : getDataSet()) {
             if (dataSet.isVisible()) {

@@ -7,7 +7,7 @@ import android.graphics.Paint;
  * Created by donglua on 8/29/17.
  */
 
-public class CandlestickValue implements Value {
+public class CandlestickValue extends Value {
 
   public final static int COLOR_NONE = Color.TRANSPARENT;
 
@@ -17,9 +17,6 @@ public class CandlestickValue implements Value {
   private float close = 0f;
 
   private long time = -1;
-
-  private float x = 0f;
-  private float y = 0f;
 
   private Paint.Style mPaintStyle = null;
   private int color = COLOR_NONE;
@@ -103,22 +100,6 @@ public class CandlestickValue implements Value {
 
   public void setClose(float close) {
     this.close = close;
-  }
-
-  public void setX(float x) {
-    this.x = x;
-  }
-
-  public float getX() {
-    return x;
-  }
-
-  public void setY(float y) {
-    this.y = y;
-  }
-
-  public float getY() {
-    return y;
   }
 
   public void setPaintStyle(Paint.Style mPaintStyle) {

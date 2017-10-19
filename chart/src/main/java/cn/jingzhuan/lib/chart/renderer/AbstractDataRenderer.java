@@ -82,7 +82,9 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     }
 
 
-    protected abstract void renderDataSet(Canvas canvas);
+    protected void renderDataSet(Canvas canvas) {
+        renderDataSet(canvas, getChartData());
+    }
 
     protected abstract void renderDataSet(Canvas canvas, ChartData<D> chartData);
 
@@ -111,8 +113,9 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     protected abstract List<D> getDataSet();
     public abstract ChartData<D> getChartData();
 
-    public abstract void calcDataSetMinMax();
-
+    protected void calcDataSetMinMax() {
+        getChartData().calcMaxMin(mViewport, mContentRect);
+    }
 
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;

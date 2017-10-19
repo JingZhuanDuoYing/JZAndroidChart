@@ -58,12 +58,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         });
     }
 
-    @Override
-    protected void renderDataSet(Canvas canvas) {
-
-        renderDataSet(canvas, getChartData());
-    }
-
     @Override protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData) {
         for (BarDataSet dataSet : chartData.getDataSets()) {
             if (dataSet.isVisible()) {
@@ -193,7 +187,4 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         return mBarDataSets;
     }
 
-    @Override public void calcDataSetMinMax() {
-        getChartData().calcMaxMin(mViewport, mContentRect);
-    }
 }

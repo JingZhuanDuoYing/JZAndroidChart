@@ -79,10 +79,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     }
   }
 
-  @Override protected void renderDataSet(Canvas canvas) {
-    renderDataSet(canvas, getChartData());
-  }
-
   private void drawDataSet(Canvas canvas, CandlestickDataSet candlestickDataSet,
       float lMax, float lMin, float rMax, float rMin) {
     float min, max;
@@ -239,26 +235,24 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                           mRenderPaint);
         }
       }
-
-
     }
 
     mRenderPaint.setPathEffect(null);
   }
 
   @Override public void addDataSet(CandlestickDataSet dataSet) {
-    chartData.add(dataSet);
+    getChartData().add(dataSet);
     calcDataSetMinMax();
   }
 
   @Override public void removeDataSet(CandlestickDataSet dataSet) {
-    chartData.remove(dataSet);
+    getChartData().remove(dataSet);
     calcDataSetMinMax();
   }
 
   @Override public void clearDataSet() {
-    chartData.clear();
-    chartData.calcMaxMin(mViewport, mContentRect);
+    getChartData().clear();
+    getChartData().calcMaxMin(mViewport, mContentRect);
   }
 
   @Override public List<CandlestickDataSet> getDataSet() {
@@ -271,7 +265,4 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     return chartData;
   }
 
-  @Override public void calcDataSetMinMax() {
-    getChartData().calcMaxMin(mViewport, mContentRect);
-  }
 }

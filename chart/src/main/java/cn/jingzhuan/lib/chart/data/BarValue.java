@@ -5,14 +5,12 @@ import android.graphics.Paint;
 /**
  * Created by Donglua on 17/8/1.
  */
-public class BarValue implements Value {
+public class BarValue extends Value {
 
     private float[] yValues;
 
     private int mColor = 0;
 
-    private float x;
-    private float y;
     private Paint.Style mPaintStyle = Paint.Style.FILL;
 
     public BarValue(float[] yValues) {
@@ -81,22 +79,6 @@ public class BarValue implements Value {
 
     public void setColor(int color) {
         mColor = color;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
     }
 
     public void setPaintStyle(Paint.Style mPaintStyle) {
