@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import java.util.List;
@@ -46,52 +47,14 @@ public class CombineChart extends BaseChart {
         mRenderer = new CombineChartRenderer(this);
     }
 
-    public void addDataSet(BarDataSet barDataSet) {
-        getRenderer().addDataSet(barDataSet);
+    public void addDataSet(AbstractDataSet abstractDataSet) {
+        getRenderer().addDataSet(abstractDataSet);
     }
 
-    public void addDataSet(LineDataSet lineDataSet) {
-        getRenderer().addDataSet(lineDataSet);
-    }
-
-    public void addDataSet(ScatterDataSet scatterDataSet) {
-        getRenderer().addDataSet(scatterDataSet);
-    }
-
-    public void addDataSet(CandlestickDataSet candlestickDataSet) {
-        getRenderer().addDataSet(candlestickDataSet);
-        triggerViewportChange();
-    }
-
-    public void setDataSet(BarDataSet barDataSet) {
+    public void setDataSet(AbstractDataSet dataSet) {
         cleanAllDataSet();
 
-        addDataSet(barDataSet);
-    }
-
-    public void setDataSet(LineDataSet lineDataSet) {
-        cleanAllDataSet();
-
-        addDataSet(lineDataSet);
-    }
-
-    public void setDataSet(CandlestickDataSet candlestickDataSet) {
-        cleanAllDataSet();
-
-        addDataSet(candlestickDataSet);
-    }
-    public void setDataSet(ScatterDataSet scatterDataSet) {
-        cleanAllDataSet();
-
-        addDataSet(scatterDataSet);
-    }
-
-    public void setLineData(List<LineDataSet> data) {
-        cleanAllDataSet();
-
-        for (LineDataSet datum : data) {
-            addDataSet(datum);
-        }
+        addDataSet(dataSet);
     }
 
     public void setCombineData(final CombineData combineData) {
@@ -106,31 +69,17 @@ public class CombineChart extends BaseChart {
         for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
             addDataSet(candlestickDataSet);
         }
+        for (ScatterDataSet scatterDataSet : combineData.getScatterData()) {
+            addDataSet(scatterDataSet);
+        }
+    }
 
-        //this.getRenderer().getChartData()
-        //
-        //List<LineDataSet> lineDataSets = combineData.getLineData();
-        //if (lineDataSets != null) {
-        //    for (LineDataSet lineDataSet : lineDataSets) {
-        //        addDataSet(lineDataSet);
-        //    }
-        //}
-        //
-        //List<BarDataSet> barDataSets = combineData.getBarData();
-        //if (barDataSets != null) {
-        //    for (BarDataSet barDataSet : barDataSets) {
-        //        addDataSet(barDataSet);
-        //    }
-        //}
-        //
-        //List<CandlestickDataSet> candlestickDataSets = combineData.getCandlestickData();
-        //if (candlestickDataSets != null) {
-        //    for (CandlestickDataSet candlestickDataSet : candlestickDataSets) {
-        //        addDataSet(candlestickDataSet);
-        //    }
-        //}
+    public <T extends AbstractDataSet> void setData(List<T> data) {
+        cleanAllDataSet();
 
-
+        for (T datum : data) {
+            addDataSet(datum);
+        }
     }
 
     public List<LineDataSet> getLineDataSet() {
@@ -145,20 +94,27 @@ public class CombineChart extends BaseChart {
         return getRenderer().getChartData().getCandlestickData();
     }
 
+    public List<ScatterDataSet> getScatterDataSet() {
+        return getRenderer().getChartData().getScatterData();
+    }
+
     public CombineChartRenderer getRenderer() {
         return (CombineChartRenderer) mRenderer;
     }
 
     public void cleanLineDataSet() {
-        getRenderer().getChartData().getLineChartData().clear();
+        getRenderer().cleanLineDataSet();
     }
 
     public void cleanBarDataSet() {
-        getRenderer().getChartData().getBarChartData().clear();
+        getRenderer().cleanBarDataSet();
     }
 
     public void cleanCandlestickDataSet() {
-        getRenderer().getChartData().getCandlestickData().clear();
+        getRenderer().cleanCandlestickDataSet();
+    }
+    public void cleanScatterDataSet() {
+        getRenderer().cleanScatterDataSet();
     }
 
     public void cleanAllDataSet() {

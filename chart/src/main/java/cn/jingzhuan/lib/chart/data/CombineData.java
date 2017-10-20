@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
 
-import android.util.Log;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -15,13 +14,13 @@ public class CombineData extends ChartData<AbstractDataSet> {
     private BarData barData;
     private LineData lineData;
     private CandlestickData candlestickData;
-    private ChartData<ScatterDataSet> scatterChartData;
+    private ScatterData scatterData;
 
     public CombineData() {
         barData = new BarData();
         lineData = new LineData();
         candlestickData = new CandlestickData();
-        scatterChartData = new ScatterData();
+        scatterData = new ScatterData();
     }
 
     public List<BarDataSet> getBarData() {
@@ -36,6 +35,9 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return candlestickData.getDataSets();
     }
 
+    public List<ScatterDataSet> getScatterData() {
+        return scatterData.getDataSets();
+    }
 
     public BarData getBarChartData() {
         return barData;
@@ -49,8 +51,8 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return candlestickData;
     }
 
-    public ChartData<ScatterDataSet> getScatterChartData() {
-        return scatterChartData;
+    public ScatterData getScatterChartData() {
+        return scatterData;
     }
 
     public boolean addDataSet(BarDataSet dataSet) {
@@ -66,7 +68,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
     public boolean addDataSet(ScatterDataSet dataSet) {
-        return scatterChartData.add(dataSet);
+        return scatterData.add(dataSet);
     }
 
     @Override public void calcMaxMin(Viewport viewport, Rect content) {
@@ -75,49 +77,57 @@ public class CombineData extends ChartData<AbstractDataSet> {
         rightMin = Float.MAX_VALUE;
         rightMax = -Float.MAX_VALUE;
 
-        candlestickData.calcMaxMin(viewport, content);
-        leftMin = Math.min(candlestickData.leftMin, leftMin);
-        leftMax = Math.max(candlestickData.leftMax, leftMax);
-        rightMin = Math.min(candlestickData.rightMin, rightMin);
-        rightMax = Math.max(candlestickData.rightMax, rightMax);
+        if (!candlestickData.getDataSets().isEmpty()) {
+            candlestickData.calcMaxMin(viewport, content);
+            leftMin = Math.min(candlestickData.leftMin, leftMin);
+            leftMax = Math.max(candlestickData.leftMax, leftMax);
+            rightMin = Math.min(candlestickData.rightMin, rightMin);
+            rightMax = Math.max(candlestickData.rightMax, rightMax);
+        }
 
-        lineData.calcMaxMin(viewport, content);
-        leftMin = Math.min(lineData.leftMin, leftMin);
-        leftMax = Math.max(lineData.leftMax, leftMax);
-        rightMin = Math.min(lineData.rightMin, rightMin);
-        rightMax = Math.max(lineData.rightMax, rightMax);
+        if (!lineData.getDataSets().isEmpty()) {
+            lineData.calcMaxMin(viewport, content);
+            leftMin = Math.min(lineData.leftMin, leftMin);
+            leftMax = Math.max(lineData.leftMax, leftMax);
+            rightMin = Math.min(lineData.rightMin, rightMin);
+            rightMax = Math.max(lineData.rightMax, rightMax);
+        }
 
-        barData.calcMaxMin(viewport, content);
-        leftMin = Math.min(barData.leftMin, leftMin);
-        leftMax = Math.max(barData.leftMax, leftMax);
-        rightMin = Math.min(barData.rightMin, rightMin);
-        rightMax = Math.max(barData.rightMax, rightMax);
+        if (!barData.getDataSets().isEmpty()) {
+            barData.calcMaxMin(viewport, content);
+            leftMin = Math.min(barData.leftMin, leftMin);
+            leftMax = Math.max(barData.leftMax, leftMax);
+            rightMin = Math.min(barData.rightMin, rightMin);
+            rightMax = Math.max(barData.rightMax, rightMax);
+        }
 
-        scatterChartData.calcMaxMin(viewport, content);
-        leftMin = Math.min(scatterChartData.leftMin, leftMin);
-        leftMax = Math.max(scatterChartData.leftMax, leftMax);
-        rightMin = Math.min(scatterChartData.rightMin, rightMin);
-        rightMax = Math.max(scatterChartData.rightMax, rightMax);
+        if (!scatterData.getDataSets().isEmpty()) {
+            scatterData.calcMaxMin(viewport, content);
+            leftMin = Math.min(scatterData.leftMin, leftMin);
+            leftMax = Math.max(scatterData.leftMax, leftMax);
+            rightMin = Math.min(scatterData.rightMin, rightMin);
+            rightMax = Math.max(scatterData.rightMax, rightMax);
+        }
 
         barData.setLeftMax(leftMax);
         lineData.setLeftMax(leftMax);
         candlestickData.setLeftMax(leftMax);
-        scatterChartData.setLeftMax(leftMax);
+        scatterData.setLeftMax(leftMax);
 
         barData.setLeftMin(leftMin);
         lineData.setLeftMin(leftMin);
         candlestickData.setLeftMin(leftMin);
-        scatterChartData.setLeftMin(leftMin);
+        scatterData.setLeftMin(leftMin);
 
         barData.setRightMax(rightMax);
         lineData.setRightMax(rightMax);
         candlestickData.setRightMax(rightMax);
-        scatterChartData.setRightMax(rightMax);
+        scatterData.setRightMax(rightMax);
 
         barData.setRightMin(rightMin);
         lineData.setRightMin(rightMin);
         candlestickData.setRightMin(rightMin);
-        scatterChartData.setRightMin(rightMin);
+        scatterData.setRightMin(rightMin);
 
         setMinMax();
     }

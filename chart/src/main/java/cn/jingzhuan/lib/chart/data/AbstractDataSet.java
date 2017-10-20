@@ -63,7 +63,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         this.mColor = barColor;
     }
 
-
     public void setHighlightedVerticalEnable(boolean highlightedVerticalEnable) {
         isHighlightedVerticalEnable = highlightedVerticalEnable;
     }
@@ -79,8 +78,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     public boolean isHighlightedHorizontalEnable() {
         return isHighlightedHorizontalEnable;
     }
-
-
 
     public List<T> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * getValues().size());

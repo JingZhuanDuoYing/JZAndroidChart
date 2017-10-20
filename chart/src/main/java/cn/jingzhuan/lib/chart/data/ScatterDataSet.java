@@ -51,6 +51,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
   }
 
   @Override public boolean addEntry(ScatterValue e) {
+    calcViewportMinMax(e);
     return scatterValues.add(e);
   }
 

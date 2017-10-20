@@ -91,7 +91,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
 
-        combineData.add(dataSet);
+        getChartData().add(dataSet);
 
         if (dataSet instanceof LineDataSet) {
             lineRenderer.addDataSet((LineDataSet) dataSet);
@@ -108,20 +108,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {
 
-        combineData.remove(dataSet);
+        getChartData().remove(dataSet);
         calcDataSetMinMax();
     }
 
     @Override public void clearDataSet() {
-        combineData.clear();
+        getChartData().clear();
 
-        lineRenderer.clearDataSet();
-        barChartRenderer.clearDataSet();
-        candlestickChartRenderer.clearDataSet();
-
-        getChartData().getBarChartData().clear();
-        getChartData().getLineChartData().clear();
-        getChartData().getCandlestickChartData().clear();
+        cleanLineDataSet();
+        cleanBarDataSet();
+        cleanCandlestickDataSet();
+        cleanScatterDataSet();
 
         calcDataSetMinMax();
     }
@@ -132,13 +129,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     public void cleanBarDataSet() {
-        lineRenderer.clearDataSet();
+        barChartRenderer.clearDataSet();
         getChartData().getBarChartData().clear();
     }
 
     public void cleanCandlestickDataSet() {
         candlestickChartRenderer.clearDataSet();
         getChartData().getCandlestickChartData().clear();
+    }
+    public void cleanScatterDataSet() {
+        scatterChartRenderer.clearDataSet();
+        getChartData().getScatterChartData().clear();
     }
 
     @Override
@@ -156,5 +157,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.lineRenderer.enableDashPathEffect(intervals, phase);
         this.barChartRenderer.enableDashPathEffect(intervals, phase);
         this.candlestickChartRenderer.enableDashPathEffect(intervals, phase);
+        this.scatterChartRenderer.enableDashPathEffect(intervals, phase);
     }
 }

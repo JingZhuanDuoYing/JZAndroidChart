@@ -54,8 +54,8 @@ public abstract class ScatterChartModel extends DataBindingEpoxyModel {
       scatterDataSet.setShape(drawable);
 
       LayoutCombineChartBinding bd = (LayoutCombineChartBinding) binding;
+
       bd.combineChart.addDataSet(scatterDataSet);
-      bd.combineChart.invalidate();
     }
 
   }
