@@ -59,31 +59,27 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     }
 
     final float width = mContentRect.width() / dataSet.getVisibleValueCount(mViewport);
-    Log.d("drawDataSet", "valueCount  = " + valueCount);
 
-    for (int i = 0; i < valueCount && i < dataSet.getValues().size(); i++) {
+    for (int i = 0; i < valueCount && i < dataSet.getValues().size() && dataSet.getShape() != null; i++) {
       ScatterValue point = dataSet.getEntryForIndex(i);
 
-      float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
-      float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
+      if (!point.isVisible()) continue;
+
+      float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount)) - dataSet.getShape().getIntrinsicWidth() * 0.5f;
+      float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - dataSet.getShape().getIntrinsicHeight() * 0.5f;
 
       point.setX(xPosition);
       point.setY(yPosition);
 
-      Log.d("drawDataSet", "drawDataSet x = " + xPosition + ", y = " + yPosition);
-
-      if (dataSet.getShape() != null) {
-        int x = (int) (xPosition + dataSet.getDrawOffsetX());
-        int y = (int) (xPosition + dataSet.getDrawOffsetY());
-        dataSet.getShape().setBounds(x,
-                                     y,
-                                     x + dataSet.getShape().getIntrinsicWidth(),
-                                     y + dataSet.getShape().getIntrinsicHeight());
-        int saveId = canvas.save();
-        dataSet.getShape().draw(canvas);
-        canvas.restoreToCount(saveId);
-      }
-
+      int x = (int) (xPosition + dataSet.getDrawOffsetX());
+      int y = (int) (yPosition + dataSet.getDrawOffsetY());
+      dataSet.getShape().setBounds(x,
+                                   y,
+                                   x + dataSet.getShape().getIntrinsicWidth(),
+                                   y + dataSet.getShape().getIntrinsicHeight());
+      int saveId = canvas.save();
+      dataSet.getShape().draw(canvas);
+      canvas.restoreToCount(saveId);
     }
 
   }
@@ -94,10 +90,12 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
   @Override public void addDataSet(ScatterDataSet dataSet) {
     getChartData().add(dataSet);
+    calcDataSetMinMax();
   }
 
   @Override public void removeDataSet(ScatterDataSet dataSet) {
     getChartData().remove(dataSet);
+    calcDataSetMinMax();
   }
 
   @Override public void clearDataSet() {
