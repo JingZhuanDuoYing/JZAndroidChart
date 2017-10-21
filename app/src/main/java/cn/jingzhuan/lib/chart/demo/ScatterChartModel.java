@@ -43,7 +43,7 @@ public abstract class ScatterChartModel extends DataBindingEpoxyModel {
     scatterValues.add(new ScatterValue(2));
 
     scatterDataSet = new ScatterDataSet(scatterValues);
-
+    scatterDataSet.setAutoWidth(true);
   }
 
   @Override protected void setDataBindingVariables(ViewDataBinding binding) {

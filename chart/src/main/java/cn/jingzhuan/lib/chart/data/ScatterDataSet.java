@@ -16,6 +16,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
   private float drawOffsetX = 0f;
   private float drawOffsetY = 0f;
 
+  private boolean autoWidth = true;
+
   public ScatterDataSet(List<ScatterValue> scatterValues) {
     this.scatterValues = scatterValues;
   }
@@ -89,5 +91,13 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
 
   public void setDrawOffsetY(float drawOffsetY) {
     this.drawOffsetY = drawOffsetY;
+  }
+
+  public void setAutoWidth(boolean autoWidth) {
+    this.autoWidth = autoWidth;
+  }
+
+  public boolean isAutoWidth() {
+    return autoWidth;
   }
 }
