@@ -1,0 +1,5 @@
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
