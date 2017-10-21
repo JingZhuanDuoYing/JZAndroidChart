@@ -19,6 +19,6 @@ import static org.junit.Assert.*;
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("cn.jingzhuan.lib.test", appContext.getPackageName());
+    assertEquals("cn.jingzhuan.lib.chart.test", appContext.getPackageName());
   }
 }
