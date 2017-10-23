@@ -110,6 +110,10 @@ public class Axis extends AbstractComponent {
         return mAxisPosition;
     }
 
+    public void setAxisPosition(int mAxisPosition) {
+        this.mAxisPosition = mAxisPosition;
+    }
+
     public int getGridColor() {
         return mGridColor;
     }
