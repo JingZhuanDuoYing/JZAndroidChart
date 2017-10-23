@@ -25,6 +25,7 @@ import android.widget.OverScroller;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -132,8 +133,8 @@ public abstract class Chart extends View {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
-        mTouchPointChangeListeners = new CopyOnWriteArrayList<>();
-        mOnViewportChangeListeners = new CopyOnWriteArrayList<>();
+        mTouchPointChangeListeners = Collections.synchronizedList(new ArrayList<OnTouchPointChangeListener>());
+        mOnViewportChangeListeners = Collections.synchronizedList(new ArrayList<OnViewportChangeListener>());
 
         mAxisTop.setGridLineEnable(false);
         mAxisTop.setLabelEnable(false);
@@ -468,9 +469,11 @@ public abstract class Chart extends View {
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
         }
-        if (mOnViewportChangeListeners != null) {
-            for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
-                mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+        if (mOnViewportChangeListeners != null && !mOnViewportChangeListeners.isEmpty()) {
+            synchronized (this) {
+                for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
+                    mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+                }
             }
         }
         ViewCompat.postInvalidateOnAnimation(this);
@@ -817,7 +820,9 @@ public abstract class Chart extends View {
     }
 
     public void addOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
-        this.mOnViewportChangeListeners.add(onViewportChangeListener);
+        synchronized (this) {
+            this.mOnViewportChangeListeners.add(onViewportChangeListener);
+        }
     }
 
     public boolean isScaleXEnable() {
@@ -837,11 +842,15 @@ public abstract class Chart extends View {
     }
 
     public void addOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
-        this.mTouchPointChangeListeners.add(touchPointChangeListener);
+        synchronized (this) {
+            this.mTouchPointChangeListeners.add(touchPointChangeListener);
+        }
     }
 
     public void removeOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
-        this.mTouchPointChangeListeners.remove(touchPointChangeListener);
+        synchronized (this) {
+            this.mTouchPointChangeListeners.remove(touchPointChangeListener);
+        }
     }
 
     public void setDraggingToMoveEnable(boolean draggingToMoveEnable) {
