@@ -60,7 +60,7 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
     @Override
     public final void renderer(Canvas canvas) {
-        int width = mContentRect.width();
+        int width = mContentRect.width() + mContentRect.left;
         int height = mContentRect.height();
 
         if (mDrawBitmap == null
@@ -79,7 +79,7 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
         renderDataSet(mBitmapCanvas);
 
-        canvas.drawBitmap(mDrawBitmap.get(), mContentRect.left, mContentRect.top, mRenderPaint);
+        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
     }
 
 
@@ -129,5 +129,10 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
     public void enableDashPathEffect(float intervals[], float phase) {
         this.mDashedHighlightIntervals = intervals;
         this.mDashedHighlightPhase = phase;
+    }
+
+
+    public Canvas getCacheCanvas() {
+        return mBitmapCanvas;
     }
 }
