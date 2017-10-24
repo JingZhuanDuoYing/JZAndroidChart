@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -99,9 +100,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     mRenderPaint.setColor(candlestickDataSet.getColor());
 
     int valueCount = candlestickDataSet.getEntryCount();
-
-    Path path = new Path();
-    path.reset();
 
     for (int i = 0; i < valueCount; i++) {
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);

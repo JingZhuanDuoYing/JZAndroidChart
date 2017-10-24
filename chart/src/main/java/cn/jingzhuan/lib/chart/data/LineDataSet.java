@@ -86,22 +86,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         return mPointValues;
     }
 
-
-    ///**
-    // * Updates the min and max x and y value of this DataSet based on the given Entry.
-    // *
-    // * @param e
-    // */
-    //public void calcMinMax(PointValue e) {
-    //
-    //    if (e == null)
-    //        return;
-    //
-    //    calcMinMaxX(e);
-    //
-    //    calcMinMaxY(e);
-    //}
-
     protected void calcViewportMinMax(PointValue e) {
         if (e.getValue() < mViewportYMin)
             mViewportYMin = e.getValue();
@@ -109,24 +93,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (e.getValue() > mViewportYMax)
             mViewportYMax = e.getValue();
     }
-
-    //protected void calcMinMaxX(PointValue e) {
-    //
-    //    if (e.getX() < mXMin)
-    //        mXMin = e.getX();
-    //
-    //    if (e.getX() > mXMax)
-    //        mXMax = e.getX();
-    //}
-
-    //protected void calcMinMaxY(PointValue e) {
-    //
-    //    if (e.getValue() < mYMin)
-    //        mYMin = e.getValue();
-    //
-    //    if (e.getValue() > mYMax)
-    //        mYMax = e.getValue();
-    //}
 
 
     @Override

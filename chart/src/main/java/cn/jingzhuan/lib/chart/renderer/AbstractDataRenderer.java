@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.lang.ref.WeakReference;
@@ -78,7 +79,7 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
         renderDataSet(mBitmapCanvas);
 
-        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
+        canvas.drawBitmap(mDrawBitmap.get(), mContentRect.left, mContentRect.top, mRenderPaint);
     }
 
 

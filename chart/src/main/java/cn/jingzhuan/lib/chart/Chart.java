@@ -16,6 +16,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -27,7 +28,6 @@ import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
@@ -183,11 +183,13 @@ public abstract class Chart extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
+
         mContentRect.set(
-                getPaddingLeft() + mAxisLeft.getMaxLabelWidth() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation()),
+                getPaddingLeft()
+                    + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth())
+                    + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation()),
                 getPaddingTop(),
-                getWidth() - getPaddingRight(),
+                getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth()),
                 getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight() - mAxisBottom.getLabelSeparation());
     }
 
@@ -197,7 +199,7 @@ public abstract class Chart extends View {
         setMeasuredDimension(
                 Math.max(getSuggestedMinimumWidth(),
                         resolveSize(minChartSize + getPaddingLeft()
-                                        + (mAxisLeft.isInside() ? 0 : mAxisLeft.getMaxLabelWidth())
+                                        + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth())
                                         + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation())
                                         + getPaddingRight(),
                                 widthMeasureSpec)),
@@ -221,10 +223,10 @@ public abstract class Chart extends View {
 
         render(canvas);
 
-        drawEdgeEffectsUnclipped(canvas);
-
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
+
+        drawEdgeEffectsUnclipped(canvas);
 
         drawLabels(canvas); // 坐标轴刻度在最上层
     }
@@ -287,14 +289,12 @@ public abstract class Chart extends View {
          */
         private PointF viewportFocus = new PointF();
         private float lastSpanX;
-//        private float lastSpanY;
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!mScaleGestureEnable) return super.onScaleBegin(scaleGestureDetector);
 
             lastSpanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
-//            lastSpanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
             return true;
         }
 
@@ -305,10 +305,8 @@ public abstract class Chart extends View {
             if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
             float spanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
-            //float spanY = ScaleGestureDetectorCompat.getCurrentSpanY(scaleGestureDetector);
 
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
-//            float newHeight = lastSpanY / spanY * mCurrentViewport.height();
 
             if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.1) {
                 return true;
@@ -321,22 +319,11 @@ public abstract class Chart extends View {
             mCurrentViewport.left = viewportFocus.x
                     - newWidth * (focusX - mContentRect.left)
                     / mContentRect.width();
-//            mCurrentViewport.set(
-//                    viewportFocus.x
-//                            - newWidth * (focusX - mContentRect.left)
-//                            / mContentRect.width(),
-//                    viewportFocus.y
-//                            - newHeight * (mContentRect.bottom - focusY)
-//                            / mContentRect.height(),
-//                    0,
-//                    0);
+
             mCurrentViewport.right = mCurrentViewport.left + newWidth;
-//            mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
             mCurrentViewport.constrainViewport();
-            //ViewCompat.postInvalidateOnAnimation(Chart.this);
             if (mScaleXEnable) triggerViewportChange();
             lastSpanX = spanX;
-//            lastSpanY = spanY;
 
             return true;
         }
@@ -729,7 +716,6 @@ public abstract class Chart extends View {
         mEdgeEffectBottom = new EdgeEffectCompat(context);
     }
 
-
     /**
      * Draws the overscroll "glow" at the four edges of the lib region, if necessary. The edges
      * of the lib region are stored in {@link #mContentRect}.
@@ -874,7 +860,7 @@ public abstract class Chart extends View {
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
         mScrollerStartViewport.set(mCurrentViewport);
 
-        float moveDistance = getWidth() * percent;
+        float moveDistance = mContentRect.width() * percent;
         int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
             / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
         if (!mScroller.isFinished()) {
@@ -889,7 +875,7 @@ public abstract class Chart extends View {
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
         mScrollerStartViewport.set(mCurrentViewport);
 
-        float moveDistance = getWidth() * percent;
+        float moveDistance = mContentRect.width() * percent;
         int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
             / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
         if (!mScroller.isFinished()) {

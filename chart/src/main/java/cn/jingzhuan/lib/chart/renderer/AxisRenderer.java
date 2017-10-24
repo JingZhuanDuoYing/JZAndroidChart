@@ -1,12 +1,8 @@
 package cn.jingzhuan.lib.chart.renderer;
 
-import android.database.CharArrayBuffer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-
-import java.io.CharArrayWriter;
 
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
@@ -58,7 +54,7 @@ public class AxisRenderer implements Renderer {
         mLabelTextPaint.setAntiAlias(true);
         mLabelTextPaint.setTextSize(mAxis.getLabelTextSize());
         mLabelTextPaint.setColor(mAxis.getLabelTextColor());
-        mAxis.setMaxLabelWidth((int) mLabelTextPaint.measureText("0000"));
+        mAxis.setLabelWidth((int) mLabelTextPaint.measureText("0000"));
         mAxis.setLabelHeight((int) Math.abs(mLabelTextPaint.getFontMetrics().top));
 
         mAxisPaint = new Paint();
@@ -69,7 +65,6 @@ public class AxisRenderer implements Renderer {
 
     @Override
     public void renderer(Canvas canvas) {
-        int i;
 
         if (mAxis instanceof AxisX) {
 

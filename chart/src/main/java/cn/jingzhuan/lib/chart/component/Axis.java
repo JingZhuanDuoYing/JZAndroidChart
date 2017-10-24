@@ -22,7 +22,7 @@ public class Axis extends AbstractComponent {
     private float mLabelSeparation = 0;
     private int mLabelTextColor = Color.GREEN;
     private Paint mLabelTextPaint;
-    private int mMaxLabelWidth = 80;
+    private int mLabelWidth = 100;
     private int mLabelHeight = 0;
     private int mAxisColor = Color.GRAY;
     private float mAxisThickness = 2;
@@ -55,8 +55,8 @@ public class Axis extends AbstractComponent {
         this.mLabelTextPaint = mLabelTextPaint;
     }
 
-    public void setMaxLabelWidth(int mMaxLabelWidth) {
-        this.mMaxLabelWidth = mMaxLabelWidth;
+    public void setLabelWidth(int mLabelWidth) {
+        this.mLabelWidth = mLabelWidth;
     }
 
     public void setLabelHeight(int mLabelHeight) {
@@ -79,12 +79,13 @@ public class Axis extends AbstractComponent {
         return mLabelTextPaint;
     }
 
-    public int getMaxLabelWidth() {
+    public int getLabelWidth() {
         if (isInside()) {
             return 0;
         }
-        return mMaxLabelWidth;
+        return mLabelWidth;
     }
+
 
     public boolean isInside() {
         switch (getAxisPosition()) {

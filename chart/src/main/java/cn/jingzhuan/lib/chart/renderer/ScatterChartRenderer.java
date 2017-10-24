@@ -1,9 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.Rect;
+
 import android.support.annotation.NonNull;
 import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
