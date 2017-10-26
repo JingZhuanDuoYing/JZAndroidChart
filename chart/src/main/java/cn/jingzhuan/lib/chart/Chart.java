@@ -226,8 +226,6 @@ public abstract class Chart extends View {
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
 
-        drawEdgeEffectsUnclipped(canvas);
-
         drawLabels(canvas); // 坐标轴刻度在最上层
     }
 
@@ -722,7 +720,7 @@ public abstract class Chart extends View {
      *
      * @see EdgeEffectCompat
      */
-    private void drawEdgeEffectsUnclipped(Canvas canvas) {
+    protected void drawEdgeEffectsUnclipped(Canvas canvas) {
         // The methods below rotate and translate the canvas as needed before drawing the glow,
         // since EdgeEffectCompat always draws a top-glow at 0,0.
 

@@ -120,7 +120,7 @@ public class BaseChart extends Chart {
         if (mRenderer != null) {
             mRenderer.renderer(canvas);
         }
-
+        drawEdgeEffectsUnclipped(canvas);
         renderHighlighted(canvas);
     }
 

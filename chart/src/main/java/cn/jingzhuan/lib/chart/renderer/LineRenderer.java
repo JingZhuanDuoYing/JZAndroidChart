@@ -42,7 +42,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             @Override
             public void touch(float x, float y) {
                 for (LineDataSet line : getDataSet()) {
-                    if (line.isHighlightedVerticalEnable()) {
+                    if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
                         float xPositionMax = line.getEntryForIndex(line.getValues().size() - 1).getX();
 
                         int index = 0;
