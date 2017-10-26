@@ -100,7 +100,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
             if (barValue.getValues().length < 1 || Float.isNaN(barValue.getValues()[0])) continue;
 
-            if (barValue.getColor() != 0) {
+            if (barValue.getColor() != -1) {
                 mRenderPaint.setColor(barValue.getColor());
             } else {
                 mRenderPaint.setColor(barDataSet.getColor());
