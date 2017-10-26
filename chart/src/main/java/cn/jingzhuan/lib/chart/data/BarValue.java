@@ -9,7 +9,7 @@ public class BarValue extends Value {
 
     private float[] yValues;
 
-    private int mColor = -1;
+    private int mColor = -2;
 
     private Paint.Style mPaintStyle = Paint.Style.FILL;
 
