@@ -156,7 +156,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 break;
         }
 
-        final float width = mContentRect.width() / lineDataSet.getVisibleValueCount(mViewport);
+        final int count = lineDataSet.getVisibleValueCount(mViewport);
+        float width = 0;
+        if (count > 0) {
+            width = mContentRect.width() / ((float) count);
+        }
 
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
