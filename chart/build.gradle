@@ -27,13 +27,13 @@ ext.ver = [
 ]
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-  compile 'com.android.support:appcompat-v7:26.1.0'
-  testCompile 'junit:junit:4.12'
-  compile 'com.android.support:support-annotations:27.0.0'
+  implementation 'com.android.support:appcompat-v7:26.1.0'
+  testImplementation 'junit:junit:4.12'
+  implementation 'com.android.support:support-annotations:27.0.0'
 
 }
 
@@ -45,7 +45,7 @@ publish {
   userOrg = 'donglua'
   groupId = 'cn.jingzhuan.lib'
   artifactId = 'chart'
-  publishVersion = "0.4.27"
+  publishVersion = "0.4.28"
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
 }
