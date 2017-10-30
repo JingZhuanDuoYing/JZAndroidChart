@@ -71,6 +71,38 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return scatterData.add(dataSet);
     }
 
+    public void setCombineData(CombineData combineData) {
+        this.leftMin = combineData.leftMin;
+        this.rightMin = combineData.rightMin;
+        this.leftMax = combineData.leftMax;
+        this.rightMax = combineData.rightMax;
+
+        barData.setLeftMax(leftMax);
+        lineData.setLeftMax(leftMax);
+        candlestickData.setLeftMax(leftMax);
+        scatterData.setLeftMax(leftMax);
+
+        barData.setLeftMin(leftMin);
+        lineData.setLeftMin(leftMin);
+        candlestickData.setLeftMin(leftMin);
+        scatterData.setLeftMin(leftMin);
+
+        barData.setRightMax(rightMax);
+        lineData.setRightMax(rightMax);
+        candlestickData.setRightMax(rightMax);
+        scatterData.setRightMax(rightMax);
+
+        barData.setRightMin(rightMin);
+        lineData.setRightMin(rightMin);
+        candlestickData.setRightMin(rightMin);
+        scatterData.setRightMin(rightMin);
+
+        barData.getDataSets().addAll(combineData.getBarData());
+        lineData.getDataSets().addAll(combineData.getLineData());
+        candlestickData.getDataSets().addAll(combineData.getCandlestickData());
+        scatterData.getDataSets().addAll(combineData.getScatterData());
+    }
+
     @Override public void calcMaxMin(Viewport viewport, Rect content) {
         leftMin = Float.MAX_VALUE;
         leftMax = -Float.MAX_VALUE;
