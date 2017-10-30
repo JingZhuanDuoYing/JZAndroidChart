@@ -94,6 +94,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         if (barDataSet.isAutoBarWidth()) {
             width = mContentRect.width() / barDataSet.getVisibleValueCount(mViewport);
         }
+        final float percent = 0.8f;
 
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             BarValue barValue = barDataSet.getEntryForIndex(i);
@@ -121,9 +122,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
                 mRenderPaint.setStyle(barValue.getPaintStyle());
 
-                canvas.drawRect(x,
+                canvas.drawRect(x + width * (1 - percent) * 0.5f,
                         top,
-                        x + width,
+                        x + width * percent,
                         bottom, mRenderPaint);
             }
         }
