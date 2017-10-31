@@ -21,7 +21,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int mColor = Color.GRAY;
 
-    private int maxVisibleEntryCount = 100;
+    private int maxVisibleEntryCount = 500;
     private int minVisibleEntryCount = 20;
 
     private boolean isHighlightedVerticalEnable = false;
