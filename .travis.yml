@@ -2,18 +2,17 @@ language: android
 
 android:
   components:
-    - android-22
     - android-26
     - build-tools-26.0.2
     - platform-tools
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-26
     - extra-android-support
     - extra-android-m2repository
     - extra-google-m2repository
 
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-26 --abi armeabi-v7a
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
