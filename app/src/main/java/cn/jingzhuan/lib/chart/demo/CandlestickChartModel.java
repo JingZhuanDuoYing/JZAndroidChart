@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
-import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
@@ -124,7 +123,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     LayoutCombineChartBinding b = (LayoutCombineChartBinding) binding;
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
     dataSet.setHighlightedVerticalEnable(true);
-    dataSet.setMaxVisibleEntry(20);
+    dataSet.setMaxVisibleEntryCount(20);
 
     b.combineChart.getAxisLeft().setAxisPosition(LEFT_OUTSIDE);
     b.combineChart.getAxisRight().setAxisPosition(RIGHT_INSIDE);

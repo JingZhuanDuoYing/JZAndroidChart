@@ -17,5 +17,9 @@ public interface IDataSet {
 
   float getViewportYMax();
 
+  void setMaxVisibleEntryCount(int maxVisibleEntryCount);
+
+  void setMinVisibleEntryCount(int minVisibleEntryCount);
+
   @AxisDependency int getAxisDependency();
 }

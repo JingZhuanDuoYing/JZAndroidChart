@@ -138,4 +138,20 @@ public class ChartData<T extends IDataSet> {
     this.leftAxis = chart.getAxisLeft();
     this.rightAxis = chart.getAxisRight();
   }
+
+  public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+    synchronized (getDataSets()) {
+      for (T t : getDataSets()) {
+        t.setMaxVisibleEntryCount(maxVisibleEntryCount);
+      }
+    }
+  }
+
+  public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+    synchronized (getDataSets()) {
+      for (T t : getDataSets()) {
+        t.setMinVisibleEntryCount(minVisibleEntryCount);
+      }
+    }
+  }
 }

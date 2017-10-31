@@ -31,6 +31,9 @@ public class BaseChart extends Chart {
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
     private OnHighlightListener mHighlightListener;
 
+    private int maxVisibleEntryCount = 100;
+    private int minVisibleEntryCount = 20;
+
     public BaseChart(Context context) {
         super(context);
     }
@@ -115,6 +118,7 @@ public class BaseChart extends Chart {
         this.mRenderer = renderer;
     }
 
+
     @Override
     protected final void render(final Canvas canvas) {
         if (mRenderer != null) {
@@ -163,5 +167,13 @@ public class BaseChart extends Chart {
         this.mRenderer.enableDashPathEffect(intervals, phase);
     }
 
+    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        this.minVisibleEntryCount = minVisibleEntryCount;
+        mRenderer.getChartData().setMinVisibleEntryCount(minVisibleEntryCount);
+    }
 
+    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        this.maxVisibleEntryCount = maxVisibleEntryCount;
+        mRenderer.getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);
+    }
 }

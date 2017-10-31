@@ -21,6 +21,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int mColor = Color.GRAY;
 
+    private int maxVisibleEntryCount = 100;
+    private int minVisibleEntryCount = 20;
 
     private boolean isHighlightedVerticalEnable = false;
     private boolean isHighlightedHorizontalEnable = false;
@@ -83,6 +85,21 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         int from = (int) (viewport.left * getValues().size());
         int to  = (int) (viewport.right * getValues().size());
 
+        if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
+            from = to - getMaxVisibleEntryCount();
+            viewport.left = from / (float) getValues().size();
+        }
+        if (getMinVisibleEntryCount() > 0
+            && getMinVisibleEntryCount() < getValues().size()
+            && to - from < getMinVisibleEntryCount()) {
+            if (to >= getMinVisibleEntryCount()) {
+                from = to - getMinVisibleEntryCount();
+                viewport.left = from / (float) getValues().size();
+            } else {
+                to = from + getMinVisibleEntryCount();
+                viewport.right = to / (float) getValues().size();
+            }
+        }
         return getValues().subList(from, to);
     }
 
@@ -90,4 +107,21 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return (int) ((viewport.right - viewport.left) * getEntryCount());
     }
 
+    public int getMaxVisibleEntryCount() {
+        return maxVisibleEntryCount;
+    }
+
+    public int getMinVisibleEntryCount() {
+        return minVisibleEntryCount;
+    }
+
+    @Override
+    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        this.maxVisibleEntryCount = maxVisibleEntryCount;
+    }
+
+    @Override
+    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        this.minVisibleEntryCount = minVisibleEntryCount;
+    }
 }

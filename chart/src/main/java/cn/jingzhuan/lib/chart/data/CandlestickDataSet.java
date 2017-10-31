@@ -22,7 +22,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mNeutralColor = Color.WHITE;    // 十字线
   private int mLimitUpColor = Color.TRANSPARENT;
 
-  private int maxVisibleEntry = 100;
   private float strokeThickness = 4;
   private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
   private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
@@ -66,9 +65,20 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     int from = (int) (viewport.left * candlestickValues.size());
     int to  = (int) (viewport.right * candlestickValues.size());
 
-    if (maxVisibleEntry > 0 && to - from > maxVisibleEntry) {
-      from = to - maxVisibleEntry;
+    if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
+      from = to - getMaxVisibleEntryCount();
       viewport.left = from / (float) candlestickValues.size();
+    }
+    if (getMinVisibleEntryCount() > 0
+        && getMinVisibleEntryCount() < candlestickValues.size()
+        && to - from < getMinVisibleEntryCount()) {
+      if (to >= getMinVisibleEntryCount()) {
+        from = to - getMinVisibleEntryCount();
+        viewport.left = from / (float) candlestickValues.size();
+      } else {
+        to = from + getMinVisibleEntryCount();
+        viewport.right = to / (float) candlestickValues.size();
+      }
     }
     return candlestickValues.subList(from, to);
   }
@@ -163,14 +173,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return mLimitUpColor;
   }
 
-  public int getMaxVisibleEntry() {
-    return maxVisibleEntry;
-  }
-
-  public void setMaxVisibleEntry(int maxVisibleEntry) {
-    this.maxVisibleEntry = maxVisibleEntry;
-  }
-
   public float getStrokeThickness() {
     return strokeThickness;
   }
@@ -194,4 +196,5 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   public void setDecreasingPaintStyle(Paint.Style decreasingPaintStyle) {
     this.mDecreasingPaintStyle = decreasingPaintStyle;
   }
+
 }
