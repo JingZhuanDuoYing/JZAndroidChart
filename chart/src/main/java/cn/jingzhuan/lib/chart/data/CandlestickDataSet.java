@@ -23,7 +23,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mLimitUpColor = Color.TRANSPARENT;
 
   private int maxVisibleEntry = 100;
-  private float strokeThickness = 5;
+  private float strokeThickness = 4;
   private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
   private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
 
