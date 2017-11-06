@@ -21,5 +21,7 @@ public interface IDataSet {
 
   void setMinVisibleEntryCount(int minVisibleEntryCount);
 
+  void setDefaultVisibleEntryCount(int defaultVisibleEntryCount);
+
   @AxisDependency int getAxisDependency();
 }

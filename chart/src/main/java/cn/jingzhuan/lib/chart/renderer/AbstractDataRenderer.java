@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.lang.ref.WeakReference;
@@ -21,7 +20,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
  * Created by Donglua on 17/7/19.
  */
 
-public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements Renderer {
+public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements Renderer {
 
     protected Viewport mViewport;
     protected Rect mContentRect;
@@ -29,6 +28,10 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
 
     protected float mDashedHighlightIntervals[] = null;
     protected float mDashedHighlightPhase = -1;
+
+    protected int maxVisibleEntryCount = 500;
+    protected int minVisibleEntryCount = 20;
+    protected int defaultVisibleEntryCount = -1;
 
     /**
      * Bitmap object used for drawing the paths (otherwise they are too long if
@@ -87,7 +90,7 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
         renderDataSet(canvas, getChartData());
     }
 
-    protected abstract void renderDataSet(Canvas canvas, ChartData<D> chartData);
+    protected abstract void renderDataSet(Canvas canvas, ChartData<T> chartData);
 
     public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
@@ -107,12 +110,20 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
                 - mContentRect.height() * (y - mViewport.top) / mViewport.height();
     }
 
-    public abstract void addDataSet(D dataSet);
-    public abstract void removeDataSet(D dataSet);
+    public void addDataSet(T dataSet) {
+        if (dataSet == null) return;
+        dataSet.setMinVisibleEntryCount(minVisibleEntryCount);
+        dataSet.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        dataSet.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        getChartData().add(dataSet);
+        calcDataSetMinMax();
+    }
+
+    public abstract void removeDataSet(T dataSet);
     public abstract void clearDataSet();
 
-    protected abstract List<D> getDataSet();
-    public abstract ChartData<D> getChartData();
+    protected abstract List<T> getDataSet();
+    public abstract ChartData<T> getChartData();
 
     protected void calcDataSetMinMax() {
         getChartData().calcMaxMin(mViewport, mContentRect);
@@ -131,8 +142,52 @@ public abstract class AbstractDataRenderer<D extends AbstractDataSet> implements
         this.mDashedHighlightPhase = phase;
     }
 
-
     public Canvas getCacheCanvas() {
         return mBitmapCanvas;
+    }
+
+    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        this.maxVisibleEntryCount = maxVisibleEntryCount;
+        if (maxVisibleEntryCount <= 0) return;
+
+        synchronized (getDataSet()) {
+            for (T t : getDataSet()) {
+                t.setMaxVisibleEntryCount(maxVisibleEntryCount);
+            }
+        }
+    }
+
+    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        this.minVisibleEntryCount = minVisibleEntryCount;
+        if (minVisibleEntryCount <= 0) return;
+
+        synchronized (getDataSet()) {
+            for (T t : getDataSet()) {
+                t.setMinVisibleEntryCount(minVisibleEntryCount);
+            }
+        }
+    }
+
+    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+        if (defaultVisibleEntryCount <= 0) return;
+
+        synchronized (getDataSet()) {
+            for (T t : getDataSet()) {
+                t.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+            }
+        }
+    }
+
+    public int getMinVisibleEntryCount() {
+        return minVisibleEntryCount;
+    }
+
+    public int getMaxVisibleEntryCount() {
+        return maxVisibleEntryCount;
+    }
+
+    public int getDefaultVisibleEntryCount() {
+        return defaultVisibleEntryCount;
     }
 }

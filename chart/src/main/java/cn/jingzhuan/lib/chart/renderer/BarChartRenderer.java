@@ -160,13 +160,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         mRenderPaint.setPathEffect(null);
     }
 
-    @Override
-    public void addDataSet(BarDataSet dataSet) {
-        if (dataSet == null) return;
-        mBarDataSets.add(dataSet);
-        calcDataSetMinMax();
-    }
-
     @Override public void removeDataSet(BarDataSet dataSet) {
         if (dataSet == null) return;
         mBarDataSets.remove(dataSet);

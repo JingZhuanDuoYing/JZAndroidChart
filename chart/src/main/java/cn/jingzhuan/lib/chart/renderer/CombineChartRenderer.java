@@ -90,6 +90,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
+        dataSet.setMinVisibleEntryCount(getMinVisibleEntryCount());
+        dataSet.setMaxVisibleEntryCount(getMaxVisibleEntryCount());
+        dataSet.setDefaultVisibleEntryCount(getDefaultVisibleEntryCount());
 
         getChartData().add(dataSet);
 
@@ -104,6 +107,36 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
 
         calcDataSetMinMax();
+    }
+
+    @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+        if (defaultVisibleEntryCount <= 0) return;
+
+        barChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        lineRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        scatterChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        candlestickChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+    }
+
+    @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        this.maxVisibleEntryCount = maxVisibleEntryCount;
+        if (maxVisibleEntryCount <= 0) return;
+
+        barChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        lineRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        scatterChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        candlestickChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+    }
+
+    @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        this.minVisibleEntryCount = minVisibleEntryCount;
+        if (minVisibleEntryCount <= 0) return;
+
+        barChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
+        lineRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
+        scatterChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
+        candlestickChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {

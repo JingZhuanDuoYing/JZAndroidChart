@@ -92,12 +92,6 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
   }
 
-
-  @Override public void addDataSet(ScatterDataSet dataSet) {
-    getChartData().add(dataSet);
-    calcDataSetMinMax();
-  }
-
   @Override public void removeDataSet(ScatterDataSet dataSet) {
     getChartData().remove(dataSet);
     calcDataSetMinMax();

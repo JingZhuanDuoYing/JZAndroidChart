@@ -23,10 +23,10 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int maxVisibleEntryCount = 500;
     private int minVisibleEntryCount = 20;
+    private int defaultVisibleEntryCount = -1;
 
     private boolean isHighlightedVerticalEnable = false;
     private boolean isHighlightedHorizontalEnable = false;
-
 
     public abstract void setValues(List<T> values);
 
@@ -85,19 +85,26 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         int from = (int) (viewport.left * getValues().size());
         int to  = (int) (viewport.right * getValues().size());
 
-        if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
-            from = to - getMaxVisibleEntryCount();
+        if (Float.compare(viewport.width(), 1f) == 0 && defaultVisibleEntryCount > 0
+            && defaultVisibleEntryCount < getValues().size()) {
+            from = to - defaultVisibleEntryCount;
             viewport.left = from / (float) getValues().size();
-        }
-        if (getMinVisibleEntryCount() > 0
-            && getMinVisibleEntryCount() < getValues().size()
-            && to - from < getMinVisibleEntryCount()) {
-            if (to >= getMinVisibleEntryCount()) {
-                from = to - getMinVisibleEntryCount();
+        } else {
+
+            if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
+                from = to - getMaxVisibleEntryCount();
                 viewport.left = from / (float) getValues().size();
-            } else {
-                to = from + getMinVisibleEntryCount();
-                viewport.right = to / (float) getValues().size();
+            }
+            if (getMinVisibleEntryCount() > 0
+                && getMinVisibleEntryCount() < getValues().size()
+                && to - from < getMinVisibleEntryCount()) {
+                if (to >= getMinVisibleEntryCount()) {
+                    from = to - getMinVisibleEntryCount();
+                    viewport.left = from / (float) getValues().size();
+                } else {
+                    to = from + getMinVisibleEntryCount();
+                    viewport.right = to / (float) getValues().size();
+                }
             }
         }
         return getValues().subList(from, to);
@@ -123,5 +130,10 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     @Override
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {
         this.minVisibleEntryCount = minVisibleEntryCount;
+    }
+
+    @Override
+    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
     }
 }

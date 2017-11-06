@@ -238,11 +238,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     mRenderPaint.setPathEffect(null);
   }
 
-  @Override public void addDataSet(CandlestickDataSet dataSet) {
-    getChartData().add(dataSet);
-    calcDataSetMinMax();
-  }
-
   @Override public void removeDataSet(CandlestickDataSet dataSet) {
     getChartData().remove(dataSet);
     calcDataSetMinMax();

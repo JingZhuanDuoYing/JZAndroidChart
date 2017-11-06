@@ -176,4 +176,8 @@ public class BaseChart extends Chart {
         this.maxVisibleEntryCount = maxVisibleEntryCount;
         mRenderer.getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
+
+    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        mRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+    }
 }

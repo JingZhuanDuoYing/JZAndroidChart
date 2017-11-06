@@ -94,12 +94,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mRenderPaint.setPathEffect(null);
     }
 
-    @Override
-    public void addDataSet(LineDataSet dataSet) {
-        lineData.add(dataSet);
-        calcDataSetMinMax();
-    }
-
     @Override public void removeDataSet(LineDataSet dataSet) {
         lineData.remove(dataSet);
         calcDataSetMinMax();
