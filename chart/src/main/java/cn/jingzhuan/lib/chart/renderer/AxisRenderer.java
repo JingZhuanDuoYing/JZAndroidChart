@@ -1,6 +1,9 @@
 package cn.jingzhuan.lib.chart.renderer;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -13,6 +16,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
+import java.lang.ref.WeakReference;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -24,17 +28,18 @@ public class AxisRenderer implements Renderer {
     private Rect mContentRect;
     private Axis mAxis;
 
-    // Buffers used during drawing. These are defined as fields to avoid allocation during
-    // draw calls.
-//    private float[] mAxisPositionsBuffer = new float[]{};
     private final char[] mLabelBuffer = new char[100];
-//    private AxisAutoValues mStopsBuffer = new AxisAutoValues();
 
     private Paint mGridPaint;
     private Paint mLabelTextPaint;
     private Paint mAxisPaint;
+    private Paint mRenderPaint;
 
     private static final int POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+
+    private WeakReference<Bitmap> mDrawBitmap;
+    private Canvas mBitmapCanvas;
+    private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public AxisRenderer(Chart chart, Axis axis) {
         this.mCurrentViewport = chart.getCurrentViewport();
@@ -44,7 +49,7 @@ public class AxisRenderer implements Renderer {
         initPaints();
     }
 
-    public void initPaints() {
+    protected void initPaints() {
         mGridPaint = new Paint();
         mGridPaint.setStrokeWidth(mAxis.getGridThickness());
         mGridPaint.setColor(mAxis.getGridColor());
@@ -61,10 +66,29 @@ public class AxisRenderer implements Renderer {
         mAxisPaint.setStrokeWidth(mAxis.getAxisThickness());
         mAxisPaint.setColor(mAxis.getAxisColor());
         mAxisPaint.setStyle(Paint.Style.STROKE);
+
+        mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mRenderPaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
     public void renderer(Canvas canvas) {
+
+        int width = mContentRect.width() + mContentRect.left;
+        int height = mContentRect.height();
+
+        if (mDrawBitmap == null
+            || (mDrawBitmap.get().getWidth() != width)
+            || (mDrawBitmap.get().getHeight() != height)) {
+
+            if (width > 0 && height > 0) {
+                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
+                mBitmapCanvas = new Canvas(mDrawBitmap.get());
+            } else
+                return;
+        }
+
+        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
 
         if (mAxis instanceof AxisX) {
 
@@ -81,12 +105,13 @@ public class AxisRenderer implements Renderer {
         }
 
         // Draws lib container
-        drawAxisLine(canvas);
+        drawAxisLine(mBitmapCanvas);
 
         if (mAxis.isGridLineEnable()) {
-            drawGridLines(canvas);
+            drawGridLines(mBitmapCanvas);
         }
 
+        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
     }
 
 
@@ -252,6 +277,11 @@ public class AxisRenderer implements Renderer {
     private void drawGridLines(Canvas canvas) {
         if (mAxis.isEnable()) {
             int count = mAxis.getGridCount();
+
+            if (mAxis.getDashedGridIntervals() != null && mAxis.getDashedGridPhase() > 0) {
+                mGridPaint.setPathEffect(new DashPathEffect(mAxis.getDashedGridIntervals(), mAxis.getDashedGridPhase()));
+            }
+
             if (mAxis instanceof AxisX) {
                 final float width = mContentRect.width() / count;
                 for (int i = 1; i < count; i++) {
@@ -398,4 +428,5 @@ public class AxisRenderer implements Renderer {
             }
         }
     }
+
 }

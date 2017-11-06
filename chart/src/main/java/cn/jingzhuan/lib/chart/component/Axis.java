@@ -12,7 +12,7 @@ import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 public class Axis extends AbstractComponent {
 
-    protected int mAxisPosition;
+    private int mAxisPosition;
 
     private int mGridColor = Color.GRAY;
     private float mGridThickness = 1;
@@ -34,6 +34,9 @@ public class Axis extends AbstractComponent {
     public float[] mLabelEntries = new float[]{};
     private boolean gridLineEnable = true;
     private boolean labelEnable = true;
+
+    private float mDashedGridIntervals[] = null;
+    private float mDashedGridPhase = -1;
 
     Axis(int axisPosition) {
         this.mAxisPosition = axisPosition;
@@ -177,5 +180,18 @@ public class Axis extends AbstractComponent {
 
     public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
         this.mLabelValueFormatter = mLabelValueFormatter;
+    }
+
+    public float getDashedGridPhase() {
+        return mDashedGridPhase;
+    }
+
+    public float[] getDashedGridIntervals() {
+        return mDashedGridIntervals;
+    }
+
+    public void enableGridDashPathEffect(float intervals[], float phase) {
+        this.mDashedGridIntervals = intervals;
+        this.mDashedGridPhase = phase;
     }
 }

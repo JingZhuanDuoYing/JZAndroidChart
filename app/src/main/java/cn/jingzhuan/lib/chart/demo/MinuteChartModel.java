@@ -89,6 +89,9 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
             final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
 
+            minuteBinding.minuteChart.getAxisLeft().enableGridDashPathEffect(new float[] {10, 10}, 10);
+            minuteBinding.minuteChart.getAxisRight().enableGridDashPathEffect(new float[] {10, 10}, 10);
+
             minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new LabelValueFormatter() {
                 @Override
                 public String format(float value, int index) {

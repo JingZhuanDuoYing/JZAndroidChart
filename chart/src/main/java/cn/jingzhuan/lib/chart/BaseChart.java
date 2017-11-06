@@ -159,8 +159,8 @@ public class BaseChart extends Chart {
         return mHighlightStatusChangeListener;
     }
 
-    public void setOnHighlightListener(OnHighlightListener mHighlightListener) {
-        this.mHighlightListener = mHighlightListener;
+    public void setOnHighlightListener(OnHighlightListener highlightListener) {
+        this.mHighlightListener = highlightListener;
     }
 
     public void enableHighlightDashPathEffect(float intervals[], float phase) {
