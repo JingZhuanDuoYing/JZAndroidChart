@@ -37,9 +37,9 @@ public class AxisRenderer implements Renderer {
 
     private static final int POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 
-    private WeakReference<Bitmap> mDrawBitmap;
-    private Canvas mBitmapCanvas;
-    private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+    //private WeakReference<Bitmap> mDrawBitmap;
+    //private Canvas mBitmapCanvas;
+    //private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public AxisRenderer(Chart chart, Axis axis) {
         this.mCurrentViewport = chart.getCurrentViewport();
@@ -74,21 +74,21 @@ public class AxisRenderer implements Renderer {
     @Override
     public void renderer(Canvas canvas) {
 
-        int width = mContentRect.width() + mContentRect.left;
-        int height = mContentRect.height();
+        //int width = mContentRect.width() + mContentRect.left;
+        //int height = mContentRect.height();
 
-        if (mDrawBitmap == null
-            || (mDrawBitmap.get().getWidth() != width)
-            || (mDrawBitmap.get().getHeight() != height)) {
-
-            if (width > 0 && height > 0) {
-                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-                mBitmapCanvas = new Canvas(mDrawBitmap.get());
-            } else
-                return;
-        }
-
-        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
+        //if (mDrawBitmap == null
+        //    || (mDrawBitmap.get().getWidth() != width)
+        //    || (mDrawBitmap.get().getHeight() != height)) {
+        //
+        //    if (width > 0 && height > 0) {
+        //        mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
+        //        mBitmapCanvas = new Canvas(mDrawBitmap.get());
+        //    } else
+        //        return;
+        //}
+        //
+        //mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
 
         if (mAxis instanceof AxisX) {
 
@@ -105,13 +105,9 @@ public class AxisRenderer implements Renderer {
         }
 
         // Draws lib container
-        drawAxisLine(mBitmapCanvas);
+        drawAxisLine(canvas);
 
-        if (mAxis.isGridLineEnable()) {
-            drawGridLines(mBitmapCanvas);
-        }
-
-        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
+        //canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
     }
 
 
@@ -274,8 +270,9 @@ public class AxisRenderer implements Renderer {
 
 
     // 网絡线
-    private void drawGridLines(Canvas canvas) {
-        if (mAxis.isEnable()) {
+    public void drawGridLines(Canvas canvas) {
+
+        if (mAxis.isEnable() && mAxis.isGridLineEnable()) {
             int count = mAxis.getGridCount();
 
             if (mAxis.getDashedGridIntervals() != null && mAxis.getDashedGridPhase() > 0) {
@@ -295,7 +292,7 @@ public class AxisRenderer implements Renderer {
             }
             if (mAxis instanceof AxisY) {
                 final float height = mContentRect.height() / (count - 1);
-                for (int i = 1; i < count; i++) {
+                for (int i = 1; i < count - 1; i++) {
                     canvas.drawLine(
                             mContentRect.left,
                             mContentRect.top + i * height,
