@@ -24,4 +24,6 @@ public interface IDataSet {
   void setDefaultVisibleEntryCount(int defaultVisibleEntryCount);
 
   @AxisDependency int getAxisDependency();
+
+  boolean isEnable();
 }

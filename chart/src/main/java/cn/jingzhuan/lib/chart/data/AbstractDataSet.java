@@ -28,6 +28,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     private boolean isHighlightedVerticalEnable = false;
     private boolean isHighlightedHorizontalEnable = false;
 
+    private boolean enable = true;
+
     public abstract void setValues(List<T> values);
 
     public abstract List<T> getValues();
@@ -135,5 +137,15 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     @Override
     public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
         this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+        this.setVisible(enable);
+    }
+
+    @Override
+    public boolean isEnable() {
+        return enable;
     }
 }
