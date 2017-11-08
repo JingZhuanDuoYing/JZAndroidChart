@@ -33,22 +33,6 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected int minVisibleEntryCount = 20;
     protected int defaultVisibleEntryCount = -1;
 
-    /**
-     * Bitmap object used for drawing the paths (otherwise they are too long if
-     * rendered directly on the canvas)
-     */
-    protected WeakReference<Bitmap> mDrawBitmap;
-
-    /**
-     * on this canvas, the paths are rendered, it is initialized with the
-     * pathBitmap
-     */
-    protected Canvas mBitmapCanvas;
-    /**
-     * the bitmap configuration to be used
-     */
-    protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
-
     private int mHighlightColor = Color.WHITE;
 
     public AbstractDataRenderer(Chart chart) {
@@ -63,26 +47,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     @Override
     public final void renderer(Canvas canvas) {
-        int width = mContentRect.width() + mContentRect.left;
-        int height = mContentRect.height();
-
-        if (mDrawBitmap == null
-                || (mDrawBitmap.get().getWidth() != width)
-                || (mDrawBitmap.get().getHeight() != height)) {
-
-            if (width > 0 && height > 0) {
-
-                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-                mBitmapCanvas = new Canvas(mDrawBitmap.get());
-            } else
-                return;
-        }
-
-        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
-
-        renderDataSet(mBitmapCanvas);
-
-        canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
+        renderDataSet(canvas);
     }
 
 
@@ -142,10 +107,6 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         this.mDashedHighlightPhase = phase;
     }
 
-    public Canvas getCacheCanvas() {
-        return mBitmapCanvas;
-    }
-
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
         this.maxVisibleEntryCount = maxVisibleEntryCount;
         if (maxVisibleEntryCount <= 0) return;
@@ -189,5 +150,9 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public int getDefaultVisibleEntryCount() {
         return defaultVisibleEntryCount;
+    }
+
+    public Paint getRenderPaint() {
+        return mRenderPaint;
     }
 }
