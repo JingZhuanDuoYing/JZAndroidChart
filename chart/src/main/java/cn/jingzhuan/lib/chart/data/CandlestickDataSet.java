@@ -21,6 +21,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mDecreasingColor = 0xFF1deb5b; // 阴线
   private int mNeutralColor = Color.WHITE;    // 十字线
   private int mLimitUpColor = Color.TRANSPARENT;
+  private Paint.Style mLimitUpPaintStyle = null;
 
   private float strokeThickness = 4;
   private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
@@ -193,8 +194,17 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return mDecreasingPaintStyle;
   }
 
+
   public void setDecreasingPaintStyle(Paint.Style decreasingPaintStyle) {
     this.mDecreasingPaintStyle = decreasingPaintStyle;
+  }
+
+  public Paint.Style getLimitUpPaintStyle() {
+    return mLimitUpPaintStyle;
+  }
+
+  public void setLimitUpPaintStyle(Paint.Style limitUpPaintStyle) {
+    this.mLimitUpPaintStyle = limitUpPaintStyle;
   }
 
 }

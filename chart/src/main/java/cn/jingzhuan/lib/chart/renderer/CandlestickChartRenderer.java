@@ -193,6 +193,10 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         }
       }
 
+      if (candlestickDataSet.getLimitUpPaintStyle() != null) {
+        mRenderPaint.setStyle(candlestickDataSet.getLimitUpPaintStyle());
+      }
+
       canvas.drawRect(mBodyBuffers[0],
                       mBodyBuffers[1],
                       mBodyBuffers[2],
