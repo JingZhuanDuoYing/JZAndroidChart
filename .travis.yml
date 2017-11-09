@@ -1,21 +1,38 @@
 language: android
 
+env:
+  global:
+    - ANDROID_API=26
+    - EMULATOR_API=26
+    - ANDROID_BUILD_TOOLS=26.0.2
+    - ADB_INSTALL_TIMEOUT=5 # minutes
+
 android:
   components:
-    - android-26
-    - build-tools-26.0.2
+    - tools
     - platform-tools
-    - sys-img-armeabi-v7a-android-26
-    - extra-android-support
-    - extra-android-m2repository
+    - build-tools-$ANDROID_BUILD_TOOLS
+    - android-$ANDROID_API
+    - android-$EMULATOR_API_LEVEL
     - extra-google-m2repository
+    - extra-android-m2repository
+    - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
+    - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+
+licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
 
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t android-26 # --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
+  - echo no | android create avd --force -n test -t android-$$ANDROID_API --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+
+script:
+  - "./gradlew clean build check -PdisablePreDex --stacktrace"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
