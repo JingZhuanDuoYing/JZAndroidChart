@@ -72,19 +72,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
-        Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
-
         if (lineRenderer.getDataSet() != null && !lineRenderer.getDataSet().isEmpty()) {
-            lineRenderer.renderHighlighted(c, highlights);
+            lineRenderer.renderHighlighted(canvas, highlights);
         }
         if (barChartRenderer.getDataSet() != null && !barChartRenderer.getDataSet().isEmpty()) {
-            barChartRenderer.renderHighlighted(c, highlights);
+            barChartRenderer.renderHighlighted(canvas, highlights);
         }
         if (candlestickChartRenderer.getDataSet() != null && !candlestickChartRenderer.getDataSet().isEmpty()) {
-            candlestickChartRenderer.renderHighlighted(c, highlights);
+            candlestickChartRenderer.renderHighlighted(canvas, highlights);
         }
         if (scatterChartRenderer.getDataSet() != null && !scatterChartRenderer.getDataSet().isEmpty()) {
-            scatterChartRenderer.renderHighlighted(c, highlights);
+            scatterChartRenderer.renderHighlighted(canvas, highlights);
         }
     }
 

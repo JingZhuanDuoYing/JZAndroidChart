@@ -1,13 +1,17 @@
 package cn.jingzhuan.lib.chart;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import android.view.View;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +38,10 @@ public class BaseChart extends Chart {
     private int maxVisibleEntryCount = 100;
     private int minVisibleEntryCount = 20;
 
+    protected WeakReference<Bitmap> mDrawBitmap;
+    protected Canvas mBitmapCanvas;
+    protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+
     public BaseChart(Context context) {
         super(context);
     }
@@ -53,7 +61,6 @@ public class BaseChart extends Chart {
 
     @Override
     public void initChart() {
-        //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         mAxisRenderers = new ArrayList<>(4);
 
@@ -63,10 +70,47 @@ public class BaseChart extends Chart {
         mAxisRenderers.add(new AxisRenderer(this, mAxisRight));
     }
 
+    @Override protected void createBitmapCache(Canvas canvas) {
+        int width = getContentRect().width() + getContentRect().left;
+        int height = getContentRect().height();
+
+        if (mDrawBitmap == null
+            || (mDrawBitmap.get().getWidth() != width)
+            || (mDrawBitmap.get().getHeight() != height)) {
+
+            if (width > 0 && height > 0) {
+                mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
+                mBitmapCanvas = new Canvas(mDrawBitmap.get());
+            } else
+                return;
+        }
+
+        mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
+    }
+
+    @Override protected Bitmap getDrawBitmap() {
+        return mDrawBitmap.get();
+    }
+
+    @Override protected Paint getRenderPaint() {
+        return mRenderer.getRenderPaint();
+    }
+
+    @Override
+    public Canvas getBitmapCanvas() {
+        return mBitmapCanvas;
+    }
+
     @Override
     protected void drawAxis(Canvas canvas) {
-        for (Renderer axisRenderer : mAxisRenderers) {
+        for (AxisRenderer axisRenderer : mAxisRenderers) {
             axisRenderer.renderer(canvas);
+        }
+    }
+
+    @Override protected void drawGridLine(Canvas canvas) {
+        for (AxisRenderer axisRenderer : mAxisRenderers) {
+            axisRenderer.drawGridLines(canvas);
         }
     }
 

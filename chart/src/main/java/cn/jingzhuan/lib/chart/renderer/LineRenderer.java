@@ -71,9 +71,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         for (Highlight highlight : highlights) {
-            Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
 
-            c.drawLine(
+            canvas.drawLine(
                     highlight.getX(),
                     0,
                     highlight.getX(),
@@ -87,7 +86,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                     float max = lineDataSet.getViewportYMax();
                     float value =  lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
                     float y = (max - value) / (max - min) * mContentRect.height();
-                    c.drawLine(0, y, mContentRect.right, y, mRenderPaint);
+                    canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
                 }
             }
         }

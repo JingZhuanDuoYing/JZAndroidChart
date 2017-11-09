@@ -148,8 +148,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         for (Highlight highlight : highlights) {
 
-            Canvas c = mBitmapCanvas == null ? canvas : mBitmapCanvas;
-            c.drawLine(
+            canvas.drawLine(
                     highlight.getX(),
                     0,
                     highlight.getX(),

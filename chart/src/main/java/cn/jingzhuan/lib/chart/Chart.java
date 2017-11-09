@@ -2,8 +2,10 @@ package cn.jingzhuan.lib.chart;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -25,6 +27,7 @@ import android.widget.OverScroller;
 
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,7 +109,6 @@ public abstract class Chart extends View {
     private boolean mEdgeEffectBottomActive;
     private boolean mEdgeEffectLeftActive;
     private boolean mEdgeEffectRightActive;
-
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -219,9 +221,15 @@ public abstract class Chart extends View {
 
         // Clips the next few drawing operations to the content area
         int clipRestoreCount = canvas.save();
-        canvas.clipRect(mContentRect);
 
-        render(canvas);
+        canvas.clipRect(mContentRect);
+        createBitmapCache(canvas);
+
+        drawGridLine(getBitmapCanvas());
+
+        render(getBitmapCanvas());
+
+        canvas.drawBitmap(getDrawBitmap(), 0, 0, getRenderPaint());
 
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
@@ -229,7 +237,12 @@ public abstract class Chart extends View {
         drawLabels(canvas); // 坐标轴刻度在最上层
     }
 
+    protected abstract Canvas getBitmapCanvas();
+    protected abstract Bitmap getDrawBitmap();
+    protected abstract Paint getRenderPaint();
+    protected abstract void createBitmapCache(Canvas canvas);
     protected abstract void drawAxis(Canvas canvas);
+    protected abstract void drawGridLine(Canvas canvas);
     protected abstract void drawLabels(Canvas canvas);
 
     protected abstract void render(Canvas canvas);
