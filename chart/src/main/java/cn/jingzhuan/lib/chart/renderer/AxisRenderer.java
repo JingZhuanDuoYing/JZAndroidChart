@@ -272,15 +272,15 @@ public class AxisRenderer implements Renderer {
     // 网絡线
     public void drawGridLines(Canvas canvas) {
 
-        if (mAxis.isEnable() && mAxis.isGridLineEnable()) {
-            int count = mAxis.getGridCount();
+        if (mAxis.isEnable() && mAxis.isGridLineEnable() && mAxis.getGridCount() > 0) {
+            int count = mAxis.getGridCount() + 1;
 
             if (mAxis.getDashedGridIntervals() != null && mAxis.getDashedGridPhase() > 0) {
                 mGridPaint.setPathEffect(new DashPathEffect(mAxis.getDashedGridIntervals(), mAxis.getDashedGridPhase()));
             }
 
             if (mAxis instanceof AxisX) {
-                final float width = mContentRect.width() / count;
+                final float width = mContentRect.width() / ((float) count);
                 for (int i = 1; i < count; i++) {
                     canvas.drawLine(
                             mContentRect.left + i * width,
@@ -291,8 +291,8 @@ public class AxisRenderer implements Renderer {
                 }
             }
             if (mAxis instanceof AxisY) {
-                final float height = mContentRect.height() / (count - 1);
-                for (int i = 1; i < count - 1; i++) {
+                final float height = mContentRect.height() / ((float) count);
+                for (int i = 1; i < count; i++) {
                     canvas.drawLine(
                             mContentRect.left,
                             mContentRect.top + i * height,

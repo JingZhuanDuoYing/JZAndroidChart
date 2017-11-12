@@ -16,7 +16,7 @@ public class Axis extends AbstractComponent {
 
     private int mGridColor = Color.GRAY;
     private float mGridThickness = 1;
-    private int mGridCount = 5;
+    private int mGridCount = 3;
 
     private float mLabelTextSize;
     private float mLabelSeparation = 0;

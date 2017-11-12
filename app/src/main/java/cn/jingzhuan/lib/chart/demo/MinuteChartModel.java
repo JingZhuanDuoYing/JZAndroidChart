@@ -100,7 +100,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
                 }
             });
 
-            minuteBinding.minuteChart.getAxisBottom().setGridCount(4);
+            minuteBinding.minuteChart.getAxisBottom().setGridCount(3);
 
             minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new LabelValueFormatter() {
                 @Override
