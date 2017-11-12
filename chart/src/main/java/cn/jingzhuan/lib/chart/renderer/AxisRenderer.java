@@ -115,7 +115,7 @@ public class AxisRenderer implements Renderer {
 
         double min = axis.getYMin();
         double max = axis.getYMax();
-        int count = axis.getGridCount() - 1;
+        int count = axis.getGridCount();
 
         double interval = (max - min) / count;
 
@@ -173,7 +173,7 @@ public class AxisRenderer implements Renderer {
             return;
         }
 
-        final int count = axis.getGridCount();
+        final int count = axis.getGridCount() + 1;
 //        autoValues.number = axis.getGridCount();
 //        if (autoValues.values.length < autoValues.number) {
 //            // Ensure values contains at least number elements.
@@ -344,7 +344,7 @@ public class AxisRenderer implements Renderer {
         int labelLength;
 
         if (mAxis instanceof AxisX) { // X轴
-            final float width = mContentRect.width() / (labels.length - 1);
+            final float width = mContentRect.width() / (labels.length - 1F);
             for (int i = 0; i < labels.length; i++) {
                 LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
 
@@ -376,7 +376,7 @@ public class AxisRenderer implements Renderer {
             }
         } else { // Y轴
 
-            final float height = mContentRect.height() / (labels.length - 1);
+            final float height = mContentRect.height() / (labels.length - 1F);
             float separation = 0;
             for (int i = 0; i < labels.length; i++) {
                 LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
