@@ -189,10 +189,12 @@ public abstract class Chart extends View {
         mContentRect.set(
                 getPaddingLeft()
                     + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth())
-                    + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation()),
+                    //+ (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation())
+            ,
                 getPaddingTop(),
                 getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth()),
-                getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight() - mAxisBottom.getLabelSeparation());
+                getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight()// - mAxisBottom.getLabelSeparation()
+        );
     }
 
     @Override
@@ -202,13 +204,11 @@ public abstract class Chart extends View {
                 Math.max(getSuggestedMinimumWidth(),
                         resolveSize(minChartSize + getPaddingLeft()
                                         + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth())
-                                        + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation())
                                         + getPaddingRight(),
                                 widthMeasureSpec)),
                 Math.max(getSuggestedMinimumHeight(),
                         resolveSize(minChartSize + getPaddingTop()
                                         + (mAxisBottom.isInside() ? 0 : mAxisBottom.getLabelHeight())
-                                        + (mAxisBottom.isInside() ? 0 : mAxisBottom.getLabelSeparation())
                                         + getPaddingBottom(),
                                 heightMeasureSpec)));
     }
