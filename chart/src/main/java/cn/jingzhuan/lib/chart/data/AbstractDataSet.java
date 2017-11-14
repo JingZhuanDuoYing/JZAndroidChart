@@ -1,12 +1,10 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
-
 import cn.jingzhuan.lib.chart.Viewport;
-import java.util.List;
-
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import java.util.List;
 
 /**
  * Created by Donglua on 17/7/20.
@@ -85,26 +83,26 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     public List<T> getVisiblePoints(Viewport viewport) {
         int from = (int) (viewport.left * getValues().size());
-        int to  = (int) (viewport.right * getValues().size());
+        int to = (int) (viewport.right * getValues().size());
 
-        if (Float.compare(viewport.width(), 1f) == 0 && defaultVisibleEntryCount > 0
+        if (Float.compare(viewport.width(), 1f) == 0
+            && defaultVisibleEntryCount > 0
             && defaultVisibleEntryCount < getValues().size()) {
             from = to - defaultVisibleEntryCount;
             viewport.left = from / (float) getValues().size();
         } else {
-
-            if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
-                from = to - getMaxVisibleEntryCount();
+            if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
+                from = to - maxVisibleEntryCount;
                 viewport.left = from / (float) getValues().size();
             }
-            if (getMinVisibleEntryCount() > 0
-                && getMinVisibleEntryCount() < getValues().size()
-                && to - from < getMinVisibleEntryCount()) {
-                if (to >= getMinVisibleEntryCount()) {
-                    from = to - getMinVisibleEntryCount();
+            if (minVisibleEntryCount > 0
+                && minVisibleEntryCount < getValues().size()
+                && to - from < minVisibleEntryCount) {
+                if (to >= minVisibleEntryCount) {
+                    from = to - minVisibleEntryCount;
                     viewport.left = from / (float) getValues().size();
                 } else {
-                    to = from + getMinVisibleEntryCount();
+                    to = from + minVisibleEntryCount;
                     viewport.right = to / (float) getValues().size();
                 }
             }
@@ -113,15 +111,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
     public int getVisibleValueCount(Viewport viewport) {
-        return (int) ((viewport.right - viewport.left) * getEntryCount());
-    }
-
-    public int getMaxVisibleEntryCount() {
-        return maxVisibleEntryCount;
-    }
-
-    public int getMinVisibleEntryCount() {
-        return minVisibleEntryCount;
+        return getVisiblePoints(viewport).size();
     }
 
     @Override

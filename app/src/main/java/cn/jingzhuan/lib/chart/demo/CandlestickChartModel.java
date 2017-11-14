@@ -123,11 +123,10 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     LayoutCombineChartBinding b = (LayoutCombineChartBinding) binding;
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
     dataSet.setHighlightedVerticalEnable(true);
-    dataSet.setMaxVisibleEntryCount(20);
 
     b.combineChart.getAxisLeft().setAxisPosition(LEFT_OUTSIDE);
     b.combineChart.getAxisRight().setAxisPosition(RIGHT_INSIDE);
-
+    b.combineChart.setMaxVisibleEntryCount(20);
     b.combineChart.setHighlightColor(Color.BLACK);
     b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
     b.combineChart.setDataSet(dataSet);

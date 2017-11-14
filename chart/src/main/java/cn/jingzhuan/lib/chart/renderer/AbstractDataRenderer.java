@@ -29,10 +29,6 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected float mDashedHighlightIntervals[] = null;
     protected float mDashedHighlightPhase = -1;
 
-    protected int maxVisibleEntryCount = 500;
-    protected int minVisibleEntryCount = 20;
-    protected int defaultVisibleEntryCount = -1;
-
     private int mHighlightColor = Color.WHITE;
 
     public AbstractDataRenderer(Chart chart) {
@@ -77,9 +73,6 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public void addDataSet(T dataSet) {
         if (dataSet == null) return;
-        dataSet.setMinVisibleEntryCount(minVisibleEntryCount);
-        dataSet.setMaxVisibleEntryCount(maxVisibleEntryCount);
-        dataSet.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         getChartData().add(dataSet);
         calcDataSetMinMax();
     }
@@ -108,48 +101,18 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     }
 
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
-        this.maxVisibleEntryCount = maxVisibleEntryCount;
         if (maxVisibleEntryCount <= 0) return;
-
-        synchronized (getDataSet()) {
-            for (T t : getDataSet()) {
-                t.setMaxVisibleEntryCount(maxVisibleEntryCount);
-            }
-        }
+        getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {
-        this.minVisibleEntryCount = minVisibleEntryCount;
         if (minVisibleEntryCount <= 0) return;
-
-        synchronized (getDataSet()) {
-            for (T t : getDataSet()) {
-                t.setMinVisibleEntryCount(minVisibleEntryCount);
-            }
-        }
+        getChartData().setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
     public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
-        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
         if (defaultVisibleEntryCount <= 0) return;
-
-        synchronized (getDataSet()) {
-            for (T t : getDataSet()) {
-                t.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
-            }
-        }
-    }
-
-    public int getMinVisibleEntryCount() {
-        return minVisibleEntryCount;
-    }
-
-    public int getMaxVisibleEntryCount() {
-        return maxVisibleEntryCount;
-    }
-
-    public int getDefaultVisibleEntryCount() {
-        return defaultVisibleEntryCount;
+        getChartData().setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
     public Paint getRenderPaint() {

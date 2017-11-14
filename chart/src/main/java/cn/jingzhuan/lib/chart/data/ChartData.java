@@ -26,6 +26,10 @@ public class ChartData<T extends IDataSet> {
   protected AxisY leftAxis;
   protected AxisY rightAxis;
 
+  protected int maxVisibleEntryCount = 500;
+  protected int minVisibleEntryCount = 20;
+  protected int defaultVisibleEntryCount = -1;
+
   public ChartData() {
     this.chartData = Collections.synchronizedList(new ArrayList<T>());
   }
@@ -39,7 +43,9 @@ public class ChartData<T extends IDataSet> {
 
   public boolean add(T e) {
     if (e == null) return false;
-
+    e.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+    e.setMinVisibleEntryCount(minVisibleEntryCount);
+    e.setMaxVisibleEntryCount(maxVisibleEntryCount);
     synchronized (this) {
       return getDataSets().add(e);
     }
@@ -143,6 +149,7 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+    this.maxVisibleEntryCount = maxVisibleEntryCount;
     synchronized (getDataSets()) {
       for (T t : getDataSets()) {
         t.setMaxVisibleEntryCount(maxVisibleEntryCount);
@@ -151,9 +158,19 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+    this.minVisibleEntryCount = minVisibleEntryCount;
     synchronized (getDataSets()) {
       for (T t : getDataSets()) {
         t.setMinVisibleEntryCount(minVisibleEntryCount);
+      }
+    }
+  }
+
+  public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+    this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+    synchronized (getDataSets()) {
+      for (T t : getDataSets()) {
+        t.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
       }
     }
   }

@@ -62,27 +62,27 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     return getVisiblePoints(viewport).size();
   }
 
-  @Override public List<CandlestickValue> getVisiblePoints(Viewport viewport) {
-    int from = (int) (viewport.left * candlestickValues.size());
-    int to  = (int) (viewport.right * candlestickValues.size());
-
-    if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
-      from = to - getMaxVisibleEntryCount();
-      viewport.left = from / (float) candlestickValues.size();
-    }
-    if (getMinVisibleEntryCount() > 0
-        && getMinVisibleEntryCount() < candlestickValues.size()
-        && to - from < getMinVisibleEntryCount()) {
-      if (to >= getMinVisibleEntryCount()) {
-        from = to - getMinVisibleEntryCount();
-        viewport.left = from / (float) candlestickValues.size();
-      } else {
-        to = from + getMinVisibleEntryCount();
-        viewport.right = to / (float) candlestickValues.size();
-      }
-    }
-    return candlestickValues.subList(from, to);
-  }
+  //@Override public List<CandlestickValue> getVisiblePoints(Viewport viewport) {
+  //  int from = (int) (viewport.left * candlestickValues.size());
+  //  int to  = (int) (viewport.right * candlestickValues.size());
+  //
+  //  if (getMaxVisibleEntryCount() > 0 && to - from > getMaxVisibleEntryCount()) {
+  //    from = to - getMaxVisibleEntryCount();
+  //    viewport.left = from / (float) candlestickValues.size();
+  //  }
+  //  if (getMinVisibleEntryCount() > 0
+  //      && getMinVisibleEntryCount() < candlestickValues.size()
+  //      && to - from < getMinVisibleEntryCount()) {
+  //    if (to >= getMinVisibleEntryCount()) {
+  //      from = to - getMinVisibleEntryCount();
+  //      viewport.left = from / (float) candlestickValues.size();
+  //    } else {
+  //      to = from + getMinVisibleEntryCount();
+  //      viewport.right = to / (float) candlestickValues.size();
+  //    }
+  //  }
+  //  return candlestickValues.subList(from, to);
+  //}
 
   @Override public int getEntryCount() {
     return candlestickValues.size();

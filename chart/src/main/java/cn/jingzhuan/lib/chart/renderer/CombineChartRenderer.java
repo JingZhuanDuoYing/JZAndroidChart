@@ -88,9 +88,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
-        dataSet.setMinVisibleEntryCount(getMinVisibleEntryCount());
-        dataSet.setMaxVisibleEntryCount(getMaxVisibleEntryCount());
-        dataSet.setDefaultVisibleEntryCount(getDefaultVisibleEntryCount());
 
         getChartData().add(dataSet);
 
@@ -108,7 +105,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
-        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
         if (defaultVisibleEntryCount <= 0) return;
 
         barChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
@@ -118,7 +114,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
-        this.maxVisibleEntryCount = maxVisibleEntryCount;
         if (maxVisibleEntryCount <= 0) return;
 
         barChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
@@ -128,7 +123,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
-        this.minVisibleEntryCount = minVisibleEntryCount;
         if (minVisibleEntryCount <= 0) return;
 
         barChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);

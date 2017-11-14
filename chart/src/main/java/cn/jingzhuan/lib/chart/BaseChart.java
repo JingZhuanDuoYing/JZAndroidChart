@@ -35,8 +35,8 @@ public class BaseChart extends Chart {
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
     private OnHighlightListener mHighlightListener;
 
-    private int maxVisibleEntryCount = 100;
-    private int minVisibleEntryCount = 20;
+    //private int maxVisibleEntryCount = 500;
+    //private int minVisibleEntryCount = 20;
 
     protected WeakReference<Bitmap> mDrawBitmap;
     protected Canvas mBitmapCanvas;
@@ -212,16 +212,16 @@ public class BaseChart extends Chart {
     }
 
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {
-        this.minVisibleEntryCount = minVisibleEntryCount;
-        mRenderer.getChartData().setMinVisibleEntryCount(minVisibleEntryCount);
+        mRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
-        this.maxVisibleEntryCount = maxVisibleEntryCount;
-        mRenderer.getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);
+        mRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
     public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
         mRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
+
 }
+
