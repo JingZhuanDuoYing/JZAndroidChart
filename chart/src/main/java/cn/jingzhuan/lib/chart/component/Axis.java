@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
+import cn.jingzhuan.lib.chart.data.GirdLineColorSetter;
 import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 /**
@@ -15,6 +16,7 @@ public class Axis extends AbstractComponent {
     private int mAxisPosition;
 
     private int mGridColor = Color.GRAY;
+    private GirdLineColorSetter mGirdLineColorSetter = null;
     private float mGridThickness = 1;
     private int mGridCount = 3;
 
@@ -193,5 +195,13 @@ public class Axis extends AbstractComponent {
     public void enableGridDashPathEffect(float intervals[], float phase) {
         this.mDashedGridIntervals = intervals;
         this.mDashedGridPhase = phase;
+    }
+
+    public void setGirdLineColorSetter(GirdLineColorSetter mGirdLineColorSetter) {
+        this.mGirdLineColorSetter = mGirdLineColorSetter;
+    }
+
+    public GirdLineColorSetter getGirdLineColorSetter() {
+        return mGirdLineColorSetter;
     }
 }

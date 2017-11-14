@@ -282,6 +282,9 @@ public class AxisRenderer implements Renderer {
             if (mAxis instanceof AxisX) {
                 final float width = mContentRect.width() / ((float) count);
                 for (int i = 1; i < count; i++) {
+                    if (mAxis.getGirdLineColorSetter() != null) {
+                        mGridPaint.setColor(mAxis.getGirdLineColorSetter().getColorByIndex(mAxis.getGridColor(), i));
+                    }
                     canvas.drawLine(
                             mContentRect.left + i * width,
                             mContentRect.top,
@@ -291,8 +294,12 @@ public class AxisRenderer implements Renderer {
                 }
             }
             if (mAxis instanceof AxisY) {
+
                 final float height = mContentRect.height() / ((float) count);
                 for (int i = 1; i < count; i++) {
+                    if (mAxis.getGirdLineColorSetter() != null) {
+                        mGridPaint.setColor(mAxis.getGirdLineColorSetter().getColorByIndex(mAxis.getGridColor(), i));
+                    }
                     canvas.drawLine(
                             mContentRect.left,
                             mContentRect.top + i * height,
