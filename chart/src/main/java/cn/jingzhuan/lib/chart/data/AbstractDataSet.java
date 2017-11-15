@@ -111,7 +111,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
     public int getVisibleValueCount(Viewport viewport) {
-        return getVisiblePoints(viewport).size();
+        return (int) ((viewport.right - viewport.left) * getEntryCount());
     }
 
     @Override
