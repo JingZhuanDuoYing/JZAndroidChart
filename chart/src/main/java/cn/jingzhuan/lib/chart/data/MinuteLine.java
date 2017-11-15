@@ -29,26 +29,9 @@ public class MinuteLine extends LineDataSet {
         this.mLastClose = lastClose;
     }
 
-    //@Override
-    //public void calcMinMax(Viewport viewport) {
-    //    super.calcMinMax(viewport);
-    //
-    //    if (mLastClose > 0) {
-    //        float maxDiff = Math.max(Math.abs(mYMin - mLastClose), Math.abs(mYMax - mLastClose));
-    //        maxDiff = Math.max(mLastClose * 0.01f, maxDiff);
-    //        mYMin = mLastClose - maxDiff;
-    //        mYMax = mLastClose + maxDiff;
-    //    }
-    //}
-
     @Override
-    public void calcViewportY(Viewport viewport) {
-        mViewportYMax = -Float.MAX_VALUE;
-        mViewportYMin = Float.MAX_VALUE;
-
-        for (PointValue e : getVisiblePoints(viewport)) {
-            calcViewportMinMax(e);
-        }
+    public void calcMinMax(Viewport viewport) {
+        super.calcMinMax(viewport);
 
         if (mLastClose > 0) {
             float maxDiff = Math.max(Math.abs(mViewportYMin - mLastClose), Math.abs(mViewportYMax - mLastClose));
@@ -56,10 +39,8 @@ public class MinuteLine extends LineDataSet {
             mViewportYMin = mLastClose - maxDiff;
             mViewportYMax = mLastClose + maxDiff;
         }
-
-        //setAxisViewportY(mAxisLeft, mViewportYMin, mViewportYMax);
-        //setAxisViewportY(mAxisRight, mViewportYMin, mViewportYMax);
     }
+
 }
 
 

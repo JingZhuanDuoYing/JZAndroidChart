@@ -58,14 +58,10 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null || mPointValues.isEmpty())
             return;
 
-        //for (PointValue e : mPointValues) {
-        //    setMinMax(e);
-        //}
-
         calcViewportY(viewport);
     }
 
-    public void calcViewportY(Viewport viewport) {
+    private void calcViewportY(Viewport viewport) {
 
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
@@ -78,7 +74,6 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     @Override
     public void setValues(List<PointValue> values) {
         this.mPointValues = values;
-        //notifyDataSetChanged();
     }
 
     @Override
@@ -86,14 +81,13 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         return mPointValues;
     }
 
-    protected void calcViewportMinMax(PointValue e) {
+    private void calcViewportMinMax(PointValue e) {
         if (e.getValue() < mViewportYMin)
             mViewportYMin = e.getValue();
 
         if (e.getValue() > mViewportYMax)
             mViewportYMax = e.getValue();
     }
-
 
     @Override
     public boolean addEntry(PointValue e) {

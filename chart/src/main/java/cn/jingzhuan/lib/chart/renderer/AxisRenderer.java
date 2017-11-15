@@ -115,13 +115,13 @@ public class AxisRenderer implements Renderer {
 
         double min = axis.getYMin();
         double max = axis.getYMax();
-        int count = axis.getGridCount();
+        int count = axis.getGridCount() + 1;
 
         double interval = (max - min) / count;
 
-        axis.mLabelEntries = new float[axis.getGridCount()];
+        axis.mLabelEntries = new float[count + 1];
         double f = min;
-        for (int j = 0; j < axis.getGridCount(); f += interval, j++) {
+        for (int j = 0; j < count + 1; f += interval, j++) {
             axis.mLabelEntries[j] = (float) f;
         }
     }
@@ -294,7 +294,6 @@ public class AxisRenderer implements Renderer {
                 }
             }
             if (mAxis instanceof AxisY) {
-
                 final float height = mContentRect.height() / ((float) count);
                 for (int i = 1; i < count; i++) {
                     if (mAxis.getGirdLineColorSetter() != null) {

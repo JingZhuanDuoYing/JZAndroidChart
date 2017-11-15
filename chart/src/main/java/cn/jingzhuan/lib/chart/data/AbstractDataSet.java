@@ -7,6 +7,8 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 import java.util.List;
 
 /**
+ * Abstract DataSet
+ *
  * Created by Donglua on 17/7/20.
  */
 
