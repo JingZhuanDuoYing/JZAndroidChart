@@ -4,10 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.support.annotation.NonNull;
-
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -185,22 +182,32 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         }
       }
 
-      if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT && i > 0) {
+      if (i > 0) {
         final CandlestickValue previousValue = candlestickDataSet.getEntryForIndex(i - 1);
         boolean isLimitUp = Float.compare((candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.095f) > 0;
-        if (isLimitUp) {
-          mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());
+        if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT && i > 0) {
+          if (isLimitUp) {
+            mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());
+          }
+        }
+        if (candlestickDataSet.getLimitUpPaintStyle() != null) {
+          if (isLimitUp) {
+            mRenderPaint.setStyle(candlestickDataSet.getLimitUpPaintStyle());
+          }
         }
       }
 
-      if (candlestickDataSet.getLimitUpPaintStyle() != null) {
-        mRenderPaint.setStyle(candlestickDataSet.getLimitUpPaintStyle());
+      if (mBodyBuffers[1] == mBodyBuffers[3]) {
+        canvas.drawLine(mBodyBuffers[0],
+                        mBodyBuffers[1],
+                        mBodyBuffers[2],
+                        mBodyBuffers[3], mRenderPaint);
+      } else {
+        canvas.drawRect(mBodyBuffers[0],
+                        mBodyBuffers[1],
+                        mBodyBuffers[2],
+                        mBodyBuffers[3], mRenderPaint);
       }
-
-      canvas.drawRect(mBodyBuffers[0],
-                      mBodyBuffers[1],
-                      mBodyBuffers[2],
-                      mBodyBuffers[3], mRenderPaint);
 
       canvas.drawLines(mUpperShadowBuffers, mRenderPaint);
 
