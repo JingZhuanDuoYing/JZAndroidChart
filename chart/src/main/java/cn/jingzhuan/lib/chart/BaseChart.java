@@ -223,5 +223,8 @@ public class BaseChart extends Chart {
         mRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
+    @Override protected int getEntryIndexByCoordinate(float x, float y) {
+        return mRenderer.getEntryIndexByCoordinate(x, y);
+    }
 }
 

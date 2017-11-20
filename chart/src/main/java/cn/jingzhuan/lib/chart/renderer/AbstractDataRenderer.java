@@ -83,6 +83,16 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected abstract List<T> getDataSet();
     public abstract ChartData<T> getChartData();
 
+    public int getEntryIndexByCoordinate(float x, float y) {
+        float valueCount = getChartData().getEntryCount();
+        int index =
+            (int) (((x - mContentRect.left) * mViewport.width() / mContentRect.width() + mViewport.left) * valueCount);
+        if (index >= getChartData().getEntryCount()) index = getChartData().getEntryCount() - 1;
+        if (index < 0) index = 0;
+
+        return index;
+    }
+
     protected void calcDataSetMinMax() {
         getChartData().calcMaxMin(mViewport, mContentRect);
     }

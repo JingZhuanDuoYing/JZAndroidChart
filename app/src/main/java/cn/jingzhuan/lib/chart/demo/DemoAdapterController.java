@@ -17,6 +17,7 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel LineChartModel_ lineChartModel;
     @AutoModel MinuteChartModel_ minuteChartModel;
     @AutoModel BarChartModel_ barChartModel_;
+    @AutoModel BarChartClickableModel_ barChartClickableModel_;
     @AutoModel CombineChartModel_ combineChartModel_;
     @AutoModel CandlestickChartModel_ candlestickChartModel_;
     @AutoModel ViewPagerModel_ viewPagerModel_;
@@ -44,6 +45,7 @@ public class DemoAdapterController extends EpoxyController {
 
         new LayoutDescTextBindingModel_().id("Bar").text("Bar Chart").addTo(this);
         barChartModel_.addTo(this);
+        barChartClickableModel_.addTo(this);
 
         new LayoutDescTextBindingModel_().id("Combine").text("Combine Chart").addTo(this);
         combineChartModel_.addTo(this);

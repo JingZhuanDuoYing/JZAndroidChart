@@ -25,6 +25,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.OverScroller;
 
+import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import java.lang.ref.WeakReference;
@@ -65,6 +66,8 @@ public abstract class Chart extends View {
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
     protected OnViewportChangeListener mInternalViewportChangeListener;
+
+    protected OnEntryClickListener onEntryClickListener;
 
     /**
      * The current viewport. This rectangle represents the currently visible lib domain
@@ -244,6 +247,7 @@ public abstract class Chart extends View {
     protected abstract void drawAxis(Canvas canvas);
     protected abstract void drawGridLine(Canvas canvas);
     protected abstract void drawLabels(Canvas canvas);
+    protected abstract int getEntryIndexByCoordinate(float x, float y);
 
     protected abstract void render(Canvas canvas);
 
@@ -373,7 +377,11 @@ public abstract class Chart extends View {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             cleanHighlight();
-            performClick();
+            if (onEntryClickListener != null) {
+                onEntryClickListener.onEntryClick(Chart.this, getEntryIndexByCoordinate(e.getX(), getY()));
+            } else {
+                performClick();
+            }
             return true;
         }
 
@@ -907,6 +915,14 @@ public abstract class Chart extends View {
 
     public boolean isScaleGestureEnable() {
         return mScaleGestureEnable;
+    }
+
+    public void setOnEntryClickListener(OnEntryClickListener onEntryClickListener) {
+        this.onEntryClickListener = onEntryClickListener;
+    }
+
+    public OnEntryClickListener getOnEntryClickListener() {
+        return onEntryClickListener;
     }
 }
 
