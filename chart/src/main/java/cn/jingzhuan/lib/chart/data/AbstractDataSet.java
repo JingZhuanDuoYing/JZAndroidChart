@@ -30,6 +30,9 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private boolean enable = true;
 
+    public AbstractDataSet() {
+    }
+
     public abstract void setValues(List<T> values);
 
     public abstract List<T> getValues();
