@@ -42,14 +42,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 for (BarDataSet dataSet : getDataSet()) {
                     if (dataSet.isHighlightedVerticalEnable()) {
 
-                        int index = 0;
-                        if (x > mContentRect.left) {
-                            index = (int) (dataSet.getEntryCount()
-                                    * (x - mContentRect.left) * mViewport.width()
-                                    / mContentRect.width()
-                                    + mViewport.left);
-                        }
-                        if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
+                        int index = getEntryIndexByCoordinate(x, y);
                         BarValue barValue = dataSet.getEntryForIndex(index);
                         chart.highlightValue(new Highlight(barValue.getX(), barValue.getY(), index));
                     }

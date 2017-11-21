@@ -49,10 +49,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float xPosition = x;
             float yPosition = -1;
             if (x > mContentRect.left) {
-              index =
-                  (int) (((x - mContentRect.left) * mViewport.width() / mContentRect.width() + mViewport.left) * valueCount);
-
-              if (index >= dataSet.getValues().size()) index = dataSet.getValues().size() - 1;
+              index = getEntryIndexByCoordinate(x, y);
 
               final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
               xPosition = candlestickValue.getX();

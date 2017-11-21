@@ -44,15 +44,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
                         float xPositionMax = line.getEntryForIndex(line.getValues().size() - 1).getX();
-
-                        int index = 0;
-                        if (x > mContentRect.left) {
-                            index = (int) (line.getEntryCount()
-                                    * (x - mContentRect.left) * mViewport.width()
-                                    / mContentRect.width()
-                                    + mViewport.left);
-                        }
-                        if (index >= line.getValues().size()) index = line.getValues().size() - 1;
+                        int index = getEntryIndexByCoordinate(x, y);
                         if (x > xPositionMax) x = xPositionMax;
                         chart.highlightValue(new Highlight(x, y, index));
                     }

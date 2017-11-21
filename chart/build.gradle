@@ -22,9 +22,6 @@ android {
     }
   }
 }
-ext.ver = [
-        daggerLibVersion :   "2.11",
-]
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -45,7 +42,7 @@ publish {
   userOrg = 'donglua'
   groupId = 'cn.jingzhuan.lib'
   artifactId = 'chart'
-  publishVersion = "0.6.18"
+  publishVersion = "0.6.19"
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
 }
