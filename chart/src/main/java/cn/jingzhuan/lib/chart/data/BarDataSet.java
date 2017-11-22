@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.HasValueOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
  * Created by Donglua on 17/8/1.
  */
 
-public class BarDataSet extends AbstractDataSet<BarValue> {
+public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOffset {
 
     private List<BarValue> mBarValues;
     private float mBarWidth = 20;
@@ -51,7 +52,13 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         for (BarValue e : getVisiblePoints(viewport)) {
             calcMinMaxY(e);
         }
-
+        float range = mViewportYMax - mViewportYMin;
+        if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
+            mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+        }
+        if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
+            mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+        }
     }
 
     public void calcMinMaxY(BarValue e) {
@@ -140,5 +147,23 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
 
     public void setStrokeThickness(float strokeThickness) {
         this.strokeThickness = strokeThickness;
+    }
+
+    @Override public float getMaxValueOffsetPercent() {
+        return maxValueOffsetPercent;
+    }
+
+    @Override public float getMinValueOffsetPercent() {
+        return minValueOffsetPercent;
+    }
+
+    @Override
+    public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+        this.minValueOffsetPercent = minValueOffsetPercent;
+    }
+
+    @Override
+    public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+        this.maxValueOffsetPercent = maxValueOffsetPercent;
     }
 }

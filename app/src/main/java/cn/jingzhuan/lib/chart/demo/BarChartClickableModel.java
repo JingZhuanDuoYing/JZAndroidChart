@@ -36,6 +36,7 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barValueList.add(new BarValue(9));
 
     barDataSet = new BarDataSet(barValueList);
+    barDataSet.setMaxValueOffsetPercent(0.2f);
     barDataSet.setAutoBarWidth(true);
   }
 

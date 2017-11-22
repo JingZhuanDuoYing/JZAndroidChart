@@ -25,6 +25,9 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     private int minVisibleEntryCount = 20;
     private int defaultVisibleEntryCount = -1;
 
+    protected float minValueOffsetPercent = 0F;
+    protected float maxValueOffsetPercent = 0F;
+
     private boolean isHighlightedVerticalEnable = false;
     private boolean isHighlightedHorizontalEnable = false;
 
@@ -143,4 +146,5 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     public boolean isEnable() {
         return enable;
     }
+
 }
