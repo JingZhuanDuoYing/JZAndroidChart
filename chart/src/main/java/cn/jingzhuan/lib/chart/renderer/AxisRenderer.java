@@ -5,6 +5,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import android.util.Log;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.Chart;
@@ -14,6 +15,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
+import java.util.List;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -62,20 +64,17 @@ public class AxisRenderer implements Renderer {
 
     @Override
     public void renderer(Canvas canvas) {
-        if (mAxis instanceof AxisX) {
+        if (mAxis.getLabels() == null) {
+            if (mAxis instanceof AxisX) {
 
-            computeAxisStopsX(
-                    mCurrentViewport.left,
-                    mCurrentViewport.right,
-                    (AxisX) mAxis,
-                    null);
+                computeAxisStopsX(mCurrentViewport.left, mCurrentViewport.right,
+                    (AxisX) mAxis, null);
 
-        } else if (mAxis instanceof AxisY) {
+            } else if (mAxis instanceof AxisY) {
 
-            computeAxisStopsY((AxisY) mAxis);
-
+                computeAxisStopsY((AxisY) mAxis);
+            }
         }
-
         // Draws lib container
         drawAxisLine(canvas);
     }
@@ -267,8 +266,111 @@ public class AxisRenderer implements Renderer {
         }
     }
 
+    public void drawAxisLabels(Canvas canvas) {
+        if (!mAxis.isLabelEnable()) return;
+        if (mAxis.getLabels() == null || mAxis.getLabels().size() <= 0) return;
 
-    public void drawLabels(Canvas canvas) {
+        List<String> labels = mAxis.getLabels();
+
+        mLabelTextPaint.setColor(mAxis.getLabelTextColor());
+        mLabelTextPaint.setTextSize(mAxis.getLabelTextSize());
+
+        float x = 0f, y = 0f;
+        switch (mAxis.getAxisPosition()) {
+            case AxisX.TOP:
+            case AxisX.TOP_INSIDE:
+                x = mContentRect.left;
+                y = mContentRect.top;
+                break;
+            case AxisX.BOTTOM:
+            case AxisX.BOTTOM_INSIDE:
+                x = mContentRect.left;
+                y = mContentRect.top + mContentRect.height();
+                break;
+            case AxisY.LEFT_INSIDE:
+            case AxisY.LEFT_OUTSIDE:
+                x = mContentRect.left;
+                y = mContentRect.bottom;
+                break;
+            case AxisY.RIGHT_INSIDE:
+            case AxisY.RIGHT_OUTSIDE:
+                x = mContentRect.right;
+                y = mContentRect.bottom;
+                break;
+        }
+        int labelOffset;
+        int labelLength;
+
+        if (mAxis instanceof AxisX) { // X轴
+            final float width = mContentRect.width() / ((float) labels.size());
+            for (int i = 0; i < labels.size(); i++) {
+
+                char[] labelCharArray = labels.get(i).toCharArray();
+                labelLength = labelCharArray.length;
+                System.arraycopy(labelCharArray, 0, mLabelBuffer,
+                    mLabelBuffer.length - labelLength, labelLength);
+
+                labelOffset = mLabelBuffer.length - labelLength;
+
+                mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
+
+                canvas.drawText(mLabelBuffer, labelOffset, labelLength,
+                    width * 0.5f + getDrawX(i / ((float) labels.size())),
+                    y + mLabelTextPaint.getTextSize(), mLabelTextPaint);
+            }
+        } else { // Y轴
+
+            final float height = mContentRect.height() / (mAxis.getLabels().size() - 1F);
+            float separation = 0;
+            for (int i = 0; i < mAxis.getLabels().size(); i++) {
+                //LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
+                //if (labelValueFormatter == null) {
+                //    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
+                //} else {
+                    char[] labelCharArray = mAxis.getLabels().get(i).toCharArray();
+                    labelLength = labelCharArray.length;
+                    System.arraycopy(labelCharArray,
+                        0,
+                        mLabelBuffer,
+                        mLabelBuffer.length - labelLength,
+                        labelLength);
+                //}
+                labelOffset = mLabelBuffer.length - labelLength;
+                switch (mAxis.getAxisPosition()) {
+                    case AxisY.LEFT_OUTSIDE:
+                    case AxisY.RIGHT_INSIDE:
+                        mLabelTextPaint.setTextAlign(Paint.Align.RIGHT);
+                        separation = -mAxis.getLabelSeparation();
+                        break;
+                    case AxisY.LEFT_INSIDE:
+                    case AxisY.RIGHT_OUTSIDE:
+                        mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
+                        separation = mAxis.getLabelSeparation();
+                        break;
+                }
+
+                float textHeightOffset = (mLabelTextPaint.descent() + mLabelTextPaint.ascent()) / 2;
+                //if (i == 0) { // Bottom
+                //    textHeightOffset = mAxis.getLabelSeparation();
+                //} else if (i == mAxis.getLabels().size() - 1) { // Top
+                //    textHeightOffset += textHeightOffset - mAxis.getLabelSeparation();
+                //}
+
+                LabelColorSetter colorSetter = ((AxisY) mAxis).getLabelColorSetter();
+                if (colorSetter != null) {
+                    mLabelTextPaint.setColor(colorSetter.getColorByIndex(i));
+                }
+
+                canvas.drawText(mLabelBuffer, labelOffset, labelLength,
+                    x + separation,
+                    y - i * height - textHeightOffset,
+                    mLabelTextPaint);
+
+            }
+        }
+    }
+
+    private void drawGridLabels(Canvas canvas) {
 
         if (!mAxis.isLabelEnable()) return;
 
@@ -389,4 +491,11 @@ public class AxisRenderer implements Renderer {
         }
     }
 
+    public void drawLabels(Canvas canvas) {
+        if (mAxis.getLabels() == null) {
+            drawGridLabels(canvas);
+        } else {
+            drawAxisLabels(canvas);
+        }
+    }
 }

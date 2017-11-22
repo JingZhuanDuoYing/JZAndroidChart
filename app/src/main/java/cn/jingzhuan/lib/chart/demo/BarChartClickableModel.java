@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
 
   private BarDataSet barDataSet;
   private List<BarValue> barValueList = new ArrayList<>();
+  private List<String> labels = Arrays.asList("data1", "data2", "data3", "data4", "data5", "data6");
 
   public BarChartClickableModel() {
 
@@ -32,7 +34,6 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barValueList.add(new BarValue(13));
     barValueList.add(new BarValue(8));
     barValueList.add(new BarValue(9));
-    barValueList.add(new BarValue(12));
 
     barDataSet = new BarDataSet(barValueList);
     barDataSet.setAutoBarWidth(true);
@@ -46,6 +47,9 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
 
       barBinding.barChart.setDataSet(barDataSet);
       barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
+      barBinding.barChart.getAxisBottom().setLabels(labels);
+      barBinding.barChart.getAxisBottom().setLabelTextColor(Color.BLACK);
+
       barBinding.barChart.setOnEntryClickListener(new OnEntryClickListener() {
         @Override public void onEntryClick(Chart chart, int position) {
           Toast.makeText(binding.getRoot().getContext(),

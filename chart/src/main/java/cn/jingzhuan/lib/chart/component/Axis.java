@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.data.GirdLineColorSetter;
 import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
+import java.util.List;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -28,6 +29,7 @@ public class Axis extends AbstractComponent {
     private int mLabelHeight = 0;
     private int mAxisColor = Color.GRAY;
     private float mAxisThickness = 2;
+    private List<String> mLabels;
 
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
@@ -203,5 +205,14 @@ public class Axis extends AbstractComponent {
 
     public GirdLineColorSetter getGirdLineColorSetter() {
         return mGirdLineColorSetter;
+    }
+
+
+    public List<String> getLabels() {
+        return mLabels;
+    }
+
+    public void setLabels(List<String> mLabels) {
+        this.mLabels = mLabels;
     }
 }

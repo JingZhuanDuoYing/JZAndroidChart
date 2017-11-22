@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
-import android.view.View;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
-import cn.jingzhuan.lib.chart.renderer.Renderer;
 
 /**
  * Created by Donglua on 17/7/17.
