@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.data.MinuteLine;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutMinuteChartBinding;
@@ -92,7 +92,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
             minuteBinding.minuteChart.getAxisLeft().enableGridDashPathEffect(new float[] {10, 10}, 10);
             minuteBinding.minuteChart.getAxisRight().enableGridDashPathEffect(new float[] {10, 10}, 10);
 
-            minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new LabelValueFormatter() {
+            minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new ValueFormatter() {
                 @Override
                 public String format(float value, int index) {
                     return String.format(Locale.ENGLISH, "%.2f%%",
@@ -102,7 +102,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
             minuteBinding.minuteChart.getAxisBottom().setGridCount(3);
 
-            minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new LabelValueFormatter() {
+            minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
                 @Override
                 public String format(float value, int index) {
                     if (index == 0) {

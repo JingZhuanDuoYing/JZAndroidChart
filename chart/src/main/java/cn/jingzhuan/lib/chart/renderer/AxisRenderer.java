@@ -5,14 +5,13 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import android.util.Log;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 import java.util.List;
@@ -323,7 +322,7 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (mAxis.getLabels().size() - 1F);
             float separation = 0;
             for (int i = 0; i < mAxis.getLabels().size(); i++) {
-                //LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
+                //ValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
                 //if (labelValueFormatter == null) {
                 //    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
                 //} else {
@@ -411,12 +410,12 @@ public class AxisRenderer implements Renderer {
         if (mAxis instanceof AxisX) { // X轴
             final float width = mContentRect.width() / (labels.length - 1F);
             for (int i = 0; i < labels.length; i++) {
-                LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
+                ValueFormatter valueFormatter = mAxis.getLabelValueFormatter();
 
-                if (labelValueFormatter == null) {
+                if (valueFormatter == null) {
                     labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
                 } else {
-                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    char[] labelCharArray = valueFormatter.format(labels[i], i).toCharArray();
                     labelLength = labelCharArray.length;
                     System.arraycopy(labelCharArray,
                             0,
@@ -444,11 +443,11 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (labels.length - 1F);
             float separation = 0;
             for (int i = 0; i < labels.length; i++) {
-                LabelValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
-                if (labelValueFormatter == null) {
+                ValueFormatter valueFormatter = mAxis.getLabelValueFormatter();
+                if (valueFormatter == null) {
                     labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
                 } else {
-                    char[] labelCharArray = labelValueFormatter.format(labels[i], i).toCharArray();
+                    char[] labelCharArray = valueFormatter.format(labels[i], i).toCharArray();
                     labelLength = labelCharArray.length;
                     System.arraycopy(labelCharArray,
                             0,

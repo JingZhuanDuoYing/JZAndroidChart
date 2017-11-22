@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
-import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 
 /**
  * Created by Donglua on 17/7/17.

@@ -5,7 +5,7 @@ import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.data.GirdLineColorSetter;
-import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ public class Axis extends AbstractComponent {
 
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
-    private LabelValueFormatter mLabelValueFormatter;
+    private ValueFormatter mLabelValueFormatter;
 
     public float[] mLabelEntries = new float[]{};
     private boolean gridLineEnable = true;
@@ -178,12 +178,12 @@ public class Axis extends AbstractComponent {
         this.labelEnable = labelEnable;
     }
 
-    public LabelValueFormatter getLabelValueFormatter() {
+    public ValueFormatter getLabelValueFormatter() {
         return mLabelValueFormatter;
     }
 
-    public void setLabelValueFormatter(LabelValueFormatter mLabelValueFormatter) {
-        this.mLabelValueFormatter = mLabelValueFormatter;
+    public void setLabelValueFormatter(ValueFormatter mValueFormatter) {
+        this.mLabelValueFormatter = mValueFormatter;
     }
 
     public float getDashedGridPhase() {

@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -24,9 +26,16 @@ import cn.jingzhuan.lib.chart.data.BarValue;
 public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     private BarData mBarDataSets;
+    private final char[] mLabelBuffer = new char[100];
+
+    private Paint mValueTextPaint;
 
     public BarChartRenderer(final Chart chart) {
         super(chart);
+
+        mValueTextPaint = new Paint();
+        mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mValueTextPaint.setStyle(Paint.Style.STROKE);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -66,6 +75,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         mRenderPaint.setStrokeWidth(barDataSet.getStrokeThickness());
         mRenderPaint.setStyle(Paint.Style.FILL);
+
+        mValueTextPaint.setColor(barDataSet.getValueColor());
+        mValueTextPaint.setTextSize(barDataSet.getValueTextSize());
 
         int valueCount = barDataSet.getEntryCount();
 
@@ -107,8 +119,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             float bottom = calcHeight(0, max, min);
 
             if (barValue.getValueCount() > 0) {
+                float value = barValue.getValues()[0];
 
-                top = calcHeight(barValue.getValues()[0], max, min);
+                top = calcHeight(value, max, min);
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
 
                 barValue.setX(x + width * 0.5f);
@@ -120,6 +133,30 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                         top,
                         x + width * percent,
                         bottom, mRenderPaint);
+
+                int labelLength;
+                int labelOffset;
+                if (barDataSet.isDrawValueEnable()) {
+                    ValueFormatter valueFormatter = barDataSet.getValueFormatter();
+                    if (valueFormatter == null) {
+                        labelLength = FloatUtils.formatFloatValue(mLabelBuffer, value, 2);
+                    } else {
+                        char[] labelCharArray = valueFormatter.format(barValue.getValues()[0], i).toCharArray();
+                        labelLength = labelCharArray.length;
+                        System.arraycopy(labelCharArray,
+                            0,
+                            mLabelBuffer,
+                            mLabelBuffer.length - labelLength,
+                            labelLength);
+                    }
+                    labelOffset = mLabelBuffer.length - labelLength;
+
+                    mValueTextPaint.setTextAlign(Paint.Align.CENTER);
+
+                    canvas.drawText(mLabelBuffer, labelOffset, labelLength,
+                        x + width * 0.5f,
+                        top - 10, mValueTextPaint);
+                }
             }
         }
         mRenderPaint.setStyle(Paint.Style.FILL);

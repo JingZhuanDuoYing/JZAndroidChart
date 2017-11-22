@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Color;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueOffset;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 
 /**
+ * Bar Data Set
  * Created by Donglua on 17/8/1.
  */
 
@@ -20,6 +22,11 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOff
     private boolean mAutoBarWidth = false;
     private int mForceValueCount = -1;
     private float strokeThickness = 2;
+
+    private boolean drawValueEnable = false;
+    private int valueColor = Color.BLACK;
+    private float valueTextSize = 12F;
+    private ValueFormatter valueFormatter;
 
     public BarDataSet(List<BarValue> barValues) {
         this(barValues, AxisY.DEPENDENCY_BOTH);
@@ -61,7 +68,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOff
         }
     }
 
-    public void calcMinMaxY(BarValue e) {
+    protected void calcMinMaxY(BarValue e) {
 
         if (e == null) return;
 
@@ -74,8 +81,6 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOff
     @Override
     public void setValues(List<BarValue> values) {
         this.mBarValues = values;
-
-        //setMinMax();
     }
 
     @Override
@@ -165,5 +170,37 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOff
     @Override
     public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
         this.maxValueOffsetPercent = maxValueOffsetPercent;
+    }
+
+    public void setDrawValueEnable(boolean drawValueEnable) {
+        this.drawValueEnable = drawValueEnable;
+    }
+
+    public boolean isDrawValueEnable() {
+        return drawValueEnable;
+    }
+
+    public int getValueColor() {
+        return valueColor;
+    }
+
+    public void setValueColor(int valueColor) {
+        this.valueColor = valueColor;
+    }
+
+    public float getValueTextSize() {
+        return valueTextSize;
+    }
+
+    public void setValueTextSize(float valueTextSize) {
+        this.valueTextSize = valueTextSize;
+    }
+
+    public ValueFormatter getValueFormatter() {
+        return valueFormatter;
+    }
+
+    public void setValueFormatter(ValueFormatter valueFormatter) {
+        this.valueFormatter = valueFormatter;
     }
 }
