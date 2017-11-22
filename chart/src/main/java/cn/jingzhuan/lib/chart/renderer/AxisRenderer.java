@@ -1,8 +1,6 @@
 package cn.jingzhuan.lib.chart.renderer;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -16,7 +14,6 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.LabelValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
-import java.lang.ref.WeakReference;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -33,13 +30,8 @@ public class AxisRenderer implements Renderer {
     private Paint mGridPaint;
     private Paint mLabelTextPaint;
     private Paint mAxisPaint;
-    private Paint mRenderPaint;
 
     private static final int POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000};
-
-    //private WeakReference<Bitmap> mDrawBitmap;
-    //private Canvas mBitmapCanvas;
-    //private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public AxisRenderer(Chart chart, Axis axis) {
         this.mCurrentViewport = chart.getCurrentViewport();
@@ -66,30 +58,10 @@ public class AxisRenderer implements Renderer {
         mAxisPaint.setStrokeWidth(mAxis.getAxisThickness());
         mAxisPaint.setColor(mAxis.getAxisColor());
         mAxisPaint.setStyle(Paint.Style.STROKE);
-
-        mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mRenderPaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
     public void renderer(Canvas canvas) {
-
-        //int width = mContentRect.width() + mContentRect.left;
-        //int height = mContentRect.height();
-
-        //if (mDrawBitmap == null
-        //    || (mDrawBitmap.get().getWidth() != width)
-        //    || (mDrawBitmap.get().getHeight() != height)) {
-        //
-        //    if (width > 0 && height > 0) {
-        //        mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(width, height, mBitmapConfig));
-        //        mBitmapCanvas = new Canvas(mDrawBitmap.get());
-        //    } else
-        //        return;
-        //}
-        //
-        //mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
-
         if (mAxis instanceof AxisX) {
 
             computeAxisStopsX(
@@ -106,8 +78,6 @@ public class AxisRenderer implements Renderer {
 
         // Draws lib container
         drawAxisLine(canvas);
-
-        //canvas.drawBitmap(mDrawBitmap.get(), 0, 0, mRenderPaint);
     }
 
 
@@ -168,17 +138,10 @@ public class AxisRenderer implements Renderer {
     private static void computeAxisStopsX(float start, float stop, AxisX axis, AxisAutoValues autoValues) {
         double range = stop - start;
         if (axis.getGridCount() == 0 || range <= 0) {
-//            autoValues.values = new float[]{};
-//            autoValues.number = 0;
             return;
         }
 
         final int count = axis.getGridCount() + 1;
-//        autoValues.number = axis.getGridCount();
-//        if (autoValues.values.length < autoValues.number) {
-//            // Ensure values contains at least number elements.
-//            autoValues.values = new float[autoValues.number];
-//        }
         double rawInterval = range / count;
 
         double interval = roundToOneSignificantFigure(rawInterval);
@@ -189,15 +152,9 @@ public class AxisRenderer implements Renderer {
 
         axis.mLabelEntries = new float[count + 1];
         for (f = first, i = 0; i < count + 1; f += interval, ++i) {
-//            autoValues.values[i] = (float) f;
             axis.mLabelEntries[i] = (float) f;
         }
 
-//        if (interval < 1) {
-//            autoValues.decimals = (int) Math.ceil(-Math.log10(interval));
-//        } else {
-//            autoValues.decimals = 0;
-//        }
     }
 
     /**

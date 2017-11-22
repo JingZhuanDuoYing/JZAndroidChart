@@ -35,9 +35,6 @@ public class BaseChart extends Chart {
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
     private OnHighlightListener mHighlightListener;
 
-    //private int maxVisibleEntryCount = 500;
-    //private int minVisibleEntryCount = 20;
-
     protected WeakReference<Bitmap> mDrawBitmap;
     protected Canvas mBitmapCanvas;
     protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
