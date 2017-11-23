@@ -129,15 +129,15 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
                 mRenderPaint.setStyle(barValue.getPaintStyle());
 
-                canvas.drawRect(x + width * (1 - percent) * 0.5f,
-                        top,
-                        x + width * percent,
-                        bottom, mRenderPaint);
+                float left = x + width * (1 - percent) * 0.5f;
+                float right = left + width * percent;
+                canvas.drawRect(left, top, right, bottom, mRenderPaint);
 
                 int labelLength;
                 int labelOffset;
                 if (barDataSet.isDrawValueEnable()) {
-                    ValueFormatter valueFormatter = barDataSet.getValueFormatter();
+                    ValueFormatter valueFormatter;
+                    valueFormatter = barDataSet.getValueFormatter();
                     if (valueFormatter == null) {
                         labelLength = FloatUtils.formatFloatValue(mLabelBuffer, value, 2);
                     } else {
