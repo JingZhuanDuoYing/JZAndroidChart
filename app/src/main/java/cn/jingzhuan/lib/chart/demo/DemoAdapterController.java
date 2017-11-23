@@ -22,6 +22,7 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel CandlestickChartModel_ candlestickChartModel_;
     @AutoModel ViewPagerModel_ viewPagerModel_;
     @AutoModel ScatterChartModel_ scatterChartModel_;
+    @AutoModel ScatterChart2Model_ scatterChart2Model_;
 
     private Context context;
 
@@ -58,6 +59,7 @@ public class DemoAdapterController extends EpoxyController {
 
         new LayoutDescTextBindingModel_().id("Scatter Chart").text("Scatter Chart").addTo(this);
         scatterChartModel_.addTo(this);
+        scatterChart2Model_.addTo(this);
 
     }
 }
