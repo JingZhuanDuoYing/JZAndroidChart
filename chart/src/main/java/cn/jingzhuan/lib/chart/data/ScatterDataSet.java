@@ -2,14 +2,16 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.drawable.Drawable;
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.component.HasValueOffset;
+import cn.jingzhuan.lib.chart.component.HasValueXOffset;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 import java.util.List;
 
 /**
  * Created by donglua on 10/19/17.
  */
 
-public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueOffset {
+public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueYOffset,
+    HasValueXOffset {
 
   private List<ScatterValue> scatterValues;
 
@@ -126,5 +128,21 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   @Override
   public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
     this.maxValueOffsetPercent = maxValueOffsetPercent;
+  }
+
+  public float getStartXOffset() {
+    return startXOffset;
+  }
+
+  public void setStartXOffset(float startXOffset) {
+    this.startXOffset = startXOffset;
+  }
+
+  public float getEndXOffset() {
+    return endXOffset;
+  }
+
+  public void setEndXOffset(float endXOffset) {
+    this.endXOffset = endXOffset;
   }
 }

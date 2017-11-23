@@ -56,13 +56,14 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
         break;
     }
 
-    final float width = mContentRect.width() / dataSet.getVisibleValueCount(mViewport);
+    final float width = (mContentRect.width() - dataSet.getStartXOffset() - dataSet.getEndXOffset())
+        / (float) dataSet.getVisibleValueCount(mViewport) + 1;
 
     float shapeWidth = dataSet.getShape().getIntrinsicWidth();
     float shapeHeight = dataSet.getShape().getIntrinsicHeight();
     if (dataSet.isAutoWidth()) {
       shapeWidth = width * 0.8f;
-      shapeHeight = shapeWidth * shapeHeight / (dataSet.getShape().getIntrinsicWidth());
+      shapeHeight = shapeWidth * shapeHeight / ((float) dataSet.getShape().getIntrinsicWidth());
     }
 
     for (int i = 0; i < valueCount && i < dataSet.getValues().size() && dataSet.getShape() != null; i++) {
@@ -70,7 +71,8 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
       if (!point.isVisible()) continue;
 
-      float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount)) - shapeWidth * 0.5f;
+      float xPosition = dataSet.getStartXOffset() + width * 0.5f
+          + getDrawX(i / ((float) valueCount)) - shapeWidth * 0.5f;
       float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - shapeHeight * 0.5f;
 
       point.setX(xPosition);

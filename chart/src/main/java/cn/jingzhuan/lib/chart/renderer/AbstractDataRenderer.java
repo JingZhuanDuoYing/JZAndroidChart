@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Chart;
@@ -45,7 +44,6 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     public final void renderer(Canvas canvas) {
         renderDataSet(canvas);
     }
-
 
     protected void renderDataSet(Canvas canvas) {
         renderDataSet(canvas, getChartData());

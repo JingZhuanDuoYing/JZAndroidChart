@@ -190,13 +190,10 @@ public abstract class Chart extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
         mContentRect.set(
-                getPaddingLeft()
-                    + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth())
-                    //+ (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelSeparation())
-            ,
+                getPaddingLeft() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth()),
                 getPaddingTop(),
                 getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth()),
-                getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight()// - mAxisBottom.getLabelSeparation()
+                getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight()
         );
     }
 

@@ -2,7 +2,7 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.component.HasValueOffset;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +15,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
  * Created by Donglua on 17/8/1.
  */
 
-public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueOffset {
+public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOffset {
 
     private List<BarValue> mBarValues;
     private float mBarWidth = 20;
