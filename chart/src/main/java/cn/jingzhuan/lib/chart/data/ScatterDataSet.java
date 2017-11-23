@@ -4,6 +4,9 @@ import android.graphics.drawable.Drawable;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueXOffset;
 import cn.jingzhuan.lib.chart.component.HasValueYOffset;
+import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +23,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private float drawOffsetY = 0f;
 
   private boolean autoWidth = true;
+
+  private List<TextValueRenderer> mTextValueRenderers;
 
   public ScatterDataSet(List<ScatterValue> scatterValues) {
     this.scatterValues = scatterValues;
@@ -145,4 +150,16 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   public void setEndXOffset(float endXOffset) {
     this.endXOffset = endXOffset;
   }
+
+  public void addTextValueRenderer(TextValueRenderer textValueRenderer) {
+    if (mTextValueRenderers == null) {
+      mTextValueRenderers = Collections.synchronizedList(new ArrayList<TextValueRenderer>());
+    }
+    this.mTextValueRenderers.add(textValueRenderer);
+  }
+
+  public List<TextValueRenderer> getTextValueRenderers() {
+    return mTextValueRenderers;
+  }
 }
+

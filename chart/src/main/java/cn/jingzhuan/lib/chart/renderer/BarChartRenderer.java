@@ -33,7 +33,6 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     public BarChartRenderer(final Chart chart) {
         super(chart);
 
-        mValueTextPaint = new Paint();
         mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mValueTextPaint.setStyle(Paint.Style.FILL);
 

@@ -25,7 +25,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     private boolean drawValueEnable = false;
     private int valueColor = Color.BLACK;
-    private float valueTextSize = 12F;
+    private float valueTextSize = 24F;
     private ValueFormatter valueFormatter;
 
     public BarDataSet(List<BarValue> barValues) {

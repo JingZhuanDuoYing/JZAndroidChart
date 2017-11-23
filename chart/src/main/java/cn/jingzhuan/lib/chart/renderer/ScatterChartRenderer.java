@@ -3,7 +3,6 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -14,10 +13,13 @@ import cn.jingzhuan.lib.chart.data.ScatterValue;
 import java.util.List;
 
 /**
+ * Scatter Chart Renderer
+ *
  * Created by donglua on 10/19/17.
  */
 
 public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
+
   private ScatterData scatterData;
 
   public ScatterChartRenderer(Chart chart) {
@@ -87,8 +89,14 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       int saveId = canvas.save();
       dataSet.getShape().draw(canvas);
       canvas.restoreToCount(saveId);
-    }
 
+      if (dataSet.getTextValueRenderers() != null) {
+        for (TextValueRenderer textValueRenderer : dataSet.getTextValueRenderers()) {
+          textValueRenderer.render(canvas, i,
+              x + shapeWidth * 0.5f, y + shapeHeight * 0.5f);
+        }
+      }
+    }
   }
 
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
