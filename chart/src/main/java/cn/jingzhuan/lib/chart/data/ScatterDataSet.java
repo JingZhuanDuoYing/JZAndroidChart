@@ -2,13 +2,14 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.drawable.Drawable;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.HasValueOffset;
 import java.util.List;
 
 /**
  * Created by donglua on 10/19/17.
  */
 
-public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
+public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueOffset {
 
   private List<ScatterValue> scatterValues;
 
@@ -29,6 +30,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
 
     for (ScatterValue e : getVisiblePoints(viewport)) {
       calcViewportMinMax(e);
+    }
+
+    float range = mViewportYMax - mViewportYMin;
+    if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+    }
+    if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
     }
   }
 
@@ -99,5 +108,23 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> {
 
   public boolean isAutoWidth() {
     return autoWidth;
+  }
+
+  @Override public float getMaxValueOffsetPercent() {
+    return maxValueOffsetPercent;
+  }
+
+  @Override public float getMinValueOffsetPercent() {
+    return minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+    this.minValueOffsetPercent = minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+    this.maxValueOffsetPercent = maxValueOffsetPercent;
   }
 }
