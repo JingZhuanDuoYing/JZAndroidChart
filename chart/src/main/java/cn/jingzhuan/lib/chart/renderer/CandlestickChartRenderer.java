@@ -51,17 +51,18 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             if (x > mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y);
 
-              final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-              xPosition = candlestickValue.getX();
-              yPosition = candlestickValue.getY();
+              if (valueCount < index) {
+                final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
+                xPosition = candlestickValue.getX();
+                yPosition = candlestickValue.getY();
+              }
+              chart.highlightValue(new Highlight(xPosition, yPosition, index));
             }
-            chart.highlightValue(new Highlight(xPosition, yPosition, index));
           }
         }
       }
     });
   }
-
 
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
