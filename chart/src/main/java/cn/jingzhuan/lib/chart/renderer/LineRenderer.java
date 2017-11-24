@@ -76,9 +76,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 if (lineDataSet.isHighlightedHorizontalEnable()) {
                     float min = lineDataSet.getViewportYMin();
                     float max = lineDataSet.getViewportYMax();
-                    float value =  lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
-                    float y = (max - value) / (max - min) * mContentRect.height();
-                    canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
+                    if (highlight.getDataIndex() < lineDataSet.getValues().size()) {
+                        float value = lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
+                        float y = (max - value) / (max - min) * mContentRect.height();
+                        canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
+                    }
                 }
             }
         }
