@@ -49,10 +49,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             public void touch(float x, float y) {
                 for (BarDataSet dataSet : getDataSet()) {
                     if (dataSet.isHighlightedVerticalEnable()) {
-
                         int index = getEntryIndexByCoordinate(x, y);
-                        BarValue barValue = dataSet.getEntryForIndex(index);
-                        chart.highlightValue(new Highlight(barValue.getX(), barValue.getY(), index));
+                        if (index < dataSet.getValues().size()) {
+                            BarValue barValue = dataSet.getEntryForIndex(index);
+                            chart.highlightValue(
+                                new Highlight(barValue.getX(), barValue.getY(), index));
+                        }
                     }
                 }
             }
@@ -130,7 +132,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
                 float left = x + width * (1 - percent) * 0.5f;
                 float right = left + width * percent;
-                canvas.drawRect(left, top, right, bottom, mRenderPaint);
+
+                if (Math.abs(top - bottom) < 0.0001) {
+                    canvas.drawLine(left, top, right, bottom, mRenderPaint);
+                } else {
+                    canvas.drawRect(left, top, right, bottom, mRenderPaint);
+                }
 
                 int labelLength;
                 int labelOffset;
