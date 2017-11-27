@@ -32,7 +32,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         barValueList.add(new BarValue(1));
         barValueList.add(new BarValue(-2));
-        barValueList.add(new BarValue(1));
+        barValueList.add(new BarValue(0));
         barValueList.add(new BarValue(3));
         barValueList.add(new BarValue(1));
         barValueList.add(new BarValue(2));
