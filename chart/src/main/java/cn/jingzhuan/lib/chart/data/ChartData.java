@@ -85,6 +85,8 @@ public class ChartData<T extends IDataSet> {
     rightMin = Float.MAX_VALUE;
     rightMax = -Float.MAX_VALUE;
 
+    entryCount = 0;
+
     if (!getDataSets().isEmpty()) {
       for (T t : getDataSets()) {
 

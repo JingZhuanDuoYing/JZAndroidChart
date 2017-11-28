@@ -44,7 +44,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         for (CandlestickDataSet dataSet : getDataSet()) {
           if (dataSet.isHighlightedVerticalEnable()) {
 
-            float valueCount = dataSet.getEntryCount();
+            int valueCount = dataSet.getEntryCount();
             int index = 0;
             float xPosition = x;
             float yPosition = -1;
@@ -55,6 +55,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
                 xPosition = candlestickValue.getX();
                 yPosition = candlestickValue.getY();
+              } else {
+                index = valueCount - 1;
               }
               chart.highlightValue(new Highlight(xPosition, yPosition, index));
             }
