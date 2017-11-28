@@ -23,6 +23,8 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
     private int mForceValueCount = -1;
     private float strokeThickness = 2;
 
+    private float mBarWidthPercent = 0.8f;
+
     private boolean drawValueEnable = false;
     private int valueColor = Color.BLACK;
     private float valueTextSize = 24F;
@@ -202,5 +204,13 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     public void setValueFormatter(ValueFormatter valueFormatter) {
         this.valueFormatter = valueFormatter;
+    }
+
+    public void setBarWidthPercent(float mBarWidthPercent) {
+        this.mBarWidthPercent = mBarWidthPercent;
+    }
+
+    public float getBarWidthPercent() {
+        return mBarWidthPercent;
     }
 }
