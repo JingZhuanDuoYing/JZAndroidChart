@@ -375,7 +375,12 @@ public abstract class Chart extends View {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             cleanHighlight();
             if (onEntryClickListener != null) {
-                onEntryClickListener.onEntryClick(Chart.this, getEntryIndexByCoordinate(e.getX(), getY()));
+                int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+                if (index >= 0) {
+                    onEntryClickListener.onEntryClick(Chart.this, index);
+                } else {
+                    performClick();
+                }
             } else {
                 performClick();
             }

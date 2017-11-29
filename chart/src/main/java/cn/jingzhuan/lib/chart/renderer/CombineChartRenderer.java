@@ -1,22 +1,19 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
-
 import android.support.annotation.NonNull;
-import android.util.Log;
+import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
-
-import cn.jingzhuan.lib.chart.Chart;
-import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.BarDataSet;
-import cn.jingzhuan.lib.chart.data.LineDataSet;
 
 /**
  * Created by Donglua on 17/8/2.
@@ -183,5 +180,21 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.barChartRenderer.enableDashPathEffect(intervals, phase);
         this.candlestickChartRenderer.enableDashPathEffect(intervals, phase);
         this.scatterChartRenderer.enableDashPathEffect(intervals, phase);
+    }
+
+    @Override public int getEntryIndexByCoordinate(float x, float y) {
+        if (!getChartData().getCandlestickData().isEmpty()) {
+            return candlestickChartRenderer.getEntryIndexByCoordinate(x, y);
+        }
+        if (!getChartData().getLineData().isEmpty()) {
+            return lineRenderer.getEntryIndexByCoordinate(x, y);
+        }
+        if (!getChartData().getBarData().isEmpty()) {
+            return barChartRenderer.getEntryIndexByCoordinate(x, y);
+        }
+        if (!getChartData().getScatterData().isEmpty()) {
+            return scatterChartRenderer.getEntryIndexByCoordinate(x, y);
+        }
+        return super.getEntryIndexByCoordinate(x, y);
     }
 }

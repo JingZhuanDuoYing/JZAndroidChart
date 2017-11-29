@@ -7,10 +7,13 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
+import android.widget.Toast;
+import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutScatterChartBinding;
+import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -66,6 +69,14 @@ public abstract class ScatterChart2Model extends DataBindingEpoxyModel {
       bd.combineChart.getAxisBottom().setGridCount(1);
       bd.combineChart.getAxisLeft().setGridCount(1);
       bd.combineChart.addDataSet(scatterDataSet);
+
+      bd.combineChart.setOnEntryClickListener(new OnEntryClickListener() {
+        @Override public void onEntryClick(Chart chart, int position) {
+          if (position >= 0) {
+            Toast.makeText(chart.getContext(), textList.get(position), Toast.LENGTH_SHORT).show();
+          }
+        }
+      });
     }
 
   }

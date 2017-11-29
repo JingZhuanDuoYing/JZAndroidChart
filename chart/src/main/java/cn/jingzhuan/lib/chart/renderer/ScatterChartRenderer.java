@@ -2,7 +2,10 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -97,6 +100,28 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
         }
       }
     }
+  }
+
+  @Override public int getEntryIndexByCoordinate(float x, float y) {
+    int index = -1;
+    if (scatterData.getDataSets().size() > 0) {
+      ScatterDataSet dataSet = scatterData.getDataSets().get(0);
+      RectF rect = new RectF();
+      float shapeWidth = dataSet.getShape().getIntrinsicWidth();
+      float shapeHeight = dataSet.getShape().getIntrinsicHeight();
+      for (int i = 0; i < dataSet.getValues().size(); i++) {
+        final ScatterValue value = dataSet.getEntryForIndex(i);
+        float pX = value.getX();
+        float pY = value.getY();
+        rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
+        if (rect.contains(x, y)) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
+    return super.getEntryIndexByCoordinate(x, y);
   }
 
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
