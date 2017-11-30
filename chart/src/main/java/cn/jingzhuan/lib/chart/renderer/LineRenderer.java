@@ -43,10 +43,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             public void touch(float x, float y) {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
-                        float xPositionMax = line.getEntryForIndex(line.getValues().size() - 1).getX();
                         int index = getEntryIndexByCoordinate(x, y);
-                        if (x > xPositionMax) x = xPositionMax;
-                        chart.highlightValue(new Highlight(x, y, index));
+                        int count = line.getEntryCount();
+                        if (index >= count) index = count - 1;
+                        if (index < 0) index = 0;
+                        final PointValue pointValue = line.getEntryForIndex(index);
+                        if (pointValue != null) {
+                            chart.highlightValue(new Highlight(pointValue.getX(), pointValue.getY(), index));
+                        }
                     }
                 }
             }
@@ -170,7 +174,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
             mRenderPaint.setStyle(Paint.Style.FILL);
             Path shaderPath = new Path(path);
-            shaderPath.lineTo(lineDataSet.getValues().get(lineDataSet.getValues().size() - 1).getX(), mContentRect.bottom);
+            int lastIndex = lineDataSet.getValues().size() - 1;
+            if (lastIndex >= valueCount) lastIndex = valueCount - 1;
+            shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
             shaderPath.lineTo(0, mContentRect.bottom);
             shaderPath.lineTo(0, lineDataSet.getValues().get(0).getY());
             shaderPath.close();
