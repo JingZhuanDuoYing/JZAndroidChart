@@ -20,6 +20,8 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 
 /**
+ * Line Renderer
+ *
  * Created by Donglua on 17/7/19.
  */
 
@@ -44,7 +46,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
                         int index = getEntryIndexByCoordinate(x, y);
-                        int count = line.getEntryCount();
+                        int count = Math.min(line.getForceValueCount(), line.getValues().size());
                         if (index >= count) index = count - 1;
                         if (index < 0) index = 0;
                         final PointValue pointValue = line.getEntryForIndex(index);
