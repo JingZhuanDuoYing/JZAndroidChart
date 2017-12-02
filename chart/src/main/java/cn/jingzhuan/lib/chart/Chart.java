@@ -23,6 +23,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 
 import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
@@ -103,10 +104,10 @@ public abstract class Chart extends View {
 
 
     // Edge effect / overscroll tracking objects.
-    private EdgeEffectCompat mEdgeEffectTop;
-    private EdgeEffectCompat mEdgeEffectBottom;
-    private EdgeEffectCompat mEdgeEffectLeft;
-    private EdgeEffectCompat mEdgeEffectRight;
+    private EdgeEffect mEdgeEffectTop;
+    private EdgeEffect mEdgeEffectBottom;
+    private EdgeEffect mEdgeEffectLeft;
+    private EdgeEffect mEdgeEffectRight;
 
     private boolean mEdgeEffectTopActive;
     private boolean mEdgeEffectBottomActive;
@@ -731,10 +732,10 @@ public abstract class Chart extends View {
     protected void setupEdgeEffect(Context context) {
 
         // Sets up edge effects
-        mEdgeEffectLeft = new EdgeEffectCompat(context);
-        mEdgeEffectTop = new EdgeEffectCompat(context);
-        mEdgeEffectRight = new EdgeEffectCompat(context);
-        mEdgeEffectBottom = new EdgeEffectCompat(context);
+        mEdgeEffectLeft = new EdgeEffect(context);
+        mEdgeEffectTop = new EdgeEffect(context);
+        mEdgeEffectRight = new EdgeEffect(context);
+        mEdgeEffectBottom = new EdgeEffect(context);
     }
 
     /**

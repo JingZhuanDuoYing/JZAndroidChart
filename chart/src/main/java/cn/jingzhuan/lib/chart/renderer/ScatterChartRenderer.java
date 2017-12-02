@@ -2,6 +2,9 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
@@ -85,6 +88,9 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
       int x = (int) (xPosition + dataSet.getDrawOffsetX());
       int y = (int) (yPosition + dataSet.getDrawOffsetY());
+      if (point.getColor() != Color.TRANSPARENT) {
+        dataSet.getShape().setColorFilter(point.getColor(), PorterDuff.Mode.SRC_OVER);
+      }
       dataSet.getShape().setBounds(x,
                                    y,
                                   (int) (x + shapeWidth),
