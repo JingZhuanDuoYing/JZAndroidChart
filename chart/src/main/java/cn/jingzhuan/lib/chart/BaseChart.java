@@ -65,6 +65,21 @@ public class BaseChart extends Chart {
         mAxisRenderers.add(new AxisRenderer(this, mAxisRight));
     }
 
+    @Override protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        mAxisRenderers.clear();
+        if (mBitmapCanvas != null) {
+            mBitmapCanvas.setBitmap(null);
+            mBitmapCanvas = null;
+        }
+        if (mDrawBitmap != null) {
+            if (mDrawBitmap.get() != null) mDrawBitmap.get().recycle();
+            mDrawBitmap.clear();
+            mDrawBitmap = null;
+        }
+    }
+
     @Override protected void createBitmapCache(Canvas canvas) {
         int width = getContentRect().width() + getContentRect().left;
         int height = getContentRect().height();
