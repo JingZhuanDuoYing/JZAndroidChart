@@ -106,6 +106,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             BarValue barValue = barDataSet.getEntryForIndex(i);
 
+            if (!barValue.isEnable()) continue;
             if (barValue.getValues().length < 1 || Float.isNaN(barValue.getValues()[0])) continue;
 
             if (barValue.getColor() != -2) {

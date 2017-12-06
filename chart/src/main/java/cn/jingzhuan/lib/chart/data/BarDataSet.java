@@ -72,7 +72,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     protected void calcMinMaxY(BarValue e) {
 
-        if (e == null) return;
+        if (e == null || !e.isEnable()) return;
 
         for (float v : e.getValues()) {
             mViewportYMin = Math.min(mViewportYMin, v);

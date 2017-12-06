@@ -13,6 +13,8 @@ public class BarValue extends Value {
 
     private Paint.Style mPaintStyle = Paint.Style.FILL;
 
+    private boolean isEnable = true;
+
     public BarValue(float[] yValues) {
         this.yValues = yValues;
     }
@@ -89,4 +91,11 @@ public class BarValue extends Value {
         return mPaintStyle;
     }
 
+    public void setEnable(boolean enable) {
+        isEnable = enable;
+    }
+
+    public boolean isEnable() {
+        return isEnable;
+    }
 }
