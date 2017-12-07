@@ -527,22 +527,20 @@ public abstract class Chart extends View {
      * Smoothly zooms the lib in one step.
      */
     public void zoomIn() {
-        mScrollerStartViewport.set(mCurrentViewport);
-        mZoomer.forceFinished(true);
-        mZoomer.startZoom(ZOOM_AMOUNT);
-        mZoomFocalPoint.set(
-                (mCurrentViewport.right + mCurrentViewport.left) / 2,
-                (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        triggerViewportChange();
+        zoom(ZOOM_AMOUNT);
     }
 
     /**
      * Smoothly zooms the lib out one step.
      */
     public void zoomOut() {
+        zoom(-ZOOM_AMOUNT);
+    }
+
+    public void zoom(float scalingFactor) {
         mScrollerStartViewport.set(mCurrentViewport);
         mZoomer.forceFinished(true);
-        mZoomer.startZoom(-ZOOM_AMOUNT);
+        mZoomer.startZoom(scalingFactor);
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
