@@ -12,6 +12,7 @@ import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterData;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
@@ -83,8 +84,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
           + getDrawX(i / ((float) valueCount)) - shapeWidth * 0.5f;
       float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - shapeHeight * 0.5f;
 
-      point.setX(xPosition);
-      point.setY(yPosition);
+      point.setCoordinate(new XYCoordinate(xPosition, yPosition));
 
       int x = (int) (xPosition + dataSet.getDrawOffsetX());
       int y = (int) (yPosition + dataSet.getDrawOffsetY());
@@ -117,12 +117,14 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       float shapeHeight = dataSet.getShape().getIntrinsicHeight();
       for (int i = 0; i < dataSet.getValues().size(); i++) {
         final ScatterValue value = dataSet.getEntryForIndex(i);
-        float pX = value.getX();
-        float pY = value.getY();
-        rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
-        if (rect.contains(x, y)) {
-          index = i;
-          break;
+        if (value.getCoordinate() != null) {
+          float pX = value.getCoordinate().getX();
+          float pY = value.getCoordinate().getY();
+          rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
+          if (rect.contains(x, y)) {
+            index = i;
+            break;
+          }
         }
       }
       return index;

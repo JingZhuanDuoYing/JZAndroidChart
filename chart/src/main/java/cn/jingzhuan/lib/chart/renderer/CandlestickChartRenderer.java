@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
@@ -45,7 +46,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
           if (dataSet.isHighlightedVerticalEnable()) {
 
             int valueCount = dataSet.getEntryCount();
-            int index = 0;
+            int index;
             float xPosition = x;
             float yPosition = -1;
             if (x > mContentRect.left) {
@@ -53,12 +54,13 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
               if (index < valueCount) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-                xPosition = candlestickValue.getX();
-                yPosition = candlestickValue.getY();
-              } else {
-                index = valueCount - 1;
+                XYCoordinate coordinate = candlestickValue.getCoordinate();
+                if (coordinate != null) {
+                  xPosition = coordinate.getX();
+                  yPosition = coordinate.getY();
+                  chart.highlightValue(new Highlight(xPosition, yPosition, index));
+                }
               }
-              chart.highlightValue(new Highlight(xPosition, yPosition, index));
             }
           }
         }
@@ -128,8 +130,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mLowerShadowBuffers[0] = candlestickCenterX;
       mLowerShadowBuffers[2] = candlestickCenterX;
 
-      candlestick.setX(candlestickCenterX);
-      candlestick.setY(closeY);
+      candlestick.setCoordinate(new XYCoordinate(candlestickCenterX, closeY));
 
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 

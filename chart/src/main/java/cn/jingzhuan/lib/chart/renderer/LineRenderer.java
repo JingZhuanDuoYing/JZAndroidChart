@@ -4,20 +4,19 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-
 import android.support.annotation.NonNull;
 import android.util.Log;
-import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.data.ChartData;
-import java.util.List;
-
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.component.XYCoordinate;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
+import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import java.util.List;
 
 /**
  * Line Renderer
@@ -46,12 +45,13 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 for (LineDataSet line : getDataSet()) {
                     if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
                         int index = getEntryIndexByCoordinate(x, y);
-                        int count = Math.min(line.getForceValueCount(), line.getValues().size());
-                        if (index >= count) index = count - 1;
-                        if (index < 0) index = 0;
-                        final PointValue pointValue = line.getEntryForIndex(index);
-                        if (pointValue != null) {
-                            chart.highlightValue(new Highlight(pointValue.getX(), pointValue.getY(), index));
+                        if (index > 0 && index < line.getValues().size()) {
+                            final PointValue pointValue = line.getEntryForIndex(index);
+                            XYCoordinate coordinate = pointValue.getCoordinate();
+                            if (coordinate != null) {
+                                chart.highlightValue(
+                                    new Highlight(coordinate.getX(), coordinate.getY(), index));
+                            }
                         }
                     }
                 }
@@ -161,8 +161,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
-            point.setX(xPosition);
-            point.setY(yPosition);
+            point.setCoordinate(new XYCoordinate(xPosition, yPosition));
 
             if (isFirst) {
                 isFirst = false;
@@ -178,14 +177,19 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             Path shaderPath = new Path(path);
             int lastIndex = lineDataSet.getValues().size() - 1;
             if (lastIndex >= valueCount) lastIndex = valueCount - 1;
-            shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
-            shaderPath.lineTo(0, mContentRect.bottom);
-            shaderPath.lineTo(0, lineDataSet.getValues().get(0).getY());
-            shaderPath.close();
-            mRenderPaint.setShader(lineDataSet.getShader());
-            canvas.drawPath(shaderPath, mRenderPaint);
-            mRenderPaint.setShader(null);
-            mRenderPaint.setStyle(Paint.Style.STROKE);
+
+            if (lineDataSet.getValues().get(lastIndex).getCoordinate() != null
+                && lineDataSet.getValues().get(0).getCoordinate() != null) {
+                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getCoordinate().getX(),
+                    mContentRect.bottom);
+                shaderPath.lineTo(0, mContentRect.bottom);
+                shaderPath.lineTo(0, lineDataSet.getValues().get(0).getCoordinate().getY());
+                shaderPath.close();
+                mRenderPaint.setShader(lineDataSet.getShader());
+                canvas.drawPath(shaderPath, mRenderPaint);
+                mRenderPaint.setShader(null);
+                mRenderPaint.setStyle(Paint.Style.STROKE);
+            }
         }
 
         canvas.drawPath(path, mRenderPaint);

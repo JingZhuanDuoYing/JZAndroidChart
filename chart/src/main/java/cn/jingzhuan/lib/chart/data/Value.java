@@ -1,29 +1,20 @@
 package cn.jingzhuan.lib.chart.data;
 
+import cn.jingzhuan.lib.chart.component.XYCoordinate;
+
 /**
  * Created by Donglua on 17/8/1.
  */
 
 public abstract class Value {
 
-  private float x;
-  private float y;
+  private XYCoordinate coordinate;
 
-  public float getX() {
-    return x;
+  public XYCoordinate getCoordinate() {
+    return coordinate;
   }
 
-  public void setX(float x) {
-    this.x = x;
+  public void setCoordinate(XYCoordinate coordinate) {
+    this.coordinate = coordinate;
   }
-
-  public float getY() {
-    return y;
-  }
-
-  public void setY(float y) {
-    this.y = y;
-  }
-
-
 }
