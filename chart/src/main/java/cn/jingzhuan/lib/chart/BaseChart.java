@@ -68,7 +68,6 @@ public class BaseChart extends Chart {
     @Override protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        mAxisRenderers.clear();
         if (mBitmapCanvas != null) {
             mBitmapCanvas.setBitmap(null);
             mBitmapCanvas = null;
