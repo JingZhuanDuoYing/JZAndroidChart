@@ -90,7 +90,8 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
             final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
 
             minuteBinding.minuteChart.getAxisLeft().enableGridDashPathEffect(new float[] {10, 10}, 10);
-            minuteBinding.minuteChart.getAxisRight().enableGridDashPathEffect(new float[] {10, 10}, 10);
+            minuteBinding.minuteChart.getAxisTop().enableGridDashPathEffect(new float[] {10, 10}, 10);
+            minuteBinding.minuteChart.getAxisTop().setGridLineEnable(true);
 
             minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new ValueFormatter() {
                 @Override
@@ -100,7 +101,9 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
                 }
             });
 
-            minuteBinding.minuteChart.getAxisBottom().setGridCount(3);
+            minuteBinding.minuteChart.getAxisBottom().setGridCount(1);
+            minuteBinding.minuteChart.getAxisTop().setGridCount(3);
+            minuteBinding.minuteChart.getAxisRight().setGridCount(1);
 
             minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
                 @Override
@@ -108,11 +111,11 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
                     if (index == 0) {
                         return "9:30";
                     }
-                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount()) {
-                        return "15:00";
-                    }
-                    if (index == minuteBinding.minuteChart.getAxisBottom().getGridCount() / 2) {
+                    if (index == 1) {
                         return "11:30/13:00";
+                    }
+                    if (index == 2) {
+                        return "15:00";
                     }
                     return "";
                 }
