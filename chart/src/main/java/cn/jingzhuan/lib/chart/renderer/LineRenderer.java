@@ -158,6 +158,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
+            if (Float.isNaN(point.getValue())) {
+                continue;
+            }
+
             float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 

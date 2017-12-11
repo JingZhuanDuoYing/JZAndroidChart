@@ -82,6 +82,9 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
     private void calcViewportMinMax(PointValue e) {
+
+        if (Float.isNaN(e.getValue())) return;
+
         if (e.getValue() < mViewportYMin)
             mViewportYMin = e.getValue();
 
