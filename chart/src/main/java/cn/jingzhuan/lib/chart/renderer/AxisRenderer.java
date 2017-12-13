@@ -4,16 +4,15 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
-
-import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
-import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 import java.util.List;
 
 /**
@@ -88,9 +87,12 @@ public class AxisRenderer implements Renderer {
         double interval = (max - min) / count;
 
         axis.mLabelEntries = new float[count + 1];
-        double f = min;
-        for (int j = 0; j < count + 1; f += interval, j++) {
-            axis.mLabelEntries[j] = (float) f;
+
+        if (min < Float.MAX_VALUE && max > -Float.MAX_VALUE && min <= max) {
+            double f = min;
+            for (int j = 0; j < count + 1; f += interval, j++) {
+                axis.mLabelEntries[j] = (float) f;
+            }
         }
     }
 
@@ -322,18 +324,10 @@ public class AxisRenderer implements Renderer {
             final float height = mContentRect.height() / (mAxis.getLabels().size() - 1F);
             float separation = 0;
             for (int i = 0; i < mAxis.getLabels().size(); i++) {
-                //ValueFormatter labelValueFormatter = mAxis.getLabelValueFormatter();
-                //if (labelValueFormatter == null) {
-                //    labelLength = FloatUtils.formatFloatValue(mLabelBuffer, labels[i], 2);
-                //} else {
-                    char[] labelCharArray = mAxis.getLabels().get(i).toCharArray();
-                    labelLength = labelCharArray.length;
-                    System.arraycopy(labelCharArray,
-                        0,
-                        mLabelBuffer,
-                        mLabelBuffer.length - labelLength,
-                        labelLength);
-                //}
+                char[] labelCharArray = mAxis.getLabels().get(i).toCharArray();
+                labelLength = labelCharArray.length;
+                System.arraycopy(labelCharArray, 0, mLabelBuffer,
+                    mLabelBuffer.length - labelLength, labelLength);
                 labelOffset = mLabelBuffer.length - labelLength;
                 switch (mAxis.getAxisPosition()) {
                     case AxisY.LEFT_OUTSIDE:
@@ -349,11 +343,6 @@ public class AxisRenderer implements Renderer {
                 }
 
                 float textHeightOffset = (mLabelTextPaint.descent() + mLabelTextPaint.ascent()) / 2;
-                //if (i == 0) { // Bottom
-                //    textHeightOffset = mAxis.getLabelSeparation();
-                //} else if (i == mAxis.getLabels().size() - 1) { // Top
-                //    textHeightOffset += textHeightOffset - mAxis.getLabelSeparation();
-                //}
 
                 LabelColorSetter colorSetter = ((AxisY) mAxis).getLabelColorSetter();
                 if (colorSetter != null) {
