@@ -75,8 +75,10 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
         if (e == null || !e.isEnable()) return;
 
         for (float v : e.getValues()) {
-            mViewportYMin = Math.min(mViewportYMin, v);
-            mViewportYMax = Math.max(mViewportYMax, v);
+            if (!Float.isNaN(v)) {
+                mViewportYMin = Math.min(mViewportYMin, v);
+                mViewportYMax = Math.max(mViewportYMax, v);
+            }
         }
     }
 
