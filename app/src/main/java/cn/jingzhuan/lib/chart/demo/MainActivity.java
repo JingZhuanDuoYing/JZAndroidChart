@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
         DemoAdapterController controller = new DemoAdapterController(this);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
         recyclerView.setAdapter(controller.getAdapter());
 

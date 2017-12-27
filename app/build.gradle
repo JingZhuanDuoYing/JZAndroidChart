@@ -8,8 +8,8 @@ android {
             enabled true
         }
         applicationId "cn.jingzhuan.lib.chart.demo"
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion 16
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -34,5 +34,8 @@ dependencies {
     implementation 'com.airbnb.android:epoxy-databinding:2.7.3'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
     annotationProcessor 'com.airbnb.android:epoxy-processor:2.7.3'
+
+    implementation 'jp.wasabeef:takt:1.0.5'
+
     implementation project(':chart')
 }
