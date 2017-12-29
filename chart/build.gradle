@@ -9,7 +9,7 @@ android {
   }
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 26
+    targetSdkVersion 27
     versionCode 1
     versionName "1.0"
 
@@ -20,6 +20,9 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
+  lintOptions {
+    abortOnError false
   }
 }
 

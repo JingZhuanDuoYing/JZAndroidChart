@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="HardcodedText"
     >
 
     <LinearLayout
@@ -21,12 +23,14 @@
             >
 
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/bt_move_left"
                 android:text="move left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/bt_move_right"
                 android:text="move right"
                 android:layout_width="wrap_content"
