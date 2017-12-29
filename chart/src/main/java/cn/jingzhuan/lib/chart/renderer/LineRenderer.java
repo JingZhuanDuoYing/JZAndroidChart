@@ -39,6 +39,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
         });
 
+        final Highlight highlight = new Highlight();
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
@@ -49,8 +50,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                             final PointValue pointValue = line.getEntryForIndex(index);
                             XYCoordinate coordinate = pointValue.getCoordinate();
                             if (coordinate != null) {
-                                chart.highlightValue(
-                                    new Highlight(coordinate.getX(), coordinate.getY(), index));
+                                highlight.setX(coordinate.getX());
+                                highlight.setY(coordinate.getY());
+                                highlight.setDataIndex(index);
+                                chart.highlightValue(highlight);
                             }
                         }
                     }

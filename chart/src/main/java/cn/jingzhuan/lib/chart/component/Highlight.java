@@ -11,6 +11,9 @@ public class Highlight {
 
     private int dataIndex = 0;
 
+    public Highlight() {
+    }
+
     public Highlight(float x, float y, int dataIndex) {
         this.x = x;
         this.y = y;

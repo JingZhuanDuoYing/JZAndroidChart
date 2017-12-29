@@ -39,26 +39,28 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     });
 
+    final Highlight highlight = new Highlight();
     chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
       @Override
       public void touch(float x, float y) {
         for (CandlestickDataSet dataSet : getDataSet()) {
           if (dataSet.isHighlightedVerticalEnable()) {
-
-            int valueCount = dataSet.getEntryCount();
+            final int valueCount = dataSet.getEntryCount();
             int index;
-            float xPosition = x;
-            float yPosition = -1;
+            float xPosition;
+            float yPosition;
             if (x > mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y);
-
               if (index < valueCount) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
                 XYCoordinate coordinate = candlestickValue.getCoordinate();
                 if (coordinate != null) {
                   xPosition = coordinate.getX();
                   yPosition = coordinate.getY();
-                  chart.highlightValue(new Highlight(xPosition, yPosition, index));
+                  highlight.setX(xPosition);
+                  highlight.setY(yPosition);
+                  highlight.setDataIndex(index);
+                  chart.highlightValue(highlight);
                 }
               }
             }
