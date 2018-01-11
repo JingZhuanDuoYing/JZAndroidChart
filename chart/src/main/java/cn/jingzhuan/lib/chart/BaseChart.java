@@ -235,5 +235,17 @@ public class BaseChart extends Chart {
     @Override protected int getEntryIndexByCoordinate(float x, float y) {
         return mRenderer.getEntryIndexByCoordinate(x, y);
     }
+
+    public void releaseBitmap() {
+        if (mBitmapCanvas != null) {
+            mBitmapCanvas.setBitmap(null);
+            mBitmapCanvas = null;
+        }
+        if (mDrawBitmap != null) {
+            if (mDrawBitmap.get() != null) mDrawBitmap.get().recycle();
+            mDrawBitmap.clear();
+            mDrawBitmap = null;
+        }
+    }
 }
 
