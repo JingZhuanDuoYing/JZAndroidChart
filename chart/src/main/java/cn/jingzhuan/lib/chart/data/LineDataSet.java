@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Shader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;

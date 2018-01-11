@@ -5,7 +5,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -73,23 +72,23 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         for (Highlight highlight : highlights) {
 
-            canvas.drawLine(
-                    highlight.getX(),
-                    0,
-                    highlight.getX(),
-                    mContentRect.bottom,
-                    mRenderPaint);
-
+            for (LineDataSet lineDataSet : getDataSet()) {
+                if (lineDataSet.isHighlightedVerticalEnable()) {
+                    canvas.drawLine(highlight.getX(),
+                                    0,
+                                    highlight.getX(),
+                                    mContentRect.bottom,
+                                    mRenderPaint);
+                }
+            }
             // Horizontal
             for (LineDataSet lineDataSet : getDataSet()) {
                 if (lineDataSet.isHighlightedHorizontalEnable()) {
-                    float min = lineDataSet.getViewportYMin();
-                    float max = lineDataSet.getViewportYMax();
-                    if (highlight.getDataIndex() < lineDataSet.getValues().size()) {
-                        float value = lineDataSet.getEntryForIndex(highlight.getDataIndex()).getValue();
-                        float y = (max - value) / (max - min) * mContentRect.height();
-                        canvas.drawLine(0, y, mContentRect.right, y, mRenderPaint);
-                    }
+                    canvas.drawLine(0,
+                                    highlight.getY(),
+                                    mContentRect.right,
+                                    highlight.getY(),
+                                    mRenderPaint);
                 }
             }
         }
