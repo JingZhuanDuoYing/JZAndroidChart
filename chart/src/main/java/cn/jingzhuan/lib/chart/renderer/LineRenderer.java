@@ -9,7 +9,6 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
@@ -47,10 +46,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                         int index = getEntryIndexByCoordinate(x, y);
                         if (index > 0 && index < line.getValues().size()) {
                             final PointValue pointValue = line.getEntryForIndex(index);
-                            XYCoordinate coordinate = pointValue.getCoordinate();
-                            if (coordinate != null) {
-                                highlight.setX(coordinate.getX());
-                                highlight.setY(coordinate.getY());
+                            float xPosition = pointValue.getX();
+                            float yPosition = pointValue.getY();
+
+                            if (xPosition > 0 && yPosition > 0) {
+                                highlight.setX(xPosition);
+                                highlight.setY(yPosition);
                                 highlight.setDataIndex(index);
                                 chart.highlightValue(highlight);
                             }
@@ -167,7 +168,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
-            point.setCoordinate(new XYCoordinate(xPosition, yPosition));
+            point.setCoordinate(xPosition, yPosition);
 
             if (isFirst) {
                 isFirst = false;
@@ -184,12 +185,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             int lastIndex = lineDataSet.getValues().size() - 1;
             if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
-            if (lineDataSet.getValues().get(lastIndex).getCoordinate() != null
-                && lineDataSet.getValues().get(0).getCoordinate() != null) {
-                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getCoordinate().getX(),
+            if (lineDataSet.getValues().get(lastIndex).getX() > 0
+                && lineDataSet.getValues().get(0).getY() > 0) {
+                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(),
                     mContentRect.bottom);
                 shaderPath.lineTo(0, mContentRect.bottom);
-                shaderPath.lineTo(0, lineDataSet.getValues().get(0).getCoordinate().getY());
+                shaderPath.lineTo(0, lineDataSet.getValues().get(0).getY());
                 shaderPath.close();
                 mRenderPaint.setShader(lineDataSet.getShader());
                 canvas.drawPath(shaderPath, mRenderPaint);

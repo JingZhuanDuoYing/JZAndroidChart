@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
@@ -54,11 +53,12 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                         int index = getEntryIndexByCoordinate(x, y);
                         if (index < dataSet.getValues().size()) {
                             BarValue barValue = dataSet.getEntryForIndex(index);
-                            XYCoordinate coordinate = barValue.getCoordinate();
+                            float xPosition = barValue.getX();
+                            float yPosition = barValue.getY();
 
-                            if (coordinate != null) {
-                                highlight.setX(coordinate.getX());
-                                highlight.setY(coordinate.getY());
+                            if (xPosition > 0 && yPosition > 0) {
+                                highlight.setX(xPosition);
+                                highlight.setY(yPosition);
                                 highlight.setDataIndex(index);
                                 chart.highlightValue(highlight);
                             }
@@ -134,7 +134,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 top = calcHeight(value, max, min);
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
 
-                barValue.setCoordinate(new XYCoordinate(x + width * 0.5f, top));
+                barValue.setCoordinate(x + width * 0.5f, top);
 
                 mRenderPaint.setStyle(barValue.getPaintStyle());
 

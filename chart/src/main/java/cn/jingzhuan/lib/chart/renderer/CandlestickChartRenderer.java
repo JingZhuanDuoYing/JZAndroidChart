@@ -9,7 +9,6 @@ import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
@@ -53,10 +52,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
               index = getEntryIndexByCoordinate(x, y);
               if (index < valueCount) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-                XYCoordinate coordinate = candlestickValue.getCoordinate();
-                if (coordinate != null) {
-                  xPosition = coordinate.getX();
-                  yPosition = coordinate.getY();
+                xPosition = candlestickValue.getX();
+                yPosition = candlestickValue.getY();
+                if (xPosition > 0 && xPosition > 0) {
                   highlight.setX(xPosition);
                   highlight.setY(yPosition);
                   highlight.setDataIndex(index);
@@ -132,7 +130,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mLowerShadowBuffers[0] = candlestickCenterX;
       mLowerShadowBuffers[2] = candlestickCenterX;
 
-      candlestick.setCoordinate(new XYCoordinate(candlestickCenterX, closeY));
+      candlestick.setCoordinate(candlestickCenterX, closeY);
 
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 

@@ -3,16 +3,12 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.component.XYCoordinate;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterData;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
@@ -84,7 +80,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
           + getDrawX(i / ((float) valueCount)) - shapeWidth * 0.5f;
       float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - shapeHeight * 0.5f;
 
-      point.setCoordinate(new XYCoordinate(xPosition, yPosition));
+      point.setCoordinate(xPosition, yPosition);
 
       int x = (int) (xPosition + dataSet.getDrawOffsetX());
       int y = (int) (yPosition + dataSet.getDrawOffsetY());
@@ -117,9 +113,9 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       float shapeHeight = dataSet.getShape().getIntrinsicHeight();
       for (int i = 0; i < dataSet.getValues().size(); i++) {
         final ScatterValue value = dataSet.getEntryForIndex(i);
-        if (value.getCoordinate() != null) {
-          float pX = value.getCoordinate().getX();
-          float pY = value.getCoordinate().getY();
+        if (value.getX() > 0 && value.getY() > 0) {
+          float pX = value.getX();
+          float pY = value.getY();
           rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
           if (rect.contains(x, y)) {
             index = i;
