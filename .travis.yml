@@ -3,7 +3,7 @@ jdk: oraclejdk8
 
 env:
   global:
-    - ANDROID_API=26
+    - ANDROID_API=27
     - EMULATOR_API=26
     - ANDROID_BUILD_TOOLS=27.0.3
     - ADB_INSTALL_TIMEOUT=5 # minutes
@@ -14,7 +14,7 @@ android:
     - platform-tools
     - build-tools-$ANDROID_BUILD_TOOLS
     - android-$ANDROID_API
-    - android-$EMULATOR_API_LEVEL
+    - android-$EMULATOR_API
     - extra-google-m2repository
     - extra-android-m2repository
     - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
