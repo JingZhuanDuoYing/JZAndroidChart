@@ -18,7 +18,6 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -29,7 +28,6 @@ import android.widget.OverScroller;
 import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -266,6 +264,8 @@ public abstract class Chart extends View {
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
         mGestureDetector = new GestureDetectorCompat(context, mGestureListener);
 
+        mGestureDetector.setIsLongpressEnabled(false);
+
         mScroller = new OverScroller(context);
         mZoomer = new Zoomer(context);
     }
@@ -366,10 +366,6 @@ public abstract class Chart extends View {
         public void onShowPress(MotionEvent e) {
             super.onShowPress(e);
             onTouchPoint(e.getX(), e.getY());
-        }
-
-        @Override public void onLongPress(MotionEvent e) {
-            performLongClick();
         }
 
         @Override
