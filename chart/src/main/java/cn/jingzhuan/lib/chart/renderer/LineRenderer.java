@@ -5,6 +5,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -73,23 +74,22 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         for (Highlight highlight : highlights) {
 
-            for (LineDataSet lineDataSet : getDataSet()) {
-                if (lineDataSet.isHighlightedVerticalEnable()) {
-                    canvas.drawLine(highlight.getX(),
-                                    0,
-                                    highlight.getX(),
-                                    mContentRect.bottom,
-                                    mRenderPaint);
-                }
-            }
-            // Horizontal
-            for (LineDataSet lineDataSet : getDataSet()) {
-                if (lineDataSet.isHighlightedHorizontalEnable()) {
-                    canvas.drawLine(0,
-                                    highlight.getY(),
-                                    mContentRect.right,
-                                    highlight.getY(),
-                                    mRenderPaint);
+            if (highlight != null) {
+                canvas.drawLine(highlight.getX(),
+                    0,
+                    highlight.getX(),
+                    mContentRect.bottom,
+                    mRenderPaint);
+
+                // Horizontal
+                for (LineDataSet lineDataSet : getDataSet()) {
+                    if (lineDataSet.isHighlightedHorizontalEnable()) {
+                        canvas.drawLine(0,
+                            highlight.getY(),
+                            mContentRect.right,
+                            highlight.getY(),
+                            mRenderPaint);
+                    }
                 }
             }
         }
@@ -185,10 +185,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             int lastIndex = lineDataSet.getValues().size() - 1;
             if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
-            if (lineDataSet.getValues().get(lastIndex).getX() > 0
-                && lineDataSet.getValues().get(0).getY() > 0) {
-                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(),
-                    mContentRect.bottom);
+            PointValue pointValue = lineDataSet.getEntryForIndex(lastIndex);
+
+            if (pointValue != null) {
+
+                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
                 shaderPath.lineTo(0, mContentRect.bottom);
                 shaderPath.lineTo(0, lineDataSet.getValues().get(0).getY());
                 shaderPath.close();
@@ -196,6 +197,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 canvas.drawPath(shaderPath, mRenderPaint);
                 mRenderPaint.setShader(null);
                 mRenderPaint.setStyle(Paint.Style.STROKE);
+
             }
         }
 
