@@ -6,4 +6,5 @@
 
 ![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
 
-![kline-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif)
+ <img HEIGHT="800" WIDTH="450" alt="kline-chart" src="https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif" />
+ 
