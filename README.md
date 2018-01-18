@@ -5,3 +5,5 @@
 ## Screenshots
 
 ![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
+
+![kline-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif)
