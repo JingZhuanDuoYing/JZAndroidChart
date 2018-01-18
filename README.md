@@ -2,6 +2,13 @@
 [![Build Status](https://travis-ci.org/donglua/JZAndroidChart.svg?branch=master)](https://travis-ci.org/donglua/JZAndroidChart)
 [ ![Download](https://api.bintray.com/packages/donglua/maven/chart/images/download.svg) ](https://bintray.com/donglua/maven/chart/_latestVersion)
  
+## Usage
+
+```gradle
+implementation 'cn.jingzhuan.lib:chart:0.7.11@aar'
+
+```
+ 
 ## Screenshots
 
 ![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
