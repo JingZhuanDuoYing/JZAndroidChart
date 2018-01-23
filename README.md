@@ -8,15 +8,17 @@
 implementation 'cn.jingzhuan.lib:chart:0.7.11@aar'
 
 ```
-## 交流
 
-QQ群: 181938912
- 
 ## Screenshots
 
 ![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
 
  <img HEIGHT="800" WIDTH="450" alt="kline-chart" src="https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif" />
+ 
+## Communication/交流
+
+QQ群: 181938912
+ 
  
 ## License
 
