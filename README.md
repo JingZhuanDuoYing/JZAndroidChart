@@ -8,6 +8,9 @@
 implementation 'cn.jingzhuan.lib:chart:0.7.11@aar'
 
 ```
+## 交流
+
+QQ群: 181938912
  
 ## Screenshots
 
