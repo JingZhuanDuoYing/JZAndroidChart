@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -25,8 +26,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected Rect mContentRect;
     protected Paint mRenderPaint;
 
-    protected float mDashedHighlightIntervals[] = null;
-    protected float mDashedHighlightPhase = -1;
+    protected DashPathEffect mHighlightedDashPathEffect;
 
     private int mHighlightColor = Color.WHITE;
 
@@ -103,9 +103,8 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         return mHighlightColor;
     }
 
-    public void enableDashPathEffect(float intervals[], float phase) {
-        this.mDashedHighlightIntervals = intervals;
-        this.mDashedHighlightPhase = phase;
+    public void enableHighlightDashPathEffect(float intervals[], float phase) {
+        mHighlightedDashPathEffect = new DashPathEffect(intervals, phase);
     }
 
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {

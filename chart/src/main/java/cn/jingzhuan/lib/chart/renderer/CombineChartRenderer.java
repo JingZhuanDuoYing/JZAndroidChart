@@ -174,12 +174,12 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return combineData;
     }
 
-    @Override public void enableDashPathEffect(float[] intervals, float phase) {
-        super.enableDashPathEffect(intervals, phase);
-        this.lineRenderer.enableDashPathEffect(intervals, phase);
-        this.barChartRenderer.enableDashPathEffect(intervals, phase);
-        this.candlestickChartRenderer.enableDashPathEffect(intervals, phase);
-        this.scatterChartRenderer.enableDashPathEffect(intervals, phase);
+    @Override public void enableHighlightDashPathEffect(float[] intervals, float phase) {
+        super.enableHighlightDashPathEffect(intervals, phase);
+        this.lineRenderer.enableHighlightDashPathEffect(intervals, phase);
+        this.barChartRenderer.enableHighlightDashPathEffect(intervals, phase);
+        this.candlestickChartRenderer.enableHighlightDashPathEffect(intervals, phase);
+        this.scatterChartRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {

@@ -72,8 +72,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());
-        if (mDashedHighlightPhase > 0) {
-            mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
+        if (mHighlightedDashPathEffect != null) {
+            mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
         }
 
         for (Highlight highlight : highlights) {
