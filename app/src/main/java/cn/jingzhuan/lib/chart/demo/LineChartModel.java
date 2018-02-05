@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.demo;
 import android.databinding.ViewDataBinding;
 
 import android.view.View;
+import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.Viewport;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -66,25 +67,28 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         line = new LineDataSet(values);
     }
 
-    @Override
-    protected void setDataBindingVariables(ViewDataBinding binding) {
+    @Override protected View buildView(ViewGroup parent) {
+        View rootView = super.buildView(parent);
 
-        if (binding instanceof LayoutLineChartBinding) {
-            final LayoutLineChartBinding bd = ((LayoutLineChartBinding) binding);
-            bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
-            bd.lineChart.setDoubleTapToZoom(true);
-            bd.lineChart.addLine(line);
+        final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();
+        bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
+        bd.lineChart.setDoubleTapToZoom(true);
+        bd.lineChart.addLine(line);
 
-            bd.btMoveLeft.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    bd.lineChart.moveLeft();
-                }
-            });
-            bd.btMoveRight.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    bd.lineChart.moveRight();
-                }
-            });
-        }
+        bd.btMoveLeft.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                bd.lineChart.moveLeft();
+            }
+        });
+        bd.btMoveRight.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                bd.lineChart.moveRight();
+            }
+        });
+
+        return rootView;
+    }
+
+    @Override protected void setDataBindingVariables(ViewDataBinding binding) {
     }
 }

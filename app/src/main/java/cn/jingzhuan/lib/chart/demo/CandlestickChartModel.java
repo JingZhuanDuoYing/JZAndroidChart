@@ -2,8 +2,11 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
+import android.view.View;
+import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
+import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
@@ -116,11 +119,13 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     candlestickValues.add(new CandlestickValue(3374.59f, 3354.45f, 3362.06f, 3365.22f));
     candlestickValues.add(new CandlestickValue(3376.64f, 3357.08f, 3361.82f, 3363.62f));
     candlestickValues.add(new CandlestickValue(3367.36f, 3341.14f, 3361.45f, 3349.57f));
-
   }
 
-  @Override protected void setDataBindingVariables(ViewDataBinding binding) {
-    LayoutCombineChartBinding b = (LayoutCombineChartBinding) binding;
+  @Override protected View buildView(ViewGroup parent) {
+    View rootView = super.buildView(parent);
+
+    LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();
+
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
     dataSet.setHighlightedVerticalEnable(true);
 
@@ -130,6 +135,10 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     b.combineChart.setHighlightColor(Color.BLACK);
     b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
     b.combineChart.setDataSet(dataSet);
+
+    return rootView;
   }
 
+  @Override protected void setDataBindingVariables(ViewDataBinding binding) {
+  }
 }

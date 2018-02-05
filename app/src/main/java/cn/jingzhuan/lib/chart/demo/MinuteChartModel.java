@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.view.View;
+import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.MinuteLine;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
@@ -27,8 +28,8 @@ import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
 @EpoxyModelClass(layout = R.layout.layout_minute_chart)
 public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
-    final MinuteLine line;
-    final float lastClose = 11.27f;
+    private final MinuteLine line;
+    private final float lastClose = 11.27f;
 
     @EpoxyAttribute(DoNotHash) View.OnClickListener onClickListener;
     @EpoxyAttribute(DoNotHash) HighlightStatusChangeListener highlightStatusChangeListener;
@@ -81,61 +82,62 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         line.setHighlightedVerticalEnable(true);
         line.setHighlightedHorizontalEnable(true);
         line.setLastClose(lastClose);
-
     }
 
-    @Override
-    protected void setDataBindingVariables(ViewDataBinding binding) {
-        if (binding instanceof LayoutMinuteChartBinding) {
+    @Override protected View buildView(ViewGroup parent) {
+        View rootView = super.buildView(parent);
 
-            final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) binding;
+        final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) rootView.getTag();
 
-            minuteBinding.minuteChart.getAxisLeft().enableGridDashPathEffect(new float[] {10, 10}, 10);
-            minuteBinding.minuteChart.getAxisTop().enableGridDashPathEffect(new float[] {10, 10}, 10);
-            minuteBinding.minuteChart.getAxisTop().setGridLineEnable(true);
+        minuteBinding.minuteChart.getAxisLeft().enableGridDashPathEffect(new float[] {10, 10}, 10);
+        minuteBinding.minuteChart.getAxisTop().enableGridDashPathEffect(new float[] {10, 10}, 10);
+        minuteBinding.minuteChart.getAxisTop().setGridLineEnable(true);
 
-            minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new ValueFormatter() {
-                @Override
-                public String format(float value, int index) {
-                    return String.format(Locale.ENGLISH, "%.2f%%",
-                            (value - lastClose) / lastClose * 100);
+        minuteBinding.minuteChart.getAxisRight().setLabelValueFormatter(new ValueFormatter() {
+            @Override
+            public String format(float value, int index) {
+                return String.format(Locale.ENGLISH, "%.2f%%",
+                    (value - lastClose) / lastClose * 100);
+            }
+        });
+
+        minuteBinding.minuteChart.getAxisBottom().setGridCount(1);
+        minuteBinding.minuteChart.getAxisTop().setGridCount(3);
+        minuteBinding.minuteChart.getAxisRight().setGridCount(1);
+
+        minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
+            @Override
+            public String format(float value, int index) {
+                if (index == 0) {
+                    return "9:30";
                 }
-            });
-
-            minuteBinding.minuteChart.getAxisBottom().setGridCount(1);
-            minuteBinding.minuteChart.getAxisTop().setGridCount(3);
-            minuteBinding.minuteChart.getAxisRight().setGridCount(1);
-
-            minuteBinding.minuteChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
-                @Override
-                public String format(float value, int index) {
-                    if (index == 0) {
-                        return "9:30";
-                    }
-                    if (index == 1) {
-                        return "11:30/13:00";
-                    }
-                    if (index == 2) {
-                        return "15:00";
-                    }
-                    return "";
+                if (index == 1) {
+                    return "11:30/13:00";
                 }
-            });
+                if (index == 2) {
+                    return "15:00";
+                }
+                return "";
+            }
+        });
 
-            minuteBinding.minuteChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
+        minuteBinding.minuteChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
 
-            minuteBinding.minuteChart.setHighlightColor(Color.BLACK);
+        minuteBinding.minuteChart.setHighlightColor(Color.BLACK);
 
-            minuteBinding.minuteChart.setScaleXEnable(false);
+        minuteBinding.minuteChart.setScaleXEnable(false);
 
-            line.setShader(new LinearGradient(0, 0, 0, 0, 0x10000000, 0x10000000, Shader.TileMode.REPEAT));
+        line.setShader(new LinearGradient(0, 0, 0, 0, 0x10000000, 0x10000000, Shader.TileMode.REPEAT));
 
-            minuteBinding.minuteChart.addLine(line);
+        minuteBinding.minuteChart.addLine(line);
 
-            minuteBinding.minuteChart.setOnClickListener(onClickListener);
+        minuteBinding.minuteChart.setOnClickListener(onClickListener);
 
-            minuteBinding.minuteChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
-        }
+        minuteBinding.minuteChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
+
+        return rootView;
     }
 
+    @Override protected void setDataBindingVariables(ViewDataBinding binding) {
+    }
 }

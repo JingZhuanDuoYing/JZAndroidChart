@@ -2,11 +2,12 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 import cn.jingzhuan.lib.chart.Chart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
-import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartClickableItemBinding;
 import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
@@ -42,24 +43,26 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barDataSet.setAutoBarWidth(true);
   }
 
-  @Override
-  protected void setDataBindingVariables(final ViewDataBinding binding) {
-    if (binding instanceof LayoutBarChartClickableItemBinding) {
+  @Override protected View buildView(final ViewGroup parent) {
+    View rootView = super.buildView(parent);
 
-      LayoutBarChartClickableItemBinding barBinding = (LayoutBarChartClickableItemBinding) binding;
+    LayoutBarChartClickableItemBinding barBinding = (LayoutBarChartClickableItemBinding) rootView.getTag();
 
-      barBinding.barChart.setDataSet(barDataSet);
-      barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
-      barBinding.barChart.getAxisBottom().setLabels(labels);
-      barBinding.barChart.getAxisBottom().setLabelTextColor(Color.BLACK);
+    barBinding.barChart.setDataSet(barDataSet);
+    barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
+    barBinding.barChart.getAxisBottom().setLabels(labels);
+    barBinding.barChart.getAxisBottom().setLabelTextColor(Color.BLACK);
 
-      barBinding.barChart.setOnEntryClickListener(new OnEntryClickListener() {
-        @Override public void onEntryClick(Chart chart, int position) {
-          Toast.makeText(binding.getRoot().getContext(),
-              "value = " + barValueList.get(position).getValues()[0],
-              Toast.LENGTH_SHORT).show();
-        }
-      });
-    }
+    barBinding.barChart.setOnEntryClickListener(new OnEntryClickListener() {
+      @Override public void onEntryClick(Chart chart, int position) {
+        Toast.makeText(parent.getContext(),
+            "value = " + barValueList.get(position).getValues()[0],
+            Toast.LENGTH_SHORT).show();
+      }
+    });
+    return rootView;
+  }
+
+  @Override protected void setDataBindingVariables(ViewDataBinding binding) {
   }
 }

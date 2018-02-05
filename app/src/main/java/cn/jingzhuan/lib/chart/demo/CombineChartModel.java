@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart.demo;
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
 
+import android.view.View;
+import android.view.ViewGroup;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 
@@ -85,15 +87,18 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         line.setHighlightedVerticalEnable(true);
     }
 
-    @Override
-    protected void setDataBindingVariables(ViewDataBinding binding) {
+    @Override protected View buildView(ViewGroup parent) {
+        View rootView =  super.buildView(parent);
 
-        LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) binding;
+        LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) rootView.getTag();
 
         chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         chartBinding.combineChart.addDataSet(barDataSet);
         chartBinding.combineChart.addDataSet(line);
 
+        return rootView;
     }
 
+    @Override protected void setDataBindingVariables(ViewDataBinding binding) {
+    }
 }

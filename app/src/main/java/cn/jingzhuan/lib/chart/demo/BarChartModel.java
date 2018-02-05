@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart.demo;
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
 
+import android.view.View;
+import android.view.ViewGroup;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 
@@ -39,14 +41,17 @@ public abstract class BarChartModel extends DataBindingEpoxyModel {
         barDataSet.setAutoBarWidth(true);
     }
 
-    @Override
-    protected void setDataBindingVariables(ViewDataBinding binding) {
-        if (binding instanceof LayoutBarChartBinding) {
+    @Override protected View buildView(ViewGroup parent) {
+        View rootView = super.buildView(parent);
 
-            LayoutBarChartBinding barBinding = (LayoutBarChartBinding) binding;
+        LayoutBarChartBinding barBinding = (LayoutBarChartBinding) rootView.getTag();
 
-            barBinding.barChart.setDataSet(barDataSet);
-            barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
-        }
+        barBinding.barChart.setDataSet(barDataSet);
+        barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);
+
+        return rootView;
+    }
+
+    @Override protected void setDataBindingVariables(ViewDataBinding binding) {
     }
 }
