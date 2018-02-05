@@ -217,7 +217,7 @@ public class BaseChart extends Chart {
     }
 
     public void enableHighlightDashPathEffect(float intervals[], float phase) {
-        this.mRenderer.enableDashPathEffect(intervals, phase);
+        this.mRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {

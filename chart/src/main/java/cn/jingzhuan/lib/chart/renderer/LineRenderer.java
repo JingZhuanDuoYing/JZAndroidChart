@@ -26,9 +26,13 @@ import java.util.List;
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private LineData lineData;
+    private Path linePath;
+    private Path shaderPath;
 
     public LineRenderer(final Chart chart) {
         super(chart);
+
+        linePath = new Path();
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -68,8 +72,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());
-        if (mDashedHighlightPhase > 0) {
-            mRenderPaint.setPathEffect(new DashPathEffect(mDashedHighlightIntervals, mDashedHighlightPhase));
+        if (mHighlightedDashPathEffect != null) {
+            mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
         }
 
         for (Highlight highlight : highlights) {
@@ -134,8 +138,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         int valueCount = lineDataSet.getEntryCount();
 
-        Path path = new Path();
-        path.reset();
+        linePath.reset();
         boolean isFirst = true;
 
         float min, max;
@@ -172,16 +175,22 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
             if (isFirst) {
                 isFirst = false;
-                path.moveTo(xPosition, yPosition);
+                linePath.moveTo(xPosition, yPosition);
             } else  {
-                path.lineTo(xPosition, yPosition);
+                linePath.lineTo(xPosition, yPosition);
             }
         }
 
         // draw shader area
         if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
             mRenderPaint.setStyle(Paint.Style.FILL);
-            Path shaderPath = new Path(path);
+
+            if (shaderPath == null) {
+                shaderPath = new Path(linePath);
+            } else {
+                shaderPath.set(linePath);
+            }
+
             int lastIndex = lineDataSet.getValues().size() - 1;
             if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
@@ -201,7 +210,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
         }
 
-        canvas.drawPath(path, mRenderPaint);
+        canvas.drawPath(linePath, mRenderPaint);
     }
 
 }
