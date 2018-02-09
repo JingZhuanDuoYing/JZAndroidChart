@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -134,7 +135,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     b.combineChart.setMaxVisibleEntryCount(20);
     b.combineChart.setHighlightColor(Color.BLACK);
     b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
-    b.combineChart.setDataSet(dataSet);
+    b.combineChart.setDataSet(new CandlestickDataSetArrowDecorator(dataSet));
 
     return rootView;
   }

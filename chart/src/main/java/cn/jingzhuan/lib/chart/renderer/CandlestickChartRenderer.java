@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Chart;
@@ -213,6 +212,15 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       canvas.drawLines(mUpperShadowBuffers, mRenderPaint);
 
       canvas.drawLines(mLowerShadowBuffers, mRenderPaint);
+
+
+      if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
+        ((CandlestickDataSetArrowDecorator) candlestickDataSet).draw(canvas, candlestick,
+                                                                     mContentRect, xPosition,
+                                                                     highY, lowY,
+                                                                     max, min,
+                                                                     candleWidth);
+      }
 
     }
 
