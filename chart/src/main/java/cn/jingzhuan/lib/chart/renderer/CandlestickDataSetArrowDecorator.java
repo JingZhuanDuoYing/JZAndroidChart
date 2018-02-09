@@ -25,6 +25,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
   private Rect mTextBounds = new Rect();
 
+  private float maxData = -1f;
+  private float minData = -1f;
 
   public CandlestickDataSetArrowDecorator(CandlestickDataSet candlestickDataSet) {
     super(candlestickDataSet.getValues(), candlestickDataSet.getAxisDependency());
@@ -42,13 +44,15 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     mPaint.setTextSize(textSize);
   }
 
-  public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect,
-                   float x,
-                   float highY, float lowY,
-                   float max, float min, float candleWidth) {
+  public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
+      float x, float highY, float lowY) {
 
-    if (Float.compare(candlestick.getHigh(), max) == 0) {
-      int length = FloatUtils.formatFloatValue(mLabelBuffer, candlestick.getHigh(), 2);
+    float lowValue = candlestick.getLow();
+    float highValue = candlestick.getHigh();
+
+    if (Float.compare(highValue, getViewportYMax()) == 0 && Float.compare(highValue, maxData) != 0) {
+
+      int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, 2);
 
       if (x < contentRect.width() >> 1) {
 
@@ -65,9 +69,14 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         canvas.drawText(text, x + candleWidth * 0.4f, highY + mTextBounds.height(), getPaint());
 
       }
+
+      maxData = highValue;
     }
-    if (Float.compare(candlestick.getLow(), min) == 0) {
-      int length = FloatUtils.formatFloatValue(mLabelBuffer, candlestick.getLow(), 2);
+
+    if (Float.compare(lowValue, getViewportYMin()) == 0 && Float.compare(lowValue, minData) != 0) {
+
+      int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, 2);
+
       if (x < contentRect.width() >> 1) {
 
         mPaint.setTextAlign(Align.LEFT);
@@ -81,6 +90,14 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         canvas.drawText(text, x + candleWidth * 0.4f, lowY, getPaint());
 
       }
+
+      minData = lowValue;
     }
+
+  }
+
+  public void reset() {
+    minData = -1f;
+    maxData = -1f;
   }
 }
