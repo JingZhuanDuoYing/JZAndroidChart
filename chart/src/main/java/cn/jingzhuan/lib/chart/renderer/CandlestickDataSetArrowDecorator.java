@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
@@ -25,8 +26,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
   private Rect mTextBounds = new Rect();
 
-  private float maxData = -1f;
-  private float minData = -1f;
+  private float currentMaxValue = -1f;
+  private float currentMinValue = -1f;
 
   public CandlestickDataSetArrowDecorator(CandlestickDataSet candlestickDataSet) {
     super(candlestickDataSet.getValues(), candlestickDataSet.getAxisDependency());
@@ -40,6 +41,10 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     return mPaint;
   }
 
+  @Override public void calcMinMax(Viewport viewport) {
+    super.calcMinMax(viewport);
+  }
+
   public void setTextSize(int textSize) {
     mPaint.setTextSize(textSize);
   }
@@ -47,12 +52,14 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
   public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
       float x, float highY, float lowY) {
 
-    float lowValue = candlestick.getLow();
-    float highValue = candlestick.getHigh();
+    final float highValue = candlestick.getHigh();
+    final float lowValue = candlestick.getLow();
 
-    if (Float.compare(highValue, getViewportYMax()) == 0 && Float.compare(highValue, maxData) != 0) {
+    if (Float.compare(highValue, getViewportYMax()) == 0 && currentMaxValue < 0) {
 
-      int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, 2);
+      currentMaxValue = highValue;
+
+      final int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, 2);
 
       if (x < contentRect.width() >> 1) {
 
@@ -70,12 +77,13 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
       }
 
-      maxData = highValue;
     }
 
-    if (Float.compare(lowValue, getViewportYMin()) == 0 && Float.compare(lowValue, minData) != 0) {
+    if (Float.compare(lowValue, getViewportYMin()) == 0 && currentMinValue < 0) {
 
-      int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, 2);
+      currentMinValue = lowValue;
+
+      final int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, 2);
 
       if (x < contentRect.width() >> 1) {
 
@@ -91,13 +99,13 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
       }
 
-      minData = lowValue;
     }
 
+    reset();
   }
 
   public void reset() {
-    minData = -1f;
-    maxData = -1f;
+    currentMinValue = -1f;
+    currentMaxValue = -1f;
   }
 }

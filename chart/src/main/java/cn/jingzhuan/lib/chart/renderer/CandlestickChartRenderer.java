@@ -67,7 +67,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     });
   }
 
-
   @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
     for (CandlestickDataSet dataSet : chartData.getDataSets()) {
       if (dataSet.isVisible()) {
@@ -221,9 +220,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     }
 
-    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
-      ((CandlestickDataSetArrowDecorator) candlestickDataSet).reset();
-    }
   }
 
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
