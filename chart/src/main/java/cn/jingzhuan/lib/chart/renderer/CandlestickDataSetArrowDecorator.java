@@ -101,7 +101,6 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
     }
 
-    reset();
   }
 
   public void reset() {
