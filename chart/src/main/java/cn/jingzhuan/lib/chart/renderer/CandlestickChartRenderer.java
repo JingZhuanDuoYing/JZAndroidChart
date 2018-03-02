@@ -98,8 +98,14 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     int valueCount = candlestickDataSet.getEntryCount();
 
+    final List<CandlestickValue> visibleValues = candlestickDataSet.getVisiblePoints(mViewport);
+
     for (int i = 0; i < valueCount; i++) {
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
+
+      if (!visibleValues.contains(candlestick)) {
+        continue;
+      }
 
       float candleWidth = candlestickDataSet.getCandleWidth();
 
@@ -220,6 +226,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     }
 
+    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
+      ((CandlestickDataSetArrowDecorator) candlestickDataSet).reset();
+    }
   }
 
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
