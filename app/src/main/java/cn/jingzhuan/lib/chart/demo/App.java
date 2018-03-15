@@ -1,9 +1,6 @@
 package cn.jingzhuan.lib.chart.demo;
 
 import android.app.Application;
-import android.graphics.Color;
-import jp.wasabeef.takt.Seat;
-import jp.wasabeef.takt.Takt;
 
 /**
  * Application
@@ -12,20 +9,5 @@ import jp.wasabeef.takt.Takt;
 
 public class App extends Application {
 
-  @Override public void onCreate() {
-    super.onCreate();
-    if (BuildConfig.DEBUG) {
-      Takt.stock(this)
-          .color(Color.WHITE)
-          .seat(Seat.TOP_RIGHT)
-          .play();
-    }
-  }
 
-  @Override public void onTerminate() {
-    if (BuildConfig.DEBUG) {
-      Takt.finish();
-    }
-    super.onTerminate();
-  }
 }

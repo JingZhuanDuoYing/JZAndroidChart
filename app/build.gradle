@@ -30,12 +30,10 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.0.2'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.airbnb.android:epoxy:2.8.0'
-    implementation 'com.airbnb.android:epoxy-databinding:2.8.0'
+    implementation 'com.airbnb.android:epoxy:2.10.0'
+    implementation 'com.airbnb.android:epoxy-databinding:2.10.0'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
-    annotationProcessor 'com.airbnb.android:epoxy-processor:2.8.0'
-
-    implementation 'jp.wasabeef:takt:1.0.5'
+    annotationProcessor 'com.airbnb.android:epoxy-processor:2.10.0'
 
     implementation project(':chart')
 }
