@@ -88,21 +88,23 @@ public class ChartData<T extends IDataSet> {
     entryCount = 0;
 
     if (!getDataSets().isEmpty()) {
-      for (T t : getDataSets()) {
+      synchronized (this) {
+        for (T t : getDataSets()) {
 
-        if (!t.isEnable()) continue;
+          if (!t.isEnable()) continue;
 
-        t.calcMinMax(viewport);
-        if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
-          leftMax = Math.max(leftMax, t.getViewportYMax());
-          leftMin = Math.min(leftMin, t.getViewportYMin());
-        }
-        if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
-          rightMax = Math.max(rightMax, t.getViewportYMax());
-          rightMin = Math.min(rightMin, t.getViewportYMin());
-        }
-        if (t.getEntryCount() > entryCount) {
-          entryCount = t.getEntryCount();
+          t.calcMinMax(viewport);
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
+            leftMax = Math.max(leftMax, t.getViewportYMax());
+            leftMin = Math.min(leftMin, t.getViewportYMin());
+          }
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
+            rightMax = Math.max(rightMax, t.getViewportYMax());
+            rightMin = Math.min(rightMin, t.getViewportYMin());
+          }
+          if (t.getEntryCount() > entryCount) {
+            entryCount = t.getEntryCount();
+          }
         }
       }
       setMinMax();

@@ -46,19 +46,22 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
-                for (LineDataSet line : getDataSet()) {
-                    if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
-                        int index = getEntryIndexByCoordinate(x, y);
-                        if (index > 0 && index < line.getValues().size()) {
-                            final PointValue pointValue = line.getEntryForIndex(index);
-                            float xPosition = pointValue.getX();
-                            float yPosition = pointValue.getY();
+                //noinspection SynchronizeOnNonFinalField
+                synchronized (lineData) {
+                    for (LineDataSet line : getDataSet()) {
+                        if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
+                            int index = getEntryIndexByCoordinate(x, y);
+                            if (index > 0 && index < line.getValues().size()) {
+                                final PointValue pointValue = line.getEntryForIndex(index);
+                                float xPosition = pointValue.getX();
+                                float yPosition = pointValue.getY();
 
-                            if (xPosition > 0 && yPosition > 0) {
-                                highlight.setX(xPosition);
-                                highlight.setY(yPosition);
-                                highlight.setDataIndex(index);
-                                chart.highlightValue(highlight);
+                                if (xPosition > 0 && yPosition > 0) {
+                                    highlight.setX(xPosition);
+                                    highlight.setY(yPosition);
+                                    highlight.setDataIndex(index);
+                                    chart.highlightValue(highlight);
+                                }
                             }
                         }
                     }
