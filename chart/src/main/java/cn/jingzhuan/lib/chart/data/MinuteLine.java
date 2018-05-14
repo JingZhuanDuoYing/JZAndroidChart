@@ -33,7 +33,7 @@ public class MinuteLine extends LineDataSet {
     public void calcMinMax(Viewport viewport) {
         super.calcMinMax(viewport);
 
-        if (mLastClose > 0) {
+        if (mLastClose > 0 && getValues() != null && getValues().size() > 0) {
             float maxDiff = Math.max(Math.abs(mViewportYMin - mLastClose), Math.abs(mViewportYMax - mLastClose));
             maxDiff = Math.max(mLastClose * 0.01f, maxDiff);
             mViewportYMin = mLastClose - maxDiff;
