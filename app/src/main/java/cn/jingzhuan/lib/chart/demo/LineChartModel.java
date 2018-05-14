@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.Viewport;
@@ -67,7 +68,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         line = new LineDataSet(values);
     }
 
-    @Override protected View buildView(ViewGroup parent) {
+    @Override protected View buildView(@NonNull ViewGroup parent) {
         View rootView = super.buildView(parent);
 
         final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();
