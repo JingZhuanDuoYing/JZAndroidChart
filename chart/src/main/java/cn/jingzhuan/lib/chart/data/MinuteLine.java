@@ -41,7 +41,7 @@ public class MinuteLine extends LineDataSet {
                 mViewportYMax = mLastClose + maxDiff;
             } else {
                 mViewportYMin = mLastClose * 0.9f;
-                mViewportYMax = mLastClose + 1.1f;
+                mViewportYMax = mLastClose * 1.1f;
             }
         }
     }
