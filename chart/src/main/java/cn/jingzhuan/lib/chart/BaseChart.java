@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;

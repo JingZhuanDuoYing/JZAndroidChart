@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart.event;
 
-import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.base.Chart;
 
 /**
  * Created by donglua on 11/20/17.

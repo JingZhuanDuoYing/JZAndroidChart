@@ -1,6 +1,5 @@
 package cn.jingzhuan.lib.chart.renderer;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -12,7 +11,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
 

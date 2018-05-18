@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
-import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;

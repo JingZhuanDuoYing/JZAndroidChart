@@ -1,7 +1,6 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
 import android.support.annotation.NonNull;
@@ -13,7 +12,7 @@ import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.data.BarDataSet;

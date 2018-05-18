@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import cn.jingzhuan.lib.chart.Chart;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartClickableItemBinding;
