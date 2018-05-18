@@ -1,4 +1,4 @@
-package cn.jingzhuan.lib.chart;
+package cn.jingzhuan.lib.chart.base;
 
 import android.content.Context;
 import android.graphics.Bitmap;

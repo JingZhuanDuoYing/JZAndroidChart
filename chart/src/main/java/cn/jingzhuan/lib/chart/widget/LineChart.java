@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
-import cn.jingzhuan.lib.chart.BaseChart;
+import cn.jingzhuan.lib.chart.base.BaseChart;
 import cn.jingzhuan.lib.chart.renderer.LineRenderer;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 

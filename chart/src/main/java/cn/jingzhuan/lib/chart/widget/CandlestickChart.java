@@ -1,13 +1,12 @@
 package cn.jingzhuan.lib.chart.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
-import cn.jingzhuan.lib.chart.BaseChart;
+
+import cn.jingzhuan.lib.chart.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.renderer.CandlestickChartRenderer;
 
