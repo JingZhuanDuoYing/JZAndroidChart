@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
   compileSdkVersion 27
@@ -34,6 +35,7 @@ dependencies {
   implementation 'com.android.support:appcompat-v7:27.1.1'
   testImplementation 'junit:junit:4.12'
   implementation 'com.android.support:support-annotations:27.1.1'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
@@ -48,5 +50,8 @@ publish {
   publishVersion = "0.9.9"
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
+}
+repositories {
+    mavenCentral()
 }
 

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -33,7 +34,9 @@ dependencies {
     implementation 'com.airbnb.android:epoxy:2.12.0'
     implementation 'com.airbnb.android:epoxy-databinding:2.12.0'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
-    annotationProcessor 'com.airbnb.android:epoxy-processor:2.12.0'
+    kapt 'com.airbnb.android:epoxy-processor:2.12.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation project(':chart')
 }
