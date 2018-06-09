@@ -36,6 +36,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private boolean enable = true;
 
+    private int minValueCount = -1;
+
     public AbstractDataSet() {
     }
 
@@ -150,4 +152,13 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return enable;
     }
 
+    @Override
+    public int getMinValueCount() {
+        return minValueCount;
+    }
+
+    @Override
+    public void setMinValueCount(int minValueCount) {
+        this.minValueCount = minValueCount;
+    }
 }

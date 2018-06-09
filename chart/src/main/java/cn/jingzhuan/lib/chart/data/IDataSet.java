@@ -26,4 +26,8 @@ public interface IDataSet {
   @AxisDependency int getAxisDependency();
 
   boolean isEnable();
+
+  int getMinValueCount();
+
+  void setMinValueCount(int minValueCount);
 }

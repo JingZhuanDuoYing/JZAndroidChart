@@ -30,6 +30,8 @@ public class ChartData<T extends IDataSet> {
   protected int minVisibleEntryCount = 20;
   protected int defaultVisibleEntryCount = -1;
 
+  private int minValueCount = -1;
+
   public ChartData() {
     this.chartData = Collections.synchronizedList(new ArrayList<T>());
   }
@@ -178,4 +180,19 @@ public class ChartData<T extends IDataSet> {
       }
     }
   }
+
+  public int getMinValueCount() {
+    return minValueCount;
+  }
+
+  public void setMinValueCount(int minValueCount) {
+    this.minValueCount = minValueCount;
+
+    synchronized (getDataSets()) {
+      for (T t : getDataSets()) {
+        t.setMinValueCount(minValueCount);
+      }
+    }
+  }
+
 }

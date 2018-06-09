@@ -44,7 +44,11 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
         if (mForceValueCount > 0) return mForceValueCount;
 
         if (mBarValues != null) {
-            return mBarValues.size();
+            if (getMinValueCount() > mBarValues.size()) {
+                return getMinValueCount();
+            } else {
+                return mBarValues.size();
+            }
         }
         return 0;
     }

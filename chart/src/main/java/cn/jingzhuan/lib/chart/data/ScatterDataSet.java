@@ -57,7 +57,9 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   }
 
   @Override public int getEntryCount() {
-    return getValues().size();
+    if (getValues() == null) return 0;
+    int entryCount = getValues().size();
+    return getMinValueCount() > entryCount ? getMinValueCount() : entryCount;
   }
 
   @Override public void setValues(List<ScatterValue> values) {

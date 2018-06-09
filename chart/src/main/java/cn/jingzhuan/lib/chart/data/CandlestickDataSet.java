@@ -70,7 +70,9 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   }
 
   @Override public int getEntryCount() {
-    return candlestickValues.size();
+    if (candlestickValues == null) return 0;
+    int entryCount = candlestickValues.size();
+    return getMinValueCount() > entryCount ? getMinValueCount() : entryCount;
   }
 
   @Override public void setValues(List<CandlestickValue> values) {
