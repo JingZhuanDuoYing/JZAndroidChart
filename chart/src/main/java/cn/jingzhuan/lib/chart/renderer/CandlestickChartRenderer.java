@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -48,7 +49,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float xPosition;
             float yPosition;
             if (x > mContentRect.left) {
-              index = getEntryIndexByCoordinate(x, y);
+              index = getEntryIndexByCoordinate(x, y) + dataSet.getStartIndexOffset();
               if (index < valueCount) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
                 xPosition = candlestickValue.getX();
@@ -100,7 +101,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     final List<CandlestickValue> visibleValues = candlestickDataSet.getVisiblePoints(mViewport);
 
-    for (int i = 0; i < valueCount; i++) {
+    for (int i = 0; i < valueCount && i < candlestickDataSet.getValues().size(); i++) {
+
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
       if (!visibleValues.contains(candlestick)) {
@@ -113,7 +115,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         candleWidth = mContentRect.width() / candlestickDataSet.getVisibleValueCount(mViewport);
       }
 
-      float xPosition = getDrawX(i / (valueCount + 0f));
+      float xPosition = getDrawX((i + candlestickDataSet.getStartIndexOffset()) / (valueCount + 0f));
 
       float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
       float lowY   = (max - candlestick.getLow())   / (max - min) * mContentRect.height();

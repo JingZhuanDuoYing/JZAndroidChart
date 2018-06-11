@@ -82,10 +82,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public int getEntryIndexByCoordinate(float x, float y) {
         float valueCount = getChartData().getEntryCount();
-//        int offset = 0;
-//        if (getChartData().getMinValueCount() > 0) {
-//            offset = getChartData().getEntryCount() - getChartData().getDataSets().size();
-//        }
+
         int index =
             (int) (((x - mContentRect.left) * mViewport.width() / mContentRect.width() + mViewport.left) * valueCount);
         if (index >= getChartData().getEntryCount()) index = getChartData().getEntryCount() - 1;

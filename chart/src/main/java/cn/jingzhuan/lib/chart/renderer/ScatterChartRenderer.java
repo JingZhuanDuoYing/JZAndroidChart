@@ -77,7 +77,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       if (!point.isVisible()) continue;
 
       float xPosition = dataSet.getStartXOffset() + width * 0.5f
-          + getDrawX(i / ((float) valueCount)) - shapeWidth * 0.5f;
+          + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
       float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - shapeHeight * 0.5f;
 
       point.setCoordinate(xPosition, yPosition);

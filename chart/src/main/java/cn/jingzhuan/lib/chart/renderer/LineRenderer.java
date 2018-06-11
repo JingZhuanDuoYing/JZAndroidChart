@@ -49,7 +49,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 synchronized (lineData) {
                     for (LineDataSet line : getDataSet()) {
                         if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
-                            int index = getEntryIndexByCoordinate(x, y);
+                            int offset = line.getStartIndexOffset();
+                            int index = getEntryIndexByCoordinate(x, y) - offset;
                             if (index > 0 && index < line.getValues().size()) {
                                 final PointValue pointValue = line.getEntryForIndex(index);
                                 float xPosition = pointValue.getX();
@@ -163,10 +164,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             width = mContentRect.width() / ((float) count);
         }
 
-//        int offset = 0;
-//        if (lineDataSet.getMinValueCount() > 0) {
-//            offset = valueCount - lineDataSet.getValues().size();
-//        }
+        int offset = lineDataSet.getStartIndexOffset();
 
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
@@ -175,7 +173,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 continue;
             }
 
-            float xPosition = width * 0.5f + getDrawX(i / ((float) valueCount));
+            float xPosition = width * 0.5f + getDrawX((i + offset) / ((float) valueCount));
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
             point.setCoordinate(xPosition, yPosition);
@@ -206,8 +204,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             if (pointValue != null) {
 
                 shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
-                shaderPath.lineTo(0, mContentRect.bottom);
-                shaderPath.lineTo(0, lineDataSet.getValues().get(0).getY());
+                shaderPath.lineTo(offset * width, mContentRect.bottom);
+                shaderPath.lineTo(offset * width, lineDataSet.getValues().get(0).getY());
                 shaderPath.close();
                 mRenderPaint.setShader(lineDataSet.getShader());
                 canvas.drawPath(shaderPath, mRenderPaint);

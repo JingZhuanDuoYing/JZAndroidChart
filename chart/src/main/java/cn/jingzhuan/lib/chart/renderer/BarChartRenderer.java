@@ -49,7 +49,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             public void touch(float x, float y) {
                 for (BarDataSet dataSet : getDataSet()) {
                     if (dataSet.isHighlightedVerticalEnable()) {
-                        int index = getEntryIndexByCoordinate(x, y);
+                        int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
                         if (index < dataSet.getValues().size()) {
                             BarValue barValue = dataSet.getEntryForIndex(index);
                             float xPosition = barValue.getX();
@@ -122,7 +122,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 mRenderPaint.setColor(barDataSet.getColor());
             }
 
-            float x = getDrawX(i / (valueCount + 0f));
+            float x = getDrawX((i + barDataSet.getStartIndexOffset()) / (valueCount + 0f));
 
             float top;
             float bottom = calcHeight(0, max, min);

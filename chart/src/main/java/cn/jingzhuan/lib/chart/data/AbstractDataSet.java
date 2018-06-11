@@ -157,6 +157,14 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return minValueCount;
     }
 
+    public int getStartIndexOffset() {
+        int startIndex = 0;
+        if (minValueCount > 0) {
+            startIndex = getEntryCount() - getValues().size();
+        }
+        return startIndex;
+    }
+
     @Override
     public void setMinValueCount(int minValueCount) {
         this.minValueCount = minValueCount;

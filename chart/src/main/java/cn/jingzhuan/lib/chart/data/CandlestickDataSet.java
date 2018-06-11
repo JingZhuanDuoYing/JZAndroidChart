@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import java.util.ArrayList;
@@ -66,7 +67,11 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   }
 
   @Override public int getVisibleValueCount(Viewport viewport) {
-    return getVisiblePoints(viewport).size();
+    int size = getVisiblePoints(viewport).size();
+    if (size > 0 && getMinValueCount() > size) {
+      size = getMinValueCount();
+    }
+    return size;
   }
 
   @Override public int getEntryCount() {

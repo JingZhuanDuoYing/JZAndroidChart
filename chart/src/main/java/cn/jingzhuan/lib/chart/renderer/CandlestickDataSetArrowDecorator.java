@@ -32,6 +32,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
   public CandlestickDataSetArrowDecorator(CandlestickDataSet candlestickDataSet) {
     super(candlestickDataSet.getValues(), candlestickDataSet.getAxisDependency());
 
+    setMinValueCount(candlestickDataSet.getMinValueCount());
+
     mPaint = new Paint(ANTI_ALIAS_FLAG);
     mPaint.setColor(0xffA1abbb);
     mPaint.setTextSize(30);
