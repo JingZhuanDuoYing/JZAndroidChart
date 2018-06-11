@@ -49,7 +49,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float xPosition;
             float yPosition;
             if (x > mContentRect.left) {
-              index = getEntryIndexByCoordinate(x, y) + dataSet.getStartIndexOffset();
+              index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
               if (index < valueCount) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
                 xPosition = candlestickValue.getX();
@@ -192,7 +192,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       if (i > 0) {
         final CandlestickValue previousValue = candlestickDataSet.getEntryForIndex(i - 1);
         boolean isLimitUp = Float.compare((candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.095f) > 0;
-        if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT && i > 0) {
+        if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT) {
           if (isLimitUp) {
             mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());
           }
