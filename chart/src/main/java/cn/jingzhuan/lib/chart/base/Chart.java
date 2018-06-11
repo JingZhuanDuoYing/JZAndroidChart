@@ -857,6 +857,10 @@ public abstract class Chart extends BitmapCachedChart {
     public OnEntryClickListener getOnEntryClickListener() {
         return onEntryClickListener;
     }
+
+    public Zoomer getZoomer() {
+        return mZoomer;
+    }
 }
 
 
