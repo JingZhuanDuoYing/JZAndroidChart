@@ -56,7 +56,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                                 float xPosition = pointValue.getX();
                                 float yPosition = pointValue.getY();
 
-                                if (xPosition > 0 && yPosition > 0) {
+                                if (xPosition >= 0 && yPosition >= 0) {
                                     highlight.setX(xPosition);
                                     highlight.setY(yPosition);
                                     highlight.setDataIndex(index);
