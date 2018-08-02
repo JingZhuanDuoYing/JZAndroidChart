@@ -85,11 +85,13 @@ public abstract class BitmapCachedChart extends View {
         canvas.clipRect(mContentRect);
         createBitmapCache(canvas);
 
-        drawGridLine(getBitmapCanvas());
+        if (getBitmapCanvas() != null) {
+          drawGridLine(getBitmapCanvas());
 
-        render(getBitmapCanvas());
+          render(getBitmapCanvas());
 
-        canvas.drawBitmap(getDrawBitmap(), 0, 0, getRenderPaint());
+          canvas.drawBitmap(getDrawBitmap(), 0, 0, getRenderPaint());
+        }
 
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
