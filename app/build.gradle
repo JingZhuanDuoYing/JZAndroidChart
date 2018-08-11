@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion "27.0.3"
     defaultConfig {
         dataBinding {
@@ -11,7 +11,7 @@ android {
         }
         applicationId "cn.jingzhuan.lib.chart.demo"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -31,11 +31,11 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
-    implementation 'com.airbnb.android:epoxy:2.12.0'
-    implementation 'com.airbnb.android:epoxy-databinding:2.12.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.airbnb.android:epoxy:2.14.0'
+    implementation 'com.airbnb.android:epoxy-databinding:2.14.0'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
-    kapt 'com.airbnb.android:epoxy-processor:2.12.0'
+    kapt 'com.airbnb.android:epoxy-processor:2.14.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

@@ -81,13 +81,9 @@ public abstract class Chart extends BitmapCachedChart {
 
 
     // Edge effect / overscroll tracking objects.
-    private EdgeEffect mEdgeEffectTop;
-    private EdgeEffect mEdgeEffectBottom;
     private EdgeEffect mEdgeEffectLeft;
     private EdgeEffect mEdgeEffectRight;
 
-    private boolean mEdgeEffectTopActive;
-    private boolean mEdgeEffectBottomActive;
     private boolean mEdgeEffectLeftActive;
     private boolean mEdgeEffectRightActive;
 
@@ -357,34 +353,20 @@ public abstract class Chart extends BitmapCachedChart {
             int scrolledX = (int) (mSurfaceSizeBuffer.x
                     * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
                     / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
-            int scrolledY = (int) (mSurfaceSizeBuffer.y
-                    * (Viewport.AXIS_Y_MAX - mCurrentViewport.bottom - viewportOffsetY)
-                    / (Viewport.AXIS_Y_MAX - Viewport.AXIS_Y_MIN));
             boolean canScrollX = mCurrentViewport.left > Viewport.AXIS_X_MIN
                     || mCurrentViewport.right < Viewport.AXIS_X_MAX;
-            boolean canScrollY = mCurrentViewport.top > Viewport.AXIS_Y_MIN
-                    || mCurrentViewport.bottom < Viewport.AXIS_Y_MAX;
             setViewportBottomLeft(
-                    mCurrentViewport.left + viewportOffsetX,
-                    mCurrentViewport.bottom + viewportOffsetY);
+                    mCurrentViewport.left + viewportOffsetX
+            );
 
             if (canScrollX && scrolledX < 0) {
                 mEdgeEffectLeft.onPull(scrolledX / (float) mContentRect.width());
                 mEdgeEffectLeftActive = true;
             }
-            if (canScrollY && scrolledY < 0) {
-                mEdgeEffectTop.onPull(scrolledY / (float) mContentRect.height());
-                mEdgeEffectTopActive = true;
-            }
             if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width()) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
                         / (float) mContentRect.width());
                 mEdgeEffectRightActive = true;
-            }
-            if (canScrollY && scrolledY > mSurfaceSizeBuffer.y - mContentRect.height()) {
-                mEdgeEffectBottom.onPull((scrolledY - mSurfaceSizeBuffer.y + mContentRect.height())
-                        / (float) mContentRect.height());
-                mEdgeEffectBottomActive = true;
             }
 
             onTouchPoint(e2.getX(), e2.getY());
@@ -398,7 +380,7 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
 
-            fling((int) -velocityX, (int) -velocityY);
+            fling((int) -velocityX);
 
             onTouchPoint(e2.getX(), e2.getY());
 
@@ -420,25 +402,23 @@ public abstract class Chart extends BitmapCachedChart {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    private void fling(int velocityX, int velocityY) {
+    private void fling(int velocityX) {
         releaseEdgeEffects();
         // Flings use math in pixels (as opposed to math based on the viewport).
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
         mScrollerStartViewport.set(mCurrentViewport);
         int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN) / (
                 Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
-        int startY = (int) (mSurfaceSizeBuffer.y * (Viewport.AXIS_Y_MAX - mScrollerStartViewport.bottom) / (
-                Viewport.AXIS_Y_MAX - Viewport.AXIS_Y_MIN));
         mScroller.forceFinished(true);
         mScroller.fling(
                 startX,
-                startY,
+                0,
                 velocityX,
-                velocityY,
+                0,
                 0, mSurfaceSizeBuffer.x - mContentRect.width(),
                 0, mSurfaceSizeBuffer.y - mContentRect.height(),
                 mContentRect.width() / 2,
-                mContentRect.height() / 2);
+                0);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
@@ -545,12 +525,9 @@ public abstract class Chart extends BitmapCachedChart {
 
             computeScrollSurfaceSize(mSurfaceSizeBuffer);
             int currX = mScroller.getCurrX();
-            int currY = mScroller.getCurrY();
 
             boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
                     || mCurrentViewport.right < Viewport.AXIS_X_MAX);
-            boolean canScrollY = (mCurrentViewport.top > Viewport.AXIS_Y_MIN
-                    || mCurrentViewport.bottom < Viewport.AXIS_Y_MAX);
 
             if (canScrollX
                     && currX < 0
@@ -568,27 +545,9 @@ public abstract class Chart extends BitmapCachedChart {
                 needsInvalidate = true;
             }
 
-            if (canScrollY
-                    && currY < 0
-                    && mEdgeEffectTop.isFinished()
-                    && !mEdgeEffectTopActive) {
-                mEdgeEffectTop.onAbsorb((int) OverScrollerCompat.getCurrVelocity(mScroller));
-                mEdgeEffectTopActive = true;
-                needsInvalidate = true;
-            } else if (canScrollY
-                    && currY > (mSurfaceSizeBuffer.y - mContentRect.height())
-                    && mEdgeEffectBottom.isFinished()
-                    && !mEdgeEffectBottomActive) {
-                mEdgeEffectBottom.onAbsorb((int) OverScrollerCompat.getCurrVelocity(mScroller));
-                mEdgeEffectBottomActive = true;
-                needsInvalidate = true;
-            }
-
             float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
                     * currX / mSurfaceSizeBuffer.x;
-            float currYRange = Viewport.AXIS_Y_MAX - (Viewport.AXIS_Y_MAX - Viewport.AXIS_Y_MIN)
-                    * currY / mSurfaceSizeBuffer.y;
-            setViewportBottomLeft(currXRange, currYRange);
+            setViewportBottomLeft(currXRange);
         }
 
         if (mZoomer.computeZoom()) {
@@ -621,7 +580,7 @@ public abstract class Chart extends BitmapCachedChart {
      * the bottom of the {@link #mCurrentViewport} rectangle. For more details on why top and
      * bottom are flipped, see {@link #mCurrentViewport}.
      */
-    private void setViewportBottomLeft(float x, float y) {
+    private void setViewportBottomLeft(float x) {
         /**
          * Constrains within the scroll range. The scroll range is simply the viewport extremes
          * (AXIS_X_MAX, etc.) minus the viewport size. For example, if the extrema were 0 and 10,
@@ -629,11 +588,10 @@ public abstract class Chart extends BitmapCachedChart {
          */
 
         float curWidth = mCurrentViewport.width();
-        float curHeight = mCurrentViewport.height();
         x = Math.max(Viewport.AXIS_X_MIN, Math.min(x, Viewport.AXIS_X_MAX - curWidth));
-        y = Math.max(Viewport.AXIS_Y_MIN + curHeight, Math.min(y, Viewport.AXIS_Y_MAX));
 
-        mCurrentViewport.set(x, y - curHeight, x + curWidth, y);
+        mCurrentViewport.left = x;
+        mCurrentViewport.right = x + curWidth;
         mCurrentViewport.constrainViewport();
         triggerViewportChange();
     }
@@ -663,9 +621,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         // Sets up edge effects
         mEdgeEffectLeft = new EdgeEffect(context);
-        mEdgeEffectTop = new EdgeEffect(context);
         mEdgeEffectRight = new EdgeEffect(context);
-        mEdgeEffectBottom = new EdgeEffect(context);
     }
 
     /**
@@ -679,27 +635,6 @@ public abstract class Chart extends BitmapCachedChart {
         // since EdgeEffectCompat always draws a top-glow at 0,0.
 
         boolean needsInvalidate = false;
-
-        if (!mEdgeEffectTop.isFinished()) {
-            final int restoreCount = canvas.save();
-            canvas.translate(mContentRect.left, mContentRect.top);
-            mEdgeEffectTop.setSize(mContentRect.width(), mContentRect.height());
-            if (mEdgeEffectTop.draw(canvas)) {
-                needsInvalidate = true;
-            }
-            canvas.restoreToCount(restoreCount);
-        }
-
-        if (!mEdgeEffectBottom.isFinished()) {
-            final int restoreCount = canvas.save();
-            canvas.translate(2 * mContentRect.left - mContentRect.right, mContentRect.bottom);
-            canvas.rotate(180, mContentRect.width(), 0);
-            mEdgeEffectBottom.setSize(mContentRect.width(), mContentRect.height());
-            if (mEdgeEffectBottom.draw(canvas)) {
-                needsInvalidate = true;
-            }
-            canvas.restoreToCount(restoreCount);
-        }
 
         if (!mEdgeEffectLeft.isFinished()) {
             final int restoreCount = canvas.save();
@@ -731,14 +666,10 @@ public abstract class Chart extends BitmapCachedChart {
 
     private void releaseEdgeEffects() {
         mEdgeEffectLeftActive
-                = mEdgeEffectTopActive
                 = mEdgeEffectRightActive
-                = mEdgeEffectBottomActive
                 = false;
         mEdgeEffectLeft.onRelease();
-        mEdgeEffectTop.onRelease();
         mEdgeEffectRight.onRelease();
-        mEdgeEffectBottom.onRelease();
     }
 
     public AxisY getAxisLeft() {
@@ -823,7 +754,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     public void moveRight(@FloatRange(from = 0f, to = 1.0f) float percent) {
-        releaseEdgeEffects();
+//        releaseEdgeEffects();
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
         mScrollerStartViewport.set(mCurrentViewport);
 
