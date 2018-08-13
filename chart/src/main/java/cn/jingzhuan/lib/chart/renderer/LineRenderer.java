@@ -158,10 +158,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 break;
         }
 
-        final int count = lineDataSet.getVisibleValueCount(mViewport);
+        final float count = lineDataSet.getVisibleRange(mViewport);
         float width = 0;
         if (count > 0) {
-            width = mContentRect.width() / ((float) count);
+            width = mContentRect.width() / count;
         }
 
         int offset = lineDataSet.getStartIndexOffset();

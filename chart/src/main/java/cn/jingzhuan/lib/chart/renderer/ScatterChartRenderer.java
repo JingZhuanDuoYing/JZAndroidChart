@@ -62,7 +62,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     }
 
     final float width = (mContentRect.width() - dataSet.getStartXOffset() - dataSet.getEndXOffset())
-        / (float) dataSet.getVisibleValueCount(mViewport) + 1;
+        / dataSet.getVisibleRange(mViewport) + 1;
 
     float shapeWidth = dataSet.getShape().getIntrinsicWidth();
     float shapeHeight = dataSet.getShape().getIntrinsicHeight();
