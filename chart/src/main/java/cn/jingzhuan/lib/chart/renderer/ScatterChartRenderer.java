@@ -113,14 +113,12 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       float shapeHeight = dataSet.getShape().getIntrinsicHeight();
       for (int i = 0; i < dataSet.getValues().size(); i++) {
         final ScatterValue value = dataSet.getEntryForIndex(i);
-        if (value.getX() > 0 && value.getY() > 0) {
-          float pX = value.getX();
-          float pY = value.getY();
-          rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
-          if (rect.contains(x, y)) {
-            index = i;
-            break;
-          }
+        float pX = value.getX();
+        float pY = value.getY();
+        rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
+        if (rect.contains(x, y)) {
+          index = i;
+          break;
         }
       }
       return index;
