@@ -110,6 +110,10 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         }
         final float percent = barDataSet.getBarWidthPercent();
 
+        final float scale = 1 / mViewport.width();
+        final float step = mContentRect.width() * scale / valueCount;
+        final float startX = mContentRect.left - mViewport.left * mContentRect.width() * scale;
+
         for (int i = 0; i < valueCount && i < barDataSet.getValues().size(); i++) {
             BarValue barValue = barDataSet.getEntryForIndex(i);
 
@@ -122,7 +126,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 mRenderPaint.setColor(barDataSet.getColor());
             }
 
-            float x = getDrawX((i + barDataSet.getStartIndexOffset()) / (valueCount + 0f));
+            float x = startX + step * (i + barDataSet.getStartIndexOffset());
 
             float top;
             float bottom = calcHeight(0, max, min);
