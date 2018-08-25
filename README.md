@@ -5,7 +5,7 @@
 ## Usage
 
 ```gradle
-implementation 'cn.jingzhuan.lib:chart:0.9.7@aar'
+implementation 'cn.jingzhuan.lib:chart:0.9.24@aar'
 
 ```
 
