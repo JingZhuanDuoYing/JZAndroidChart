@@ -49,6 +49,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 synchronized (lineData) {
                     for (LineDataSet line : getDataSet()) {
                         if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
+                            highlight.setTouchX(x);
+                            highlight.setTouchY(y);
                             int offset = line.getStartIndexOffset();
                             int index = getEntryIndexByCoordinate(x, y) - offset;
                             if (index > 0 && index < line.getValues().size()) {

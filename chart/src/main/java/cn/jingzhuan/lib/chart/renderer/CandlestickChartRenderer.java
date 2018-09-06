@@ -48,6 +48,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             int index;
             float xPosition;
             float yPosition;
+            highlight.setTouchX(x);
+            highlight.setTouchY(y);
             if (x > mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
               if (index < valueCount && index >= 0) {

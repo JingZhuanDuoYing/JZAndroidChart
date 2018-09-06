@@ -49,6 +49,8 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             public void touch(float x, float y) {
                 for (BarDataSet dataSet : getDataSet()) {
                     if (dataSet.isHighlightedVerticalEnable()) {
+                        highlight.setTouchX(x);
+                        highlight.setTouchY(y);
                         int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
                         if (index < dataSet.getValues().size()) {
                             BarValue barValue = dataSet.getEntryForIndex(index);
