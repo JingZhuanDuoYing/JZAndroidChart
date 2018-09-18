@@ -15,11 +15,6 @@ implementation 'cn.jingzhuan.lib:chart:0.9.24@aar'
 
  <img HEIGHT="800" WIDTH="450" alt="kline-chart" src="https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif" />
  
-## Communication/交流
-
-QQ群: 181938912 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=4c486ea8d402fe488072efe35b7c8c6f19888ce30e244d2e155cb66417deddfd"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="JZAndroid技术交流" title="JZAndroid技术交流"></a>
- 
- 
 ## License
 
 ```
