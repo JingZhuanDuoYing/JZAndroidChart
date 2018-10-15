@@ -196,8 +196,6 @@ public abstract class Chart extends BitmapCachedChart {
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
         mGestureDetector = new GestureDetectorCompat(context, mGestureListener);
 
-        mGestureDetector.setIsLongpressEnabled(false);
-
         mScroller = new OverScroller(context);
         mZoomer = new Zoomer(context);
     }
@@ -292,6 +290,12 @@ public abstract class Chart extends BitmapCachedChart {
             ViewCompat.postInvalidateOnAnimation(Chart.this);
 
             return true;
+        }
+
+
+        @Override public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            onTouchPoint(e.getX(), e.getY());
         }
 
         @Override
