@@ -11,6 +11,9 @@ public class Highlight {
 
     private int dataIndex = 0;
 
+    private float touchX = Float.NaN;
+    private float touchY = Float.NaN;
+
     public Highlight() {
     }
 
@@ -42,5 +45,21 @@ public class Highlight {
 
     public int getDataIndex() {
         return dataIndex;
+    }
+
+    public float getTouchX() {
+        return touchX;
+    }
+
+    public void setTouchX(float touchX) {
+        this.touchX = touchX;
+    }
+
+    public float getTouchY() {
+        return touchY;
+    }
+
+    public void setTouchY(float touchY) {
+        this.touchY = touchY;
     }
 }

@@ -33,7 +33,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
       @Override public void onViewportChange(Viewport viewport) {
-        mViewport = viewport;
+        mViewport.set(viewport);
         calcDataSetMinMax();
       }
     });
@@ -48,6 +48,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             int index;
             float xPosition;
             float yPosition;
+            highlight.setTouchX(x);
+            highlight.setTouchY(y);
             if (x > mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
               if (index < valueCount && index >= 0) {
@@ -101,6 +103,10 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     final List<CandlestickValue> visibleValues = candlestickDataSet.getVisiblePoints(mViewport);
 
+    final float scale = 1 / mViewport.width();
+    final float step = mContentRect.width() * scale / valueCount;
+    final float startX = mContentRect.left - mViewport.left * mContentRect.width() * scale;
+
     for (int i = 0; i < valueCount && i < candlestickDataSet.getValues().size(); i++) {
 
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
@@ -115,7 +121,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         candleWidth = mContentRect.width() / candlestickDataSet.getVisibleRange(mViewport);
       }
 
-      float xPosition = getDrawX((i + candlestickDataSet.getStartIndexOffset()) / (valueCount + 0f));
+      float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
 
       float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
       float lowY   = (max - candlestick.getLow())   / (max - min) * mContentRect.height();
