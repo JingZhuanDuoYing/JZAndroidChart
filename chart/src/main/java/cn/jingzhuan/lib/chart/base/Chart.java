@@ -294,9 +294,8 @@ public abstract class Chart extends BitmapCachedChart {
 
 
         @Override public void onLongPress(MotionEvent e) {
-            super.onLongPress(e);
+            mGestureDetector.onTouchEvent(e);
             mGestureDetector.setIsLongpressEnabled(false);
-            onTouchPoint(e.getX(), e.getY());
         }
 
         @Override
@@ -319,11 +318,6 @@ public abstract class Chart extends BitmapCachedChart {
                 performClick();
             }
             return true;
-        }
-
-        @Override public boolean onSingleTapUp(MotionEvent e) {
-            mGestureDetector.setIsLongpressEnabled(true);
-            return super.onSingleTapUp(e);
         }
 
         @Override
