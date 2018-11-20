@@ -14,6 +14,7 @@ public class BarValue extends Value {
     private Paint.Style mPaintStyle = Paint.Style.FILL;
 
     private boolean isEnable = true;
+    private int[] gradientColors = null;
 
     public BarValue(float[] yValues) {
         this.yValues = yValues;
@@ -97,5 +98,13 @@ public class BarValue extends Value {
 
     public boolean isEnable() {
         return isEnable;
+    }
+
+    public void setGradientColors(int colorTop, int colorBottom) {
+        this.gradientColors = new int[] {colorTop, colorBottom};
+    }
+
+    public int[] getGradientColors() {
+        return gradientColors;
     }
 }

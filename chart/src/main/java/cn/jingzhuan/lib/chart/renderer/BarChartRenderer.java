@@ -1,22 +1,23 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
-
+import android.graphics.Shader;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.BarData;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.BarValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
-
-import cn.jingzhuan.lib.chart.base.Chart;
-import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.data.BarData;
-import cn.jingzhuan.lib.chart.data.BarDataSet;
-import cn.jingzhuan.lib.chart.data.BarValue;
 
 /**
  * Created by Donglua on 17/8/1.
@@ -149,6 +150,13 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 if (Math.abs(top - bottom) < 0.0001) {
                     canvas.drawLine(left, top, right, bottom, mRenderPaint);
                 } else {
+                    if (barValue.getGradientColors() != null && barValue.getGradientColors().length > 1) {
+                        float centerX = (left + right) * 0.5f;
+                        mRenderPaint.setShader(
+                            new LinearGradient(centerX, top, centerX, bottom,
+                                barValue.getGradientColors()[0],
+                                barValue.getGradientColors()[1], Shader.TileMode.MIRROR));
+                    }
                     canvas.drawRect(left, top, right, bottom, mRenderPaint);
                 }
 
@@ -177,6 +185,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                         top - 10, mValueTextPaint);
                 }
             }
+            mRenderPaint.setShader(null);
         }
         mRenderPaint.setStyle(Paint.Style.FILL);
     }
