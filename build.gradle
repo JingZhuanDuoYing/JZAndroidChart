@@ -12,7 +12,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.2.1'
 
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.novoda:bintray-release:0.8.1'
+        classpath 'com.novoda:bintray-release:0.9'
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -26,9 +26,8 @@ allprojects {
         mavenCentral()
     }
 
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.addStringOption('encoding', 'UTF-8')
+    tasks.withType(Javadoc).all {
+        enabled = false
     }
 }
 
