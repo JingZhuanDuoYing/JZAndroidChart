@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Shader;
 import android.support.annotation.NonNull;
 
 import cn.jingzhuan.lib.chart.base.Chart;
@@ -14,6 +15,7 @@ import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +27,8 @@ import java.util.List;
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private LineData lineData;
+    private List<Path> shaderPaths;
+    private List<Shader> shaderPathColors;
     private Path linePath;
     private Path shaderPath;
 
@@ -32,6 +36,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         super(chart);
 
         linePath = new Path();
+        shaderPath = new Path();
+        shaderPaths = new ArrayList<>();
+        shaderPathColors = new ArrayList<>();
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -143,6 +150,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         int valueCount = lineDataSet.getEntryCount();
 
+        shaderPath.reset();
+        shaderPaths.clear();
+        shaderPathColors.clear();
+
         linePath.reset();
         boolean isFirst = true;
 
@@ -172,6 +183,17 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         final float step = mContentRect.width() * scale / valueCount;
         final float startX = mContentRect.left + step * 0.5f - mViewport.left * mContentRect.width() * scale;
 
+        PointValue prevValue = null;
+
+        boolean shaderSplit = !Float.isNaN(lineDataSet.getShaderBaseValue()) &&
+                              lineDataSet.getShaderBaseValue() < max &&
+                              lineDataSet.getShaderBaseValue() > min;
+
+        int lastIndex = lineDataSet.getValues().size() - 1;
+        if (lastIndex >= valueCount) lastIndex = valueCount - 1;
+
+        PointValue startPoint = null;
+
         for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
@@ -190,37 +212,103 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             } else  {
                 linePath.lineTo(xPosition, yPosition);
             }
+
+            if (shaderSplit) {
+                float baseValue = lineDataSet.getShaderBaseValue();
+                float baseValueY = mContentRect.height() / (max - min) * (max - baseValue);
+
+                if (startPoint == null) { // isFirst
+                    shaderPath.moveTo(xPosition, yPosition);
+                    startPoint = prevValue == null ? point : prevValue;
+                } else {
+                    shaderPath.lineTo(xPosition, yPosition);
+
+                    if (prevValue.getValue() > lineDataSet.getShaderBaseValue()) {
+                        if (point.getValue() <= lineDataSet.getShaderBaseValue()) {
+
+                            shaderPath.lineTo(point.getX(), baseValueY);
+                            shaderPath.lineTo(startPoint.getX(), baseValueY);
+                            shaderPath.lineTo(startPoint.getX(), startPoint.getY());
+
+                            shaderPath.close();
+                            shaderPaths.add(new Path(shaderPath));
+                            shaderPathColors.add(lineDataSet.getShaderTop());
+                            shaderPath.reset();
+                            startPoint = null;
+                        }
+                    } else {
+                        if (point.getValue() > lineDataSet.getShaderBaseValue()) {
+
+                            shaderPath.lineTo(point.getX(), baseValueY);
+                            shaderPath.lineTo(startPoint.getX(), baseValueY);
+                            shaderPath.lineTo(startPoint.getX(), startPoint.getY());
+
+                            shaderPath.close();
+                            shaderPaths.add(new Path(shaderPath));
+                            shaderPathColors.add(lineDataSet.getShaderBottom());
+                            shaderPath.reset();
+                            startPoint = null;
+                        }
+                    }
+                }
+                prevValue = point;
+
+                if (lastIndex == i) {
+                    shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), baseValueY);
+                    shaderPath.lineTo(startPoint.getX(), baseValueY);
+                    shaderPath.lineTo(startPoint.getX(), startPoint.getY());
+                    shaderPath.close();
+                    shaderPaths.add(new Path(shaderPath));
+                    if (prevValue.getValue() > baseValue) {
+                        shaderPathColors.add(lineDataSet.getShaderTop());
+                    } else {
+                        shaderPathColors.add(lineDataSet.getShaderBottom());
+                    }
+                    shaderPath.reset();
+                    startPoint = null;
+                }
+            }
         }
 
-        // draw shader area
-        if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
+
+        if (!shaderSplit) {
+
+            // draw shader area
+            if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
+                mRenderPaint.setStyle(Paint.Style.FILL);
+
+                if (shaderPath == null) {
+                    shaderPath = new Path(linePath);
+                } else {
+                    shaderPath.set(linePath);
+                }
+
+                PointValue pointValue = lineDataSet.getEntryForIndex(lastIndex);
+
+                if (pointValue != null) {
+                    shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
+                    shaderPath.lineTo(offset * width, mContentRect.bottom);
+                    shaderPath.lineTo(offset * width, lineDataSet.getValues().get(0).getY());
+                    shaderPath.close();
+                    mRenderPaint.setShader(lineDataSet.getShader());
+                    canvas.drawPath(shaderPath, mRenderPaint);
+                    mRenderPaint.setShader(null);
+                    mRenderPaint.setStyle(Paint.Style.STROKE);
+                }
+            }
+        } else {
             mRenderPaint.setStyle(Paint.Style.FILL);
 
-            if (shaderPath == null) {
-                shaderPath = new Path(linePath);
-            } else {
-                shaderPath.set(linePath);
-            }
+            for (int i = 0; i < shaderPaths.size(); i++) {
+                Path path = shaderPaths.get(i);
 
-            int lastIndex = lineDataSet.getValues().size() - 1;
-            if (lastIndex >= valueCount) lastIndex = valueCount - 1;
-
-            PointValue pointValue = lineDataSet.getEntryForIndex(lastIndex);
-
-            if (pointValue != null) {
-
-                shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
-                shaderPath.lineTo(offset * width, mContentRect.bottom);
-                shaderPath.lineTo(offset * width, lineDataSet.getValues().get(0).getY());
-                shaderPath.close();
-                mRenderPaint.setShader(lineDataSet.getShader());
-                canvas.drawPath(shaderPath, mRenderPaint);
+                Shader shader = shaderPathColors.get(i);
+                mRenderPaint.setShader(shader);
+                canvas.drawPath(path, mRenderPaint);
                 mRenderPaint.setShader(null);
-                mRenderPaint.setStyle(Paint.Style.STROKE);
-
             }
+            mRenderPaint.setStyle(Paint.Style.STROKE);
         }
-
         canvas.drawPath(linePath, mRenderPaint);
     }
 

@@ -21,6 +21,9 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     private int mForceValueCount = -1;
     private Shader shader;
+    private Shader mShaderTop;
+    private Shader mShaderBottom;
+    private float mShaderBaseValue = Float.NaN;
 
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
@@ -157,5 +160,23 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     public void setShader(Shader shader) {
         this.shader = shader;
+    }
+
+    public float getShaderBaseValue() {
+        return mShaderBaseValue;
+    }
+
+    public void setShaderBaseValue(float shaderBaseValue, Shader shaderTop, Shader shaderBottom) {
+        this.mShaderBaseValue = shaderBaseValue;
+        this.mShaderTop = shaderTop;
+        this.mShaderBottom = shaderBottom;
+    }
+
+    public Shader getShaderTop() {
+        return mShaderTop;
+    }
+
+    public Shader getShaderBottom() {
+        return mShaderBottom;
     }
 }
