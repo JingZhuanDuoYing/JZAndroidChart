@@ -23,8 +23,6 @@ public class AxisY extends Axis {
     private float mYMin = Float.MAX_VALUE;
     private float mYMax = -Float.MAX_VALUE;
 
-    private LabelColorSetter mLabelColorSetter;
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({DEPENDENCY_LEFT, DEPENDENCY_RIGHT, DEPENDENCY_BOTH})
     public @interface AxisDependency{}
@@ -51,14 +49,6 @@ public class AxisY extends Axis {
 
     public float getYMax() {
         return mYMax;
-    }
-
-    public LabelColorSetter getLabelColorSetter() {
-        return mLabelColorSetter;
-    }
-
-    public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
-        this.mLabelColorSetter = mLabelColorSetter;
     }
 
 }

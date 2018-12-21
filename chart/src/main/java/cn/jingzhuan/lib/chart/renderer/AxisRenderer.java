@@ -315,6 +315,11 @@ public class AxisRenderer implements Renderer {
 
                 mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
 
+                LabelColorSetter colorSetter = mAxis.getLabelColorSetter();
+                if (colorSetter != null) {
+                    mLabelTextPaint.setColor(colorSetter.getColorByIndex(i));
+                }
+
                 canvas.drawText(mLabelBuffer, labelOffset, labelLength,
                     width * 0.5f + getDrawX(i / ((float) labels.size())),
                     y + mLabelTextPaint.getTextSize(), mLabelTextPaint);
@@ -344,7 +349,7 @@ public class AxisRenderer implements Renderer {
 
                 float textHeightOffset = (mLabelTextPaint.descent() + mLabelTextPaint.ascent()) / 2;
 
-                LabelColorSetter colorSetter = ((AxisY) mAxis).getLabelColorSetter();
+                LabelColorSetter colorSetter = mAxis.getLabelColorSetter();
                 if (colorSetter != null) {
                     mLabelTextPaint.setColor(colorSetter.getColorByIndex(i));
                 }

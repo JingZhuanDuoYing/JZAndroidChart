@@ -5,6 +5,7 @@ import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.data.GirdLineColorSetter;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class Axis extends AbstractComponent {
 
     private float mDashedGridIntervals[] = null;
     private float mDashedGridPhase = -1;
+
+    private LabelColorSetter mLabelColorSetter;
 
     Axis(int axisPosition) {
         this.mAxisPosition = axisPosition;
@@ -215,4 +218,13 @@ public class Axis extends AbstractComponent {
     public void setLabels(List<String> mLabels) {
         this.mLabels = mLabels;
     }
+
+    public LabelColorSetter getLabelColorSetter() {
+        return mLabelColorSetter;
+    }
+
+    public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
+        this.mLabelColorSetter = mLabelColorSetter;
+    }
+
 }
