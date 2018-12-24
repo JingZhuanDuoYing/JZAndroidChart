@@ -11,9 +11,6 @@ import android.os.Build;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -21,9 +18,7 @@ import android.view.ScaleGestureDetector;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 
-import cn.jingzhuan.lib.chart.OverScrollerCompat;
 import cn.jingzhuan.lib.chart.R;
-import cn.jingzhuan.lib.chart.ScaleGestureDetectorCompat;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
@@ -52,7 +47,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     // State objects and values related to gesture tracking.
     private ScaleGestureDetector mScaleGestureDetector;
-    private GestureDetectorCompat mGestureDetector;
+    private GestureDetector mGestureDetector;
     private OverScroller mScroller;
     private Zoomer mZoomer;
     private PointF mZoomFocalPoint = new PointF();
@@ -194,7 +189,7 @@ public abstract class Chart extends BitmapCachedChart {
     private void setupInteractions(Context context) {
 
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
-        mGestureDetector = new GestureDetectorCompat(context, mGestureListener);
+        mGestureDetector = new GestureDetector(context, mGestureListener);
 
         mScroller = new OverScroller(context);
         mZoomer = new Zoomer(context);
@@ -237,7 +232,7 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!mScaleGestureEnable) return super.onScaleBegin(scaleGestureDetector);
 
-            lastSpanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
+            lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
 
@@ -247,7 +242,7 @@ public abstract class Chart extends BitmapCachedChart {
             if (!mScaleXEnable) return false;
             if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
-            float spanX = ScaleGestureDetectorCompat.getCurrentSpanX(scaleGestureDetector);
+            float spanX = scaleGestureDetector.getCurrentSpanX();
 
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
@@ -287,7 +282,7 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
-            ViewCompat.postInvalidateOnAnimation(Chart.this);
+            postInvalidateOnAnimation();
 
             return true;
         }
@@ -329,7 +324,7 @@ public abstract class Chart extends BitmapCachedChart {
                 if (hitTest(e.getX(), e.getY(), mZoomFocalPoint)) {
                     mZoomer.startZoom(ZOOM_AMOUNT);
                 }
-                ViewCompat.postInvalidateOnAnimation(Chart.this);
+                postInvalidateOnAnimation();
             }
             return true;
         }
@@ -403,7 +398,7 @@ public abstract class Chart extends BitmapCachedChart {
                 }
             }
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     private void fling(int velocityX) {
@@ -423,7 +418,7 @@ public abstract class Chart extends BitmapCachedChart {
                 0, mSurfaceSizeBuffer.y - mContentRect.height(),
                 mContentRect.width() / 2,
                 0);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     /**
@@ -485,7 +480,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     /**
@@ -537,14 +532,14 @@ public abstract class Chart extends BitmapCachedChart {
                     && currX < 0
                     && mEdgeEffectLeft.isFinished()
                     && !mEdgeEffectLeftActive) {
-                mEdgeEffectLeft.onAbsorb((int) OverScrollerCompat.getCurrVelocity(mScroller));
+                mEdgeEffectLeft.onAbsorb((int) mScroller.getCurrVelocity());
                 mEdgeEffectLeftActive = true;
                 needsInvalidate = true;
             } else if (canScrollX
                     && currX > (mSurfaceSizeBuffer.x - mContentRect.width())
                     && mEdgeEffectRight.isFinished()
                     && !mEdgeEffectRightActive) {
-                mEdgeEffectRight.onAbsorb((int) OverScrollerCompat.getCurrVelocity(mScroller));
+                mEdgeEffectRight.onAbsorb((int) mScroller.getCurrVelocity());
                 mEdgeEffectRightActive = true;
                 needsInvalidate = true;
             }
@@ -632,7 +627,7 @@ public abstract class Chart extends BitmapCachedChart {
      * Draws the overscroll "glow" at the four edges of the lib region, if necessary. The edges
      * of the lib region are stored in {@link #mContentRect}.
      *
-     * @see EdgeEffectCompat
+     * @see EdgeEffect
      */
     protected void drawEdgeEffectsUnclipped(Canvas canvas) {
         // The methods below rotate and translate the canvas as needed before drawing the glow,
@@ -663,7 +658,6 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         if (needsInvalidate) {
-            //ViewCompat.postInvalidateOnAnimation(this);
             triggerViewportChange();
         }
     }
@@ -754,7 +748,7 @@ public abstract class Chart extends BitmapCachedChart {
             mScroller.forceFinished(true);
         }
         mScroller.startScroll(startX, 0, (int) -moveDistance, 0, 300);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void moveRight(@FloatRange(from = 0f, to = 1.0f) float percent) {
@@ -769,7 +763,7 @@ public abstract class Chart extends BitmapCachedChart {
             mScroller.forceFinished(true);
         }
         mScroller.startScroll(startX, 0, (int) moveDistance, 0, 300);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setInternalViewportChangeListener(
