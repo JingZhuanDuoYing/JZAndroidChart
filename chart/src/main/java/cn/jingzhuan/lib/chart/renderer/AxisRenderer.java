@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
@@ -490,5 +491,9 @@ public class AxisRenderer implements Renderer {
         } else {
             drawAxisLabels(canvas);
         }
+    }
+
+    public void setTypeface(Typeface tf) {
+        mLabelTextPaint.setTypeface(tf);
     }
 }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -14,7 +15,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
@@ -235,6 +235,13 @@ public class BaseChart extends Chart {
 
     @Override protected int getEntryIndexByCoordinate(float x, float y) {
         return mRenderer.getEntryIndexByCoordinate(x, y);
+    }
+
+    public void setTypeface(Typeface tf) {
+        for (AxisRenderer mAxisRenderer : mAxisRenderers) {
+            mAxisRenderer.setTypeface(tf);
+        }
+        postInvalidate();
     }
 
     public void releaseBitmap() {
