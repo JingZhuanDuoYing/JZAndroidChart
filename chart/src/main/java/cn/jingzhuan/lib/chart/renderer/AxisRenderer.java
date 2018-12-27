@@ -100,31 +100,32 @@ public class AxisRenderer implements Renderer {
     // 坐标轴
     private void drawAxisLine(Canvas canvas) {
         float startX = 0f, startY = 0f, stopX = 0f, stopY = 0f;
+        float halfThickness = mAxis.getAxisThickness() * .5f;
         switch (mAxis.getAxisPosition()) {
             case AxisX.TOP:
             case AxisX.TOP_INSIDE:
                 startX = mContentRect.left;
-                startY = mContentRect.top;
+                startY = mContentRect.top + halfThickness;
                 stopX  = mContentRect.right;
                 stopY  = startY;
                 break;
             case AxisX.BOTTOM:
             case AxisX.BOTTOM_INSIDE:
                 startX = mContentRect.left;
-                startY = mContentRect.bottom;
+                startY = mContentRect.bottom - halfThickness;
                 stopX  = mContentRect.right;
                 stopY  = startY;
                 break;
             case AxisY.LEFT_INSIDE:
             case AxisY.LEFT_OUTSIDE:
-                startX = mContentRect.left;
+                startX = mContentRect.left + halfThickness;
                 startY = mContentRect.top;
                 stopX  = startX;
                 stopY  = mContentRect.bottom;
                 break;
             case AxisY.RIGHT_INSIDE:
             case AxisY.RIGHT_OUTSIDE:
-                startX = mContentRect.right;
+                startX = mContentRect.right - halfThickness;
                 startY = mContentRect.top;
                 stopX  = startX;
                 stopY  = mContentRect.bottom;
