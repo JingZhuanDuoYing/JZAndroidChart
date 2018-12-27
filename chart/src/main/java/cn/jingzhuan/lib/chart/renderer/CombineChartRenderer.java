@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
@@ -180,6 +181,13 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.barChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.candlestickChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.scatterChartRenderer.enableHighlightDashPathEffect(intervals, phase);
+    }
+
+    @Override public void setTypeface(Typeface tf) {
+        this.lineRenderer.setTypeface(tf);
+        this.barChartRenderer.setTypeface(tf);
+        this.candlestickChartRenderer.setTypeface(tf);
+        this.scatterChartRenderer.setTypeface(tf);
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {

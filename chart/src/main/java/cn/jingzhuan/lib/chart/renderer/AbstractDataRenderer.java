@@ -6,6 +6,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -124,5 +125,8 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public Paint getRenderPaint() {
         return mRenderPaint;
+    }
+
+    public void setTypeface(Typeface tf) {
     }
 }

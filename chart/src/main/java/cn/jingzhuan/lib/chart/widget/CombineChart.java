@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.widget;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -100,6 +101,11 @@ public class CombineChart extends BaseChart {
 
     public CombineChartRenderer getRenderer() {
         return (CombineChartRenderer) mRenderer;
+    }
+
+    @Override public void setTypeface(Typeface tf) {
+        mRenderer.setTypeface(tf);
+        super.setTypeface(tf);
     }
 
     public void cleanLineDataSet() {

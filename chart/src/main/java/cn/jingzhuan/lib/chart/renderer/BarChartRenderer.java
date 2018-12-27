@@ -1,10 +1,10 @@
 package cn.jingzhuan.lib.chart.renderer;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.base.Chart;
@@ -240,4 +240,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         return mBarDataSets;
     }
 
+    @Override public void setTypeface(Typeface tf) {
+        mValueTextPaint.setTypeface(tf);
+    }
 }
