@@ -309,7 +309,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
             mRenderPaint.setStyle(Paint.Style.STROKE);
         }
-        canvas.drawPath(linePath, mRenderPaint);
+        if (isLineVisible()) {
+            canvas.drawPath(linePath, mRenderPaint);
+        }
     }
 
+    protected boolean isLineVisible() {
+        return false;
+    }
 }
