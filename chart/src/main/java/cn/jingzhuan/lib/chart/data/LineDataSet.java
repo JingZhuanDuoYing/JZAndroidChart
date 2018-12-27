@@ -25,6 +25,8 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     private Shader mShaderBottom;
     private float mShaderBaseValue = Float.NaN;
 
+    private boolean isLineVisible = true;
+
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
     }
@@ -178,5 +180,13 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
     public Shader getShaderBottom() {
         return mShaderBottom;
+    }
+
+    public void setLineVisible(boolean lineVisible) {
+        isLineVisible = lineVisible;
+    }
+
+    public boolean isLineVisible() {
+        return isLineVisible;
     }
 }
