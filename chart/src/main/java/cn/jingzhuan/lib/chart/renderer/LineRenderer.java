@@ -315,6 +315,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     protected boolean isLineVisible() {
-        return false;
+        return true;
     }
 }
