@@ -53,7 +53,9 @@ public class AxisRenderer implements Renderer {
         mLabelTextPaint.setTextSize(mAxis.getLabelTextSize());
         mLabelTextPaint.setColor(mAxis.getLabelTextColor());
         mAxis.setLabelWidth((int) mLabelTextPaint.measureText("0000"));
-        mAxis.setLabelHeight((int) Math.abs(mLabelTextPaint.getFontMetrics().top));
+        if (mAxis.getLabelTextSize() > 0) {
+            mAxis.setLabelHeight((int) Math.abs(mLabelTextPaint.getFontMetrics().top));
+        }
 
         mAxisPaint = new Paint();
         mAxisPaint.setStrokeWidth(mAxis.getAxisThickness());
