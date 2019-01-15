@@ -189,12 +189,18 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                               lineDataSet.getShaderBaseValue() < max &&
                               lineDataSet.getShaderBaseValue() > min;
 
-        int lastIndex = lineDataSet.getValues().size() - 1;
+        int lastIndex = 0;
+        if (mChartAnimator.getPhaseX() > 0) {
+          lastIndex = (int) (Math.floor(lineDataSet.getValues().size() * mChartAnimator.getPhaseX()) - 1);
+        }
+        
         if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
         PointValue startPoint = null;
 
-        for (int i = 0; i < valueCount && i < lineDataSet.getValues().size(); i++) {
+        int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
+
+        for (int i = 0; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
             if (Float.isNaN(point.getValue())) {

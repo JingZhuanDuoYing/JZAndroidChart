@@ -8,6 +8,8 @@ import android.graphics.Rect;
 
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.animation.ChartAnimator;
+import cn.jingzhuan.lib.chart.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
@@ -29,10 +31,15 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected DashPathEffect mHighlightedDashPathEffect;
 
     private int mHighlightColor = Color.WHITE;
+    protected ChartAnimator mChartAnimator;
 
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
         this.mContentRect = chart.getContentRect();
+
+        if (chart instanceof BaseChart) {
+            this.mChartAnimator = ((BaseChart) chart).getChartAnimator();
+        }
 
         getChartData().setChart(chart);
 
@@ -125,6 +132,10 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public Paint getRenderPaint() {
         return mRenderPaint;
+    }
+
+    public ChartAnimator getChartAnimator() {
+        return mChartAnimator;
     }
 
     public void setTypeface(Typeface tf) {

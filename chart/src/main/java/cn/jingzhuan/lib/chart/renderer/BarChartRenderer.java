@@ -135,9 +135,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             float bottom = calcHeight(0, max, min);
 
             if (barValue.getValueCount() > 0) {
-                float value = barValue.getValues()[0];
+                float value = barValue.getValues()[0] * mChartAnimator.getPhaseY();
 
-                top = calcHeight(value, max, min);
+                top = calcHeight(value, max, min) ;
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
 
                 barValue.setCoordinate(x + width * 0.5f, top);

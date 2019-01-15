@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.base;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import cn.jingzhuan.lib.chart.animation.ChartAnimator;
+import cn.jingzhuan.lib.chart.animation.Easing;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,8 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
+
+import static cn.jingzhuan.lib.chart.animation.Easing.*;
 
 /**
  * Created by Donglua on 17/7/17.
@@ -37,6 +42,8 @@ public class BaseChart extends Chart {
     protected WeakReference<Bitmap> mDrawBitmap;
     protected Canvas mBitmapCanvas;
     protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+
+    private ChartAnimator mChartAnimator;
 
     public BaseChart(Context context) {
         super(context);
@@ -64,6 +71,13 @@ public class BaseChart extends Chart {
         mAxisRenderers.add(new AxisRenderer(this, mAxisBottom));
         mAxisRenderers.add(new AxisRenderer(this, mAxisLeft));
         mAxisRenderers.add(new AxisRenderer(this, mAxisRight));
+
+        mChartAnimator = new ChartAnimator(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                postInvalidate();
+            }
+        });
     }
 
     @Override protected void onDetachedFromWindow() {
@@ -254,6 +268,39 @@ public class BaseChart extends Chart {
             mDrawBitmap.clear();
             mDrawBitmap = null;
         }
+    }
+
+    public ChartAnimator getChartAnimator() {
+        return mChartAnimator;
+    }
+
+    public void animateXY(int durationMillisX, int durationMillisY, EasingFunction easingX,
+        EasingFunction easingY) {
+        mChartAnimator.animateXY(durationMillisX, durationMillisY, easingX, easingY);
+    }
+
+    public void animateXY(int durationMillisX, int durationMillisY, EasingFunction easing) {
+        mChartAnimator.animateXY(durationMillisX, durationMillisY, easing);
+    }
+
+    public void animateX(int durationMillis, EasingFunction easing) {
+        mChartAnimator.animateX(durationMillis, easing);
+    }
+
+    public void animateY(int durationMillis, EasingFunction easing) {
+        mChartAnimator.animateY(durationMillis, easing);
+    }
+
+    public void animateX(int durationMillis) {
+        mChartAnimator.animateX(durationMillis);
+    }
+
+    public void animateY(int durationMillis) {
+        mChartAnimator.animateY(durationMillis);
+    }
+
+    public void animateXY(int durationMillisX, int durationMillisY) {
+        mChartAnimator.animateXY(durationMillisX, durationMillisY);
     }
 }
 

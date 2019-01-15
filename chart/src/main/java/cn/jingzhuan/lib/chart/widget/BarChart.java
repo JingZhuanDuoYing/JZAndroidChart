@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import android.view.animation.Animation;
 import cn.jingzhuan.lib.chart.base.BaseChart;
 import cn.jingzhuan.lib.chart.renderer.BarChartRenderer;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
@@ -40,8 +41,8 @@ public class BarChart extends BaseChart {
         mRenderer = new BarChartRenderer(this);
     }
 
+    @SuppressWarnings("unchecked")
     public void addDataSet(BarDataSet barDataSet) {
-
         mRenderer.addDataSet(barDataSet);
     }
 
@@ -50,4 +51,7 @@ public class BarChart extends BaseChart {
         addDataSet(barDataSet);
     }
 
+    @Override public void startAnimation(Animation animation) {
+        super.startAnimation(animation);
+    }
 }

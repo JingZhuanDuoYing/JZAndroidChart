@@ -48,5 +48,9 @@ abstract class BarChartModel : DataBindingEpoxyModel() {
     return rootView
   }
 
-  override fun setDataBindingVariables(binding: ViewDataBinding) {}
+  override fun setDataBindingVariables(binding: ViewDataBinding) {
+    binding as LayoutBarChartBinding
+
+    binding.barChart.animateY(500)
+  }
 }
