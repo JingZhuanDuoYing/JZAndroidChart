@@ -6,15 +6,15 @@
 
 ```gradle
 
-implementation 'cn.jingzhuan.lib:chart:0.10.12@aar'
+implementation 'cn.jingzhuan.lib:chart:0.10.16@aar'
 
 ```
 
 ## Screenshots
 
-![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
+![line-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-minute-chart.png)
+![minute-chart](https://github.com/donglua/JZAndroidChart/blob/master/screenshots/chart_minute.gif)
 
- <img HEIGHT="800" WIDTH="450" alt="kline-chart" src="https://github.com/donglua/JZAndroidChart/blob/master/screenshots/screenshot-kline-chart.gif" />
  
 ## License
 
