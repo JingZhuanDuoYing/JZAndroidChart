@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
 
+import android.util.Log;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -200,7 +201,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
 
-        for (int i = 0; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
+        int i = 0;
+        for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
             if (Float.isNaN(point.getValue())) {
@@ -280,7 +282,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         if (!shaderSplit) {
 
             // draw shader area
-            if (lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
+            if (i > 0 && lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
                 mRenderPaint.setStyle(Paint.Style.FILL);
 
                 if (shaderPath == null) {
@@ -289,10 +291,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                     shaderPath.set(linePath);
                 }
 
-                PointValue pointValue = lineDataSet.getEntryForIndex(lastIndex);
+                PointValue pointValue = lineDataSet.getEntryForIndex(i - 1);
 
                 if (pointValue != null) {
-                    shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), mContentRect.bottom);
+                    shaderPath.lineTo(pointValue.getX(), mContentRect.bottom);
                     shaderPath.lineTo(offset * width, mContentRect.bottom);
                     shaderPath.lineTo(offset * width, lineDataSet.getValues().get(0).getY());
                     shaderPath.close();
@@ -305,7 +307,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         } else {
             mRenderPaint.setStyle(Paint.Style.FILL);
 
-            for (int i = 0; i < shaderPaths.size(); i++) {
+            for (i = 0; i < shaderPaths.size(); i++) {
                 Path path = shaderPaths.get(i);
 
                 Shader shader = shaderPathColors.get(i);
