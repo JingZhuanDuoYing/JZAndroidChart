@@ -42,6 +42,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
       @Override
       public void touch(float x, float y) {
+        if (chart.isHighlightDisable()) return;
+
         for (CandlestickDataSet dataSet : getDataSet()) {
           if (dataSet.isHighlightedVerticalEnable()) {
             final int valueCount = dataSet.getEntryCount();

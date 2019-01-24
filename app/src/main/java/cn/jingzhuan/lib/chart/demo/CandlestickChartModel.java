@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.demo;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -122,7 +123,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     candlestickValues.add(new CandlestickValue(3367.36f, 3341.14f, 3361.45f, 3349.57f));
   }
 
-  @Override protected View buildView(ViewGroup parent) {
+  @Override protected View buildView(@NonNull ViewGroup parent) {
     View rootView = super.buildView(parent);
 
     LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();
@@ -132,7 +133,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
 
     b.combineChart.getAxisLeft().setAxisPosition(LEFT_OUTSIDE);
     b.combineChart.getAxisRight().setAxisPosition(RIGHT_INSIDE);
-    b.combineChart.setMaxVisibleEntryCount(20);
+    b.combineChart.setMaxVisibleEntryCount(70);
     b.combineChart.setHighlightColor(Color.BLACK);
     b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
     b.combineChart.setDataSet(new CandlestickDataSetArrowDecorator(dataSet));

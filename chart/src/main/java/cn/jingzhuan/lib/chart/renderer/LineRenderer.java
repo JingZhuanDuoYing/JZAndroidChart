@@ -53,8 +53,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
-                //noinspection SynchronizeOnNonFinalField
-                synchronized (lineData) {
+                if (chart.isHighlightDisable()) return;
+
+                synchronized (chart) {
                     for (LineDataSet line : getDataSet()) {
                         if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
                             highlight.setTouchX(x);

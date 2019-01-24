@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import android.view.MotionEvent;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.animation.Easing;
 import java.lang.ref.WeakReference;
@@ -145,10 +146,11 @@ public class BaseChart extends Chart {
         }
     }
 
-    @Override
-    protected void onTouchPoint(float x, float y) {
-        for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
-            touchPointChangeListener.touch(x, y);
+    @Override protected void onTouchPoint(MotionEvent e) {
+        if (e.getPointerCount() == 1) {
+            for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
+                touchPointChangeListener.touch(e.getX(), e.getY());
+            }
         }
     }
 

@@ -58,6 +58,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mDoubleTapToZoom = false;
     private boolean mScaleGestureEnable = true;
 
+    private boolean mHighlightDisable = false;
+
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
     protected OnViewportChangeListener mInternalViewportChangeListener;
@@ -260,14 +262,14 @@ public abstract class Chart extends BitmapCachedChart {
 
             mCurrentViewport.right = mCurrentViewport.left + newWidth;
             mCurrentViewport.constrainViewport();
-            if (mScaleXEnable) triggerViewportChange();
+            triggerViewportChange();
             lastSpanX = spanX;
 
             return true;
         }
     };
 
-    protected abstract void onTouchPoint(float x, float y);
+    protected abstract void onTouchPoint(MotionEvent e);
 
     /**
      * The gesture listener, used for handling simple gestures such as double touches, scrolls,
@@ -296,20 +298,26 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public void onShowPress(MotionEvent e) {
             super.onShowPress(e);
-            onTouchPoint(e.getX(), e.getY());
+            onTouchPoint(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            cleanHighlight();
             if (onEntryClickListener != null) {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
                 if (index >= 0) {
                     onEntryClickListener.onEntryClick(Chart.this, index);
+                    if (isHighlightDisable()) {
+                        cleanHighlight();
+                    } else {
+                        highlightValue(new Highlight(e.getX(), e.getY(), index));
+                    }
                 } else {
+                    cleanHighlight();
                     performClick();
                 }
             } else {
+                cleanHighlight();
                 performClick();
             }
             return true;
@@ -333,7 +341,7 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
             if (!isDraggingToMoveEnable()) {
-                onTouchPoint(e2.getX(), e2.getY());
+                onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
 
@@ -347,7 +355,7 @@ public abstract class Chart extends BitmapCachedChart {
              */
 
             float viewportOffsetX = distanceX * mCurrentViewport.width() / mContentRect.width();
-            float viewportOffsetY = -distanceY * mCurrentViewport.height() / mContentRect.height();
+            // float viewportOffsetY = -distanceY * mCurrentViewport.height() / mContentRect.height();
             computeScrollSurfaceSize(mSurfaceSizeBuffer);
             int scrolledX = (int) (mSurfaceSizeBuffer.x
                     * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
@@ -368,7 +376,7 @@ public abstract class Chart extends BitmapCachedChart {
                 mEdgeEffectRightActive = true;
             }
 
-            onTouchPoint(e2.getX(), e2.getY());
+            onTouchPoint(e2);
 
             //triggerViewportChange();
 
@@ -381,7 +389,7 @@ public abstract class Chart extends BitmapCachedChart {
 
             fling((int) -velocityX);
 
-            onTouchPoint(e2.getX(), e2.getY());
+            onTouchPoint(e2);
 
             return true;
         }
@@ -777,6 +785,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isScaleGestureEnable() {
         return mScaleGestureEnable;
+    }
+
+    public boolean isHighlightDisable() {
+        return mHighlightDisable;
+    }
+
+    public void setHighlightDisable(boolean highlightDisable) {
+        this.mHighlightDisable = highlightDisable;
     }
 
     public void setOnEntryClickListener(OnEntryClickListener onEntryClickListener) {
