@@ -66,14 +66,6 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
       mViewportYMax = e.getHigh();
   }
 
-  @Override public int getVisibleValueCount(Viewport viewport) {
-    int size = getVisiblePoints(viewport).size();
-    if (size > 0 && getMinValueCount() > size) {
-      size = getMinValueCount();
-    }
-    return size;
-  }
-
   @Override public int getEntryCount() {
     if (candlestickValues == null) return 0;
     int entryCount = candlestickValues.size();

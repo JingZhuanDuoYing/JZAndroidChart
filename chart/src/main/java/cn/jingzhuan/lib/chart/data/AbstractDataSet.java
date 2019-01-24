@@ -123,11 +123,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         return getValues().subList(from, to);
     }
 
-    @Deprecated
-    public int getVisibleValueCount(Viewport viewport) {
-        return (int) ((viewport.right - viewport.left) * getEntryCount());
-    }
-
     public float getVisibleRange(Viewport viewport) {
         return (viewport.right - viewport.left) * getEntryCount();
     }
