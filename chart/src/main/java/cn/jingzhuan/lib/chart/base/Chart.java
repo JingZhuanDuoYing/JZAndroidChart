@@ -248,7 +248,7 @@ public abstract class Chart extends BitmapCachedChart {
 
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
-            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.1) {
+            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
                 return true;
             }
 

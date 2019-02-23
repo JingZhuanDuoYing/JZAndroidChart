@@ -5,11 +5,13 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
@@ -126,18 +128,36 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
   @Override protected View buildView(@NonNull ViewGroup parent) {
     View rootView = super.buildView(parent);
 
-    LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();
+    final LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();
 
     CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
     dataSet.setHighlightedVerticalEnable(true);
+    dataSet.setHighlightedHorizontalEnable(true);
 
     b.combineChart.getAxisLeft().setAxisPosition(LEFT_OUTSIDE);
     b.combineChart.getAxisRight().setAxisPosition(RIGHT_INSIDE);
     b.combineChart.setMaxVisibleEntryCount(70);
+    b.combineChart.setMinVisibleEntryCount(10);
     b.combineChart.setHighlightColor(Color.BLACK);
-    b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
-    b.combineChart.setDataSet(new CandlestickDataSetArrowDecorator(dataSet));
+    //b.combineChart.setOnHighlightStatusChangeListener(highlightStatusChangeListener);
+    //b.combineChart.setDataSet(new CandlestickDataSetArrowDecorator(dataSet));
+    b.combineChart.setDataSet(dataSet);
 
+    b.combineChart.setScaleGestureEnable(true);
+    b.combineChart.setScaleXEnable(true);
+    b.combineChart.setDraggingToMoveEnable(false);
+    b.combineChart.setDoubleTapToZoom(true);
+    b.combineChart.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        b.combineChart.setDraggingToMoveEnable(b.combineChart.isHighlightDisable());
+      }
+    });
+    b.combineChart.setOnEntryClickListener(new OnEntryClickListener() {
+      @Override public void onEntryClick(Chart chart, int position) {
+        b.combineChart.setHighlightDisable(!b.combineChart.isHighlightDisable());
+        b.combineChart.setDraggingToMoveEnable(b.combineChart.isHighlightDisable());
+      }
+    });
     return rootView;
   }
 
