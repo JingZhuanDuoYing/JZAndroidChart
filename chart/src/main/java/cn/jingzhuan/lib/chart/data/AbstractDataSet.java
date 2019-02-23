@@ -38,7 +38,13 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     private int minValueCount = -1;
 
+    private String tag;
+
     public AbstractDataSet() {
+    }
+
+    public AbstractDataSet(String tag) {
+        this.tag = tag;
     }
 
     public abstract void setValues(List<T> values);
@@ -169,4 +175,12 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     public void setMinValueCount(int minValueCount) {
         this.minValueCount = minValueCount;
     }
+
+  public String getTag() {
+    return tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 }
