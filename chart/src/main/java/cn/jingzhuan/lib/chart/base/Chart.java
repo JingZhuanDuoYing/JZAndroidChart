@@ -84,6 +84,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mEdgeEffectLeftActive;
     private boolean mEdgeEffectRightActive;
 
+    private boolean isTouching = false;
+
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -288,7 +290,6 @@ public abstract class Chart extends BitmapCachedChart {
 
             return true;
         }
-
 
         @Override public void onLongPress(MotionEvent e) {
             mGestureDetector.onTouchEvent(e);
@@ -616,6 +617,12 @@ public abstract class Chart extends BitmapCachedChart {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            isTouching = true;
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            isTouching = false;
+        }
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
 
