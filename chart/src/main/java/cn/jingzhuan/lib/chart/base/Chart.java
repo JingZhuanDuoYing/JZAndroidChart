@@ -813,6 +813,10 @@ public abstract class Chart extends BitmapCachedChart {
     public Zoomer getZoomer() {
         return mZoomer;
     }
+
+    public boolean isTouching() {
+        return isTouching;
+    }
 }
 
 
