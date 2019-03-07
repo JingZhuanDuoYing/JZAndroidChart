@@ -52,13 +52,13 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float yPosition;
             highlight.setTouchX(x);
             highlight.setTouchY(y);
-            if (x > mContentRect.left) {
+            if (x >= mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
               if (index < valueCount && index >= 0) {
                 final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
                 xPosition = candlestickValue.getX();
                 yPosition = candlestickValue.getY();
-                if (xPosition > 0 && xPosition > 0) {
+                if (xPosition > 0 && yPosition > 0) {
                   highlight.setX(xPosition);
                   highlight.setY(yPosition);
                   highlight.setDataIndex(index);

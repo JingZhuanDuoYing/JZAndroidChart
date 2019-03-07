@@ -311,7 +311,7 @@ public abstract class Chart extends BitmapCachedChart {
                     if (isHighlightDisable()) {
                         cleanHighlight();
                     } else {
-                        highlightValue(new Highlight(e.getX(), e.getY(), index));
+                        onTouchPoint(e);
                     }
                 } else {
                     cleanHighlight();
@@ -618,7 +618,7 @@ public abstract class Chart extends BitmapCachedChart {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
             isTouching = true;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             isTouching = false;
