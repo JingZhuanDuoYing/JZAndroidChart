@@ -60,7 +60,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                             float xPosition = barValue.getX();
                             float yPosition = barValue.getY();
 
-                            if (xPosition > 0 && yPosition > 0) {
+                            if (xPosition >= 0 && yPosition >= 0) {
                                 highlight.setX(xPosition);
                                 highlight.setY(yPosition);
                                 highlight.setDataIndex(index);
