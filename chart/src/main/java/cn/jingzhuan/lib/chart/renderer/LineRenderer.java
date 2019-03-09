@@ -62,7 +62,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                             highlight.setTouchY(y);
                             int offset = line.getStartIndexOffset();
                             int index = getEntryIndexByCoordinate(x, y) - offset;
-                            if (index > 0 && index < line.getValues().size()) {
+                            if (index >= 0 && index < line.getValues().size()) {
                                 final PointValue pointValue = line.getEntryForIndex(index);
                                 float xPosition = pointValue.getX();
                                 float yPosition = pointValue.getY();
