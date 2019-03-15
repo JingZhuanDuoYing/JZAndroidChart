@@ -26,9 +26,9 @@ import java.util.List;
 public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     private BarData mBarDataSets;
-    private final char[] mLabelBuffer = new char[100];
+    protected final char[] mLabelBuffer = new char[100];
 
-    private Paint mValueTextPaint;
+    protected Paint mValueTextPaint;
 
     public BarChartRenderer(final Chart chart) {
         super(chart);
@@ -83,7 +83,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         }
     }
 
-    private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
+    protected void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
         float lMax, float lMin, float rMax, float rMin) {
 
         mRenderPaint.setStrokeWidth(barDataSet.getStrokeThickness());
@@ -192,7 +192,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         mRenderPaint.setStyle(Paint.Style.FILL);
     }
 
-    private float calcHeight(float value, float max, float min) {
+    protected float calcHeight(float value, float max, float min) {
         if (Float.compare(max, min) == 0) return 0;
         return (max - value) / (max - min) * mContentRect.height();
     }
