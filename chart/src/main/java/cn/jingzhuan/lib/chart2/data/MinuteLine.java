@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart2.data;
 
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart2.Viewport;
 import cn.jingzhuan.lib.chart2.component.AxisY;
 import java.util.List;

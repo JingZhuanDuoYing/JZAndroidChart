@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.data;
 
 import android.graphics.drawable.Drawable;
+import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart2.Viewport;
 import cn.jingzhuan.lib.chart2.component.HasValueXOffset;
 import cn.jingzhuan.lib.chart2.component.HasValueYOffset;

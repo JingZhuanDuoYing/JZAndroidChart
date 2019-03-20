@@ -5,6 +5,7 @@ import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart2.Viewport;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart2.data.LineDataSet;
-import cn.jingzhuan.lib.chart2.data.PointValue;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutLineChartBinding;
 
 import static cn.jingzhuan.lib.chart2.Viewport.*;

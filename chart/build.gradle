@@ -51,7 +51,7 @@ publish {
   userOrg = 'donglua'
   groupId = 'cn.jingzhuan.lib'
   artifactId = 'chart'
-  publishVersion = "0.12.4"
+  publishVersion = "0.12.7"
   desc = 'JingZhuan Android Chart'
   website = 'https://github.com/donglua/JZAndroidChart'
 }

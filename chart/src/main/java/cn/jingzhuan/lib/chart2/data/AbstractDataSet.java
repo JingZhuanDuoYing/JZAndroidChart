@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.data;
 
 import android.graphics.Color;
+import cn.jingzhuan.lib.chart.data.Value;
 import cn.jingzhuan.lib.chart2.component.AxisY.AxisDependency;
 import cn.jingzhuan.lib.chart2.Viewport;
 import cn.jingzhuan.lib.chart2.component.AxisY;
