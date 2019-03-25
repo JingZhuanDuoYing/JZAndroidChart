@@ -192,6 +192,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
         mGestureDetector = new GestureDetector(context, mGestureListener);
+        mGestureDetector.setIsLongpressEnabled(true);
 
         mScroller = new OverScroller(context);
         mZoomer = new Zoomer(context);
@@ -290,13 +291,11 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override public void onLongPress(MotionEvent e) {
-            mGestureDetector.onTouchEvent(e);
-            mGestureDetector.setIsLongpressEnabled(false);
+            onTouchPoint(e);
         }
 
         @Override
         public void onShowPress(MotionEvent e) {
-            super.onShowPress(e);
             onTouchPoint(e);
         }
 
@@ -313,11 +312,15 @@ public abstract class Chart extends BitmapCachedChart {
                     }
                 } else {
                     cleanHighlight();
-                    performClick();
+                    if (hasOnClickListeners()) {
+                        performClick();
+                    }
                 }
             } else {
                 cleanHighlight();
-                performClick();
+                if (hasOnClickListeners()) {
+                    performClick();
+                }
             }
             return true;
         }
