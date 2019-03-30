@@ -53,13 +53,6 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barBinding.barChart.getAxisBottom().setLabels(labels);
     barBinding.barChart.getAxisBottom().setLabelTextColor(Color.BLACK);
 
-    barBinding.barChart.setOnEntryClickListener(new OnEntryClickListener() {
-      @Override public void onEntryClick(Chart chart, int position) {
-        Toast.makeText(parent.getContext(),
-            "value = " + barValueList.get(position).getValues()[0],
-            Toast.LENGTH_SHORT).show();
-      }
-    });
     return rootView;
   }
 

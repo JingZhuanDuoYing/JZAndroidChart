@@ -67,13 +67,6 @@ public abstract class ScatterChart2Model extends DataBindingEpoxyModel {
       bd.combineChart.getAxisLeft().setGridCount(1);
       bd.combineChart.addDataSet(scatterDataSet);
 
-      bd.combineChart.setOnEntryClickListener(new OnEntryClickListener() {
-        @Override public void onEntryClick(Chart chart, int position) {
-          if (position >= 0) {
-            Toast.makeText(chart.getContext(), textList.get(position), Toast.LENGTH_SHORT).show();
-          }
-        }
-      });
     }
 
   }

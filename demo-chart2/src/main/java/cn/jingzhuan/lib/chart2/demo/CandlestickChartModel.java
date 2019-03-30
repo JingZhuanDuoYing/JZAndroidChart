@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart2.base.Chart;
+import cn.jingzhuan.lib.chart2.component.Highlight;
 import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart2.event.HighlightStatusChangeListener;
@@ -145,15 +146,21 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     b.combineChart.setScaleXEnable(true);
     b.combineChart.setDraggingToMoveEnable(false);
     b.combineChart.setDoubleTapToZoom(true);
-    b.combineChart.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        b.combineChart.setDraggingToMoveEnable(b.combineChart.isHighlightDisable());
+    b.combineChart.setHighlightDisable(false);
+    b.combineChart.setDraggingToMoveEnable(true);
+    b.combineChart.setOnHighlightStatusChangeListener(new HighlightStatusChangeListener() {
+      @Override public void onHighlightShow(Highlight[] highlights) {
+        b.combineChart.setDraggingToMoveEnable(false);
+      }
+
+      @Override public void onHighlightHide() {
+        b.combineChart.setDraggingToMoveEnable(true);
       }
     });
-    b.combineChart.setOnEntryClickListener(new OnEntryClickListener() {
-      @Override public void onEntryClick(Chart chart, int position) {
-        b.combineChart.setHighlightDisable(!b.combineChart.isHighlightDisable());
-        b.combineChart.setDraggingToMoveEnable(b.combineChart.isHighlightDisable());
+    b.combineChart.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        //b.combineChart.setHighlightDisable(false);
+        //b.combineChart.setDraggingToMoveEnable(b.combineChart.isHighlightDisable());
       }
     });
     return rootView;

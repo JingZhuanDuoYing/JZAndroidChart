@@ -25,7 +25,6 @@ import cn.jingzhuan.lib.chart2.component.Axis;
 import cn.jingzhuan.lib.chart2.component.AxisX;
 import cn.jingzhuan.lib.chart2.component.AxisY;
 import cn.jingzhuan.lib.chart2.component.Highlight;
-import cn.jingzhuan.lib.chart2.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart2.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.utils.ForceAlign;
 import java.util.ArrayList;
@@ -62,8 +61,6 @@ public abstract class Chart extends BitmapCachedChart {
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
     protected OnViewportChangeListener mInternalViewportChangeListener;
 
-    protected OnEntryClickListener onEntryClickListener;
-
     /**
      * The scaling factor for a single zoom 'step'.
      *
@@ -83,6 +80,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mEdgeEffectRightActive;
 
     private boolean isTouching = false;
+
+    protected Highlight[] mHighlights;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -292,29 +291,18 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override public void onLongPress(MotionEvent e) {
             onTouchPoint(e);
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-            onTouchPoint(e);
+            e.setAction(MotionEvent.ACTION_UP);
+            mGestureDetector.onTouchEvent(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (onEntryClickListener != null) {
-                int index = getEntryIndexByCoordinate(e.getX(), e.getY());
-                if (index >= 0) {
-                    onEntryClickListener.onEntryClick(Chart.this, index);
-                    if (isHighlightDisable()) {
-                        cleanHighlight();
-                    } else {
-                        onTouchPoint(e);
-                    }
-                } else {
+            int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+            if (index >= 0) {
+                if (mHighlights != null || mHighlightDisable) {
                     cleanHighlight();
-                    if (hasOnClickListeners()) {
-                        performClick();
-                    }
+                } else {
+                    onTouchPoint(e);
                 }
             } else {
                 cleanHighlight();
@@ -322,6 +310,7 @@ public abstract class Chart extends BitmapCachedChart {
                     performClick();
                 }
             }
+
             return true;
         }
 
@@ -378,10 +367,6 @@ public abstract class Chart extends BitmapCachedChart {
                 mEdgeEffectRightActive = true;
             }
 
-            onTouchPoint(e2);
-
-            //triggerViewportChange();
-
             return true;
         }
 
@@ -391,7 +376,9 @@ public abstract class Chart extends BitmapCachedChart {
 
             fling((int) -velocityX);
 
-            onTouchPoint(e2);
+            if (!isDraggingToMoveEnable()) {
+                onTouchPoint(e2);
+            }
 
             return true;
         }
@@ -801,14 +788,6 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setHighlightDisable(boolean highlightDisable) {
         this.mHighlightDisable = highlightDisable;
-    }
-
-    public void setOnEntryClickListener(OnEntryClickListener onEntryClickListener) {
-        this.onEntryClickListener = onEntryClickListener;
-    }
-
-    public OnEntryClickListener getOnEntryClickListener() {
-        return onEntryClickListener;
     }
 
     public Zoomer getZoomer() {

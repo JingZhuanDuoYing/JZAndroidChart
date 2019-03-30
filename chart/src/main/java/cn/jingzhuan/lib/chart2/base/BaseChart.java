@@ -33,7 +33,6 @@ public class BaseChart extends Chart {
     protected AbstractDataRenderer mRenderer;
     private List<AxisRenderer> mAxisRenderers;
 
-    protected Highlight[] mHighlights;
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
     private OnHighlightListener mHighlightListener;
 
