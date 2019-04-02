@@ -11,7 +11,6 @@ import cn.jingzhuan.lib.chart2.component.Highlight;
 import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart2.event.HighlightStatusChangeListener;
-import cn.jingzhuan.lib.chart2.event.OnEntryClickListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;

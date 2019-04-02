@@ -86,6 +86,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setColor(getHighlightColor());
+        mRenderPaint.setStrokeWidth(1f);
         if (mHighlightedDashPathEffect != null) {
             mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
         }

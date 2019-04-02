@@ -244,8 +244,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
     mRenderPaint.setColor(getHighlightColor());
-    mRenderPaint.setStrokeWidth(2);
-    mRenderPaint.setStyle(Paint.Style.STROKE);
+    mRenderPaint.setStrokeWidth(1);
+    mRenderPaint.setStyle(Paint.Style.FILL);
     if (mHighlightedDashPathEffect != null) {
       mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
     }
