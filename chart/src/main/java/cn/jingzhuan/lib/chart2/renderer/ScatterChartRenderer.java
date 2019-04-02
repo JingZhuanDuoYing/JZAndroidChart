@@ -41,7 +41,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
   private void drawDataSet(Canvas canvas, final ScatterDataSet dataSet,
       float leftMax, float leftMin, float rightMax, float rightMin) {
 
-    mRenderPaint.setStrokeWidth(2);
+    mRenderPaint.setStrokeWidth(1);
     mRenderPaint.setColor(dataSet.getColor());
 
     int valueCount = dataSet.getEntryCount();

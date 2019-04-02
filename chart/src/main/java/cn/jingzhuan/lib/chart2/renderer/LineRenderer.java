@@ -82,8 +82,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
-        mRenderPaint.setStyle(Paint.Style.STROKE);
+        mRenderPaint.setStyle(Paint.Style.FILL);
+        mRenderPaint.setStrokeWidth(1f);
         mRenderPaint.setColor(getHighlightColor());
+
         if (mHighlightedDashPathEffect != null) {
             mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
         }
