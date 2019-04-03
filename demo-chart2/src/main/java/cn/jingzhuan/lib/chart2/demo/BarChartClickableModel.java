@@ -9,7 +9,7 @@ import cn.jingzhuan.lib.chart.data.BarValue;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.data.BarDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutBarChartClickableItemBinding;
-import cn.jingzhuan.lib.chart2.event.OnEntryClickListener;
+import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;

@@ -7,12 +7,12 @@ import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart2.base.Chart;
-import cn.jingzhuan.lib.chart2.component.AxisY;
-import cn.jingzhuan.lib.chart2.component.Highlight;
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart2.data.CandlestickData;
 import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.data.ChartData;
-import cn.jingzhuan.lib.chart2.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
 
 /**

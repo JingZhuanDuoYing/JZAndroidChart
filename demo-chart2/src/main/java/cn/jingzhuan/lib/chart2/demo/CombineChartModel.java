@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart2.component.AxisY;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart2.data.BarDataSet;
 import cn.jingzhuan.lib.chart2.data.LineDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;

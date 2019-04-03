@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import cn.jingzhuan.lib.chart2.component.Highlight;
-import cn.jingzhuan.lib.chart2.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.SimpleEpoxyAdapter;
 
 /**

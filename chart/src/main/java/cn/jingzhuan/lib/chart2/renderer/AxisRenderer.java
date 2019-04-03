@@ -7,12 +7,13 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.data.LabelColorSetter;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart2.base.Chart;
-import cn.jingzhuan.lib.chart2.component.Axis;
-import cn.jingzhuan.lib.chart2.component.AxisX;
-import cn.jingzhuan.lib.chart2.component.AxisY;
-import cn.jingzhuan.lib.chart2.data.LabelColorSetter;
-import cn.jingzhuan.lib.chart2.data.ValueFormatter;
+import cn.jingzhuan.lib.chart.component.Axis;
+import cn.jingzhuan.lib.chart.component.AxisX;
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
 

@@ -10,7 +10,7 @@ import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutScatterChartBinding;
-import cn.jingzhuan.lib.chart2.event.OnEntryClickListener;
+import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
 import cn.jingzhuan.lib.chart2.renderer.TextValueRenderer;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;

@@ -7,17 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart2.base.Chart;
-import cn.jingzhuan.lib.chart2.component.Highlight;
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
-import cn.jingzhuan.lib.chart2.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.jingzhuan.lib.chart2.component.AxisY.*;
+import static cn.jingzhuan.lib.chart.component.AxisY.*;
 import static com.airbnb.epoxy.EpoxyAttribute.Option.DoNotHash;
 
 /**

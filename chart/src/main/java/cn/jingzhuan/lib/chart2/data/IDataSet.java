@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart2.data;
 
-import cn.jingzhuan.lib.chart2.component.AxisY.AxisDependency;
+import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 import cn.jingzhuan.lib.chart.Viewport;;
 
 /**

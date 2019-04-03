@@ -3,7 +3,7 @@ package cn.jingzhuan.lib.chart2.data;
 import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.base.Chart;
-import cn.jingzhuan.lib.chart2.component.AxisY;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

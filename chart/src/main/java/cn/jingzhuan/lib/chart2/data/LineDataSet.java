@@ -6,8 +6,8 @@ import cn.jingzhuan.lib.chart.Viewport;;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.jingzhuan.lib.chart2.component.AxisY.AxisDependency;
-import static cn.jingzhuan.lib.chart2.component.AxisY.DEPENDENCY_BOTH;
+import static cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
 
 /**
  * Created by Donglua on 17/7/19.

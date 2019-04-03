@@ -2,10 +2,11 @@ package cn.jingzhuan.lib.chart2.data;
 
 import android.graphics.Color;
 import cn.jingzhuan.lib.chart.data.BarValue;
-import cn.jingzhuan.lib.chart2.component.AxisY.AxisDependency;
-import cn.jingzhuan.lib.chart.Viewport;;
-import cn.jingzhuan.lib.chart2.component.AxisY;
-import cn.jingzhuan.lib.chart2.component.HasValueYOffset;
+import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
