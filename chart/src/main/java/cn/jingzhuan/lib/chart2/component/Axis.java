@@ -2,7 +2,7 @@ package cn.jingzhuan.lib.chart2.component;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import cn.jingzhuan.lib.chart2.AxisAutoValues;
+import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart2.data.GirdLineColorSetter;
 import cn.jingzhuan.lib.chart2.data.LabelColorSetter;
 import cn.jingzhuan.lib.chart2.data.ValueFormatter;

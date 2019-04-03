@@ -3,7 +3,7 @@ package cn.jingzhuan.lib.chart2.data;
 import android.graphics.Color;
 import android.graphics.Paint;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.component.AxisY;
 import java.util.ArrayList;
 import java.util.List;

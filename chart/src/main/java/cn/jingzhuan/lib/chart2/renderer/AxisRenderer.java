@@ -5,15 +5,15 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import cn.jingzhuan.lib.chart2.AxisAutoValues;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.AxisAutoValues;
+import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.component.Axis;
 import cn.jingzhuan.lib.chart2.component.AxisX;
 import cn.jingzhuan.lib.chart2.component.AxisY;
 import cn.jingzhuan.lib.chart2.data.LabelColorSetter;
 import cn.jingzhuan.lib.chart2.data.ValueFormatter;
-import cn.jingzhuan.lib.chart2.utils.FloatUtils;
+import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
 
 /**

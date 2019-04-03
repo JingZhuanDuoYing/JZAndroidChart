@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.base.Chart;

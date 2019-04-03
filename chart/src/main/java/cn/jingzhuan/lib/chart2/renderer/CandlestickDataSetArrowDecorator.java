@@ -4,9 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
-import cn.jingzhuan.lib.chart2.utils.FloatUtils;
+import cn.jingzhuan.lib.chart.utils.FloatUtils;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Align;

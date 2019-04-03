@@ -1,7 +1,7 @@
 package cn.jingzhuan.lib.chart2.data;
 
 import android.graphics.Rect;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 import java.util.List;
 
 /**

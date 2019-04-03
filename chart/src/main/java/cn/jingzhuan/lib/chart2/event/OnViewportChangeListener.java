@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart2.event;
 
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 
 /**
  * Created by Donglua on 17/7/24.

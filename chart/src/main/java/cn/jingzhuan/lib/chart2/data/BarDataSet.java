@@ -3,7 +3,7 @@ package cn.jingzhuan.lib.chart2.data;
 import android.graphics.Color;
 import cn.jingzhuan.lib.chart.data.BarValue;
 import cn.jingzhuan.lib.chart2.component.AxisY.AxisDependency;
-import cn.jingzhuan.lib.chart2.Viewport;
+import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart2.component.AxisY;
 import cn.jingzhuan.lib.chart2.component.HasValueYOffset;
 import java.util.ArrayList;
