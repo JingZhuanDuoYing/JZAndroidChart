@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import cn.jingzhuan.lib.chart2.animation.ChartAnimator;
+import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.jingzhuan.lib.chart2.animation.Easing.EasingFunction;
+import static cn.jingzhuan.lib.chart.animation.Easing.EasingFunction;
 
 /**
  * Created by Donglua on 17/7/17.
