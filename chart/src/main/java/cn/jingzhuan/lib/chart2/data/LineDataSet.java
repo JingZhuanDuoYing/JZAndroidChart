@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.data;
 
 import android.graphics.Shader;
+import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.Viewport;;
 import java.util.ArrayList;
