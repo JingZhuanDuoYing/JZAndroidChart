@@ -11,8 +11,8 @@ import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart2.data.ChartData;
-import cn.jingzhuan.lib.chart2.data.ScatterData;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.ScatterData;
 import java.util.List;
 
 /**

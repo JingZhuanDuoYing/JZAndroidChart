@@ -12,7 +12,7 @@ import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
-import cn.jingzhuan.lib.chart2.data.CombineData;
+import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
 import java.util.List;
 

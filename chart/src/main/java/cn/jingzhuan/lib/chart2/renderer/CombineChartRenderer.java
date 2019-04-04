@@ -11,8 +11,8 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart2.data.ChartData;
-import cn.jingzhuan.lib.chart2.data.CombineData;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
 

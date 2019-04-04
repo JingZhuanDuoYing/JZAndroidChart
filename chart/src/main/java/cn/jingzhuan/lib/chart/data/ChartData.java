@@ -154,6 +154,11 @@ public class ChartData<T extends IDataSet> {
     this.rightAxis = chart.getAxisRight();
   }
 
+  public void setChart(cn.jingzhuan.lib.chart2.base.Chart chart) {
+    this.leftAxis = chart.getAxisLeft();
+    this.rightAxis = chart.getAxisRight();
+  }
+
   public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
     this.maxVisibleEntryCount = maxVisibleEntryCount;
     synchronized (getDataSets()) {

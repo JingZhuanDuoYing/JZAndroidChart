@@ -14,7 +14,7 @@ import cn.jingzhuan.lib.chart.renderer.Renderer;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart2.data.ChartData;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
 /**
