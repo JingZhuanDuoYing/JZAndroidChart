@@ -6,8 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
-import cn.jingzhuan.lib.chart2.data.BarDataSet;
 import cn.jingzhuan.lib.chart2.renderer.BarChartRenderer;
 
 /**

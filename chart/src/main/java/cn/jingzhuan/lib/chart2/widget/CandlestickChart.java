@@ -5,8 +5,8 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
-import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.renderer.CandlestickChartRenderer;
 
 /**

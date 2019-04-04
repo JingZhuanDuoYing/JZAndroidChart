@@ -4,8 +4,8 @@ import android.databinding.ViewDataBinding
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import cn.jingzhuan.lib.chart.data.BarDataSet
 import cn.jingzhuan.lib.chart.data.BarValue
-import cn.jingzhuan.lib.chart2.data.BarDataSet
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutBarChartBinding
 import com.airbnb.epoxy.DataBindingEpoxyModel
 import com.airbnb.epoxy.EpoxyModelClass

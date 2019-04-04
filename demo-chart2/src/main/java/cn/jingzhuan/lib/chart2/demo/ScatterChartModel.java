@@ -1,11 +1,10 @@
 package cn.jingzhuan.lib.chart2.demo;
 
 import android.databinding.ViewDataBinding;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.content.res.AppCompatResources;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
-import cn.jingzhuan.lib.chart2.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;

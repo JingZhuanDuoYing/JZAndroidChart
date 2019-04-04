@@ -3,6 +3,10 @@ package cn.jingzhuan.lib.chart2.data;
 import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import java.util.List;
 
 /**

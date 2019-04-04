@@ -190,7 +190,4 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         return isLineVisible;
     }
 
-    public cn.jingzhuan.lib.chart2.data.LineDataSet toV2LineDataSet() {
-        return new cn.jingzhuan.lib.chart2.data.LineDataSet(mPointValues, getAxisDependency());
-    }
 }

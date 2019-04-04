@@ -7,12 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
-import cn.jingzhuan.lib.chart2.data.BarDataSet;
-import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.data.CombineData;
-import cn.jingzhuan.lib.chart2.data.LineDataSet;
-import cn.jingzhuan.lib.chart2.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
 import java.util.List;
 

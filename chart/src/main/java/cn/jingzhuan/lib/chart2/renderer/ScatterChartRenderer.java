@@ -5,13 +5,14 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
+import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart2.data.ChartData;
 import cn.jingzhuan.lib.chart2.data.ScatterData;
-import cn.jingzhuan.lib.chart2.data.ScatterDataSet;
 import java.util.List;
 
 /**

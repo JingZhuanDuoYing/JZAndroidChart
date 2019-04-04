@@ -5,14 +5,14 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.BarDataSet;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart2.data.BarDataSet;
-import cn.jingzhuan.lib.chart2.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart2.data.ChartData;
 import cn.jingzhuan.lib.chart2.data.CombineData;
-import cn.jingzhuan.lib.chart2.data.LineDataSet;
-import cn.jingzhuan.lib.chart2.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import java.util.List;
 
