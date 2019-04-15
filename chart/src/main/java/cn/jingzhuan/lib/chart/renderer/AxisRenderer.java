@@ -42,6 +42,14 @@ public class AxisRenderer implements Renderer {
         initPaints();
     }
 
+    public AxisRenderer(cn.jingzhuan.lib.chart2.base.Chart chart, Axis axis) {
+        this.mCurrentViewport = chart.getCurrentViewport();
+        this.mContentRect = chart.getContentRect();
+        this.mAxis = axis;
+
+        initPaints();
+    }
+
     protected void initPaints() {
         mGridPaint = new Paint();
         mGridPaint.setStrokeWidth(mAxis.getGridThickness());
