@@ -14,6 +14,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart2.widget.LineChart;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     private Path linePath;
     private Path shaderPath;
 
+    private boolean onlyLines = false;
+
     public LineRenderer(final Chart chart) {
         super(chart);
 
@@ -38,6 +41,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPath = new Path();
         shaderPaths = new ArrayList<>();
         shaderPathColors = new ArrayList<>();
+
+        if (chart instanceof LineChart) {
+            onlyLines = true;
+        }
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -183,8 +190,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         int offset = lineDataSet.getStartIndexOffset();
 
         final float scale = 1 / mViewport.width();
-        final float step = mContentRect.width() * scale / valueCount;
-        final float startX = mContentRect.left + step * 0.5f - mViewport.left * mContentRect.width() * scale;
+        final float step = (valueCount > 1 && onlyLines) ?
+            (mContentRect.width() * scale / (valueCount - 1)) : (mContentRect.width() * scale / valueCount);
+        final float startX = mContentRect.left + (onlyLines ? 0f : step * 0.5f) - mViewport.left * mContentRect.width() * scale;
 
         PointValue prevValue = null;
 
