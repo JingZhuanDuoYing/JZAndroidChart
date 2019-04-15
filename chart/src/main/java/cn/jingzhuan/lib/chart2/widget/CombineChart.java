@@ -56,6 +56,12 @@ public class CombineChart extends BaseChart {
         addDataSet(dataSet);
     }
 
+    public <T extends AbstractDataSet> void addAll(List<T> dataSets) {
+        for (AbstractDataSet dataSet : dataSets) {
+            addDataSet(dataSet);
+        }
+    }
+
     public void setCombineData(final CombineData combineData) {
         cleanAllDataSet();
 
