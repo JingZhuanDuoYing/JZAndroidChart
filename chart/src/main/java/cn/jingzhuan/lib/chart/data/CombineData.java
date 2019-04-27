@@ -193,4 +193,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
         }
     }
 
+
+    public <T extends AbstractDataSet> void addAll(List<T> dataSets) {
+        for (AbstractDataSet dataSet : dataSets) {
+            add(dataSet);
+        }
+    }
+
 }
