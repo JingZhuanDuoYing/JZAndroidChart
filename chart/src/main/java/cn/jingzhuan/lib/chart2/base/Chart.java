@@ -297,17 +297,22 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            int index = getEntryIndexByCoordinate(e.getX(), e.getY());
-            if (index >= 0) {
-                if (mHighlights != null || mHighlightDisable) {
-                    cleanHighlight();
-                } else {
-                    onTouchPoint(e);
-                }
-            } else {
+            if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
-                if (hasOnClickListeners()) {
-                    performClick();
+                performClick();
+            } else {
+                int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+                if (index >= 0) {
+                    if (mHighlights != null || mHighlightDisable) {
+                        cleanHighlight();
+                    } else {
+                        onTouchPoint(e);
+                    }
+                } else {
+                    cleanHighlight();
+                    if (isClickable() && hasOnClickListeners()) {
+                        performClick();
+                    }
                 }
             }
 
