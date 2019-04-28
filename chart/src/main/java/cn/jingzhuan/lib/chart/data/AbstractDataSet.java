@@ -101,8 +101,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
     public List<T> getVisiblePoints(Viewport viewport) {
-        int from = (int) (viewport.left * getValues().size());
-        int to = (int) (viewport.right * getValues().size());
+        int from = Math.round(viewport.left * getValues().size());
+        int to = Math.round(viewport.right * getValues().size());
 
         if (Float.compare(viewport.width(), 1f) == 0
             && defaultVisibleEntryCount > 0
