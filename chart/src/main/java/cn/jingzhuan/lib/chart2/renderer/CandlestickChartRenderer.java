@@ -120,7 +120,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       float candleWidth = candlestickDataSet.getCandleWidth();
 
       if (candlestickDataSet.isAutoWidth()) {
-        candleWidth = (mContentRect.width() + 0f) / visibleValues.size();
+        candleWidth = (mContentRect.width() + 0f) / Math.max(visibleValues.size(), candlestickDataSet.getMinValueCount());
       }
 
       float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());

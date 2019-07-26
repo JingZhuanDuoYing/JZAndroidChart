@@ -68,8 +68,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   @Override public int getEntryCount() {
     if (candlestickValues == null) return 0;
-    int entryCount = candlestickValues.size();
-    return getMinValueCount() > entryCount ? getMinValueCount() : entryCount;
+    return Math.max(getMinValueCount(), candlestickValues.size());
   }
 
   @Override public void setValues(List<CandlestickValue> values) {
