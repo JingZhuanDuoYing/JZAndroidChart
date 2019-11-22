@@ -40,7 +40,8 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
   public LineChartModel() {
 
-    final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f,
+    final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f
+
         //3132.10f, 3131.55f, 3132.10f, 3133.30f, 3133.39f, 3133.02f, 3133.32f, 3132.60f,
         //3132.88f, 3132.46f, 3131.71f, 3132.14f, 3132.83f, 3132.40f, 3133.32f, 3134.26f,
         //3135.62f, 3136.88f, 3138.13f, 3138.51f, 3138.17f, 3138.73f, 3138.40f, 3138.65f,
@@ -70,7 +71,8 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         //3141.92f, 3142.10f, 3142.44f, 3143.38f, 3143.96f, 3144.77f, 3144.37f, 3148.02f,
         //3149.62f, 3149.79f, 3149.5f, 3148.58f, 3148.39f, 3148.43f, 3148.5f, 3148.12f,
         //3146.07f, 3144.87f, 3145.0f, 3144.67f, 3142.95f, 3143.63f, 3143.5f, 3144.13f,
-        3145.08f, 3145.06f, 3144.96f, 3143.86f);
+        //3145.08f, 3145.06f, 3144.96f, 3143.86f
+    );
 
     List<PointValue> values = new ArrayList<>();
     for (Float value : floats) {
@@ -160,13 +162,17 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
       @Override public String format(float value, int index) {
 
         Log.e(TAG, "value:" + value + " index" + index);
-        return value+"";
+        return value + "";
       }
     });
 
     bd.lineChart.postInvalidateOnAnimation();
 
-    //监听用户
+    //设置数据集在图表库中最大中显示的数量，
+    //如果没有达到最大数量那么按比例画（如果设置100，现在只有50个数据 那么数据会显示在图表库坐标的x轴0到x轴中点，具体看API注释）
+    line.setForceValueCount(100);
+
+    //监听长按事件用户
     //bd.lineChart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
     //  @Override public void touch(float x, float y) {
     //    Log.e(TAG, "x:" + x + " y:" + y);

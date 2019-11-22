@@ -155,6 +155,16 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     return mPointValues.get(index);
   }
 
+  /**
+   * 设置这个LineDataSet对象在图表库中有多少个item数量，如果你setForceValueCount传入了100，现在数据只有50个数据项，
+   * 那么你的50个数据项将会绘制在图表库View的x轴起始点到x轴中点。
+   *
+   * 例子1：
+   * 股票分时线数据会在9:15-3:00之间
+   * 那你假设你的分时线一天是240根，你现在是12点只有120根数据。
+   * 但是如果你不设置setForceValueCount 那么图表库
+   * 直接将120根数据平分到view中进行绘制，假设你需要120根数据只绘制在
+   */
   public void setForceValueCount(int mForceValueCount) {
     this.mForceValueCount = mForceValueCount;
   }
