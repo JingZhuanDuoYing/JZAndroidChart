@@ -32,6 +32,8 @@ import static cn.jingzhuan.lib.chart.Viewport.*;
 
 /**
  * Created by Donglua on 17/7/26.
+ *
+ * update fmy 2019-11-22 17:08:33
  */
 @EpoxyModelClass(layout = R.layout.layout_line_chart)
 public abstract class LineChartModel extends DataBindingEpoxyModel {
@@ -99,7 +101,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //其x范围为[0,1] y[-1,1] 此处设置只显示横向后半部分的数据
     //Set visible area
     // x range [0,1] and y[-1,1] 。
-    //bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
+    bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
     //双击放大
     //bd.lineChart.setDoubleTapToZoom(true);
     //设置双指捏合和扩开手势的时候进行画布缩放
@@ -197,11 +199,6 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
         //得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
         float maxValue = line.getViewportYMax();
-
-
-
-
-
 
         float minValue = line.getViewportYMin();
 

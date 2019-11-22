@@ -9,7 +9,6 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
-
 /**
  * Bar Data Set
  * Created by Donglua on 17/8/1.
@@ -17,206 +16,218 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOffset {
 
-    private List<BarValue> mBarValues;
-    private float mBarWidth = 20;
-    private boolean mAutoBarWidth = false;
-    private int mForceValueCount = -1;
-    private float strokeThickness = 2;
+  private List<BarValue> mBarValues;
+  private float mBarWidth = 20;
+  private boolean mAutoBarWidth = false;
+  private int mForceValueCount = -1;
+  private float strokeThickness = 2;
 
-    private float mBarWidthPercent = 0.8f;
+  private float mBarWidthPercent = 0.8f;
 
-    private boolean drawValueEnable = false;
-    private int valueColor = Color.BLACK;
-    private float valueTextSize = 24F;
-    private ValueFormatter valueFormatter;
+  private boolean drawValueEnable = false;
+  private int valueColor = Color.BLACK;
+  private float valueTextSize = 24F;
+  private ValueFormatter valueFormatter;
 
-    public BarDataSet(List<BarValue> barValues) {
-        this(barValues, AxisY.DEPENDENCY_BOTH);
+  public BarDataSet(List<BarValue> barValues) {
+    this(barValues, AxisY.DEPENDENCY_BOTH);
+  }
+
+  public BarDataSet(List<BarValue> mBarValues, @AxisDependency int axisDependency) {
+    this.mBarValues = mBarValues;
+    setAxisDependency(axisDependency);
+  }
+
+  @Override
+  public int getEntryCount() {
+    if (mForceValueCount > 0) return mForceValueCount;
+
+    if (mBarValues != null) {
+      if (getMinValueCount() > mBarValues.size()) {
+        return getMinValueCount();
+      } else {
+        return mBarValues.size();
+      }
+    }
+    return 0;
+  }
+
+  @Override
+  public void calcMinMax(Viewport viewport) {
+
+    if (mBarValues == null || mBarValues.isEmpty()) {
+      return;
     }
 
-    public BarDataSet(List<BarValue> mBarValues, @AxisDependency int axisDependency) {
-        this.mBarValues = mBarValues;
-        setAxisDependency(axisDependency);
+    mViewportYMax = -Float.MAX_VALUE;
+    mViewportYMin = Float.MAX_VALUE;
+
+    for (BarValue e : getVisiblePoints(viewport)) {
+      calcMinMaxY(e);
+    }
+    float range = mViewportYMax - mViewportYMin;
+    if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+    }
+    if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+    }
+  }
+
+  protected void calcMinMaxY(BarValue e) {
+
+    if (e == null || !e.isEnable()) return;
+
+    for (float v : e.getValues()) {
+      if (!Float.isNaN(v) && !Float.isInfinite(v)) {
+        mViewportYMin = Math.min(mViewportYMin, v);
+        mViewportYMax = Math.max(mViewportYMax, v);
+      }
+    }
+  }
+
+  @Override
+  public void setValues(List<BarValue> values) {
+    this.mBarValues = values;
+  }
+
+  @Override
+  public List<BarValue> getValues() {
+    return mBarValues;
+  }
+
+  @Override
+  public boolean addEntry(BarValue e) {
+    if (e == null) {
+      return false;
     }
 
-    @Override
-    public int getEntryCount() {
-        if (mForceValueCount > 0) return mForceValueCount;
-
-        if (mBarValues != null) {
-            if (getMinValueCount() > mBarValues.size()) {
-                return getMinValueCount();
-            } else {
-                return mBarValues.size();
-            }
-        }
-        return 0;
+    if (mBarValues == null) {
+      mBarValues = new ArrayList<>();
     }
 
-    @Override
-    public void calcMinMax(Viewport viewport) {
+    calcMinMaxY(e);
 
-        if (mBarValues == null || mBarValues.isEmpty())
-            return;
+    return mBarValues.add(e);
+  }
 
-        mViewportYMax = -Float.MAX_VALUE;
-        mViewportYMin = Float.MAX_VALUE;
+  @Override
+  public boolean removeEntry(BarValue e) {
 
-        for (BarValue e : getVisiblePoints(viewport)) {
-            calcMinMaxY(e);
-        }
-        float range = mViewportYMax - mViewportYMin;
-        if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
-            mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
-        }
-        if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
-            mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
-        }
-    }
+    if (e == null) return false;
 
-    protected void calcMinMaxY(BarValue e) {
+    calcMinMaxY(e);
 
-        if (e == null || !e.isEnable()) return;
+    return mBarValues.remove(e);
+  }
 
-        for (float v : e.getValues()) {
-            if (!Float.isNaN(v) && !Float.isInfinite(v)) {
-                mViewportYMin = Math.min(mViewportYMin, v);
-                mViewportYMax = Math.max(mViewportYMax, v);
-            }
-        }
-    }
+  @Override
+  public int getEntryIndex(BarValue e) {
+    return mBarValues.indexOf(e);
+  }
 
-    @Override
-    public void setValues(List<BarValue> values) {
-        this.mBarValues = values;
-    }
+  @Override
+  public BarValue getEntryForIndex(int index) {
+    return mBarValues.get(index);
+  }
 
-    @Override
-    public List<BarValue> getValues() {
-        return mBarValues;
-    }
+  public float getBarWidth() {
+    return mBarWidth;
+  }
 
-    @Override
-    public boolean addEntry(BarValue e) {
-        if (e == null)
-            return false;
+  public void setBarWidth(float mBarWidth) {
+    this.mBarWidth = mBarWidth;
+  }
 
-        if (mBarValues == null) {
-            mBarValues = new ArrayList<>();
-        }
+  public void setAutoBarWidth(boolean mAutoBarWidth) {
+    this.mAutoBarWidth = mAutoBarWidth;
+  }
 
-        calcMinMaxY(e);
+  public boolean isAutoBarWidth() {
+    return mAutoBarWidth;
+  }
 
-        return mBarValues.add(e);
-    }
+  public void setForceValueCount(int forceValueCount) {
+    this.mForceValueCount = forceValueCount;
+  }
 
-    @Override
-    public boolean removeEntry(BarValue e) {
+  public int getForceValueCount() {
+    return mForceValueCount;
+  }
 
-        if (e == null) return false;
+  public float getStrokeThickness() {
+    return strokeThickness;
+  }
 
-        calcMinMaxY(e);
+  public void setStrokeThickness(float strokeThickness) {
+    this.strokeThickness = strokeThickness;
+  }
 
-        return mBarValues.remove(e);
-    }
+  @Override public float getMaxValueOffsetPercent() {
+    return maxValueOffsetPercent;
+  }
 
-    @Override
-    public int getEntryIndex(BarValue e) {
-        return mBarValues.indexOf(e);
-    }
+  @Override public float getMinValueOffsetPercent() {
+    return minValueOffsetPercent;
+  }
 
-    @Override
-    public BarValue getEntryForIndex(int index) {
-        return mBarValues.get(index);
-    }
+  @Override
+  public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+    this.minValueOffsetPercent = minValueOffsetPercent;
+  }
 
-    public float getBarWidth() {
-        return mBarWidth;
-    }
+  /**
+   * 最高的柱形图高度在图表库中的高度比（数值越小，柱形的高度越接近图表库的高度）
+   * @param maxValueOffsetPercent
+   */
+  @Override
+  public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+    this.maxValueOffsetPercent = maxValueOffsetPercent;
+  }
 
-    public void setBarWidth(float mBarWidth) {
-        this.mBarWidth = mBarWidth;
-    }
+  /**
+   * 在柱形图上显示对应数值
+   */
+  public void setDrawValueEnable(boolean drawValueEnable) {
+    this.drawValueEnable = drawValueEnable;
+  }
 
-    public void setAutoBarWidth(boolean mAutoBarWidth) {
-        this.mAutoBarWidth = mAutoBarWidth;
-    }
+  public boolean isDrawValueEnable() {
+    return drawValueEnable;
+  }
 
-    public boolean isAutoBarWidth() {
-        return mAutoBarWidth;
-    }
+  public int getValueColor() {
+    return valueColor;
+  }
 
-    public void setForceValueCount(int forceValueCount) {
-        this.mForceValueCount = forceValueCount;
-    }
+  public void setValueColor(int valueColor) {
+    this.valueColor = valueColor;
+  }
 
-    public int getForceValueCount() {
-        return mForceValueCount;
-    }
+  public float getValueTextSize() {
+    return valueTextSize;
+  }
 
-    public float getStrokeThickness() {
-        return strokeThickness;
-    }
+  /**
+   * 在柱形图上显示数值文本的字体大小
+   */
+  public void setValueTextSize(float valueTextSize) {
+    this.valueTextSize = valueTextSize;
+  }
 
-    public void setStrokeThickness(float strokeThickness) {
-        this.strokeThickness = strokeThickness;
-    }
+  public ValueFormatter getValueFormatter() {
+    return valueFormatter;
+  }
 
-    @Override public float getMaxValueOffsetPercent() {
-        return maxValueOffsetPercent;
-    }
+  public void setValueFormatter(ValueFormatter valueFormatter) {
+    this.valueFormatter = valueFormatter;
+  }
 
-    @Override public float getMinValueOffsetPercent() {
-        return minValueOffsetPercent;
-    }
+  public void setBarWidthPercent(float mBarWidthPercent) {
+    this.mBarWidthPercent = mBarWidthPercent;
+  }
 
-    @Override
-    public void setMinValueOffsetPercent(float minValueOffsetPercent) {
-        this.minValueOffsetPercent = minValueOffsetPercent;
-    }
-
-    @Override
-    public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
-        this.maxValueOffsetPercent = maxValueOffsetPercent;
-    }
-
-    public void setDrawValueEnable(boolean drawValueEnable) {
-        this.drawValueEnable = drawValueEnable;
-    }
-
-    public boolean isDrawValueEnable() {
-        return drawValueEnable;
-    }
-
-    public int getValueColor() {
-        return valueColor;
-    }
-
-    public void setValueColor(int valueColor) {
-        this.valueColor = valueColor;
-    }
-
-    public float getValueTextSize() {
-        return valueTextSize;
-    }
-
-    public void setValueTextSize(float valueTextSize) {
-        this.valueTextSize = valueTextSize;
-    }
-
-    public ValueFormatter getValueFormatter() {
-        return valueFormatter;
-    }
-
-    public void setValueFormatter(ValueFormatter valueFormatter) {
-        this.valueFormatter = valueFormatter;
-    }
-
-    public void setBarWidthPercent(float mBarWidthPercent) {
-        this.mBarWidthPercent = mBarWidthPercent;
-    }
-
-    public float getBarWidthPercent() {
-        return mBarWidthPercent;
-    }
+  public float getBarWidthPercent() {
+    return mBarWidthPercent;
+  }
 }

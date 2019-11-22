@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.component;
 
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
 import cn.jingzhuan.lib.chart.AxisAutoValues;
@@ -212,11 +213,19 @@ public class Axis extends AbstractComponent {
     return mDashedGridIntervals;
   }
 
+  /**
+   * 设置网格线DashPathEffect 效果参数
+   * 参数和系统自带的{@link DashPathEffect} 相同
+   */
   public void enableGridDashPathEffect(float intervals[], float phase) {
     this.mDashedGridIntervals = intervals;
     this.mDashedGridPhase = phase;
   }
 
+  /**
+   * 设置每行或者每个竖直的网格线颜色
+   * 下标从1开始
+   */
   public void setGirdLineColorSetter(GirdLineColorSetter mGirdLineColorSetter) {
     this.mGirdLineColorSetter = mGirdLineColorSetter;
   }

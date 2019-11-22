@@ -34,7 +34,10 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barValueList.add(new BarValue(9));
 
     barDataSet = new BarDataSet(barValueList);
-    barDataSet.setMaxValueOffsetPercent(0.2f);
+
+    //最高的柱形图高度在图表库中的高度比（数值越小，柱形的高度越接近图表库的高度）
+    barDataSet.setMaxValueOffsetPercent(0.1f);
+    //在柱形图上显示数值
     barDataSet.setDrawValueEnable(true);
     barDataSet.setValueTextSize(24);
     barDataSet.setAutoBarWidth(true);
@@ -43,7 +46,8 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
   @Override protected View buildView(final ViewGroup parent) {
     View rootView = super.buildView(parent);
 
-    LayoutBarChartClickableItemBinding barBinding = (LayoutBarChartClickableItemBinding) rootView.getTag();
+    LayoutBarChartClickableItemBinding barBinding =
+        (LayoutBarChartClickableItemBinding) rootView.getTag();
 
     barBinding.barChart.setDataSet(barDataSet);
     barBinding.barChart.getAxisRight().setLabelTextColor(Color.BLACK);

@@ -30,11 +30,14 @@ abstract class BarChartModel : DataBindingEpoxyModel() {
     barValueList.add(BarValue(11f))
     barValueList.add(BarValue(12f))
     barValueList.add(BarValue(12f))
+    //设置柱形图的颜色
     barValueList.add(BarValue(13f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
     barValueList.add(BarValue(15f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
 
     barDataSet = BarDataSet(barValueList)
-    barDataSet.isAutoBarWidth = true
+//    设置自动设置柱形图宽
+//    barDataSet.isAutoBarWidth = true
+    barDataSet.barWidth=80f
   }
 
   override fun buildView(parent: ViewGroup): View {
