@@ -15,216 +15,223 @@ import java.util.List;
 
 public class Axis extends AbstractComponent {
 
-    private int mAxisPosition;
+  private int mAxisPosition;
 
-    private int mGridColor = Color.GRAY;
-    private GirdLineColorSetter mGirdLineColorSetter = null;
-    private float mGridThickness = 1;
-    private int mGridCount = 3;
+  private int mGridColor = Color.GRAY;
+  private GirdLineColorSetter mGirdLineColorSetter = null;
+  private float mGridThickness = 1;
+  private int mGridCount = 3;
 
-    private float mLabelTextSize;
-    private float mLabelSeparation = 0;
-    private int mLabelTextColor = Color.GREEN;
-    private Paint mLabelTextPaint;
-    private int mLabelWidth = 100;
-    private int mLabelHeight = 0;
-    private int mAxisColor = Color.GRAY;
-    private float mAxisThickness = 2;
-    private List<String> mLabels;
+  private float mLabelTextSize;
+  private float mLabelSeparation = 0;
+  private int mLabelTextColor = Color.GREEN;
+  private Paint mLabelTextPaint;
+  private int mLabelWidth = 100;
+  private int mLabelHeight = 0;
+  private int mAxisColor = Color.GRAY;
+  private float mAxisThickness = 2;
+  private List<String> mLabels;
 
-    private AxisAutoValues axisAutoValues = new AxisAutoValues();
+  private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
-    private ValueFormatter mLabelValueFormatter;
+  private ValueFormatter mLabelValueFormatter;
 
-    public float[] mLabelEntries = new float[]{};
-    private boolean gridLineEnable = true;
-    private boolean labelEnable = true;
+  public float[] mLabelEntries = new float[] {};
+  private boolean gridLineEnable = true;
+  private boolean labelEnable = true;
 
-    private float mDashedGridIntervals[] = null;
-    private float mDashedGridPhase = -1;
+  private float mDashedGridIntervals[] = null;
+  private float mDashedGridPhase = -1;
 
-    private LabelColorSetter mLabelColorSetter;
+  private LabelColorSetter mLabelColorSetter;
 
-    Axis(int axisPosition) {
-        this.mAxisPosition = axisPosition;
+  Axis(int axisPosition) {
+    this.mAxisPosition = axisPosition;
+  }
+
+  public void setLabelTextSize(float mLabelTextSize) {
+    this.mLabelTextSize = mLabelTextSize;
+  }
+
+  public void setLabelSeparation(float mLabelSeparation) {
+    this.mLabelSeparation = mLabelSeparation;
+  }
+
+  public void setLabelTextColor(int mLabelTextColor) {
+    this.mLabelTextColor = mLabelTextColor;
+  }
+
+  public void setLabelTextPaint(Paint mLabelTextPaint) {
+    this.mLabelTextPaint = mLabelTextPaint;
+  }
+
+  public void setLabelWidth(int mLabelWidth) {
+    this.mLabelWidth = mLabelWidth;
+  }
+
+  public void setLabelHeight(int mLabelHeight) {
+    this.mLabelHeight = mLabelHeight;
+  }
+
+  public float getLabelTextSize() {
+    return mLabelTextSize;
+  }
+
+  public int getLabelSeparation() {
+    return Math.round(mLabelSeparation);
+  }
+
+  public int getLabelTextColor() {
+    return mLabelTextColor;
+  }
+
+  public Paint getLabelTextPaint() {
+    return mLabelTextPaint;
+  }
+
+  public int getLabelWidth() {
+    if (isInside()) {
+      return 0;
     }
 
-    public void setLabelTextSize(float mLabelTextSize) {
-        this.mLabelTextSize = mLabelTextSize;
+    return mLabelWidth;
+  }
+
+  public boolean isInside() {
+    switch (getAxisPosition()) {
+      case AxisY.LEFT_INSIDE:
+      case AxisY.RIGHT_INSIDE:
+      case AxisX.BOTTOM_INSIDE:
+      case AxisX.TOP_INSIDE:
+        return true;
+      default:
+        return false;
     }
+  }
 
-    public void setLabelSeparation(float mLabelSeparation) {
-        this.mLabelSeparation = mLabelSeparation;
-    }
+  public int getLabelHeight() {
+    return mLabelHeight;
+  }
 
-    public void setLabelTextColor(int mLabelTextColor) {
-        this.mLabelTextColor = mLabelTextColor;
-    }
+  public AxisAutoValues getAxisAutoValues() {
+    return axisAutoValues;
+  }
 
-    public void setLabelTextPaint(Paint mLabelTextPaint) {
-        this.mLabelTextPaint = mLabelTextPaint;
-    }
+  public int getAxisPosition() {
+    return mAxisPosition;
+  }
 
-    public void setLabelWidth(int mLabelWidth) {
-        this.mLabelWidth = mLabelWidth;
-    }
+  public void setAxisPosition(int mAxisPosition) {
+    this.mAxisPosition = mAxisPosition;
+  }
 
-    public void setLabelHeight(int mLabelHeight) {
-        this.mLabelHeight = mLabelHeight;
-    }
+  public int getGridColor() {
+    return mGridColor;
+  }
 
-    public float getLabelTextSize() {
-        return mLabelTextSize;
-    }
+  public void setGridColor(int mGridColor) {
+    this.mGridColor = mGridColor;
+  }
 
-    public int getLabelSeparation() {
-        return Math.round(mLabelSeparation);
-    }
+  public float getGridThickness() {
+    return mGridThickness;
+  }
 
-    public int getLabelTextColor() {
-        return mLabelTextColor;
-    }
+  public void setGridThickness(float mGridThickness) {
+    this.mGridThickness = mGridThickness;
+  }
 
-    public Paint getLabelTextPaint() {
-        return mLabelTextPaint;
-    }
+  public int getAxisColor() {
+    return mAxisColor;
+  }
 
-    public int getLabelWidth() {
-        if (isInside()) {
-            return 0;
-        }
-        return mLabelWidth;
-    }
+  /**
+   * 设置四周边框线的颜色
+   */
+  public void setAxisColor(int mAxisColor) {
+    this.mAxisColor = mAxisColor;
+  }
 
+  public float getAxisThickness() {
+    return mAxisThickness;
+  }
 
-    public boolean isInside() {
-        switch (getAxisPosition()) {
-            case AxisY.LEFT_INSIDE:
-            case AxisY.RIGHT_INSIDE:
-            case AxisX.BOTTOM_INSIDE:
-            case AxisX.TOP_INSIDE:
-                return true;
-            default:
-                return false;
-        }
-    }
+  public void setAxisThickness(float mAxisThickness) {
+    this.mAxisThickness = mAxisThickness;
+  }
 
-    public int getLabelHeight() {
-        return mLabelHeight;
-    }
+  public int getGridCount() {
+    return mGridCount;
+  }
 
-    public AxisAutoValues getAxisAutoValues() {
-        return axisAutoValues;
-    }
+  /**
+   * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
+   * 如果是2那么被分割为3部分。
+   * 这个属性对于图表库的bottomAxis是设置垂直方向被分隔的线数量
+   *
+   */
+  public void setGridCount(int mGridCount) {
+    this.mGridCount = mGridCount;
+  }
 
-    public int getAxisPosition() {
-        return mAxisPosition;
-    }
+  public void setGridLineEnable(boolean gridLineEnable) {
+    this.gridLineEnable = gridLineEnable;
+  }
 
-    public void setAxisPosition(int mAxisPosition) {
-        this.mAxisPosition = mAxisPosition;
-    }
+  public boolean isGridLineEnable() {
+    return gridLineEnable;
+  }
 
-    public int getGridColor() {
-        return mGridColor;
-    }
+  public boolean isLabelEnable() {
+    return labelEnable;
+  }
 
-    public void setGridColor(int mGridColor) {
-        this.mGridColor = mGridColor;
-    }
+  public void setLabelEnable(boolean labelEnable) {
+    this.labelEnable = labelEnable;
+  }
 
-    public float getGridThickness() {
-        return mGridThickness;
-    }
+  public ValueFormatter getLabelValueFormatter() {
+    return mLabelValueFormatter;
+  }
 
-    public void setGridThickness(float mGridThickness) {
-        this.mGridThickness = mGridThickness;
-    }
+  public void setLabelValueFormatter(ValueFormatter mValueFormatter) {
+    this.mLabelValueFormatter = mValueFormatter;
+  }
 
-    public int getAxisColor() {
-        return mAxisColor;
-    }
+  public float getDashedGridPhase() {
+    return mDashedGridPhase;
+  }
 
-    public void setAxisColor(int mAxisColor) {
-        this.mAxisColor = mAxisColor;
-    }
+  public float[] getDashedGridIntervals() {
+    return mDashedGridIntervals;
+  }
 
-    public float getAxisThickness() {
-        return mAxisThickness;
-    }
+  public void enableGridDashPathEffect(float intervals[], float phase) {
+    this.mDashedGridIntervals = intervals;
+    this.mDashedGridPhase = phase;
+  }
 
-    public void setAxisThickness(float mAxisThickness) {
-        this.mAxisThickness = mAxisThickness;
-    }
+  public void setGirdLineColorSetter(GirdLineColorSetter mGirdLineColorSetter) {
+    this.mGirdLineColorSetter = mGirdLineColorSetter;
+  }
 
-    public int getGridCount() {
-        return mGridCount;
-    }
+  public GirdLineColorSetter getGirdLineColorSetter() {
+    return mGirdLineColorSetter;
+  }
 
-    public void setGridCount(int mGridCount) {
-        this.mGridCount = mGridCount;
-    }
+  public List<String> getLabels() {
+    return mLabels;
+  }
 
-    public void setGridLineEnable(boolean gridLineEnable) {
-        this.gridLineEnable = gridLineEnable;
-    }
+  public void setLabels(List<String> mLabels) {
+    this.mLabels = mLabels;
+  }
 
-    public boolean isGridLineEnable() {
-        return gridLineEnable;
-    }
+  public LabelColorSetter getLabelColorSetter() {
+    return mLabelColorSetter;
+  }
 
-    public boolean isLabelEnable() {
-        return labelEnable;
-    }
-
-    public void setLabelEnable(boolean labelEnable) {
-        this.labelEnable = labelEnable;
-    }
-
-    public ValueFormatter getLabelValueFormatter() {
-        return mLabelValueFormatter;
-    }
-
-    public void setLabelValueFormatter(ValueFormatter mValueFormatter) {
-        this.mLabelValueFormatter = mValueFormatter;
-    }
-
-    public float getDashedGridPhase() {
-        return mDashedGridPhase;
-    }
-
-    public float[] getDashedGridIntervals() {
-        return mDashedGridIntervals;
-    }
-
-    public void enableGridDashPathEffect(float intervals[], float phase) {
-        this.mDashedGridIntervals = intervals;
-        this.mDashedGridPhase = phase;
-    }
-
-    public void setGirdLineColorSetter(GirdLineColorSetter mGirdLineColorSetter) {
-        this.mGirdLineColorSetter = mGirdLineColorSetter;
-    }
-
-    public GirdLineColorSetter getGirdLineColorSetter() {
-        return mGirdLineColorSetter;
-    }
-
-
-    public List<String> getLabels() {
-        return mLabels;
-    }
-
-    public void setLabels(List<String> mLabels) {
-        this.mLabels = mLabels;
-    }
-
-    public LabelColorSetter getLabelColorSetter() {
-        return mLabelColorSetter;
-    }
-
-    public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
-        this.mLabelColorSetter = mLabelColorSetter;
-    }
-
+  public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
+    this.mLabelColorSetter = mLabelColorSetter;
+  }
 }

@@ -112,6 +112,34 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         bd.lineChart.moveRight();
       }
     });
+    //图表库的折线颜色
+    line.setColor(Color.RED);
+
+    /**
+     * 设置四周边框的颜色
+     */
+    bd.lineChart.getAxisLeft().setAxisColor(Color.CYAN);
+    bd.lineChart.getAxisRight().setAxisColor(Color.GREEN);
+    bd.lineChart.getAxisTop().setAxisColor(Color.GREEN);
+    bd.lineChart.getAxisBottom().setAxisColor(Color.YELLOW);
+
+
+    /**
+     * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
+     * 如果是2那么被分割为3部分。
+     * 这个属性对于图表库的bottomAxis是设置垂直方向被分隔的线数量
+     */
+    bd.lineChart.getAxisBottom().setGridCount(2);
+    bd.lineChart.getAxisLeft().setGridCount(0);
+    bd.lineChart.getAxisRight().setGridCount(0);
+    //bd.lineChart.getAxisRight().setGridCount(2);
+
+
+    bd.lineChart.postInvalidateOnAnimation();
+
+
+
+
     //监听用户
     //bd.lineChart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
     //  @Override public void touch(float x, float y) {
@@ -120,11 +148,11 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //});
 
     //监听可见区域变化
-    bd.lineChart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-      @Override public void onViewportChange(Viewport viewport) {
-
-      }
-    });
+    //bd.lineChart.setInternalViewportChangeListener(new OnViewportChangeListener() {
+    //  @Override public void onViewportChange(Viewport viewport) {
+    //    Log.e(TAG, "viewport" + viewport);
+    //  }
+    //});
 
     return rootView;
   }

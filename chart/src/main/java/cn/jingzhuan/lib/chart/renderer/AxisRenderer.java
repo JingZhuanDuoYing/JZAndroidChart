@@ -143,6 +143,8 @@ public class AxisRenderer implements Renderer {
         }
         // Draw axis line
         if (mAxis.isEnable()) {
+            int axisColor = mAxis.getAxisColor();
+            mAxisPaint.setColor(axisColor);
             canvas.drawLine(startX, startY, stopX, stopY, mAxisPaint);
         }
     }
