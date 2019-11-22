@@ -167,13 +167,14 @@ public class Axis extends AbstractComponent {
   /**
    * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
    * 如果是2那么被分割为3部分。
-   * 这个属性对于图表库的bottomAxis是设置垂直方向被分隔的线数量
-   *
    */
   public void setGridCount(int mGridCount) {
     this.mGridCount = mGridCount;
   }
 
+  /**
+   * 设置是否绘制网格线
+   */
   public void setGridLineEnable(boolean gridLineEnable) {
     this.gridLineEnable = gridLineEnable;
   }
@@ -194,6 +195,11 @@ public class Axis extends AbstractComponent {
     return mLabelValueFormatter;
   }
 
+  /**
+   * 自定义标签的显示内容
+   * 当设置分隔数量的时候{@link #setGridCount} ，每个分隔线下面的标签内容
+   * 如果设置{@link #setLabels} 那么此设置将失效
+   */
   public void setLabelValueFormatter(ValueFormatter mValueFormatter) {
     this.mLabelValueFormatter = mValueFormatter;
   }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
@@ -19,6 +20,7 @@ import com.airbnb.epoxy.EpoxyModelClass;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutLineChartBinding;
@@ -93,7 +95,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //其x范围为[0,1] y[-1,1] 此处设置只显示横向后半部分的数据
     //Set visible area
     // x range [0,1] and y[-1,1] 。
-    bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
+    //bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
     //双击放大
     //bd.lineChart.setDoubleTapToZoom(true);
     //设置双指捏合和扩开手势的时候进行画布缩放
@@ -123,22 +125,46 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     bd.lineChart.getAxisTop().setAxisColor(Color.GREEN);
     bd.lineChart.getAxisBottom().setAxisColor(Color.YELLOW);
 
-
     /**
      * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
      * 如果是2那么被分割为3部分。
-     * 这个属性对于图表库的bottomAxis是设置垂直方向被分隔的线数量
      */
     bd.lineChart.getAxisBottom().setGridCount(2);
     bd.lineChart.getAxisLeft().setGridCount(0);
     bd.lineChart.getAxisRight().setGridCount(0);
-    //bd.lineChart.getAxisRight().setGridCount(2);
+    bd.lineChart.getAxisRight().setGridCount(2);
 
+    //设置底部的标签
+    ArrayList<String> bottomTabList = new ArrayList<>();
+    bottomTabList.add("第一个标签");
+    bottomTabList.add("第二个标签");
+    bottomTabList.add("第三个标签");
+    bottomTabList.add("第四个标签");
+    bottomTabList.add("第五个标签");
+    bd.lineChart.getAxisBottom().setLabels(bottomTabList);
+
+    /**
+     * 关闭绘制网格线，默认开启绘制
+     * bd.lineChart.getAxisBottom().setGridCount(2)
+     * 本身绘制三个网格线但是关闭后不进行绘制
+     */
+    bd.lineChart.getAxisBottom().setGridLineEnable(true);
+
+    //设置是否显示标签
+    bd.lineChart.getAxisBottom().setLabelEnable(true);
+
+    /**
+     * 如果设置setLabels 那么setLabelValueFormatter 将失效
+     */
+    bd.lineChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
+      @Override public String format(float value, int index) {
+
+        Log.e(TAG, "value:" + value + " index" + index);
+        return value+"";
+      }
+    });
 
     bd.lineChart.postInvalidateOnAnimation();
-
-
-
 
     //监听用户
     //bd.lineChart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
