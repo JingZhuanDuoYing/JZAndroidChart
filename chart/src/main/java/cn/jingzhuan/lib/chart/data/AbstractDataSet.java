@@ -71,10 +71,16 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     this.mAxisDependency = mAxisDependency;
   }
 
+  /**
+   * 得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+   */
   public float getViewportYMin() {
     return mViewportYMin;
   }
 
+  /**
+   * 得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+   */
   public float getViewportYMax() {
     return mViewportYMax;
   }
@@ -103,6 +109,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     return isHighlightedHorizontalEnable;
   }
 
+  /**
+   * 获取某个可见区域的item项的list
+   * @param viewport
+   * @return
+   */
   public List<T> getVisiblePoints(Viewport viewport) {
     int from = Math.round(viewport.left * getValues().size());
     int to = Math.round(viewport.right * getValues().size());
@@ -161,6 +172,9 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     return enable;
   }
 
+  /**
+   * 当前数据集合中的最小值
+   */
   @Override
   public int getMinValueCount() {
     return minValueCount;

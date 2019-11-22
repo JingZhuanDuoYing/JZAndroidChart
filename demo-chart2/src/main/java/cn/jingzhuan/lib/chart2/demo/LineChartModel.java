@@ -7,6 +7,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutLineChartBinding;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 import static cn.jingzhuan.lib.chart.Viewport.*;
 
@@ -166,11 +168,48 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
       }
     });
 
-    bd.lineChart.postInvalidateOnAnimation();
-
     //设置数据集在图表库中最大中显示的数量，
     //如果没有达到最大数量那么按比例画（如果设置100，现在只有50个数据 那么数据会显示在图表库坐标的x轴0到x轴中点，具体看API注释）
-    line.setForceValueCount(100);
+    //line.setForceValueCount(100);
+
+    //获取数据的数量
+    int entryCount = line.getEntryCount();
+    //得到数据集
+    List<PointValue> values = line.getValues();
+
+    new Thread() {
+
+      @Override public void run() {
+
+        try {
+          TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        //当前数据集合中的最小值
+        //float minValue = line.getMinValueCount();
+        //返回集合的数量
+        int lineCount = line.getEntryCount();
+
+        //得到某个可见区域的数据iem集合
+        List<PointValue> visiblePoints =
+            line.getVisiblePoints(new Viewport(AXIS_X_MIN, AXIS_Y_MIN, AXIS_Y_MAX / 2, AXIS_Y_MAX));
+
+        //得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+        float maxValue = line.getViewportYMax();
+
+
+
+
+
+
+        float minValue = line.getViewportYMin();
+
+        System.out.printf("");
+      }
+    }.start();
+
+    //int entryIndex = line.getEntryIndex();
 
     //监听长按事件用户
     //bd.lineChart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
@@ -185,6 +224,8 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //    Log.e(TAG, "viewport" + viewport);
     //  }
     //});
+
+    bd.lineChart.postInvalidateOnAnimation();
 
     return rootView;
   }

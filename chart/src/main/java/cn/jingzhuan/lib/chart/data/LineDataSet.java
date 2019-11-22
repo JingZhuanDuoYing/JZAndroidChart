@@ -52,6 +52,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     return mPointValues;
   }
 
+  /**
+   * 得到数据集的数量,
+   * 如果设置setForceValueCount那么将返回setForceValueCount所设置的数量
+   * @return
+   */
   @Override
   public int getEntryCount() {
     if (mPointValues == null) return 0;
@@ -89,6 +94,10 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     this.mPointValues = values;
   }
 
+  /**
+   * 得到数据集
+   * @return
+   */
   @Override
   public List<PointValue> getValues() {
     return mPointValues;
