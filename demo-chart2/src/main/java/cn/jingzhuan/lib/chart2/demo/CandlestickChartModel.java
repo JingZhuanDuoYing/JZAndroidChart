@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -127,7 +128,9 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
 
     final LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();
 
-    CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues);
+    //CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues, DEPENDENCY_RIGHT);
+    CandlestickDataSet dataSet = new CandlestickDataSet(candlestickValues, DEPENDENCY_BOTH);
+
     dataSet.setHighlightedVerticalEnable(true);
     dataSet.setHighlightedHorizontalEnable(true);
 
@@ -144,7 +147,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     b.combineChart.setScaleXEnable(true);
     b.combineChart.setDraggingToMoveEnable(false);
     b.combineChart.setDoubleTapToZoom(true);
-    b.combineChart.setHighlightDisable(false);
+    //b.combineChart.setHighlightDisable(false);
     b.combineChart.setDraggingToMoveEnable(true);
     b.combineChart.setOnHighlightStatusChangeListener(new HighlightStatusChangeListener() {
       @Override public void onHighlightShow(Highlight[] highlights) {

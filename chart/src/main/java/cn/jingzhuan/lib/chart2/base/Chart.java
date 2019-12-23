@@ -629,7 +629,7 @@ public abstract class Chart extends BitmapCachedChart {
     return retVal || super.onTouchEvent(event);
   }
 
-  protected void setupEdgeEffect(Context context) {
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) protected void setupEdgeEffect(Context context) {
 
     // Sets up edge effects
     mEdgeEffectLeft = new EdgeEffect(context);

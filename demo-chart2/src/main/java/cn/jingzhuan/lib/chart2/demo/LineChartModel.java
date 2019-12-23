@@ -10,6 +10,7 @@ import android.util.Log;
 import android.util.TimeUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.Viewport;;
@@ -29,6 +30,7 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import static cn.jingzhuan.lib.chart.Viewport.*;
+import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_RIGHT;
 
 /**
  * Created by Donglua on 17/7/26.
@@ -44,8 +46,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
   public LineChartModel() {
 
-    final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f
-
+    final List<Float> floats = Arrays.asList(5f, 3f, 1f, 5f, 7f
         //3132.10f, 3131.55f, 3132.10f, 3133.30f, 3133.39f, 3133.02f, 3133.32f, 3132.60f,
         //3132.88f, 3132.46f, 3131.71f, 3132.14f, 3132.83f, 3132.40f, 3133.32f, 3134.26f,
         //3135.62f, 3136.88f, 3138.13f, 3138.51f, 3138.17f, 3138.73f, 3138.40f, 3138.65f,
@@ -82,7 +83,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     for (Float value : floats) {
       values.add(new PointValue(value));
     }
-    line = new LineDataSet(values);
+    line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
     //设置中间折线图粗细
     line.setLineThickness(2);
     //设置中间折线shader效果可以打开注释看看
@@ -101,7 +102,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //其x范围为[0,1] y[-1,1] 此处设置只显示横向后半部分的数据
     //Set visible area
     // x range [0,1] and y[-1,1] 。
-    bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
+    //bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
     //双击放大
     //bd.lineChart.setDoubleTapToZoom(true);
     //设置双指捏合和扩开手势的时候进行画布缩放
@@ -135,20 +136,22 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
      * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
      * 如果是2那么被分割为3部分。
      */
-    bd.lineChart.getAxisBottom().setGridCount(2);
-    bd.lineChart.getAxisLeft().setGridCount(0);
-    bd.lineChart.getAxisRight().setGridCount(0);
+    bd.lineChart.getAxisBottom().setGridCount(0);
+    bd.lineChart.getAxisLeft().setGridCount(5);
+    // bd.lineChart.getAxisTop()相关网格和标签默认是关闭的
+    bd.lineChart.getAxisTop().setGridLineEnable(true);
+    bd.lineChart.getAxisTop().setLabelEnable(true);
+    bd.lineChart.getAxisTop().setGridCount(4);
     bd.lineChart.getAxisRight().setGridCount(2);
 
     //设置底部的标签
-    ArrayList<String> bottomTabList = new ArrayList<>();
-    bottomTabList.add("第一个标签");
-    bottomTabList.add("第二个标签");
-    bottomTabList.add("第三个标签");
-    bottomTabList.add("第四个标签");
-    bottomTabList.add("第五个标签");
-    bd.lineChart.getAxisBottom().setLabels(bottomTabList);
-
+    //ArrayList<String> bottomTabList = new ArrayList<>();
+    //bottomTabList.add("第一个标签");
+    //bottomTabList.add("第二个标签");
+    //bottomTabList.add("第三个标签");
+    //bottomTabList.add("第四个标签");
+    //bottomTabList.add("第五个标签");
+    //bd.lineChart.getAxisBottom().setLabels(bottomTabList);
     /**
      * 关闭绘制网格线，默认开启绘制
      * bd.lineChart.getAxisBottom().setGridCount(2)
@@ -162,49 +165,49 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     /**
      * 如果设置setLabels 那么setLabelValueFormatter 将失效
      */
-    bd.lineChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
-      @Override public String format(float value, int index) {
-
-        Log.e(TAG, "value:" + value + " index" + index);
-        return value + "";
-      }
-    });
+    //bd.lineChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
+    //  @Override public String format(float value, int index) {
+    //
+    //    Log.e(TAG, "value:" + value + " index" + index);
+    //    return value + "";
+    //  }
+    //});
 
     //设置数据集在图表库中最大中显示的数量，
     //如果没有达到最大数量那么按比例画（如果设置100，现在只有50个数据 那么数据会显示在图表库坐标的x轴0到x轴中点，具体看API注释）
     //line.setForceValueCount(100);
 
     //获取数据的数量
-    int entryCount = line.getEntryCount();
+    //int entryCount = line.getEntryCount();
     //得到数据集
-    List<PointValue> values = line.getValues();
+    //List<PointValue> values = line.getValues();
 
-    new Thread() {
-
-      @Override public void run() {
-
-        try {
-          TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        //当前数据集合中的最小值
-        //float minValue = line.getMinValueCount();
-        //返回集合的数量
-        int lineCount = line.getEntryCount();
-
-        //得到某个可见区域的数据iem集合
-        List<PointValue> visiblePoints =
-            line.getVisiblePoints(new Viewport(AXIS_X_MIN, AXIS_Y_MIN, AXIS_Y_MAX / 2, AXIS_Y_MAX));
-
-        //得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
-        float maxValue = line.getViewportYMax();
-
-        float minValue = line.getViewportYMin();
-
-        System.out.printf("");
-      }
-    }.start();
+    //new Thread() {
+    //
+    //  @Override public void run() {
+    //
+    //    try {
+    //      TimeUnit.SECONDS.sleep(3);
+    //    } catch (InterruptedException e) {
+    //      e.printStackTrace();
+    //    }
+    //    //当前数据集合中的最小值
+    //    //float minValue = line.getMinValueCount();
+    //    //返回集合的数量
+    //    int lineCount = line.getEntryCount();
+    //
+    //    //得到某个可见区域的数据iem集合
+    //    List<PointValue> visiblePoints =
+    //        line.getVisiblePoints(new Viewport(AXIS_X_MIN, AXIS_Y_MIN, AXIS_Y_MAX / 2, AXIS_Y_MAX));
+    //
+    //    //得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+    //    float maxValue = line.getViewportYMax();
+    //
+    //    float minValue = line.getViewportYMin();
+    //
+    //    System.out.printf("");
+    //  }
+    //}.start();
 
     //int entryIndex = line.getEntryIndex();
 

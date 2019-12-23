@@ -47,14 +47,36 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     this.tag = tag;
   }
 
+  /**
+   * 设置实体数据集合
+   * @param values
+   */
   public abstract void setValues(List<T> values);
 
+  /**
+   * 得到实体的数据集
+   * @return
+   */
   public abstract List<T> getValues();
 
+  /**
+   * 添加一个实体
+   * @param e
+   * @return
+   */
   public abstract boolean addEntry(T e);
 
+  /**
+   * 移除一个实体对象
+   * @param e
+   * @return
+   */
   public abstract boolean removeEntry(T e);
-
+  /**
+   * 获取某个坐标信息在集合中的下标信息
+   * @param e
+   * @return
+   */
   public abstract int getEntryIndex(T e);
 
   /**
@@ -67,12 +89,16 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     return mAxisDependency;
   }
 
+  /**
+   * 设置当前dataSet依赖于图表库最左边的垂直的坐标体系还是最右边，或者左右两边
+   * todo 存在缺陷
+   */
   public void setAxisDependency(@AxisDependency int mAxisDependency) {
     this.mAxisDependency = mAxisDependency;
   }
 
   /**
-   * 得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+   * {@inheritDoc}
    */
   public float getViewportYMin() {
     return mViewportYMin;
@@ -110,9 +136,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   }
 
   /**
-   * 获取某个可见区域的item项的list
-   * @param viewport
-   * @return
+   * 获取某个可见区域的数据集合列表
    */
   public List<T> getVisiblePoints(Viewport viewport) {
     int from = Math.round(viewport.left * getValues().size());
@@ -143,6 +167,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     return getValues().subList(from, to);
   }
 
+  /**
+   * 可见区域可以显示的数据集合的数量
+   * @param viewport
+   * @return
+   */
   public float getVisibleRange(Viewport viewport) {
     return (viewport.right - viewport.left) * getEntryCount();
   }
@@ -167,19 +196,25 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     this.setVisible(enable);
   }
 
+  /**
+   * 当前数据集是否有效
+   */
   @Override
   public boolean isEnable() {
     return enable;
   }
 
   /**
-   * 当前数据集合中的最小值
+   * 当前数据集合中的最小的数据数量
    */
   @Override
   public int getMinValueCount() {
     return minValueCount;
   }
 
+  /**
+   * 获得绘制数据列表的起始偏移坐标
+   */
   public int getStartIndexOffset() {
     int startIndex = 0;
     if (minValueCount > 0 && getValues() != null && getValues().size() > 0) {
@@ -188,6 +223,9 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     return startIndex;
   }
 
+  /**
+   * 设置当前数据集合中的最小的数据数量
+   */
   @Override
   public void setMinValueCount(int minValueCount) {
     this.minValueCount = minValueCount;

@@ -30,6 +30,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     this(pointValues, DEPENDENCY_BOTH);
   }
 
+  /**
+   *
+   * @param pointValues
+   * @param depsAxis 存在缺陷 todo fix
+   */
   public LineDataSet(List<PointValue> pointValues, @AxisDependency int depsAxis) {
     mPointValues = pointValues;
     if (mPointValues == null) {
@@ -154,11 +159,16 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     return removed;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int getEntryIndex(PointValue e) {
     return mPointValues.indexOf(e);
   }
-
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public PointValue getEntryForIndex(int index) {
     return mPointValues.get(index);

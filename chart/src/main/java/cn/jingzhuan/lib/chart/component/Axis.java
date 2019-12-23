@@ -122,6 +122,10 @@ public class Axis extends AbstractComponent {
     return mAxisPosition;
   }
 
+  /**
+   * 设置对应的标签 放在图表库视图内还是外
+   * @param mAxisPosition
+   */
   public void setAxisPosition(int mAxisPosition) {
     this.mAxisPosition = mAxisPosition;
   }

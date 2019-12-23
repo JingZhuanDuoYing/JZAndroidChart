@@ -34,15 +34,24 @@ public class LineChart extends BaseChart {
     @Override
     public void initChart() {
         super.initChart();
-
         mRenderer = new LineRenderer(this);
 
     }
 
+    /**
+     * 添加一个数据集去显示，注意此处是添加一个集合并不回影响之前的集合数据显示。
+     * @param lineDataSet
+     */
     public void addLine(LineDataSet lineDataSet) {
         mRenderer.addDataSet(lineDataSet);
     }
 
+    /**
+     *  添加数据集合
+     *  与{@link #setLine(LineDataSet)}不同的是。他会清空之前的所有显示数据集合
+     *
+     * @param lineDataSet
+     */
     public void setLine(LineDataSet lineDataSet) {
         mRenderer.clearDataSet();
         addLine(lineDataSet);

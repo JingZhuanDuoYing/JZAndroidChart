@@ -32,20 +32,19 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         List<BarValue> barValueList = new ArrayList<>();
 
-        barValueList.add(new BarValue(1));
-        barValueList.add(new BarValue(-2));
-        barValueList.add(new BarValue(0));
-        barValueList.add(new BarValue(3));
-        barValueList.add(new BarValue(1));
-        barValueList.add(new BarValue(2));
-        barValueList.add(new BarValue(2));
-        barValueList.add(new BarValue(3));
-        barValueList.add(new BarValue(5));
+        //barValueList.add(new BarValue(-2));
+        barValueList.add(new BarValue(3100));
+        barValueList.add(new BarValue(3150));
+        barValueList.add(new BarValue(3050));
+        barValueList.add(new BarValue(3100));
+        barValueList.add(new BarValue(3020));
+        barValueList.add(new BarValue(3000));
 
-        barDataSet = new BarDataSet(barValueList, AxisY.DEPENDENCY_RIGHT);
+
+        barDataSet = new BarDataSet(barValueList,AxisY.DEPENDENCY_RIGHT);
         barDataSet.setAutoBarWidth(true);
         barDataSet.setColor(Color.DKGRAY);
-
+        barDataSet.setMaxValueOffsetPercent(0.5f);
 
         final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f,
                 3132.10f, 3131.55f, 3132.10f, 3133.30f, 3133.39f, 3133.02f, 3133.32f, 3132.60f,
@@ -93,8 +92,8 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) rootView.getTag();
 
         chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
-        chartBinding.combineChart.addDataSet(barDataSet);
         chartBinding.combineChart.addDataSet(line);
+        chartBinding.combineChart.addDataSet(barDataSet);
 
         return rootView;
     }

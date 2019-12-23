@@ -11,10 +11,22 @@ public interface IDataSet {
 
   void calcMinMax(Viewport viewport);
 
+  /**
+   * 得到图标库数据集合的数量，注意这个由子类自主实现
+   *
+   */
   int getEntryCount();
 
+  /**
+   * 得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+   * @return
+   */
   float getViewportYMin();
 
+  /**
+   * 得到数据集合中对应Y坐标最大的数值，返回的是数值不是对应的坐标
+   * @return
+   */
   float getViewportYMax();
 
   void setMaxVisibleEntryCount(int maxVisibleEntryCount);
