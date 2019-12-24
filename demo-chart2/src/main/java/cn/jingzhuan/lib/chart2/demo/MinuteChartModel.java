@@ -103,7 +103,6 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
     minuteBinding.minuteChart.getAxisLeft().setGirdLineColorSetter(new GirdLineColorSetter() {
       @Override public int getColorByIndex(int color, int position) {
 
-        Log.e(TAG,"-----坐标-----"+position+"-----------");
         if (position  == 1) {
           return Color.RED;
         } else {

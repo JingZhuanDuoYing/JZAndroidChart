@@ -204,6 +204,12 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     return mShaderBaseValue;
   }
 
+  /**
+   * 在 shaderBaseValue 上下分别启用不同的着色器
+   * @param shaderBaseValue 分割数值。大于这个数值的区域使用shaderTop。低于这个的使用shaderBottom
+   * @param shaderTop
+   * @param shaderBottom
+   */
   public void setShaderBaseValue(float shaderBaseValue, Shader shaderTop, Shader shaderBottom) {
     this.mShaderBaseValue = shaderBaseValue;
     this.mShaderTop = shaderTop;

@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
@@ -216,6 +217,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         lineDataSet.getShaderBaseValue() < max &&
         lineDataSet.getShaderBaseValue() > min;
 
+    //主要用于实现动画
+    //此处回返回本次drawDataSet方法绘制最后一个数据项的下标
+    //比如你有35个数据，本次只绘制到第四个那么lastIndex=3，即可实现动画过度效果
     int lastIndex = 0;
     if (mChartAnimator.getPhaseX() > 0) {
       lastIndex =
@@ -224,6 +228,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
+    Log.e("lastIndex","lastIndex:"+lastIndex);
     PointValue startPoint = null;
 
     int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
@@ -305,6 +310,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
       }
     }
 
+    //进行shader着色
     if (!shaderSplit) {
 
       // draw shader area

@@ -91,6 +91,15 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //    new LinearGradient(0, 0, 100, 100, new int[] { Color.RED, Color.BLUE },
     //        new float[] { 0, 0.5f },
     //        Shader.TileMode.REPEAT));
+
+    LinearGradient top =
+        new LinearGradient(0, 0, 0, 30, Color.RED, Color.GREEN, Shader.TileMode.REPEAT);
+
+    LinearGradient bottom =
+        new LinearGradient(0, 0, 0, 30, Color.BLUE, Color.YELLOW, Shader.TileMode.REPEAT);
+
+    //
+    line.setShaderBaseValue(4f,top,bottom);
   }
 
   @Override protected View buildView(@NonNull ViewGroup parent) {
