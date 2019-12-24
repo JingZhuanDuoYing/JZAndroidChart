@@ -87,6 +87,12 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected abstract List<T> getDataSet();
     public abstract ChartData<T> getChartData();
 
+    /**
+     * 根据坐标得到实体对象的在数据集合中的下标
+     * @param x
+     * @param y
+     * @return
+     */
     public int getEntryIndexByCoordinate(float x, float y) {
         float valueCount = getChartData().getEntryCount();
 
@@ -102,10 +108,18 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         getChartData().calcMaxMin(mViewport, mContentRect);
     }
 
+    /**
+     * 设置高亮线颜色
+     * @param highlightColor
+     */
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;
     }
 
+    /**
+     * 设置高亮线颜色数值
+     * @return
+     */
     public int getHighlightColor() {
         return mHighlightColor;
     }
@@ -114,6 +128,10 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         mHighlightedDashPathEffect = new DashPathEffect(intervals, phase);
     }
 
+    /**
+     * 设置最大可见的实体集合数量。
+     * @param maxVisibleEntryCount
+     */
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
         if (maxVisibleEntryCount <= 0) return;
         getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);

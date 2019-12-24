@@ -31,7 +31,7 @@ abstract class BarChartModel : DataBindingEpoxyModel() {
     barValueList.add(BarValue(12f))
     barValueList.add(BarValue(12f))
     //设置柱形图的颜色
-    barValueList.add(BarValue(13f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
+    barValueList.add(BarValue(13f).apply { setGradientColors(Color.RED, Color.BLACK) })
     barValueList.add(BarValue(15f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
 
     barDataSet = BarDataSet(barValueList)

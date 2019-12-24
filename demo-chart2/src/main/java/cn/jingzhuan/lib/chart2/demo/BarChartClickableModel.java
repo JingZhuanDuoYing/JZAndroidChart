@@ -36,7 +36,7 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barDataSet = new BarDataSet(barValueList);
 
     //最高的柱形图高度在图表库中的高度比（数值越小，柱形的高度越接近图表库的高度）
-    barDataSet.setMaxValueOffsetPercent(0.1f);
+    barDataSet.setMaxValueOffsetPercent(0f);
     //在柱形图上显示数值
     barDataSet.setDrawValueEnable(true);
     barDataSet.setValueTextSize(24);

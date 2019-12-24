@@ -86,6 +86,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
     line.setHighlightedVerticalEnable(true);
     line.setHighlightedHorizontalEnable(true);
     line.setLastClose(lastClose);
+    line.setForceValueCount(1321);
   }
 
   @Override protected View buildView(ViewGroup parent) {

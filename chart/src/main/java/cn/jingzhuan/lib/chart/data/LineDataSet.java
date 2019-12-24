@@ -48,7 +48,9 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     return mLineThickness;
   }
 
-  //设置中间折线图粗细
+  /**
+   * 设置中间折线图粗细
+   */
   public void setLineThickness(int mLineThickness) {
     this.mLineThickness = mLineThickness;
   }

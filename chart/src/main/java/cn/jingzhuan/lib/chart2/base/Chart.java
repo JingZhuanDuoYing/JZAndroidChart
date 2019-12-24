@@ -151,8 +151,14 @@ public abstract class Chart extends BitmapCachedChart {
 
   public abstract void initChart();
 
+  /**
+   * 绘制高亮线的回调，此处
+   */
   public abstract void highlightValue(Highlight highlight);
 
+  /**
+   * 清除高亮线
+   */
   public abstract void cleanHighlight();
 
   @Override
@@ -725,7 +731,6 @@ public abstract class Chart extends BitmapCachedChart {
 
   /**
    * 设置用户长按的时候回调事件，LongPress
-   * @param touchPointChangeListener
    */
   public void addOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
     synchronized (this) {

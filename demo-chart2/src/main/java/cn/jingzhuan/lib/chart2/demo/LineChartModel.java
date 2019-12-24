@@ -28,6 +28,8 @@ import java.util.List;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutLineChartBinding;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 import static cn.jingzhuan.lib.chart.Viewport.*;
 import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_RIGHT;
@@ -46,8 +48,8 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
   public LineChartModel() {
 
-    final List<Float> floats = Arrays.asList(5f, 3f, 1f, 5f, 7f
-        //3132.10f, 3131.55f, 3132.10f, 3133.30f, 3133.39f, 3133.02f, 3133.32f, 3132.60f,
+    final List<Float> floats = Arrays.asList(
+        1f, 2f//, 3f, 4f, 5f, 6f, 7f, 8f
         //3132.88f, 3132.46f, 3131.71f, 3132.14f, 3132.83f, 3132.40f, 3133.32f, 3134.26f,
         //3135.62f, 3136.88f, 3138.13f, 3138.51f, 3138.17f, 3138.73f, 3138.40f, 3138.65f,
         //3137.40f, 3137.05f, 3136.25f, 3136.70f, 3137.04f, 3136.28f, 3136.26f, 3135.62f,
@@ -79,11 +81,14 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         //3145.08f, 3145.06f, 3144.96f, 3143.86f
     );
 
+
     List<PointValue> values = new ArrayList<>();
     for (Float value : floats) {
       values.add(new PointValue(value));
     }
-    line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
+    //当前数据集合标尺依赖于右侧还是左侧？
+    //如果依赖左侧，那么会根据左侧的标尺绘制
+    line = new LineDataSet(values, AxisY.DEPENDENCY_BOTH);
     //设置中间折线图粗细
     line.setLineThickness(2);
     //设置中间折线shader效果可以打开注释看看
@@ -91,22 +96,20 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //    new LinearGradient(0, 0, 100, 100, new int[] { Color.RED, Color.BLUE },
     //        new float[] { 0, 0.5f },
     //        Shader.TileMode.REPEAT));
+    //LinearGradient top =
+    //    new LinearGradient(0, 0, 0, 30, Color.RED, Color.GREEN, Shader.TileMode.REPEAT);
 
-    LinearGradient top =
-        new LinearGradient(0, 0, 0, 30, Color.RED, Color.GREEN, Shader.TileMode.REPEAT);
-
-    LinearGradient bottom =
-        new LinearGradient(0, 0, 0, 30, Color.BLUE, Color.YELLOW, Shader.TileMode.REPEAT);
+    //LinearGradient bottom =
+    //    new LinearGradient(0, 0, 0, 30, Color.BLUE, Color.YELLOW, Shader.TileMode.REPEAT);
 
     //
-    line.setShaderBaseValue(4f,top,bottom);
+    line.setForceValueCount(4);
+    //line.setShaderBaseValue(4f,top,bottom);
   }
 
   @Override protected View buildView(@NonNull ViewGroup parent) {
     View rootView = super.buildView(parent);
-
     final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();
-
     //设置可见区域
     //其x范围为[0,1] y[-1,1] 此处设置只显示横向后半部分的数据
     //Set visible area
@@ -132,7 +135,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     });
     //图表库的折线颜色
     line.setColor(Color.RED);
-
+    bd.lineChart.setMaxVisibleEntryCount(1);
     /**
      * 设置四周边框的颜色
      */
@@ -140,57 +143,51 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     bd.lineChart.getAxisRight().setAxisColor(Color.GREEN);
     bd.lineChart.getAxisTop().setAxisColor(Color.GREEN);
     bd.lineChart.getAxisBottom().setAxisColor(Color.YELLOW);
-
     /**
      * 设置垂直或者水平方向分隔次数。如果是1分隔成两部分。
      * 如果是2那么被分割为3部分。
      */
-    bd.lineChart.getAxisBottom().setGridCount(0);
+    bd.lineChart.getAxisBottom().setGridCount(3);
     bd.lineChart.getAxisLeft().setGridCount(5);
     // bd.lineChart.getAxisTop()相关网格和标签默认是关闭的
     bd.lineChart.getAxisTop().setGridLineEnable(true);
     bd.lineChart.getAxisTop().setLabelEnable(true);
     bd.lineChart.getAxisTop().setGridCount(4);
     bd.lineChart.getAxisRight().setGridCount(2);
-
     //设置底部的标签
-    //ArrayList<String> bottomTabList = new ArrayList<>();
-    //bottomTabList.add("第一个标签");
-    //bottomTabList.add("第二个标签");
-    //bottomTabList.add("第三个标签");
-    //bottomTabList.add("第四个标签");
-    //bottomTabList.add("第五个标签");
-    //bd.lineChart.getAxisBottom().setLabels(bottomTabList);
+    ArrayList<String> bottomTabList = new ArrayList<>();
+    bottomTabList.add("第一个标签");
+    bottomTabList.add("第二个标签");
+    bottomTabList.add("第三个标签");
+    bottomTabList.add("第四个标签");
+    bottomTabList.add("第五个标签");
+    bd.lineChart.getAxisBottom().setLabels(bottomTabList);
     /**
      * 关闭绘制网格线，默认开启绘制
      * bd.lineChart.getAxisBottom().setGridCount(2)
      * 本身绘制三个网格线但是关闭后不进行绘制
      */
     bd.lineChart.getAxisBottom().setGridLineEnable(true);
-
     //设置是否显示标签
     bd.lineChart.getAxisBottom().setLabelEnable(true);
 
     /**
      * 如果设置setLabels 那么setLabelValueFormatter 将失效
      */
-    //bd.lineChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
-    //  @Override public String format(float value, int index) {
-    //
-    //    Log.e(TAG, "value:" + value + " index" + index);
-    //    return value + "";
-    //  }
-    //});
+    bd.lineChart.getAxisBottom().setLabelValueFormatter(new ValueFormatter() {
+      @Override public String format(float value, int index) {
 
+        Log.e(TAG, "value:" + value + " index" + index);
+        return value + "";
+      }
+    });
     //设置数据集在图表库中最大中显示的数量，
     //如果没有达到最大数量那么按比例画（如果设置100，现在只有50个数据 那么数据会显示在图表库坐标的x轴0到x轴中点，具体看API注释）
     //line.setForceValueCount(100);
-
     //获取数据的数量
     //int entryCount = line.getEntryCount();
     //得到数据集
     //List<PointValue> values = line.getValues();
-
     //new Thread() {
     //
     //  @Override public void run() {
@@ -217,23 +214,19 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
     //    System.out.printf("");
     //  }
     //}.start();
-
     //int entryIndex = line.getEntryIndex();
-
     //监听长按事件用户
     //bd.lineChart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
     //  @Override public void touch(float x, float y) {
     //    Log.e(TAG, "x:" + x + " y:" + y);
     //  }
     //});
-
     //监听可见区域变化
     //bd.lineChart.setInternalViewportChangeListener(new OnViewportChangeListener() {
     //  @Override public void onViewportChange(Viewport viewport) {
     //    Log.e(TAG, "viewport" + viewport);
     //  }
     //});
-
     bd.lineChart.postInvalidateOnAnimation();
 
     return rootView;

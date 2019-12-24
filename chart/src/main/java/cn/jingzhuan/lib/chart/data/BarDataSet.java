@@ -70,7 +70,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
       mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
     }
     if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
-      mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+        mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
     }
   }
 
@@ -177,7 +177,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
   }
 
   /**
-   * 最高的柱形图高度在图表库中的高度比（数值越小，柱形的高度越接近图表库的高度）
+   * 最高的柱形图高度在图表库中的高度距离view顶部的偏移，越小越接近view 的高度
    * @param maxValueOffsetPercent
    */
   @Override

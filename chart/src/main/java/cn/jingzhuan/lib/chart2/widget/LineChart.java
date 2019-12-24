@@ -35,7 +35,6 @@ public class LineChart extends BaseChart {
     public void initChart() {
         super.initChart();
         mRenderer = new LineRenderer(this);
-
     }
 
     /**
