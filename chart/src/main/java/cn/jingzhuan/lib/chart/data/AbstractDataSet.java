@@ -225,6 +225,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   /**
    * 设置当前数据集合中的最小的数据数量
+   * 如果数据流不够默认在前面进行填充
    */
   @Override
   public void setMinValueCount(int minValueCount) {
