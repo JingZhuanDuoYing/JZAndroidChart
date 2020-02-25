@@ -22,10 +22,10 @@ import java.util.List;
 
 public class CombineChartRenderer extends AbstractDataRenderer {
 
-    protected BarChartRenderer barChartRenderer;
-    protected LineRenderer lineRenderer;
-    protected CandlestickChartRenderer candlestickChartRenderer;
-    protected ScatterChartRenderer scatterChartRenderer;
+    protected AbstractDataRenderer barChartRenderer;
+    protected AbstractDataRenderer lineRenderer;
+    protected AbstractDataRenderer candlestickChartRenderer;
+    protected AbstractDataRenderer scatterChartRenderer;
 
     private CombineData combineData;
 
