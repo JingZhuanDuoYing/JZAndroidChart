@@ -60,7 +60,7 @@ public class DemoAdapterController extends EpoxyController {
         scatterChartModel_.addTo(this);
         scatterChart2Model_.addTo(this);
 
-//        new LayoutDescTextBindingModel_().id("CandlestickGap").text("缺口").addTo(this);
+        new LayoutDescTextBindingModel_().id("CandlestickGap").text("缺口").addTo(this);
         new CandlestickGapChartModel_().id("CandlestickGapChartModel_").addTo(this);
     }
 }

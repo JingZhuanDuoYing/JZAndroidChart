@@ -128,6 +128,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       if (candlestickDataSet.isEnableGap()) {
         mRenderPaint.setColor(candlestickDataSet.getGapColor());
+        mRenderPaint.setStyle(Paint.Style.FILL);
         if (candlestickDataSet.getLowGaps().size() > 0) {
           // 缺口
           final Pair<Float, Float> gap = candlestickDataSet.getLowGaps().get(i, null);
