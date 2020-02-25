@@ -187,7 +187,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             width = mContentRect.width() / count;
         }
 
-        int offset = lineDataSet.getStartIndexOffset();
+        final int offset = lineDataSet.getStartIndexOffset();
 
         final float scale = 1 / mViewport.width();
         final float step = (valueCount > 1 && onlyLines) ?
@@ -219,7 +219,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 continue;
             }
 
-            float xPosition = startX + step * (i + lineDataSet.getStartIndexOffset());
+            float xPosition = startX + step * (i + offset);
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
             point.setCoordinate(xPosition, yPosition);

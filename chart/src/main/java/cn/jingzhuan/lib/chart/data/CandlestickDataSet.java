@@ -2,6 +2,9 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
+import android.util.Pair;
+import android.util.SparseArray;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -22,11 +25,18 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mDecreasingColor = 0xFF1deb5b; // 阴线
   private int mNeutralColor = Color.WHITE;    // 十字线
   private int mLimitUpColor = Color.TRANSPARENT;
+
+  private int mGapColor = Color.LTGRAY; // 缺口颜色
+
   private Paint.Style mLimitUpPaintStyle = null;
 
   private float strokeThickness = 4;
   private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
   private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
+
+  private boolean mEnableGap = false; // 是否显示缺口
+  private SparseArray<Pair<Float, Float>> mLowGaps;
+  private SparseArray<Pair<Float, Float>> mHighGaps;
 
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
@@ -46,8 +56,47 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    for (CandlestickValue e : getVisiblePoints(viewport)) {
+    List<CandlestickValue> visiblePoints = getVisiblePoints(viewport);
+
+    for (int i = 0; i < visiblePoints.size(); i++) {
+      CandlestickValue e = visiblePoints.get(i);
       calcViewportMinMax(e);
+    }
+
+    if (mEnableGap) {
+      float max = -Float.MAX_VALUE;
+      float min = Float.MAX_VALUE;
+
+      for (int i = candlestickValues.size() - 1; i >= 0; i--) {
+        CandlestickValue e = candlestickValues.get(i);
+
+        if (Float.isNaN(e.getLow())) continue;
+        if (Float.isNaN(e.getHigh())) continue;
+
+        if (Float.isInfinite(e.getLow())) continue;
+        if (Float.isInfinite(e.getHigh())) continue;
+
+        if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
+          if (min - e.getHigh() > 0.01f) { // 上涨缺口
+            mHighGaps.put(i, new Pair<>(e.getHigh(), min));
+          }
+          if (e.getLow() - max > 0.01f) { // 下跌缺口
+            mLowGaps.put(i, new Pair<>(e.getLow(), max));
+          }
+        }
+        if (e.getLow() < min) min = e.getLow();
+        if (e.getHigh() > max) max = e.getHigh();
+      }
+    }
+  }
+
+  public void setEnableGap(boolean enableGap) {
+    this.mEnableGap = enableGap;
+    if (mLowGaps == null) {
+      mLowGaps = new SparseArray<>();
+    }
+    if (mHighGaps == null) {
+      mHighGaps = new SparseArray<>();
     }
   }
 
@@ -190,4 +239,23 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     this.mLimitUpPaintStyle = limitUpPaintStyle;
   }
 
+  public SparseArray<Pair<Float, Float>> getLowGaps() {
+    return mLowGaps;
+  }
+
+  public SparseArray<Pair<Float, Float>> getHighGaps() {
+    return mHighGaps;
+  }
+
+  public boolean isEnableGap() {
+    return mEnableGap;
+  }
+
+  public int getGapColor() {
+    return mGapColor;
+  }
+
+  public void setGapColor(int mGapColor) {
+    this.mGapColor = mGapColor;
+  }
 }

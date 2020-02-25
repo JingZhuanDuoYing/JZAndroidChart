@@ -1,7 +1,6 @@
 package cn.jingzhuan.lib.chart2.demo;
 
 import android.content.Context;
-import android.util.LayoutDirection;
 import android.view.View;
 import android.widget.Toast;
 
@@ -61,5 +60,7 @@ public class DemoAdapterController extends EpoxyController {
         scatterChartModel_.addTo(this);
         scatterChart2Model_.addTo(this);
 
+//        new LayoutDescTextBindingModel_().id("CandlestickGap").text("缺口").addTo(this);
+        new CandlestickGapChartModel_().id("CandlestickGapChartModel_").addTo(this);
     }
 }

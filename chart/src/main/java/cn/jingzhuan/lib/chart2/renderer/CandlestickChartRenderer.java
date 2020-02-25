@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.util.Pair;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
@@ -121,6 +123,37 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       if (candlestickDataSet.isAutoWidth()) {
         candleWidth = (mContentRect.width() + 0f) / Math.max(visibleValues.size(), candlestickDataSet.getMinValueCount());
+      }
+
+
+      if (candlestickDataSet.isEnableGap()) {
+        mRenderPaint.setColor(candlestickDataSet.getGapColor());
+        if (candlestickDataSet.getLowGaps().size() > 0) {
+          // 缺口
+          final Pair<Float, Float> gap = candlestickDataSet.getLowGaps().get(i, null);
+          if (gap != null) {
+            float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
+            float y1  = (max - gap.first)  / (max - min) * mContentRect.height();
+            float y2  = (max - gap.second)  / (max - min) * mContentRect.height();
+            canvas.drawRect(xPosition,
+                    y1,
+                    mContentRect.right,
+                    y2, mRenderPaint);
+          }
+        }
+        if (candlestickDataSet.getHighGaps().size() > 0) {
+          // 缺口
+          final Pair<Float, Float> gap = candlestickDataSet.getHighGaps().get(i, null);
+          if (gap != null) {
+            float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset()) + candleWidth * 0.5f;
+            float y1  = (max - gap.first)  / (max - min) * mContentRect.height();
+            float y2  = (max - gap.second)  / (max - min) * mContentRect.height();
+            canvas.drawRect(xPosition,
+                    y1,
+                    mContentRect.right,
+                    y2, mRenderPaint);
+          }
+        }
       }
 
       float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());

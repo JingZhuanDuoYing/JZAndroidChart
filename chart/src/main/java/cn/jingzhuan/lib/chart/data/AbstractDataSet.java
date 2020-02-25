@@ -105,8 +105,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         int to = Math.round(viewport.right * getValues().size());
 
         if (Float.compare(viewport.width(), 1f) == 0
-            && defaultVisibleEntryCount > 0
-            && defaultVisibleEntryCount < getValues().size()) {
+                && defaultVisibleEntryCount > 0
+                && defaultVisibleEntryCount < getValues().size()) {
             from = to - defaultVisibleEntryCount;
             viewport.left = from / (float) getValues().size();
         } else {
@@ -115,8 +115,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
                 viewport.left = from / (float) getValues().size();
             }
             if (minVisibleEntryCount > 0
-                && minVisibleEntryCount < getValues().size()
-                && to - from < minVisibleEntryCount) {
+                    && minVisibleEntryCount < getValues().size()
+                    && to - from < minVisibleEntryCount) {
                 if (to >= minVisibleEntryCount) {
                     from = to - minVisibleEntryCount;
                     viewport.left = from / (float) getValues().size();
@@ -177,10 +177,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     }
 
     public String getTag() {
-    return tag;
-  }
+        return tag;
+    }
 
     public void setTag(String tag) {
-    this.tag = tag;
-  }
+        this.tag = tag;
+    }
+
 }
