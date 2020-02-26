@@ -3,6 +3,9 @@ package cn.jingzhuan.lib.chart2.renderer;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
+
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
@@ -32,10 +35,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public CombineChartRenderer(final Chart chart) {
         super(chart);
 
-        lineRenderer = new LineRenderer(chart);
-        barChartRenderer = new BarChartRenderer(chart);
-        candlestickChartRenderer = new CandlestickChartRenderer(chart);
-        scatterChartRenderer = new ScatterChartRenderer(chart);
+        lineRenderer = initLineRenderer(chart);
+        barChartRenderer = initBarChartRenderer(chart);
+        candlestickChartRenderer = initCandlestickChartRenderer(chart);
+        scatterChartRenderer = initScatterChartRenderer(chart);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
@@ -43,6 +46,26 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 calcDataSetMinMax();
             }
         });
+    }
+
+    @NotNull
+    private ScatterChartRenderer initScatterChartRenderer(Chart chart) {
+        return new ScatterChartRenderer(chart);
+    }
+
+    @NotNull
+    protected CandlestickChartRenderer initCandlestickChartRenderer(Chart chart) {
+        return new CandlestickChartRenderer(chart);
+    }
+
+    @NotNull
+    protected BarChartRenderer initBarChartRenderer(Chart chart) {
+        return new BarChartRenderer(chart);
+    }
+
+    @NotNull
+    protected LineRenderer initLineRenderer(Chart chart) {
+        return new LineRenderer(chart);
     }
 
     @Override
