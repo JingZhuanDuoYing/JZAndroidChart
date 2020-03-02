@@ -438,6 +438,10 @@ public class AxisRenderer implements Renderer {
                 } else {
                     mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
                 }
+                LabelColorSetter colorSetter = ((AxisX) mAxis).getLabelColorSetter();
+                if (colorSetter != null) {
+                    mLabelTextPaint.setColor(colorSetter.getColorByIndex(i));
+                }
 
                 canvas.drawText(mLabelBuffer, labelOffset, labelLength,
                         x + i * width, // - textWidth * 0.5f,
