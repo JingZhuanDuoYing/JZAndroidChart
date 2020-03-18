@@ -29,7 +29,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     private LineData lineData;
     private List<Path> shaderPaths;
     private List<Shader> shaderPathColors;
-    private Path linePath;
+    private List<Path> linePaths;
     private Path shaderPath;
 
     private boolean onlyLines = false;
@@ -37,7 +37,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     public LineRenderer(final Chart chart) {
         super(chart);
 
-        linePath = new Path();
+        linePaths = new ArrayList<>();
         shaderPath = new Path();
         shaderPaths = new ArrayList<>();
         shaderPathColors = new ArrayList<>();
@@ -164,7 +164,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPaths.clear();
         shaderPathColors.clear();
 
-        linePath.reset();
+        linePaths.clear();
+
         boolean isFirst = true;
 
         float min, max;
@@ -182,10 +183,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         final float count = lineDataSet.getVisibleRange(mViewport);
-        float width = 0;
-        if (count > 0) {
-            width = mContentRect.width() / count;
-        }
+        final float width = count > 0 ? (mContentRect.width() / count): 0;
 
         final int offset = lineDataSet.getStartIndexOffset();
 
@@ -211,11 +209,13 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
 
+        Path linePath = new Path();
+
         int i = 0;
         for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
-            if (Float.isNaN(point.getValue())) {
+            if (point.isValueNaN()) {
                 continue;
             }
 
@@ -225,10 +225,17 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             point.setCoordinate(xPosition, yPosition);
 
             if (isFirst) {
-                isFirst = false;
-                linePath.moveTo(xPosition, yPosition);
-            } else  {
+                if (!point.isPathEnd()) {
+                    isFirst = false;
+                    linePath.moveTo(xPosition, yPosition);
+                }
+            } else {
                 linePath.lineTo(xPosition, yPosition);
+                if (point.isPathEnd()) {
+                    linePaths.add(linePath);
+                    linePath = new Path();
+                    isFirst = true;
+                }
             }
 
             if (shaderSplit) {
@@ -287,7 +294,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
         }
-
+        if (!isFirst) {
+            linePaths.add(linePath);
+        }
 
         if (!shaderSplit) {
 
@@ -327,8 +336,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
             mRenderPaint.setStyle(Paint.Style.STROKE);
         }
+
         if (lineDataSet.isLineVisible()) {
-            canvas.drawPath(linePath, mRenderPaint);
+            for (Path path : linePaths) {
+                canvas.drawPath(path, mRenderPaint);
+            }
         }
     }
 

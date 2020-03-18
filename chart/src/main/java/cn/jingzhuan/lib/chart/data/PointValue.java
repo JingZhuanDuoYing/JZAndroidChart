@@ -7,6 +7,7 @@ package cn.jingzhuan.lib.chart.data;
 public class PointValue extends Value {
 
     private float value;
+    private boolean isPathEnd = false;
 
     public PointValue(float value) {
         this.value = value;
@@ -23,4 +24,15 @@ public class PointValue extends Value {
         this.value = value;
     }
 
+    public boolean isPathEnd() {
+        return isPathEnd;
+    }
+
+    public void setPathEnd(boolean pathEnd) {
+        isPathEnd = pathEnd;
+    }
+
+    public boolean isValueNaN() {
+        return Float.isNaN(value);
+    }
 }
