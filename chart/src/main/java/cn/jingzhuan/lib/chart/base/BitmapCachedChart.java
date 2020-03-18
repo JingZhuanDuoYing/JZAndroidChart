@@ -104,6 +104,7 @@ public abstract class BitmapCachedChart extends View {
         int height = getContentRect().height();
 
         if (mDrawBitmap == null
+                || (mDrawBitmap.get() == null)
                 || (mDrawBitmap.get().getWidth() != width)
                 || (mDrawBitmap.get().getHeight() != height)) {
 
