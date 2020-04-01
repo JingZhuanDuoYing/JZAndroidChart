@@ -128,7 +128,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
           to = from + minVisibleEntryCount;
           //防止越界
           if (to >= listSize) {
-            to = getValues().size() - 1;
+            to = listSize - 1;
           }
           viewport.right = to / (float) listSize;
         }
