@@ -4,184 +4,192 @@ import android.graphics.Color;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Abstract DataSet
- *
+ * <p>
  * Created by Donglua on 17/7/20.
  */
 
 public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
 
-    protected float mViewportYMin = Float.MAX_VALUE;
-    protected float mViewportYMax = -Float.MAX_VALUE;
+  protected float mViewportYMin = Float.MAX_VALUE;
+  protected float mViewportYMax = -Float.MAX_VALUE;
+  protected float minValueOffsetPercent = 0F;
+  protected float maxValueOffsetPercent = 0F;
+  protected float startXOffset = 0f;
+  protected float endXOffset = 0f;
+  private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
+  private int mColor = Color.GRAY;
+  private int maxVisibleEntryCount = 500;
+  private int minVisibleEntryCount = 20;
+  private int defaultVisibleEntryCount = -1;
+  private boolean isHighlightedVerticalEnable = false;
+  private boolean isHighlightedHorizontalEnable = false;
 
-    private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
+  private boolean enable = true;
 
-    private int mColor = Color.GRAY;
+  private int minValueCount = -1;
 
-    private int maxVisibleEntryCount = 500;
-    private int minVisibleEntryCount = 20;
-    private int defaultVisibleEntryCount = -1;
+  private String tag;
 
-    protected float minValueOffsetPercent = 0F;
-    protected float maxValueOffsetPercent = 0F;
+  public AbstractDataSet() {
+  }
 
-    protected float startXOffset = 0f;
-    protected float endXOffset = 0f;
+  public AbstractDataSet(String tag) {
+    this.tag = tag;
+  }
 
-    private boolean isHighlightedVerticalEnable = false;
-    private boolean isHighlightedHorizontalEnable = false;
+  public abstract List<T> getValues();
 
-    private boolean enable = true;
+  public abstract void setValues(List<T> values);
 
-    private int minValueCount = -1;
+  public abstract boolean addEntry(T e);
 
-    private String tag;
+  public abstract boolean removeEntry(T e);
 
-    public AbstractDataSet() {
-    }
+  public abstract int getEntryIndex(T e);
 
-    public AbstractDataSet(String tag) {
-        this.tag = tag;
-    }
+  public abstract T getEntryForIndex(int index);
 
-    public abstract void setValues(List<T> values);
+  @AxisDependency
+  public int getAxisDependency() {
+    return mAxisDependency;
+  }
 
-    public abstract List<T> getValues();
+  public void setAxisDependency(@AxisDependency int mAxisDependency) {
+    this.mAxisDependency = mAxisDependency;
+  }
 
-    public abstract boolean addEntry(T e);
+  public float getViewportYMin() {
+    return mViewportYMin;
+  }
 
-    public abstract boolean removeEntry(T e);
+  public float getViewportYMax() {
+    return mViewportYMax;
+  }
 
-    public abstract int getEntryIndex(T e);
+  public int getColor() {
+    return mColor;
+  }
 
-    public abstract T getEntryForIndex(int index);
+  public void setColor(int barColor) {
+    this.mColor = barColor;
+  }
 
-    @AxisDependency
-    public int getAxisDependency() {
-        return mAxisDependency;
-    }
+  public boolean isHighlightedVerticalEnable() {
+    return isHighlightedVerticalEnable;
+  }
 
-    public void setAxisDependency(@AxisDependency int mAxisDependency) {
-        this.mAxisDependency = mAxisDependency;
-    }
+  public void setHighlightedVerticalEnable(boolean highlightedVerticalEnable) {
+    isHighlightedVerticalEnable = highlightedVerticalEnable;
+  }
 
-    public float getViewportYMin() {
-        return mViewportYMin;
-    }
+  public boolean isHighlightedHorizontalEnable() {
+    return isHighlightedHorizontalEnable;
+  }
 
-    public float getViewportYMax() {
-        return mViewportYMax;
-    }
+  public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {
+    isHighlightedHorizontalEnable = highlightedHorizontalEnable;
+  }
 
-    public int getColor() {
-        return mColor;
-    }
+  public List<T> getVisiblePoints(Viewport viewport) {
+    //生成一个拷贝,利用不可变的思想保证这里不存在并发问题
+    ArrayList<T> backUpList = new ArrayList<>(getValues());
+    //防止多次调用
+    int listSize = backUpList.size();
 
-    public void setColor(int barColor) {
-        this.mColor = barColor;
-    }
+    int from = Math.round(viewport.left * listSize);
+    int to = Math.round(viewport.right * listSize);
 
-    public void setHighlightedVerticalEnable(boolean highlightedVerticalEnable) {
-        isHighlightedVerticalEnable = highlightedVerticalEnable;
-    }
-
-    public boolean isHighlightedVerticalEnable() {
-        return isHighlightedVerticalEnable;
-    }
-
-    public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {
-        isHighlightedHorizontalEnable = highlightedHorizontalEnable;
-    }
-
-    public boolean isHighlightedHorizontalEnable() {
-        return isHighlightedHorizontalEnable;
-    }
-
-    public List<T> getVisiblePoints(Viewport viewport) {
-        int from = Math.round(viewport.left * getValues().size());
-        int to = Math.round(viewport.right * getValues().size());
-
-        if (Float.compare(viewport.width(), 1f) == 0
-                && defaultVisibleEntryCount > 0
-                && defaultVisibleEntryCount < getValues().size()) {
-            from = to - defaultVisibleEntryCount;
-            viewport.left = from / (float) getValues().size();
+    if (Float.compare(viewport.width(), 1f) == 0
+        && defaultVisibleEntryCount > 0
+        && defaultVisibleEntryCount < listSize) {
+      from = to - defaultVisibleEntryCount;
+      viewport.left = from / (float) listSize;
+    } else {
+      if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
+        from = to - maxVisibleEntryCount;
+        viewport.left = from / (float) listSize;
+      }
+      if (minVisibleEntryCount > 0
+          && minVisibleEntryCount < listSize
+          && to - from < minVisibleEntryCount) {
+        if (to >= minVisibleEntryCount) {
+          from = to - minVisibleEntryCount;
+          //防止越界
+          if (from < 0) {
+            from = 0;
+          }
+          viewport.left = from / (float) listSize;
         } else {
-            if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
-                from = to - maxVisibleEntryCount;
-                viewport.left = from / (float) getValues().size();
-            }
-            if (minVisibleEntryCount > 0
-                    && minVisibleEntryCount < getValues().size()
-                    && to - from < minVisibleEntryCount) {
-                if (to >= minVisibleEntryCount) {
-                    from = to - minVisibleEntryCount;
-                    viewport.left = from / (float) getValues().size();
-                } else {
-                    to = from + minVisibleEntryCount;
-                    viewport.right = to / (float) getValues().size();
-                }
-            }
+          to = from + minVisibleEntryCount;
+          //防止越界
+          if (to >= listSize) {
+            to = getValues().size() - 1;
+          }
+          viewport.right = to / (float) listSize;
         }
-        return getValues().subList(from, to);
+      }
     }
 
-    public float getVisibleRange(Viewport viewport) {
-        return (viewport.right - viewport.left) * getEntryCount();
-    }
+    return backUpList.subList(from, to);
+  }
 
-    @Override
-    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
-        this.maxVisibleEntryCount = maxVisibleEntryCount;
-    }
+  public float getVisibleRange(Viewport viewport) {
+    return (viewport.right - viewport.left) * getEntryCount();
+  }
 
-    @Override
-    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
-        this.minVisibleEntryCount = minVisibleEntryCount;
-    }
+  @Override
+  public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+    this.maxVisibleEntryCount = maxVisibleEntryCount;
+  }
 
-    @Override
-    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
-        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
-    }
+  @Override
+  public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+    this.minVisibleEntryCount = minVisibleEntryCount;
+  }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-        this.setVisible(enable);
-    }
+  @Override
+  public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+    this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+  }
 
-    @Override
-    public boolean isEnable() {
-        return enable;
-    }
+  @Override
+  public boolean isEnable() {
+    return enable;
+  }
 
-    @Override
-    public int getMinValueCount() {
-        return minValueCount;
-    }
+  public void setEnable(boolean enable) {
+    this.enable = enable;
+    this.setVisible(enable);
+  }
 
-    public int getStartIndexOffset() {
-        int startIndex = 0;
-        if (minValueCount > 0 && getValues() != null && getValues().size() > 0) {
-            startIndex = getEntryCount() - getValues().size();
-        }
-        return startIndex;
-    }
+  @Override
+  public int getMinValueCount() {
+    return minValueCount;
+  }
 
-    @Override
-    public void setMinValueCount(int minValueCount) {
-        this.minValueCount = minValueCount;
-    }
+  @Override
+  public void setMinValueCount(int minValueCount) {
+    this.minValueCount = minValueCount;
+  }
 
-    public String getTag() {
-        return tag;
+  public int getStartIndexOffset() {
+    int startIndex = 0;
+    if (minValueCount > 0 && getValues() != null && getValues().size() > 0) {
+      startIndex = getEntryCount() - getValues().size();
     }
+    return startIndex;
+  }
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+  public String getTag() {
+    return tag;
+  }
 
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 }
