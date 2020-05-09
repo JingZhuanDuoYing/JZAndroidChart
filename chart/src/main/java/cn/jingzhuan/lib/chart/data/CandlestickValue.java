@@ -2,6 +2,10 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by donglua on 8/29/17.
@@ -124,5 +128,29 @@ public class CandlestickValue extends Value {
 
   public long getTime() {
     return time;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CandlestickValue that = (CandlestickValue) o;
+    return Float.compare(that.high, high) == 0 &&
+            Float.compare(that.low, low) == 0 &&
+            Float.compare(that.open, open) == 0 &&
+            Float.compare(that.close, close) == 0 &&
+            time == that.time &&
+            color == that.color &&
+            mPaintStyle == that.mPaintStyle;
+  }
+
+  @Override
+  public int hashCode() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      return Objects.hash(high, low, open, close, time, mPaintStyle, color, getX(), getY());
+    } else {
+      return Arrays.asList(high, low, open, close, time, color, getX(), getY()).hashCode()
+              + mPaintStyle.hashCode() * 31;
+    }
   }
 }
