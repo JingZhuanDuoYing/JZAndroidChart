@@ -21,6 +21,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private Drawable shape;
   private float drawOffsetX = 0f;
   private float drawOffsetY = 0f;
+  private float shapeMinWidth = 0f;
+  private float shapeMaxWidth = Float.NaN;
 
   private boolean autoWidth = true;
 
@@ -158,6 +160,22 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
       mTextValueRenderers = Collections.synchronizedList(new ArrayList<TextValueRenderer>());
     }
     this.mTextValueRenderers.add(textValueRenderer);
+  }
+
+  public float getShapeMinWidth() {
+    return shapeMinWidth;
+  }
+
+  public float getShapeMaxWidth() {
+    return shapeMaxWidth;
+  }
+
+  public void setShapeMinWidth(float shapeMinWidth) {
+    this.shapeMinWidth = shapeMinWidth;
+  }
+
+  public void setShapeMaxWidth(float shapeMaxWidth) {
+    this.shapeMaxWidth = shapeMaxWidth;
   }
 
   public List<TextValueRenderer> getTextValueRenderers() {

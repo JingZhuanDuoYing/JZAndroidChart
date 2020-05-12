@@ -67,7 +67,10 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     float shapeWidth = dataSet.getShape().getIntrinsicWidth();
     float shapeHeight = dataSet.getShape().getIntrinsicHeight();
     if (dataSet.isAutoWidth()) {
-      shapeWidth = width * 0.8f;
+      shapeWidth = Math.max(width * 0.8f, dataSet.getShapeMinWidth());
+      if (Float.isNaN(dataSet.getShapeMaxWidth())) {
+        shapeWidth = Math.max(shapeWidth, dataSet.getShapeMaxWidth());
+      }
       shapeHeight = shapeWidth * shapeHeight / ((float) dataSet.getShape().getIntrinsicWidth());
     }
 
