@@ -74,6 +74,15 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       shapeHeight = shapeWidth * shapeHeight / ((float) dataSet.getShape().getIntrinsicWidth());
     }
 
+    float yOffset = 0f;
+    if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_CENTER) {
+      yOffset = shapeHeight * 0.5f;
+    } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
+      yOffset = shapeHeight;
+    } else {
+      yOffset = 0;
+    }
+
     for (int i = 0; i < valueCount && i < dataSet.getValues().size() && dataSet.getShape() != null; i++) {
       ScatterValue point = dataSet.getEntryForIndex(i);
 
@@ -81,7 +90,8 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
       float xPosition = dataSet.getStartXOffset() + width * 0.5f
           + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
-      float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - shapeHeight * 0.5f;
+
+      float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
 
       point.setCoordinate(xPosition, yPosition);
 

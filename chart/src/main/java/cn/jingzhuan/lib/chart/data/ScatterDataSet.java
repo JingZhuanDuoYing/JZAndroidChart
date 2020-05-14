@@ -16,6 +16,10 @@ import java.util.List;
 public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueYOffset,
     HasValueXOffset {
 
+  public final static int SHAPE_ALIGN_CENTER = 1;
+  public final static int SHAPE_ALIGN_TOP = 2;
+  public final static int SHAPE_ALIGN_BOTTOM = 3;
+
   private List<ScatterValue> scatterValues;
 
   private Drawable shape;
@@ -23,6 +27,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private float drawOffsetY = 0f;
   private float shapeMinWidth = 0f;
   private float shapeMaxWidth = Float.NaN;
+  private int shapeAlign = SHAPE_ALIGN_CENTER;
 
   private boolean autoWidth = true;
 
@@ -180,6 +185,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public List<TextValueRenderer> getTextValueRenderers() {
     return mTextValueRenderers;
+  }
+
+  public int getShapeAlign() {
+    return shapeAlign;
+  }
+
+  public void setShapeAlign(int shapeAlign) {
+    this.shapeAlign = shapeAlign;
   }
 }
 
