@@ -5,18 +5,20 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.data.LineDataSet;
-import cn.jingzhuan.lib.chart.data.PointValue;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.widget.LineChart;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Line Renderer
@@ -211,7 +213,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         Path linePath = new Path();
 
+        float splitStartBaseX = 0;
         int i = 0;
+        float preBaseX = Float.NaN;
         for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
@@ -242,46 +246,53 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 float baseValue = lineDataSet.getShaderBaseValue();
                 float baseValueY = mContentRect.height() / (max - min) * (max - baseValue);
 
-                if (startPoint == null) { // isFirst
-                    shaderPath.moveTo(xPosition, yPosition);
-                    startPoint = prevValue == null ? point : prevValue;
-                } else {
+                if (prevValue == null) {
+                    preBaseX = point.getX();
+                    shaderPath.moveTo(preBaseX, yPosition);
+                } else if (prevValue.getValue() > lineDataSet.getShaderBaseValue()) {
+                    if (point.getValue() <= lineDataSet.getShaderBaseValue()) { // 跨越颜色区域
+
+                        float nextBaseX = getBaseX(prevValue, point, baseValueY);
+                        shaderPath.lineTo(nextBaseX, baseValueY);
+                        shaderPath.lineTo(preBaseX, baseValueY);
+                        shaderPath.close();
+
+                        shaderPaths.add(new Path(shaderPath));
+                        shaderPathColors.add(lineDataSet.getShaderTop());
+
+                        shaderPath.reset();
+                        shaderPath.moveTo(nextBaseX, baseValueY);
+                        shaderPath.lineTo(xPosition, yPosition);
+
+                        preBaseX = nextBaseX;
+                    } else {
+                        shaderPath.lineTo(xPosition, yPosition); // 当前值坐标
+                    }
+                } else if (point.getValue() > lineDataSet.getShaderBaseValue()) {
+
+                    float nextBaseX = getBaseX(prevValue, point, baseValueY);
+                    shaderPath.lineTo(nextBaseX, baseValueY);
+                    shaderPath.lineTo(preBaseX, baseValueY);
+                    shaderPath.close();
+
+                    shaderPaths.add(new Path(shaderPath));
+                    shaderPathColors.add(lineDataSet.getShaderBottom());
+
+                    shaderPath.reset();
+                    shaderPath.moveTo(nextBaseX, baseValueY);
                     shaderPath.lineTo(xPosition, yPosition);
 
-                    if (prevValue.getValue() > lineDataSet.getShaderBaseValue()) {
-                        if (point.getValue() <= lineDataSet.getShaderBaseValue()) {
+                    preBaseX = nextBaseX;
 
-                            shaderPath.lineTo(point.getX(), baseValueY);
-                            shaderPath.lineTo(startPoint.getX(), baseValueY);
-                            shaderPath.lineTo(startPoint.getX(), startPoint.getY());
-
-                            shaderPath.close();
-                            shaderPaths.add(new Path(shaderPath));
-                            shaderPathColors.add(lineDataSet.getShaderTop());
-                            shaderPath.reset();
-                            startPoint = null;
-                        }
-                    } else {
-                        if (point.getValue() > lineDataSet.getShaderBaseValue()) {
-
-                            shaderPath.lineTo(point.getX(), baseValueY);
-                            shaderPath.lineTo(startPoint.getX(), baseValueY);
-                            shaderPath.lineTo(startPoint.getX(), startPoint.getY());
-
-                            shaderPath.close();
-                            shaderPaths.add(new Path(shaderPath));
-                            shaderPathColors.add(lineDataSet.getShaderBottom());
-                            shaderPath.reset();
-                            startPoint = null;
-                        }
-                    }
+                } else {
+                    shaderPath.lineTo(xPosition, yPosition); // 当前值坐标
                 }
+
                 prevValue = point;
 
                 if (lastIndex == i) {
-                    shaderPath.lineTo(lineDataSet.getValues().get(lastIndex).getX(), baseValueY);
-                    shaderPath.lineTo(startPoint.getX(), baseValueY);
-                    shaderPath.lineTo(startPoint.getX(), startPoint.getY());
+                    shaderPath.lineTo(xPosition, baseValueY);
+                    shaderPath.lineTo(preBaseX, baseValueY);
                     shaderPath.close();
                     shaderPaths.add(new Path(shaderPath));
                     if (prevValue.getValue() > baseValue) {
@@ -290,15 +301,15 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                         shaderPathColors.add(lineDataSet.getShaderBottom());
                     }
                     shaderPath.reset();
-                    startPoint = null;
                 }
             }
-        }
+        } // end for.
+
         if (!isFirst) {
             linePaths.add(linePath);
         }
 
-        if (!shaderSplit) {
+        if (!shaderSplit) { // 不区分颜色分段
 
             // draw shader area
             if (i > 0 && lineDataSet.getShader() != null && lineDataSet.getValues().size() > 0) {
@@ -344,4 +355,11 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
     }
 
+    private float getBaseX(PointValue p1, PointValue p2, float baseY) {
+        float x1 = p1.getX();
+        float x2 = p2.getX();
+        float y1 = Math.abs(p1.getY() - baseY);
+        float y2 = Math.abs(p2.getY() - baseY);
+        return (y1 * x2 + x1 * y2) / (y2 + y1);
+    }
 }
