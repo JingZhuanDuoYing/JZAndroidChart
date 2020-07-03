@@ -24,6 +24,7 @@ public class CandlestickValue extends Value {
 
   private Paint.Style mPaintStyle = null;
   private int color = COLOR_NONE;
+  private int fillBackgroundColor = COLOR_NONE;
 
   public CandlestickValue(float high, float low, float open, float close) {
     this.high = high;
@@ -152,5 +153,13 @@ public class CandlestickValue extends Value {
       return Arrays.asList(high, low, open, close, time, color, getX(), getY()).hashCode()
               + mPaintStyle.hashCode() * 31;
     }
+  }
+
+  public void setFillBackgroundColor(int fillBackgroundColor) {
+    this.fillBackgroundColor = fillBackgroundColor;
+  }
+
+  public int getFillBackgroundColor() {
+    return fillBackgroundColor;
   }
 }

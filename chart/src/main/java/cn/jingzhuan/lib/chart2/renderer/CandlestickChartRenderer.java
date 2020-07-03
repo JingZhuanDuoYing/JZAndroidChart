@@ -159,6 +159,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
 
+      if (candlestick.getFillBackgroundColor() != CandlestickValue.COLOR_NONE) { // 画背景
+        mRenderPaint.setColor(candlestick.getFillBackgroundColor());
+        canvas.drawRect(xPosition, 0, xPosition + candleWidth + 1, canvas.getHeight(), mRenderPaint);
+      }
+
       float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
       float lowY   = (max - candlestick.getLow())   / (max - min) * mContentRect.height();
       float openY  = (max - candlestick.getOpen())  / (max - min) * mContentRect.height();
