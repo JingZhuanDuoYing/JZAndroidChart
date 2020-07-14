@@ -106,10 +106,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     int valueCount = candlestickDataSet.getEntryCount();
 
     final List<CandlestickValue> visibleValues = candlestickDataSet.getVisiblePoints(mViewport);
+    final float visibleRange = candlestickDataSet.getVisibleRange(mViewport);
 
-    final float scale = 1 / mViewport.width();
-    final float step = mContentRect.width() * scale / valueCount;
-    final float startX = mContentRect.left - mViewport.left * mContentRect.width() * scale;
+    final double scale = 1.0 / mViewport.width();
+    final double step = mContentRect.width() * scale / valueCount;
+    final double startX = mContentRect.left - mViewport.left * mContentRect.width() * scale;
+
+    double candleWidth = candlestickDataSet.getCandleWidth();
+
+    if (candlestickDataSet.isAutoWidth()) {
+      candleWidth = mContentRect.width() / Math.max(visibleRange, candlestickDataSet.getMinValueCount());
+    }
 
     for (int i = 0; i < valueCount && i < candlestickDataSet.getValues().size(); i++) {
 
@@ -119,12 +126,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         continue;
       }
 
-      float candleWidth = candlestickDataSet.getCandleWidth();
-
-      if (candlestickDataSet.isAutoWidth()) {
-        candleWidth = (mContentRect.width() + 0f) / Math.max(visibleValues.size(), candlestickDataSet.getMinValueCount());
-      }
-
+      double xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
+      final double candlestickCenterX = xPosition + candleWidth * 0.5;
 
       if (candlestickDataSet.isEnableGap()) {
         mRenderPaint.setColor(candlestickDataSet.getGapColor());
@@ -133,10 +136,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
           // 缺口
           final Pair<Float, Float> gap = candlestickDataSet.getLowGaps().get(i, null);
           if (gap != null) {
-            float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
             float y1  = (max - gap.first)  / (max - min) * mContentRect.height();
             float y2  = (max - gap.second)  / (max - min) * mContentRect.height();
-            canvas.drawRect(xPosition,
+            canvas.drawRect((float) xPosition,
                     y1,
                     mContentRect.right,
                     y2, mRenderPaint);
@@ -146,10 +148,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
           // 缺口
           final Pair<Float, Float> gap = candlestickDataSet.getHighGaps().get(i, null);
           if (gap != null) {
-            float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset()) + candleWidth * 0.5f;
             float y1  = (max - gap.first)  / (max - min) * mContentRect.height();
             float y2  = (max - gap.second)  / (max - min) * mContentRect.height();
-            canvas.drawRect(xPosition,
+            canvas.drawRect((float) candlestickCenterX,
                     y1,
                     mContentRect.right,
                     y2, mRenderPaint);
@@ -157,11 +158,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         }
       }
 
-      float xPosition = startX + step * (i + candlestickDataSet.getStartIndexOffset());
-
       if (candlestick.getFillBackgroundColor() != CandlestickValue.COLOR_NONE) { // 画背景
         mRenderPaint.setColor(candlestick.getFillBackgroundColor());
-        canvas.drawRect(xPosition, 0, xPosition + candleWidth + 1, canvas.getHeight(), mRenderPaint);
+        mRenderPaint.setStyle(Paint.Style.FILL);
+        canvas.drawRect((float) xPosition, 0,
+                (float) (xPosition + candleWidth), canvas.getHeight(), mRenderPaint);
       }
 
       float highY  = (max - candlestick.getHigh())  / (max - min) * mContentRect.height();
@@ -171,19 +172,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       float widthPercent = 0.8f;
 
-      mBodyBuffers[0] = xPosition + (1 - widthPercent) * 0.5f * candleWidth;
+      mBodyBuffers[0] = (float) (xPosition + (1 - widthPercent) * 0.5 * candleWidth);
       mBodyBuffers[1] = closeY;
-      mBodyBuffers[2] = mBodyBuffers[0] + candleWidth * widthPercent;
+      mBodyBuffers[2] = (float) (mBodyBuffers[0] + candleWidth * widthPercent);
       mBodyBuffers[3] = openY;
 
-      final float candlestickCenterX = xPosition + candleWidth * 0.5f;
+      mUpperShadowBuffers[0] = (float) candlestickCenterX;
+      mUpperShadowBuffers[2] = (float) candlestickCenterX;
+      mLowerShadowBuffers[0] = (float) candlestickCenterX;
+      mLowerShadowBuffers[2] = (float) candlestickCenterX;
 
-      mUpperShadowBuffers[0] = candlestickCenterX;
-      mUpperShadowBuffers[2] = candlestickCenterX;
-      mLowerShadowBuffers[0] = candlestickCenterX;
-      mLowerShadowBuffers[2] = candlestickCenterX;
-
-      candlestick.setCoordinate(candlestickCenterX, closeY);
+      candlestick.setCoordinate((float) candlestickCenterX, closeY);
 
       if (Float.compare(candlestick.getOpen(), candlestick.getClose()) > 0) { // 阴线
 
@@ -269,8 +268,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
         ((CandlestickDataSetArrowDecorator) candlestickDataSet).draw(canvas, candlestick,
-                                                                     mContentRect, candleWidth,
-                                                                     xPosition,
+                                                                     mContentRect,
+                                                                     (float) candleWidth,
+                                                                     (float) xPosition,
                                                                      highY, lowY);
       }
     }
