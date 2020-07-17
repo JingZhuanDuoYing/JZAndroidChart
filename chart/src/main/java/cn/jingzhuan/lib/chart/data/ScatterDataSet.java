@@ -19,6 +19,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   public final static int SHAPE_ALIGN_CENTER = 1;
   public final static int SHAPE_ALIGN_TOP = 2;
   public final static int SHAPE_ALIGN_BOTTOM = 3;
+  public final static int SHAPE_ALIGN_PARENT_TOP = 4;
+  public final static int SHAPE_ALIGN_PARENT_BOTTOM = 5;
 
   private List<ScatterValue> scatterValues;
 
