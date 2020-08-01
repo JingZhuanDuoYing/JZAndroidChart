@@ -38,6 +38,8 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private SparseArray<Pair<Float, Float>> mLowGaps;
   private SparseArray<Pair<Float, Float>> mHighGaps;
 
+  private float candleWidthPercent = 0.8f;
+
   public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
     this(candlestickValues, AxisY.DEPENDENCY_BOTH);
   }
@@ -257,5 +259,13 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public void setGapColor(int mGapColor) {
     this.mGapColor = mGapColor;
+  }
+
+  public float getCandleWidthPercent() {
+    return candleWidthPercent;
+  }
+
+  public void setCandleWidthPercent(float candleWidthPercent) {
+    this.candleWidthPercent = candleWidthPercent;
   }
 }

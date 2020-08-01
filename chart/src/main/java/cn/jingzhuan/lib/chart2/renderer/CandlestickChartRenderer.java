@@ -118,6 +118,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       candleWidth = mContentRect.width() / Math.max(visibleRange, candlestickDataSet.getMinValueCount());
     }
 
+    float widthPercent = candlestickDataSet.getCandleWidthPercent();
+
     for (int i = 0; i < valueCount && i < candlestickDataSet.getValues().size(); i++) {
 
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
@@ -170,7 +172,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       float openY  = (max - candlestick.getOpen())  / (max - min) * mContentRect.height();
       float closeY = (max - candlestick.getClose()) / (max - min) * mContentRect.height();
 
-      float widthPercent = 0.8f;
 
       mBodyBuffers[0] = (float) (xPosition + (1 - widthPercent) * 0.5 * candleWidth);
       mBodyBuffers[1] = closeY;
