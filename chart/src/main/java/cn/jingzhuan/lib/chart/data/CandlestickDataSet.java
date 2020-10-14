@@ -25,6 +25,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private int mDecreasingColor = 0xFF1deb5b; // 阴线
   private int mNeutralColor = Color.WHITE;    // 十字线
   private int mLimitUpColor = Color.TRANSPARENT;
+  private int mLimitUpColor20 = Color.TRANSPARENT;
 
   private int mGapColor = Color.LTGRAY; // 缺口颜色
 
@@ -206,6 +207,14 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public int getLimitUpColor() {
     return mLimitUpColor;
+  }
+
+  public void setLimitUpColor20(int mLimitUpColor) {
+    this.mLimitUpColor20 = mLimitUpColor;
+  }
+
+  public int getLimitUpColor20() {
+    return mLimitUpColor20;
   }
 
   public float getStrokeThickness() {
