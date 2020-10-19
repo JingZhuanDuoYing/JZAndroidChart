@@ -238,14 +238,17 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       if (i > 0) {
         final CandlestickValue previousValue = candlestickDataSet.getEntryForIndex(i - 1);
+        boolean isLimitUp20 = Float.compare((candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.195f) > 0;
         boolean isLimitUp = Float.compare((candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.095f) > 0;
         if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT) {
-          if (isLimitUp) {
+          if (isLimitUp20) {
+            mRenderPaint.setColor(candlestickDataSet.getLimitUpColor20());
+          } else if (isLimitUp) {
             mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());
           }
         }
         if (candlestickDataSet.getLimitUpPaintStyle() != null) {
-          if (isLimitUp) {
+          if (isLimitUp || isLimitUp20) {
             mRenderPaint.setStyle(candlestickDataSet.getLimitUpPaintStyle());
           }
         }
