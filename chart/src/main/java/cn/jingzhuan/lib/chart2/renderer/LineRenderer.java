@@ -324,9 +324,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 PointValue pointValue = lineDataSet.getEntryForIndex(i - 1);
 
                 if (pointValue != null) {
-                    shaderPath.lineTo(pointValue.getX(), mContentRect.bottom);
-                    shaderPath.lineTo(offset * width, mContentRect.bottom);
-                    shaderPath.lineTo(offset * width, lineDataSet.getValues().get(0).getY());
+                    shaderPath.lineTo(startX + pointValue.getX(), mContentRect.bottom);
+                    shaderPath.lineTo(startX + offset * width, mContentRect.bottom);
+                    shaderPath.lineTo(startX + offset * width, lineDataSet.getValues().get(0).getY());
                     shaderPath.close();
                     mRenderPaint.setShader(lineDataSet.getShader());
                     canvas.drawPath(shaderPath, mRenderPaint);
