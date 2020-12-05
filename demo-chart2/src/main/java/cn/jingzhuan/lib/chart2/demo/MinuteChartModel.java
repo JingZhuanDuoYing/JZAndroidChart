@@ -136,7 +136,9 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
 
                 minuteBinding.minuteChart.animateX(1000);
 
-                onClickListener.onClick(v);
+                if (onClickListener != null) {
+                    onClickListener.onClick(v);
+                }
             }
         });
 
