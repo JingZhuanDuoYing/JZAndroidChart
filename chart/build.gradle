@@ -10,7 +10,7 @@ android {
   }
   defaultConfig {
     minSdkVersion 16
-    targetSdkVersion 28
+    targetSdkVersion 29
     versionCode 1
     versionName "1.0"
 
@@ -44,14 +44,14 @@ dependencies {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-apply plugin: 'com.novoda.bintray-release'
-
-publish {
-  userOrg = 'donglua'
-  groupId = 'cn.jingzhuan.lib'
-  artifactId = 'chart2'
-  publishVersion = "1.3.22"
-  desc = 'JingZhuan Android Chart'
-  website = 'https://github.com/donglua/JZAndroidChart'
-}
+//
+//apply plugin: 'com.novoda.bintray-release'
+//
+//publish {
+//  userOrg = 'donglua'
+//  groupId = 'cn.jingzhuan.lib'
+//  artifactId = 'chart2'
+//  publishVersion = "1.3.22"
+//  desc = 'JingZhuan Android Chart'
+//  website = 'https://github.com/donglua/JZAndroidChart'
+//}
