@@ -143,6 +143,8 @@ public class AxisRenderer implements Renderer {
         }
         // Draw axis line
         if (mAxis.isEnable()) {
+            mAxisPaint.setStrokeWidth(mAxis.getAxisThickness());
+            mAxisPaint.setColor(mAxis.getAxisColor());
             canvas.drawLine(startX, startY, stopX, stopY, mAxisPaint);
         }
     }
@@ -243,6 +245,9 @@ public class AxisRenderer implements Renderer {
 
         if (mAxis.isEnable() && mAxis.isGridLineEnable() && mAxis.getGridCount() > 0) {
             int count = mAxis.getGridCount() + 1;
+
+            mGridPaint.setStrokeWidth(mAxis.getGridThickness());
+            mGridPaint.setColor(mAxis.getGridColor());
 
             if (mAxis.getDashedGridIntervals() != null && mAxis.getDashedGridPhase() > 0) {
                 mGridPaint.setPathEffect(new DashPathEffect(mAxis.getDashedGridIntervals(), mAxis.getDashedGridPhase()));
