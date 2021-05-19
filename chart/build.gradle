@@ -11,8 +11,8 @@ android {
   defaultConfig {
     minSdkVersion 16
     targetSdkVersion 28
-    versionCode 1
-    versionName "1.0"
+    versionCode 2
+    versionName "1.3.23"
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
@@ -45,13 +45,25 @@ dependencies {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven-publish'
 
-publish {
-  userOrg = 'donglua'
-  groupId = 'cn.jingzhuan.lib'
-  artifactId = 'chart2'
-  publishVersion = "1.3.22"
-  desc = 'JingZhuan Android Chart'
-  website = 'https://github.com/donglua/JZAndroidChart'
+publishing {
+  repositories {
+    maven {
+      name = "release"
+      url = uri("https://maven.pkg.github.com/JingZhuanDuoYing/JZAndroidChart")
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+      }
+    }
+  }
+  publications {
+    chart(MavenPublication) {
+      groupId 'cn.jingzhuan.lib'
+      artifactId 'chart'
+      version android.defaultConfig.versionName
+      artifact("$buildDir/outputs/aar/chart-release.aar")
+    }
+  }
 }
