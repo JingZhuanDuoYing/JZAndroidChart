@@ -6,6 +6,8 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -42,7 +44,6 @@ public class CombineChart extends BaseChart {
     @Override
     public void initChart() {
         super.initChart();
-
         mRenderer = new CombineChartRenderer(this);
     }
 
@@ -131,4 +132,14 @@ public class CombineChart extends BaseChart {
         getRenderer().clearDataSet();
     }
 
+    public boolean onTouchEvent(MotionEvent event) {
+        System.out.println("9528 onTouchEvent");
+        CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
+        if (  renderer.getShowRange() && renderer.rangeRenderer != null){
+            System.out.println("9528 send");
+            renderer.rangeRenderer.onTouchEvent(event);
+        }
+
+        return super.onTouchEvent(event);
+    }
 }
