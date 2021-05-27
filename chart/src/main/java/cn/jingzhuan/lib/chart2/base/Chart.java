@@ -80,6 +80,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mEdgeEffectRightActive;
 
     private boolean isTouching = false;
+    private boolean isShowRange = false;
 
     protected Highlight[] mHighlights;
 
@@ -240,7 +241,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-
+            System.out.println("9528 ScaleGestureDetector onScale");
             if (!mScaleXEnable) return false;
             if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
@@ -335,7 +336,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
+            System.out.println(" 9528 onScroll");
             if (!isDraggingToMoveEnable()) {
                 onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
@@ -377,6 +378,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            System.out.println("9528 isDraggingToMoveEnable() :" + isDraggingToMoveEnable());
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
 
             fling((int) -velocityX);
@@ -801,6 +803,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isTouching() {
         return isTouching;
+    }
+
+    public boolean getRangeEnable() {
+        return isShowRange;
+    }
+
+    public void setRangeEnable(boolean showRange) {
+        isShowRange = showRange;
     }
 }
 

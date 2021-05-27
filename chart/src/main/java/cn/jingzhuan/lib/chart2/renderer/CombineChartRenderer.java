@@ -29,7 +29,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected LineRenderer lineRenderer;
     protected CandlestickChartRenderer candlestickChartRenderer;
     protected ScatterChartRenderer scatterChartRenderer;
+    public RangeRenderer rangeRenderer;//K线区域选择的renderer
 
+    private Boolean showRange = false;
     private CombineData combineData;
 
     public CombineChartRenderer(final Chart chart) {
@@ -39,6 +41,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer = initBarChartRenderer(chart);
         candlestickChartRenderer = initCandlestickChartRenderer(chart);
         scatterChartRenderer = initScatterChartRenderer(chart);
+        rangeRenderer = initRangeChartRenderer(chart);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
@@ -46,6 +49,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 calcDataSetMinMax();
             }
         });
+        showRange = chart.getRangeEnable();
+    }
+
+    private RangeRenderer initRangeChartRenderer(Chart chart) {
+        return new RangeRenderer(chart);
     }
 
     @NotNull
@@ -70,11 +78,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     protected void renderDataSet(Canvas canvas) {
-
         barChartRenderer.renderDataSet(canvas, getChartData().getBarChartData());
         candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
         lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
         scatterChartRenderer.renderDataSet(canvas, getChartData().getScatterChartData());
+        if (showRange){
+            System.out.println("9528 render");
+            rangeRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
+        }
+
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
@@ -88,6 +100,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer.setHighlightColor(highlightColor);
         candlestickChartRenderer.setHighlightColor(highlightColor);
         scatterChartRenderer.setHighlightColor(highlightColor);
+        rangeRenderer.setHighlightColor(highlightColor);
     }
 
     @Override
@@ -105,6 +118,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         if (scatterChartRenderer.getDataSet() != null && !scatterChartRenderer.getDataSet().isEmpty()) {
             scatterChartRenderer.renderHighlighted(canvas, highlights);
         }
+        if (rangeRenderer.getDataSet() != null && !rangeRenderer.getDataSet().isEmpty()) {
+            rangeRenderer.renderHighlighted(canvas, highlights);
+        }
     }
 
     @Override
@@ -118,6 +134,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
         } else if (dataSet instanceof CandlestickDataSet) {
             candlestickChartRenderer.addDataSet((CandlestickDataSet) dataSet);
+            rangeRenderer.addDataSet((CandlestickDataSet) dataSet);
         } else if (dataSet instanceof ScatterDataSet) {
             scatterChartRenderer.addDataSet((ScatterDataSet) dataSet);
         }
@@ -132,6 +149,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         scatterChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         candlestickChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        rangeRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
     @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
@@ -141,6 +159,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         scatterChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         candlestickChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        rangeRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
     @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
@@ -150,6 +169,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         scatterChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         candlestickChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
+        rangeRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {
@@ -204,6 +224,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.barChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.candlestickChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.scatterChartRenderer.enableHighlightDashPathEffect(intervals, phase);
+        this.rangeRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
     @Override public void setTypeface(Typeface tf) {
@@ -211,6 +232,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.barChartRenderer.setTypeface(tf);
         this.candlestickChartRenderer.setTypeface(tf);
         this.scatterChartRenderer.setTypeface(tf);
+        this.rangeRenderer.setTypeface(tf);
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {
@@ -226,6 +248,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         if (!getChartData().getScatterData().isEmpty()) {
             return scatterChartRenderer.getEntryIndexByCoordinate(x, y);
         }
+
         return super.getEntryIndexByCoordinate(x, y);
+    }
+
+    public Boolean getShowRange() {
+        return showRange;
+    }
+
+    public void setShowRange(Boolean showRange) {
+        this.showRange = showRange;
     }
 }
