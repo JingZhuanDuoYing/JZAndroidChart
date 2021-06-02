@@ -36,14 +36,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     float mEndX = 0;
     /**
-     * 绘制左侧的ico y坐标
-     */
-    float mStartY = 0;
-    /**
-     * 绘制右侧ico y坐标
-     */
-    float mEndY = 0;
-    /**
      * 绘制的ico
      */
     Bitmap icoBitmap;
@@ -72,7 +64,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     //线条颜色 默认蓝色
     private int mLineColor = Color.parseColor("#216FE1");
-
     //区间颜色
     private int mRangeColor = Color.parseColor("#66D8F2FD");
 
@@ -85,7 +76,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     public RangeRenderer(Chart chart) {
         super(chart);
         this.chart = chart;
-        initMeasure();
         initPaint();
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
@@ -101,10 +91,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
         drawCanvas(canvas);
-    }
-
-    private void initMeasure() {
-
     }
 
     public void initPaint() {
@@ -125,37 +111,37 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     public void drawCanvas(Canvas canvas) {
         CandlestickDataSet candlestickDataSet = dataVaild();
-        if (candlestickDataSet == null || icoBitmap == null) {
-            return;
-        }
-
+        if (candlestickDataSet == null) return;
 
         //默认选中数据中最后10个K线作为统计范围
+        //todo 缩放后是否该定位当前显示的最后10条K线
         if (mStartCandlestickValue == null || mEndCandlestickValue == null) {
-            mStartIndex = candlestickDataSet.getValues().size() - 10;
-            mEndIndex = candlestickDataSet.getValues().size() - 1;
+            List<CandlestickValue> visiblePoints = candlestickDataSet.getVisiblePoints(mViewport);
+            CandlestickValue startVisible = visiblePoints.get(visiblePoints.size() - 10);
+            CandlestickValue endVisible = visiblePoints.get(visiblePoints.size() - 1);
+            float startVisibleX = startVisible.getX();
+            float startVisibleY = startVisible.getY();
+            float endVisibleX = endVisible.getX();
+            float endVisibleY = endVisible.getY();
+            mStartIndex = getEntryIndexByCoordinate(startVisibleX, startVisibleY);
+            mEndIndex = getEntryIndexByCoordinate(endVisibleX, endVisibleY);
         }
         mStartCandlestickValue = candlestickDataSet.getEntryForIndex(mStartIndex);
         mEndCandlestickValue = candlestickDataSet.getEntryForIndex(mEndIndex);
 
-//        float startXPosition = startX + step * (mStartIndex + candlestickDataSet.getStartIndexOffset());
-//        float endXPosition = startX + step * (mEndIndex + candlestickDataSet.getStartIndexOffset());
-        mStartX = getScaleCoordinateByIndex(mStartIndex);
-        mEndX = getScaleCoordinateByIndex(mEndIndex);
-        /*
+         /*
           获取区间统计开始的K线坐标
          */
-//        mStartX = mStartCandlestickValue.getX();
-
+        mStartX = getScaleCoordinateByIndex(mStartIndex);
         /*
          * 获取区间统计结束的K线坐标
          */
-//        mEndX = mEndCandlestickValue.getX();
+        mEndX = getScaleCoordinateByIndex(mEndIndex);
+
         float bitmapSpanX = icoBitmap.getWidth() / 2f;
         float bitmapSpanY = icoBitmap.getHeight() / 2f;
         RectF rect = new RectF(mStartX, 0, mEndX, chart.getContentRect().height());
-        System.out.println("9529 mStartX :" + mStartX + candlestickDataSet);
-
+//        System.out.println("9529 mStartX :" + mStartX + candlestickDataSet);
 
         //绘制区间统计的选择区域
         canvas.drawRect(rect, shadowPaint);
@@ -171,14 +157,16 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         /*
          * 绘制ico
          */
-        canvas.drawBitmap(icoBitmap, mStartX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, paint);
-        canvas.drawBitmap(icoBitmap, mEndX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, paint);
+        if (icoBitmap != null){
+            canvas.drawBitmap(icoBitmap, mStartX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, paint);
+            canvas.drawBitmap(icoBitmap, mEndX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, paint);
+        }
 
         /*
          *为了更好的能拖动区间 加大了触发拖动的范围
          */
-        float defaultSpanX = 50;
-        float defaultSpanY = 20;
+        float defaultSpanX = 0;
+        float defaultSpanY = 0;
 
         /*
          * 创建开始&结束矩阵 用于判断触摸点是否在该区域内
@@ -205,7 +193,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
          * 当K线被缩放到屏幕外(不可见)的情况下 关闭缩放
          */
         if (mOnRangeKLineVisibleListener != null) {
-            mOnRangeKLineVisibleListener.onRangeKLineVisible((mStartX > mContentRect.left && mEndX < mContentRect.width()));
+            mOnRangeKLineVisibleListener.onRangeKLineVisible((mStartX > mContentRect.left + icoBitmap.getWidth() && mEndX < mContentRect.width() - icoBitmap.getWidth()));
         }
     }
 
@@ -221,29 +209,32 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 currentX = event.getX();
                 currentY = event.getY();
                 //根据当前触摸点定位对应的K线
-//                CandlestickDataSet candlestickDataSet = dataVaild();
 
-//                System.out.println("9529 onTouchEvent : X :" + currentX);
                 //拖动ico 改变开始的K线
                 if (mStartRect.contains(currentX, currentY)) {
                     mStartIndex = getEntryIndexByCoordinate(currentX, currentY);
-//                    mStartCandlestickValue = candlestickDataSet.getEntryForIndex(entryIndexByCoordinate);
                     chart.postInvalidate();
-                    System.out.println("9528 我点到了左边 " + mStartIndex);
+//                    System.out.println("9528 我点到了左边 " + mStartIndex);
                 }
 
                 //拖动ico 改变结束的K线
                 if (mEndRect.contains(currentX, currentY)) {
                     mEndIndex = getEntryIndexByCoordinate(currentX, currentY);
-//                    mEndCandlestickValue = candlestickDataSet.getEntryForIndex(entryIndexByCoordinate);
+                    if (mEndIndex - mStartIndex == 2){
+                        mStartIndex--;
+                        mEndIndex--;
+                    }
                     chart.postInvalidate();
-                    System.out.println("9528 我点到了右边" + mEndIndex);
                 }
-
 
         }
     }
 
+    /**
+     * 根据子当前Kline在数据集合的index获得缩放后对应的X轴坐标
+     * @param index 数据集合的index
+     * @return X轴坐标
+     */
     public float getScaleCoordinateByIndex(int index) {
         CandlestickDataSet candlestickDataSet = dataVaild();
         int valueCount = candlestickDataSet.getEntryCount();
