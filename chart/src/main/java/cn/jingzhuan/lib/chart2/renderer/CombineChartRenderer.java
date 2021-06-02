@@ -82,10 +82,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
         lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
         scatterChartRenderer.renderDataSet(canvas, getChartData().getScatterChartData());
-        if (showRange){
-            System.out.println("9528 render");
-            rangeRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
-        }
+        if (showRange) rangeRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
+
 
     }
 

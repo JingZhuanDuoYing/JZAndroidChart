@@ -132,14 +132,16 @@ public class CombineChart extends BaseChart {
         getRenderer().clearDataSet();
     }
 
+    public void cleanRangeData(){getRenderer().rangeRenderer.resetData();}
+
+    /**
+     * 把触摸事件传到RangeRenderer 用于处理拖动区间统计范围
+     */
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println("9528 onTouchEvent");
         CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
-        if (  renderer.getShowRange() && renderer.rangeRenderer != null){
-            System.out.println("9528 send");
+        if (renderer.getShowRange() && renderer.rangeRenderer != null){
             renderer.rangeRenderer.onTouchEvent(event);
         }
-
         return super.onTouchEvent(event);
     }
 }
