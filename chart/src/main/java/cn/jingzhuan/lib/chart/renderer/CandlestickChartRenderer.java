@@ -52,7 +52,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             float yPosition;
             highlight.setTouchX(x);
             highlight.setTouchY(y);
-            System.out.println("9529 highlight x : " + x + " , y : " + y);
             if (x >= mContentRect.left) {
               index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
               if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
@@ -62,7 +61,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                 if (xPosition >= 0 && yPosition >= 0) {
                   highlight.setX(xPosition);
                   highlight.setY(yPosition);
-                  System.out.println("9529 highlight xPosition : " + xPosition + " , y : " + yPosition);
                   highlight.setDataIndex(index);
                   chart.highlightValue(highlight);
                 }
@@ -264,7 +262,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       for (CandlestickDataSet dataSet : getDataSet()) {
 
         if (dataSet.isHighlightedVerticalEnable()) {
-          System.out.println("9529 highlight x : " + highlight.getX());
           canvas.drawLine(highlight.getX(),
                           mContentRect.top,
                           highlight.getX(),

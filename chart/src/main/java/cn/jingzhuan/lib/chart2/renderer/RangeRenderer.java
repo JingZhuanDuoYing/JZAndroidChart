@@ -59,6 +59,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     private OnRangeListener mOnRangeListener;
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
+    private OnRangeKLineListener mOnRangeKLineListener;
     private CandlestickValue mStartCandlestickValue;
     private CandlestickValue mEndCandlestickValue;
 
@@ -71,6 +72,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     private int mStartIndex;
     //结束的index
     private int mEndIndex;
+
 
 
     public RangeRenderer(Chart chart) {
@@ -113,10 +115,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         CandlestickDataSet candlestickDataSet = dataVaild();
         if (candlestickDataSet == null) return;
 
+
         //默认选中数据中最后10个K线作为统计范围
-        //todo 缩放后是否该定位当前显示的最后10条K线
         if (mStartCandlestickValue == null || mEndCandlestickValue == null) {
             List<CandlestickValue> visiblePoints = candlestickDataSet.getVisiblePoints(mViewport);
+
             CandlestickValue startVisible = visiblePoints.get(visiblePoints.size() - 10);
             CandlestickValue endVisible = visiblePoints.get(visiblePoints.size() - 1);
             float startVisibleX = startVisible.getX();
@@ -125,6 +128,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             float endVisibleY = endVisible.getY();
             mStartIndex = getEntryIndexByCoordinate(startVisibleX, startVisibleY);
             mEndIndex = getEntryIndexByCoordinate(endVisibleX, endVisibleY);
+
         }
         mStartCandlestickValue = candlestickDataSet.getEntryForIndex(mStartIndex);
         mEndCandlestickValue = candlestickDataSet.getEntryForIndex(mEndIndex);
@@ -193,8 +197,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
          * 当K线被缩放到屏幕外(不可见)的情况下 关闭缩放
          */
         if (mOnRangeKLineVisibleListener != null) {
-            mOnRangeKLineVisibleListener.onRangeKLineVisible((mStartX > mContentRect.left + icoBitmap.getWidth() && mEndX < mContentRect.width() - icoBitmap.getWidth()));
+            mOnRangeKLineVisibleListener.onRangeKLineVisible((mStartX > (mContentRect.left + icoBitmap.getWidth()) && mEndX < (mContentRect.width() - icoBitmap.getWidth())));
         }
+
+        if (mOnRangeKLineListener!=null)
+            mOnRangeKLineListener.onRangeKLine(mStartIndex,mEndIndex);
     }
 
 
@@ -213,6 +220,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 //拖动ico 改变开始的K线
                 if (mStartRect.contains(currentX, currentY)) {
                     mStartIndex = getEntryIndexByCoordinate(currentX, currentY);
+                    if (Math.abs(mEndIndex - mStartIndex) == 2){
+                        mEndIndex++;
+                    }
                     chart.postInvalidate();
 //                    System.out.println("9528 我点到了左边 " + mStartIndex);
                 }
@@ -222,7 +232,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                     mEndIndex = getEntryIndexByCoordinate(currentX, currentY);
                     if (mEndIndex - mStartIndex == 2){
                         mStartIndex--;
-                        mEndIndex--;
                     }
                     chart.postInvalidate();
                 }
@@ -387,4 +396,27 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         this.mOnRangeKLineVisibleListener = listener;
     }
 
+    /**
+     * 监听K线是否可见
+     */
+    public interface OnRangeKLineListener {
+
+
+        /**
+         *
+         * @param startIndex 开始的index
+         * @param endIndex   结束的index
+         */
+        void onRangeKLine(int startIndex , int endIndex);
+    }
+
+
+    /**
+     * 设置区间统计可见KLine监听器
+     *
+     * @param listener 监听器
+     */
+    public void setOnRangeKLineListener(OnRangeKLineListener listener) {
+        this.mOnRangeKLineListener = listener;
+    }
 }
