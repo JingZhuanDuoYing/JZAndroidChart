@@ -130,10 +130,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mEndIndex = getEntryIndexByCoordinate(endVisibleX, endVisibleY);
 
         }
-        mStartCandlestickValue = candlestickDataSet.getEntryForIndex(mStartIndex);
-        mEndCandlestickValue = candlestickDataSet.getEntryForIndex(mEndIndex);
         if (mStartIndex >= candlestickDataSet.getValues().size() || mEndIndex >= candlestickDataSet.getValues().size())
             return;
+        mStartCandlestickValue = candlestickDataSet.getEntryForIndex(mStartIndex);
+        mEndCandlestickValue = candlestickDataSet.getEntryForIndex(mEndIndex);
+
          /*
           获取区间统计开始的K线坐标
          */
