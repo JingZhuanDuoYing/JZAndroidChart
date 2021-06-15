@@ -218,24 +218,25 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 currentX = event.getX();
                 currentY = event.getY();
                 //根据当前触摸点定位对应的K线
-
+                int size = dataVaild().getValues().size();
                 //拖动ico 改变开始的K线
                 if (mStartRect.contains(currentX, currentY)) {
+
                     mStartIndex = getEntryIndexByCoordinate(currentX, currentY);
-                    if (Math.abs(mEndIndex - mStartIndex) == 2){
+                    if (Math.abs(mEndIndex - mStartIndex) == 2 && mEndIndex < size - 2){
                         mEndIndex++;
                     }
-                    chart.postInvalidate();
+                    if (Math.abs(mEndIndex - mStartIndex) >= 2) chart.postInvalidate();
 //                    System.out.println("9528 我点到了左边 " + mStartIndex);
                 }
 
                 //拖动ico 改变结束的K线
                 if (mEndRect.contains(currentX, currentY)) {
                     mEndIndex = getEntryIndexByCoordinate(currentX, currentY);
-                    if (mEndIndex - mStartIndex == 2){
+                    if (mEndIndex - mStartIndex == 2 && mStartIndex < size - 2){
                         mStartIndex--;
                     }
-                    chart.postInvalidate();
+                    if (Math.abs(mEndIndex - mStartIndex) >= 2) chart.postInvalidate();
                 }
 
         }
