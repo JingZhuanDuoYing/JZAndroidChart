@@ -27,7 +27,7 @@ public class ChartData<T extends IDataSet> {
   protected AxisY rightAxis;
 
   protected int maxVisibleEntryCount = 500;
-  protected int minVisibleEntryCount = 20;
+  protected int minVisibleEntryCount = 15;
   protected int defaultVisibleEntryCount = -1;
 
   private int minValueCount = -1;

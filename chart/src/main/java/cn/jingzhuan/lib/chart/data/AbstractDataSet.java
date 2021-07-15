@@ -24,7 +24,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
   private int mColor = Color.GRAY;
   private int maxVisibleEntryCount = 500;
-  private int minVisibleEntryCount = 20;
+  private int minVisibleEntryCount = 15;
   private int defaultVisibleEntryCount = -1;
   private boolean isHighlightedVerticalEnable = false;
   private boolean isHighlightedHorizontalEnable = false;
