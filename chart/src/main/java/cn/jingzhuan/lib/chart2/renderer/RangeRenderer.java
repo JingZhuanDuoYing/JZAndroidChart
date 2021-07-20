@@ -147,7 +147,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         float bitmapSpanX = icoBitmap.getWidth() / 2f;
         float bitmapSpanY = icoBitmap.getHeight() / 2f;
         RectF rect = new RectF(mStartX, 0, mEndX, chart.getContentRect().height());
-//        System.out.println("9529 mStartX :" + mStartX + candlestickDataSet);
 
         //绘制区间统计的选择区域
         canvas.drawRect(rect, shadowPaint);
@@ -157,8 +156,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
          */
         canvas.drawLine(mStartX, 0, mStartX, chart.getContentRect().height(), paint);
         canvas.drawLine(mEndX, 0, mEndX, chart.getContentRect().height(), paint);
-//        System.out.println("9529 current drawLine " + currentViewport.left + "," + currentViewport.right);
-//        System.out.println("9529 mContent left : " + mContentRect.left + " , right : " + mContentRect.right);
 
         /*
          * 绘制ico
@@ -227,7 +224,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                         mEndIndex++;
                     }
                     if (Math.abs(mEndIndex - mStartIndex) >= 2) chart.postInvalidate();
-//                    System.out.println("9528 我点到了左边 " + mStartIndex);
                 }
 
                 //拖动ico 改变结束的K线

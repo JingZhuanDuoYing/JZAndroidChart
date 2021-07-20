@@ -14,10 +14,6 @@ import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator;
 import cn.jingzhuan.lib.chart2.base.Chart;
 
-/**
- * Created by donglua on 8/29/17.
- */
-
 public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
 
   private final AIKLineDrawSelectRangeHelper aikLineDrawSelectRangeHelper;
@@ -28,14 +24,11 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
   public AIKLineCandlestickChartRenderer(final Chart chart) {
     super(chart);
     aikLineDrawSelectRangeHelper = new AIKLineDrawSelectRangeHelper(this, chart);
-    System.out.println("9527 new AIKLineCandlestickChartRenderer");
   }
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
     super.renderDataSet(canvas,chartData);
     aikLineDrawSelectRangeHelper.drawCanvas(canvas);
-    System.out.println("9527 new renderDataSet");
-
   }
 
   Viewport getViewPort() {
@@ -72,7 +65,6 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
         max = lMax;
         break;
     }
-    System.out.println("9527 drawDataset");
     mRenderPaint.setStrokeWidth(candlestickDataSet.getStrokeThickness());
     mRenderPaint.setColor(candlestickDataSet.getColor());
 
@@ -200,7 +192,6 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
             mBodyBuffers[2],
             mBodyBuffers[3], mRenderPaint);
       }
-      System.out.println("mBodyBuffers[0] ,"+ mBodyBuffers[0] + "mBodyBuffers[1],"+mBodyBuffers[1] + "mBodyBuffers[2],"+mBodyBuffers[2]+"mBodyBuffers[3]"+mBodyBuffers[3]);
       canvas.drawLines(mUpperShadowBuffers, mRenderPaint);
 
       canvas.drawLines(mLowerShadowBuffers, mRenderPaint);
@@ -225,7 +216,6 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
    * 更新左右两侧选中想要的K线
    */
   public void updateAIKLineSelectRange(long startTime, long endTime) {
-    System.out.println("9527 updateAIKLineSelectRange");
     aikLineDrawSelectRangeHelper.updateAIKLineSelectRange(startTime,endTime);
   }
 }

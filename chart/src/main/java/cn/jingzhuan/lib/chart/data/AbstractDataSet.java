@@ -139,8 +139,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   }
 
   public float getVisibleRange(Viewport viewport) {
-    System.out.println("8527 viewport : left :" + viewport.left + " , right : "+ viewport.right
-    +" , getEntryCount() : " + getEntryCount());
     return (viewport.right - viewport.left) * getEntryCount();
   }
 

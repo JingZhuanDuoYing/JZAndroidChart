@@ -171,7 +171,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         boolean isFirst = true;
 
         float min, max;
-        System.out.println("9527 : lineDataSet.getAxisDependency(): " + lineDataSet.getAxisDependency());
         switch (lineDataSet.getAxisDependency()) {
             case AxisY.DEPENDENCY_RIGHT:
                 min = rMin;
@@ -186,7 +185,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         final float count = lineDataSet.getVisibleRange(mViewport);
-        System.out.println("9527 count: "+ count);
         final float width = count > 0 ? (mContentRect.width() / count): 0;
 
         final int offset = lineDataSet.getStartIndexOffset();
@@ -194,7 +192,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         final float scale = 1 / mViewport.width();
         final float step = (valueCount > 1 && onlyLines) ?
             (mContentRect.width() * scale / (valueCount - 1)) : (mContentRect.width() * scale / valueCount);
-        System.out.println("9527 step: " + step);
         final float startX = mContentRect.left + (onlyLines ? 0f : step * 0.5f) - mViewport.left * mContentRect.width() * scale;
 
         PointValue prevValue = null;

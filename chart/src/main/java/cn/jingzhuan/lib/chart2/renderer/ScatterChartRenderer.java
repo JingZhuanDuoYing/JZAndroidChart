@@ -30,7 +30,6 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
   }
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData) {
-    System.out.println("ScatterChartRenderer renderDataSet");
     for (ScatterDataSet dataSet : getDataSet()) {
       if (dataSet.isVisible()) {
         drawDataSet(canvas, dataSet,

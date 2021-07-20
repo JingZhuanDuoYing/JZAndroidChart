@@ -182,9 +182,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       mUpperShadowBuffers[2] = (float) candlestickCenterX;
       mLowerShadowBuffers[0] = (float) candlestickCenterX;
       mLowerShadowBuffers[2] = (float) candlestickCenterX;
-      if (i == (valueCount -10)){
-        System.out.println("9529 setCoordinate : " + candlestickCenterX + candlestickDataSet);
-      }
 
       candlestick.setCoordinate((float) candlestickCenterX, closeY);
 

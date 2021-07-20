@@ -208,11 +208,6 @@ public abstract class Chart extends BitmapCachedChart {
         if (!mContentRect.contains((int) x, (int) y)) {
             return false;
         }
-        System.out.println("hitTest : mCurrentViewport.left : " + mCurrentViewport.left +
-                ", mCurrentViewport.width() : " + mCurrentViewport.width() +
-                " , x : " + x +
-                " , mContentRect.left : " + mContentRect.left +
-                " , mContentRect.width() : " + mContentRect.width());
         dest.set(mCurrentViewport.left
                         + mCurrentViewport.width()
                         * (x - mContentRect.left) / mContentRect.width(),
@@ -269,7 +264,6 @@ public abstract class Chart extends BitmapCachedChart {
             mCurrentViewport.constrainViewport();
             triggerViewportChange();
             lastSpanX = spanX;
-            System.out.println("9528 ScaleGestureDetector onScale");
             return true;
         }
     };
@@ -326,7 +320,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            System.out.println("onDoubleTap");
             if (mDoubleTapToZoom) {
 
                 mZoomer.forceFinished(true);
@@ -340,7 +333,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            System.out.println(" 9528 onScroll");
             if (!isDraggingToMoveEnable()) {
                 onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
@@ -382,7 +374,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            System.out.println("9528 isDraggingToMoveEnable() :" + isDraggingToMoveEnable());
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
 
             fling((int) -velocityX);
