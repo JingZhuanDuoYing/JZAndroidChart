@@ -147,14 +147,26 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     this.maxVisibleEntryCount = maxVisibleEntryCount;
   }
 
+  public int getMaxVisibleEntryCount() {
+    return maxVisibleEntryCount;
+  }
+
   @Override
   public void setMinVisibleEntryCount(int minVisibleEntryCount) {
     this.minVisibleEntryCount = minVisibleEntryCount;
   }
 
+  public int getMinVisibleEntryCount() {
+    return minVisibleEntryCount;
+  }
+
   @Override
   public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
     this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+  }
+
+  public int getDefaultVisibleEntryCount() {
+    return defaultVisibleEntryCount;
   }
 
   @Override
