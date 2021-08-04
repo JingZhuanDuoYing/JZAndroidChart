@@ -65,7 +65,6 @@ public class CombineChart extends BaseChart {
 
     public void setCombineData(final CombineData combineData) {
         cleanAllDataSet();
-
         for (LineDataSet lineDataSet : combineData.getLineData()) {
             addDataSet(lineDataSet);
         }

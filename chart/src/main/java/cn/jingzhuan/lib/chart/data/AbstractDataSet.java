@@ -103,34 +103,39 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
     int from = Math.round(viewport.left * listSize);
     int to = Math.round(viewport.right * listSize);
-
-    if (Float.compare(viewport.width(), 1f) == 0
-        && defaultVisibleEntryCount > 0
-        && defaultVisibleEntryCount < listSize) {
-      from = to - defaultVisibleEntryCount;
-      viewport.left = from / (float) listSize;
-    } else {
-      if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
-        from = to - maxVisibleEntryCount;
-        viewport.left = from / (float) listSize;
-      }
-      if (minVisibleEntryCount > 0
-          && minVisibleEntryCount < listSize
-          && to - from < minVisibleEntryCount) {
-        if (to >= minVisibleEntryCount) {
-          from = to - minVisibleEntryCount;
-          //防止越界
-          if (from < 0) {
-            from = 0;
-          }
+    if (listSize <= 500){
+      if (Float.compare(viewport.width(), 1f) == 0
+              && defaultVisibleEntryCount > 0
+              && defaultVisibleEntryCount < listSize) {
+        from = to - defaultVisibleEntryCount;
+        if (viewport.left == 0)
           viewport.left = from / (float) listSize;
-        } else {
-          to = from + minVisibleEntryCount;
-          //防止越界
-          if (to >= listSize) {
-            to = listSize - 1;
+      } else {
+        if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
+          from = to - maxVisibleEntryCount;
+          if (viewport.left == 0)
+            viewport.left = from / (float) listSize;
+        }
+        if (minVisibleEntryCount > 0
+                && minVisibleEntryCount < listSize
+                && to - from < minVisibleEntryCount) {
+          if (to >= minVisibleEntryCount) {
+            from = to - minVisibleEntryCount;
+            //防止越界
+            if (from < 0) {
+              from = 0;
+            }
+            if (viewport.left == 0)
+              viewport.left = from / (float) listSize;
+          } else {
+            to = from + minVisibleEntryCount;
+            //防止越界
+            if (to >= listSize) {
+              to = listSize - 1;
+            }
+            if (viewport.right == 1)
+              viewport.right = to / (float) listSize;
           }
-          viewport.right = to / (float) listSize;
         }
       }
     }

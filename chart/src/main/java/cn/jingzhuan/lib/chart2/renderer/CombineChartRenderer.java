@@ -33,6 +33,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     private Boolean showRange = false;
     private CombineData combineData;
+    private  int lastDataSize = 0;
 
     public CombineChartRenderer(final Chart chart) {
         super(chart);
@@ -125,6 +126,26 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void addDataSet(AbstractDataSet dataSet) {
 
         getChartData().add(dataSet);
+//        System.out.println("952999viewPort++++++++ : " + mViewport);
+//        System.out.println("加载数据的增加的addDataSet size : " + dataSet.getValues().size());
+//        System.out.println("加载数据的增加的lastDataSize size : " + lastDataSize);
+        int dataSize = dataSet.getValues().size();
+        if (lastDataSize== 0) lastDataSize = dataSize;
+        if (dataSize > dataSet.getMaxVisibleEntryCount()  && lastDataSize != dataSize && dataSize - lastDataSize >= 100){
+//            System.out.println("加载数据后的增加的lastDataSize size : " + lastDataSize);
+//            System.out.println("加载数据后的增加的DataSize  : " + dataSize);
+//            System.out.println("加载数据后的增加的的viewPort++++++++ : " + mViewport);
+            int from = Math.round(mViewport.left * lastDataSize ) + (dataSize - lastDataSize);
+            int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
+            mViewport.left = from / (float)dataSize;
+            mViewport.right = to / (float)dataSize;
+//            System.out.println("加载数据后的增加的后面的viewPort++++++++ : " + mViewport);
+//            System.out.println("加载数据后的增加的from from: " + from);
+//            System.out.println("加载数据后的增加的to to: " + to);
+             lastDataSize = dataSize;
+
+        }
+
 
         if (dataSet instanceof LineDataSet) {
             lineRenderer.addDataSet((LineDataSet) dataSet);
@@ -138,6 +159,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
 
         calcDataSetMinMax();
+
     }
 
     @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
