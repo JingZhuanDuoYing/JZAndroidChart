@@ -79,6 +79,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         if (dataSet == null) return;
         getChartData().add(dataSet);
         calcDataSetMinMax();
+        System.out.println("AbstractDataRenderer addDataSet");
     }
 
     public abstract void removeDataSet(T dataSet);

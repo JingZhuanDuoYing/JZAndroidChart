@@ -19,6 +19,7 @@ import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
+import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart.component.Axis;
@@ -60,6 +61,8 @@ public abstract class Chart extends BitmapCachedChart {
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
     protected OnViewportChangeListener mInternalViewportChangeListener;
+    protected OnLoadMoreKlineListener mOnLoadMoreKlineListener;
+
 
     /**
      * The scaling factor for a single zoom 'step'.
@@ -83,6 +86,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean isShowRange = false;
 
     protected Highlight[] mHighlights;
+
+    protected boolean canLoadMore = true;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -362,6 +367,13 @@ public abstract class Chart extends BitmapCachedChart {
             if (canScrollX && scrolledX < 0) {
                 mEdgeEffectLeft.onPull(scrolledX / (float) mContentRect.width());
                 mEdgeEffectLeftActive = true;
+                if (canLoadMore && mOnLoadMoreKlineListener != null) {
+                    mOnLoadMoreKlineListener.onLoadMoreKline(scrolledX);
+                }
+                System.out.println("mEdgeEffectLeft true");
+                canLoadMore = false;
+            } else {
+                canLoadMore = true;
             }
             if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width()) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
@@ -401,6 +413,8 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     private void fling(int velocityX) {
+        if (!canLoadMore) return;
+
         releaseEdgeEffects();
         // Flings use math in pixels (as opposed to math based on the viewport).
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
@@ -647,6 +661,7 @@ public abstract class Chart extends BitmapCachedChart {
             mEdgeEffectLeft.setSize(mContentRect.height(), mContentRect.width());
             if (mEdgeEffectLeft.draw(canvas)) {
                 needsInvalidate = true;
+                System.out.println("mEdgeEffectLeft needsInvalidate");
             }
             canvas.restoreToCount(restoreCount);
         }
@@ -806,6 +821,9 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setRangeEnable(boolean showRange) {
         isShowRange = showRange;
+    }
+    public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
+        this.mOnLoadMoreKlineListener = onLoadMoreKlineListener;
     }
 }
 

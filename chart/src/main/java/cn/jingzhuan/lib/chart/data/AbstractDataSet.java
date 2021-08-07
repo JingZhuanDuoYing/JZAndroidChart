@@ -100,7 +100,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     ArrayList<T> backUpList = new ArrayList<>(getValues());
     //防止多次调用
     int listSize = backUpList.size();
-
     int from = Math.round(viewport.left * listSize);
     int to = Math.round(viewport.right * listSize);
     if (listSize <= 500){
@@ -139,7 +138,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
         }
       }
     }
-
     return backUpList.subList(from, to);
   }
 

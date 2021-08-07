@@ -30,6 +30,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected CandlestickChartRenderer candlestickChartRenderer;
     protected ScatterChartRenderer scatterChartRenderer;
     public RangeRenderer rangeRenderer;//K线区域选择的renderer
+    private Chart chart;
 
     private Boolean showRange = false;
     private CombineData combineData;
@@ -43,6 +44,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer = initCandlestickChartRenderer(chart);
         scatterChartRenderer = initScatterChartRenderer(chart);
         rangeRenderer = initRangeChartRenderer(chart);
+        this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override public void onViewportChange(Viewport viewport) {
@@ -132,19 +134,21 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         int dataSize = dataSet.getValues().size();
         if (lastDataSize== 0) lastDataSize = dataSize;
         if (dataSize > dataSet.getMaxVisibleEntryCount()  && lastDataSize != dataSize && dataSize - lastDataSize >= 100){
-//            System.out.println("加载数据后的增加的lastDataSize size : " + lastDataSize);
-//            System.out.println("加载数据后的增加的DataSize  : " + dataSize);
-//            System.out.println("加载数据后的增加的的viewPort++++++++ : " + mViewport);
+            System.out.println("加载数据后的增加的lastDataSize size : " + lastDataSize);
+            System.out.println("加载数据后的增加的DataSize  : " + dataSize);
+            System.out.println("加载数据后的增加的的viewPort++++++++ : " + mViewport);
             int from = Math.round(mViewport.left * lastDataSize ) + (dataSize - lastDataSize);
             int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
             mViewport.left = from / (float)dataSize;
             mViewport.right = to / (float)dataSize;
-//            System.out.println("加载数据后的增加的后面的viewPort++++++++ : " + mViewport);
-//            System.out.println("加载数据后的增加的from from: " + from);
-//            System.out.println("加载数据后的增加的to to: " + to);
+            chart.setCurrentViewport(mViewport);
+            System.out.println("加载数据后的增加的后面的viewPort++++++++ : " + mViewport);
+            System.out.println("加载数据后的增加的from from: " + from);
+            System.out.println("加载数据后的增加的to to: " + to);
              lastDataSize = dataSize;
-
         }
+        System.out.println("加载数据后的addDataSet++++++++ : " + mViewport);
+
 
 
         if (dataSet instanceof LineDataSet) {
@@ -159,7 +163,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
 
         calcDataSetMinMax();
-
     }
 
     @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
