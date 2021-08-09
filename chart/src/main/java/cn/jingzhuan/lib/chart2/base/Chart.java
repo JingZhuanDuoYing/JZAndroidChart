@@ -370,7 +370,6 @@ public abstract class Chart extends BitmapCachedChart {
                 if (canLoadMore && mOnLoadMoreKlineListener != null) {
                     mOnLoadMoreKlineListener.onLoadMoreKline(scrolledX);
                 }
-                System.out.println("mEdgeEffectLeft true");
                 canLoadMore = false;
             } else {
                 canLoadMore = true;
@@ -661,7 +660,6 @@ public abstract class Chart extends BitmapCachedChart {
             mEdgeEffectLeft.setSize(mContentRect.height(), mContentRect.width());
             if (mEdgeEffectLeft.draw(canvas)) {
                 needsInvalidate = true;
-                System.out.println("mEdgeEffectLeft needsInvalidate");
             }
             canvas.restoreToCount(restoreCount);
         }
