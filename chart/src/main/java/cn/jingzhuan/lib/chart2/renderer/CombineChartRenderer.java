@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
+import cn.jingzhuan.lib.chart.utils.RequestDataType;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -128,26 +129,18 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void addDataSet(AbstractDataSet dataSet) {
 
         getChartData().add(dataSet);
-//        System.out.println("952999viewPort++++++++ : " + mViewport);
-//        System.out.println("加载数据的增加的addDataSet size : " + dataSet.getValues().size());
-//        System.out.println("加载数据的增加的lastDataSize size : " + lastDataSize);
         int dataSize = dataSet.getValues().size();
         if (lastDataSize== 0) lastDataSize = dataSize;
-        if (dataSize > dataSet.getMaxVisibleEntryCount()  && lastDataSize != dataSize && dataSize - lastDataSize >= 100){
-            System.out.println("加载数据后的增加的lastDataSize size : " + lastDataSize);
-            System.out.println("加载数据后的增加的DataSize  : " + dataSize);
-            System.out.println("加载数据后的增加的的viewPort++++++++ : " + mViewport);
-            int from = Math.round(mViewport.left * lastDataSize ) + (dataSize - lastDataSize);
-            int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
-            mViewport.left = from / (float)dataSize;
-            mViewport.right = to / (float)dataSize;
-            chart.setCurrentViewport(mViewport);
-            System.out.println("加载数据后的增加的后面的viewPort++++++++ : " + mViewport);
-            System.out.println("加载数据后的增加的from from: " + from);
-            System.out.println("加载数据后的增加的to to: " + to);
-             lastDataSize = dataSize;
+        if (RequestDataType.DATA_TYPE == RequestDataType.DATA_TYPE_RANGE){
+            if (lastDataSize != dataSize){
+                int from = Math.round(mViewport.left * lastDataSize ) + (dataSize - lastDataSize);
+                int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
+                mViewport.left = from / (float)dataSize;
+                mViewport.right = to / (float)dataSize;
+                chart.setCurrentViewport(mViewport);
+                lastDataSize = dataSize;
+            }
         }
-        System.out.println("加载数据后的addDataSet++++++++ : " + mViewport);
 
 
 

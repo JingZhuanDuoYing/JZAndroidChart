@@ -4,6 +4,8 @@ import android.graphics.Color;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import cn.jingzhuan.lib.chart.utils.RequestDataType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,17 +104,15 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
     int listSize = backUpList.size();
     int from = Math.round(viewport.left * listSize);
     int to = Math.round(viewport.right * listSize);
-    if (listSize <= 500){
+    if (RequestDataType.DATA_TYPE != RequestDataType.DATA_TYPE_RANGE){
       if (Float.compare(viewport.width(), 1f) == 0
               && defaultVisibleEntryCount > 0
               && defaultVisibleEntryCount < listSize) {
         from = to - defaultVisibleEntryCount;
-        if (viewport.left == 0)
           viewport.left = from / (float) listSize;
       } else {
         if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
           from = to - maxVisibleEntryCount;
-          if (viewport.left == 0)
             viewport.left = from / (float) listSize;
         }
         if (minVisibleEntryCount > 0
@@ -124,7 +124,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
             if (from < 0) {
               from = 0;
             }
-            if (viewport.left == 0)
               viewport.left = from / (float) listSize;
           } else {
             to = from + minVisibleEntryCount;
@@ -132,7 +131,6 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
             if (to >= listSize) {
               to = listSize - 1;
             }
-            if (viewport.right == 1)
               viewport.right = to / (float) listSize;
           }
         }
