@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CombineData;
@@ -77,6 +78,9 @@ public class CombineChart extends BaseChart {
         for (ScatterDataSet scatterDataSet : combineData.getScatterData()) {
             addDataSet(scatterDataSet);
         }
+        for (PointLineDataSet pointLineDataSet : combineData.getPointLineData()) {
+            addDataSet(pointLineDataSet);
+        }
     }
 
     public <T extends AbstractDataSet> void setData(List<T> data) {
@@ -97,6 +101,10 @@ public class CombineChart extends BaseChart {
 
     public List<CandlestickDataSet> getCandlestickDataSet() {
         return getRenderer().getChartData().getCandlestickData();
+    }
+
+    public List<PointLineDataSet> getPointLineDataSet() {
+        return getRenderer().getChartData().getPointLineData();
     }
 
     public List<ScatterDataSet> getScatterDataSet() {
