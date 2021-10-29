@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
+
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
@@ -28,6 +29,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +40,9 @@ import java.util.List;
 
 public abstract class Chart extends BitmapCachedChart {
 
-    protected AxisY mAxisLeft   = new AxisY(AxisY.LEFT_INSIDE);
-    protected AxisY mAxisRight  = new AxisY(AxisY.RIGHT_INSIDE);
-    protected AxisX mAxisTop    = new AxisX(AxisX.TOP);
+    protected AxisY mAxisLeft = new AxisY(AxisY.LEFT_INSIDE);
+    protected AxisY mAxisRight = new AxisY(AxisY.RIGHT_INSIDE);
+    protected AxisX mAxisTop = new AxisX(AxisX.TOP);
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     // State objects and values related to gesture tracking.
@@ -88,6 +90,10 @@ public abstract class Chart extends BitmapCachedChart {
     protected Highlight[] mHighlights;
 
     protected boolean canLoadMore = true;
+
+    private float scaleSensitivity = 1f;
+    private boolean canZoomIn = true;
+    private boolean canZoomOut = true;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -251,6 +257,27 @@ public abstract class Chart extends BitmapCachedChart {
 
             float spanX = scaleGestureDetector.getCurrentSpanX();
 
+            boolean zoomIn = lastSpanX > spanX;
+            boolean zoomOut = spanX > lastSpanX;
+
+            if (zoomIn) {
+                setCanZoomOut(true);
+                if (!canZoomOut)
+                    return false;
+            }
+
+            if (zoomOut) {
+                setCanZoomIn(true);
+                if (!canZoomOut)
+                    return false;
+            }
+
+
+            if (zoomIn)
+                lastSpanX *= scaleSensitivity;
+            else if (zoomOut)
+                lastSpanX /= scaleSensitivity;
+
             float newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
             if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
@@ -259,6 +286,12 @@ public abstract class Chart extends BitmapCachedChart {
 
             float focusX = scaleGestureDetector.getFocusX();
             float focusY = scaleGestureDetector.getFocusY();
+
+            if (zoomIn)
+                focusX *= scaleSensitivity;
+            else if (zoomOut)
+                focusX /= scaleSensitivity;
+
             hitTest(focusX, focusY, viewportFocus);
 
             mCurrentViewport.left = viewportFocus.x
@@ -293,7 +326,8 @@ public abstract class Chart extends BitmapCachedChart {
             return true;
         }
 
-        @Override public void onLongPress(MotionEvent e) {
+        @Override
+        public void onLongPress(MotionEvent e) {
             onTouchPoint(e);
             e.setAction(MotionEvent.ACTION_UP);
             mGestureDetector.onTouchEvent(e);
@@ -520,7 +554,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         mZoomFocalPoint.set(forceX,
-            (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+                (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
     }
 
@@ -722,6 +756,30 @@ public abstract class Chart extends BitmapCachedChart {
         this.mDoubleTapToZoom = doubleTapToZoom;
     }
 
+    public float getScaleSensitivity() {
+        return scaleSensitivity;
+    }
+
+    public void setScaleSensitivity(float scaleSensitivity) {
+        this.scaleSensitivity = scaleSensitivity;
+    }
+
+    public boolean isCanZoomIn() {
+        return canZoomIn;
+    }
+
+    public void setCanZoomIn(boolean canZoomIn) {
+        this.canZoomIn = canZoomIn;
+    }
+
+    public boolean isCanZoomOut() {
+        return canZoomOut;
+    }
+
+    public void setCanZoomOut(boolean canZoomOut) {
+        this.canZoomOut = canZoomOut;
+    }
+
     public interface OnTouchPointChangeListener {
         void touch(float x, float y);
     }
@@ -761,7 +819,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         float moveDistance = mContentRect.width() * percent;
         int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
-            / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+                / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
         if (!mScroller.isFinished()) {
             mScroller.forceFinished(true);
         }
@@ -776,7 +834,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         float moveDistance = mContentRect.width() * percent;
         int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
-            / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+                / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
         if (!mScroller.isFinished()) {
             mScroller.forceFinished(true);
         }
@@ -785,7 +843,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     public void setInternalViewportChangeListener(
-        OnViewportChangeListener mInternalViewportChangeListener) {
+            OnViewportChangeListener mInternalViewportChangeListener) {
         this.mInternalViewportChangeListener = mInternalViewportChangeListener;
     }
 
@@ -820,6 +878,7 @@ public abstract class Chart extends BitmapCachedChart {
     public void setRangeEnable(boolean showRange) {
         isShowRange = showRange;
     }
+
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
         this.mOnLoadMoreKlineListener = onLoadMoreKlineListener;
     }
