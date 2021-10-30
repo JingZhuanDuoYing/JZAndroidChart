@@ -256,9 +256,9 @@ public abstract class Chart extends BitmapCachedChart {
             if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
 
             float spanX = scaleGestureDetector.getCurrentSpanX();
-
             boolean zoomIn = lastSpanX > spanX;
             boolean zoomOut = spanX > lastSpanX;
+            boolean canZoom =Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
             if (zoomIn) {
                 setCanZoomOut(true);
@@ -272,13 +272,23 @@ public abstract class Chart extends BitmapCachedChart {
                     return false;
             }
 
+            float scaleSpanX = lastSpanX;
+            if (canZoom) {
+                if (zoomIn)
+                    lastSpanX = lastSpanX * scaleSensitivity;
+                else if (zoomOut)
+                    scaleSpanX = spanX * scaleSensitivity;
+            }
 
-            if (zoomIn)
-                lastSpanX *= scaleSensitivity;
-            else if (zoomOut)
-                lastSpanX /= scaleSensitivity;
+            float newWidth;
+            if (canZoom) {
+                if (zoomOut)
+                    newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
+                else
+                    newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
-            float newWidth = lastSpanX / spanX * mCurrentViewport.width();
+            } else
+                newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
             if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
                 return true;
@@ -287,10 +297,15 @@ public abstract class Chart extends BitmapCachedChart {
             float focusX = scaleGestureDetector.getFocusX();
             float focusY = scaleGestureDetector.getFocusY();
 
-            if (zoomIn)
-                focusX *= scaleSensitivity;
-            else if (zoomOut)
-                focusX /= scaleSensitivity;
+
+            if (canZoom) {
+                if (zoomIn)
+                    focusX *= scaleSensitivity;
+                else if (zoomOut)
+                    focusX /= scaleSensitivity;
+            }
+
+
 
             hitTest(focusX, focusY, viewportFocus);
 
