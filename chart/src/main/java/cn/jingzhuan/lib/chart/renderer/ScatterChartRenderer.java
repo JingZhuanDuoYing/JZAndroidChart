@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
+
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -126,7 +128,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     return super.getEntryIndexByCoordinate(x, y);
   }
 
-  @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+  @Override public void renderHighlighted(Canvas canvas, @NotNull Highlight[] highlights) {
   }
 
   @Override public void removeDataSet(ScatterDataSet dataSet) {
