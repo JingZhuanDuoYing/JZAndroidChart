@@ -20,11 +20,11 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
   public final static String ARROW_LEFT = "←";
   public final static String ARROW_RIGHT = "→";
 
-  private Paint mPaint;
+  private final Paint mPaint;
 
   private final char[] mLabelBuffer = new char[20];
 
-  private Rect mTextBounds = new Rect();
+  private final Rect mTextBounds = new Rect();
 
   private float currentMaxValue = -1f;
   private float currentMinValue = -1f;
@@ -33,6 +33,32 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     super(candlestickDataSet.getValues(), candlestickDataSet.getAxisDependency());
 
     setMinValueCount(candlestickDataSet.getMinValueCount());
+
+    setMinVisibleEntryCount(candlestickDataSet.getMinVisibleEntryCount());
+    setMaxVisibleEntryCount(candlestickDataSet.getMaxVisibleEntryCount());
+    setDefaultVisibleEntryCount(candlestickDataSet.getDefaultVisibleEntryCount());
+
+    setTag(candlestickDataSet.getTag());
+    setDecreasingPaintStyle(candlestickDataSet.getDecreasingPaintStyle());
+    setDecreasingColor(candlestickDataSet.getDecreasingColor());
+    setIncreasingPaintStyle(candlestickDataSet.getIncreasingPaintStyle());
+    setIncreasingColor(candlestickDataSet.getIncreasingColor());
+    setNeutralColor(candlestickDataSet.getNeutralColor());
+    setLimitUpColor(candlestickDataSet.getLimitUpColor());
+    setLimitUpColor20(candlestickDataSet.getLimitUpColor20());
+    setGapColor(candlestickDataSet.getGapColor());
+
+    setAutoWidth(candlestickDataSet.isAutoWidth());
+    setCandleWidth(candlestickDataSet.getCandleWidth());
+    setCandleWidthPercent(candlestickDataSet.getCandleWidthPercent());
+
+    setHighlightedHorizontalEnable(candlestickDataSet.isHighlightedHorizontalEnable());
+    setHighlightedVerticalEnable(candlestickDataSet.isHighlightedVerticalEnable());
+
+    setEnable(candlestickDataSet.isEnable());
+    setEnableGap(candlestickDataSet.isEnableGap());
+    setStrokeThickness(candlestickDataSet.getStrokeThickness());
+    setVisible(candlestickDataSet.isVisible());
 
     mPaint = new Paint(ANTI_ALIAS_FLAG);
     mPaint.setColor(0xffA1abbb);
