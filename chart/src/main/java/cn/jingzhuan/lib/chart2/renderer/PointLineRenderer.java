@@ -4,9 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;

@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;

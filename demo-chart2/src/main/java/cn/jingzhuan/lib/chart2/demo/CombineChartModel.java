@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart2.demo;
 
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.graphics.Color;
 
 import android.view.View;

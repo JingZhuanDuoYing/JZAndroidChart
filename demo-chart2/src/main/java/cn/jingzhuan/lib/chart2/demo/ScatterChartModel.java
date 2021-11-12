@@ -1,8 +1,8 @@
 package cn.jingzhuan.lib.chart2.demo;
 
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.graphics.drawable.Drawable;
-import android.support.v7.content.res.AppCompatResources;
+import androidx.appcompat.content.res.AppCompatResources;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;

@@ -2,7 +2,7 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 

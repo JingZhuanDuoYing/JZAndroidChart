@@ -6,7 +6,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;

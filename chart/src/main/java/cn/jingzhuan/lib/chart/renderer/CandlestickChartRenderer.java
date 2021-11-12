@@ -3,7 +3,7 @@ package cn.jingzhuan.lib.chart.renderer;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;

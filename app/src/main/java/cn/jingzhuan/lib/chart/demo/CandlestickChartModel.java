@@ -1,8 +1,8 @@
 package cn.jingzhuan.lib.chart.demo;
 
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.base.Chart;
@@ -12,7 +12,7 @@ import cn.jingzhuan.lib.chart.demo.databinding.LayoutBarChartBinding;
 import cn.jingzhuan.lib.chart.demo.databinding.LayoutCombineChartBinding;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnEntryClickListener;
-import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator;
+
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyModelClass;

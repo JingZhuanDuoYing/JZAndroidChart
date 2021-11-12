@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart2.demo;
 
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 /**
  * Application

@@ -8,10 +8,13 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
-import android.support.annotation.FloatRange;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.FloatRange;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.view.ScaleGestureDetectorCompat;
+
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -258,7 +261,7 @@ public abstract class Chart extends BitmapCachedChart {
             float spanX = scaleGestureDetector.getCurrentSpanX();
             boolean zoomIn = lastSpanX > spanX;
             boolean zoomOut = spanX > lastSpanX;
-            boolean canZoom =Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
+            boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
             if (zoomIn) {
                 setCanZoomOut(true);
@@ -286,7 +289,6 @@ public abstract class Chart extends BitmapCachedChart {
                     newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
                 else
                     newWidth = lastSpanX / spanX * mCurrentViewport.width();
-
             } else
                 newWidth = lastSpanX / spanX * mCurrentViewport.width();
 
@@ -297,15 +299,12 @@ public abstract class Chart extends BitmapCachedChart {
             float focusX = scaleGestureDetector.getFocusX();
             float focusY = scaleGestureDetector.getFocusY();
 
-
             if (canZoom) {
                 if (zoomIn)
                     focusX *= scaleSensitivity;
                 else if (zoomOut)
                     focusX /= scaleSensitivity;
             }
-
-
 
             hitTest(focusX, focusY, viewportFocus);
 
@@ -453,7 +452,11 @@ public abstract class Chart extends BitmapCachedChart {
         if (mOnViewportChangeListeners != null && !mOnViewportChangeListeners.isEmpty()) {
             synchronized (this) {
                 for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
-                    mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+                    try {
+                        mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+                    } catch (Exception e) {
+                        Log.e("Chart", "onViewportChange", e);
+                    }
                 }
             }
         }

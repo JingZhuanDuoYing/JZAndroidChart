@@ -4,9 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import android.util.Log;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;

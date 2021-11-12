@@ -1,7 +1,7 @@
 package cn.jingzhuan.lib.chart2.demo;
 
-import android.databinding.ViewDataBinding;
-import android.support.v4.view.PagerAdapter;
+import androidx.databinding.ViewDataBinding;
+import androidx.viewpager.widget.PagerAdapter;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutViewPagerBinding;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyAttribute;
