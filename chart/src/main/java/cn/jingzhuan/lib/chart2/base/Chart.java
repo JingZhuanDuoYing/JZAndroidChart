@@ -75,9 +75,9 @@ public abstract class Chart extends BitmapCachedChart {
      * @see #zoomIn()
      * @see #zoomOut()
      */
-    private static final float ZOOM_AMOUNT = 0.25f;
+    private static final float ZOOM_AMOUNT = 0.2f;
 
-    private Point mSurfaceSizeBuffer = new Point();
+    private final Point mSurfaceSizeBuffer = new Point();
 
 
     // Edge effect / overscroll tracking objects.
@@ -222,6 +222,7 @@ public abstract class Chart extends BitmapCachedChart {
         if (!mContentRect.contains((int) x, (int) y)) {
             return false;
         }
+
         dest.set(mCurrentViewport.left
                         + mCurrentViewport.width()
                         * (x - mContentRect.left) / mContentRect.width(),
@@ -316,6 +317,7 @@ public abstract class Chart extends BitmapCachedChart {
             mCurrentViewport.constrainViewport();
             triggerViewportChange();
             lastSpanX = spanX;
+
             return true;
         }
     };
@@ -335,6 +337,7 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
+
             postInvalidateOnAnimation();
 
             return true;
@@ -446,6 +449,8 @@ public abstract class Chart extends BitmapCachedChart {
     };
 
     protected void triggerViewportChange() {
+        postInvalidateOnAnimation();
+
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
         }
@@ -460,7 +465,6 @@ public abstract class Chart extends BitmapCachedChart {
                 }
             }
         }
-        postInvalidateOnAnimation();
     }
 
     private void fling(int velocityX) {
