@@ -262,6 +262,7 @@ public abstract class Chart extends BitmapCachedChart {
             float spanX = scaleGestureDetector.getCurrentSpanX();
             boolean zoomIn = lastSpanX > spanX;
             boolean zoomOut = spanX > lastSpanX;
+
             boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
             if (zoomIn) {
