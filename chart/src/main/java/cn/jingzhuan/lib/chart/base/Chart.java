@@ -8,9 +8,9 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
-import android.support.annotation.FloatRange;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.FloatRange;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -72,9 +72,9 @@ public abstract class Chart extends BitmapCachedChart {
      * @see #zoomIn()
      * @see #zoomOut()
      */
-    private static final float ZOOM_AMOUNT = 0.25f;
+    private static final float ZOOM_AMOUNT = 0.2f;
 
-    private Point mSurfaceSizeBuffer = new Point();
+    private final Point mSurfaceSizeBuffer = new Point();
 
 
     // Edge effect / overscroll tracking objects.
@@ -235,7 +235,6 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!mScaleGestureEnable) return super.onScaleBegin(scaleGestureDetector);
-
             lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
@@ -261,7 +260,6 @@ public abstract class Chart extends BitmapCachedChart {
             mCurrentViewport.left = viewportFocus.x
                     - newWidth * (focusX - mContentRect.left)
                     / mContentRect.width();
-
             mCurrentViewport.right = mCurrentViewport.left + newWidth;
             mCurrentViewport.constrainViewport();
             triggerViewportChange();
@@ -286,6 +284,7 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
+
             postInvalidateOnAnimation();
 
             return true;
@@ -397,6 +396,8 @@ public abstract class Chart extends BitmapCachedChart {
     };
 
     protected void triggerViewportChange() {
+        postInvalidateOnAnimation();
+
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
         }
@@ -407,7 +408,6 @@ public abstract class Chart extends BitmapCachedChart {
                 }
             }
         }
-        postInvalidateOnAnimation();
     }
 
     private void fling(int velocityX) {

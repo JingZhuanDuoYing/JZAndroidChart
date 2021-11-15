@@ -1,10 +1,10 @@
 package cn.jingzhuan.lib.chart.demo;
 
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.support.v7.content.res.AppCompatResources;
+import androidx.appcompat.content.res.AppCompatResources;
 import android.widget.Toast;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;

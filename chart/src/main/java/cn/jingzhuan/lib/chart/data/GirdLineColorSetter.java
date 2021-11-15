@@ -1,6 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 /**
  * Created by donglua on 11/13/17.
