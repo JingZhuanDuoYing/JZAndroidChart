@@ -15,6 +15,8 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.PartLineData;
+import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.base.Chart;
@@ -33,6 +35,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     private List<Shader> shaderPathColors;
     private List<Path> linePaths;
     private Path shaderPath;
+    private List<PartLineData> partLineDatas;
 
     private boolean onlyLines = false;
 
@@ -43,6 +46,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPath = new Path();
         shaderPaths = new ArrayList<>();
         shaderPathColors = new ArrayList<>();
+        partLineDatas = new ArrayList<>();
 
         if (chart instanceof LineChart) {
             onlyLines = true;
@@ -167,6 +171,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPathColors.clear();
 
         linePaths.clear();
+        partLineDatas.clear();
 
         boolean isFirst = true;
 
@@ -227,6 +232,19 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
 
             point.setCoordinate(xPosition, yPosition);
+
+            if (i > 1 && lineDataSet.isPartLine()){
+                PointValue lastPoint = lineDataSet.getEntryForIndex( i - 1);
+                boolean split  = point.getPathColor() != lastPoint.getPathColor();
+                if (split){
+                    partLineDatas.add(new PartLineData(linePath,lastPoint.getPathColor()));
+                    linePath = new Path();
+                    linePath.moveTo(lastPoint.getX(),lastPoint.getY());
+                }
+                if (i == lineDataSet.getValues().size() -1){
+                    partLineDatas.add(new PartLineData(linePath,point.getPathColor()));
+                }
+            }
 
             if (isFirst) {
                 if (!point.isPathEnd()) {
@@ -349,8 +367,16 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         if (lineDataSet.isLineVisible()) {
-            for (Path path : linePaths) {
-                canvas.drawPath(path, mRenderPaint);
+            if (lineDataSet.isPartLine()){
+                for (PartLineData partLineData : partLineDatas) {
+                    mRenderPaint.setColor(partLineData.getColor());
+                    canvas.drawPath(partLineData.getPath(),mRenderPaint);
+                }
+            }else {
+                for (Path path : linePaths) {
+                    canvas.drawPath(path, mRenderPaint);
+                }
+
             }
         }
     }

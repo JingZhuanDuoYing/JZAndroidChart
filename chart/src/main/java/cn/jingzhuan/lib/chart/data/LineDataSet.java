@@ -26,6 +26,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     private float mShaderBaseValue = Float.NaN;
 
     private boolean isLineVisible = true;
+    private boolean isPartLine = false;
 
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
@@ -190,4 +191,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         return isLineVisible;
     }
 
+    public boolean isPartLine() {
+        return isPartLine;
+    }
+
+    public void setPartLine(boolean partLine) {
+        isPartLine = partLine;
+    }
 }

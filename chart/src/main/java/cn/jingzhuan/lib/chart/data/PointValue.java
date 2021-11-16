@@ -8,6 +8,7 @@ public class PointValue extends Value {
 
     private float value;
     private boolean isPathEnd = false;
+    private int pathColor = -1; //多段path 不同颜色 应用于:神龙趋势线
 
     public PointValue(float value) {
         this.value = value;
@@ -35,4 +36,17 @@ public class PointValue extends Value {
     public boolean isValueNaN() {
         return Float.isNaN(value);
     }
+
+    public int getPathColor() {
+        return pathColor;
+    }
+
+    public void setPathColor(int pathColor) {
+        this.pathColor = pathColor;
+    }
+
+    public boolean applyMultiPath() {
+        return pathColor != -1;
+    }
+
 }

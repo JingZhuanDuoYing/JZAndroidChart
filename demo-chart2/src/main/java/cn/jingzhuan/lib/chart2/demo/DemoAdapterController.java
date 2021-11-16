@@ -32,8 +32,8 @@ public class DemoAdapterController extends EpoxyController {
     @Override
     protected void buildModels() {
 
-//        new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
-//        lineChartModel.addTo(this);
+        new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
+        lineChartModel.addTo(this);
 
 //        new LayoutDescTextBindingModel_().id("Minute").text("Minute Chart").addTo(this);
 //        minuteChartModel.onClickListener(new View.OnClickListener() {
