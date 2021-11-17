@@ -279,7 +279,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     }
 
-    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator)) {
+    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
       ((CandlestickDataSetArrowDecorator) candlestickDataSet).reset();
     }
   }
