@@ -36,6 +36,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
   private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
 
   private boolean mEnableGap = false; // 是否显示缺口
+  private boolean mEnableArrowDecorator = true;
   private SparseArray<Pair<Float, Float>> mLowGaps;
   private SparseArray<Pair<Float, Float>> mHighGaps;
 
@@ -276,5 +277,13 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   public void setCandleWidthPercent(float candleWidthPercent) {
     this.candleWidthPercent = candleWidthPercent;
+  }
+
+  public boolean isEnableArrowDecorator() {
+    return mEnableArrowDecorator;
+  }
+
+  public void setEnableArrowDecorator(boolean mEnableArrowDecorator) {
+    this.mEnableArrowDecorator = mEnableArrowDecorator;
   }
 }

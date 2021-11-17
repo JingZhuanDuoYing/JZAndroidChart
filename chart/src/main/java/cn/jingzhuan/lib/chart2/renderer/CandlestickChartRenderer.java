@@ -270,7 +270,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       canvas.drawLines(mLowerShadowBuffers, mRenderPaint);
 
-      if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
+      if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator && candlestickDataSet.isEnableArrowDecorator()) {
         ((CandlestickDataSetArrowDecorator) candlestickDataSet).draw(canvas, candlestick,
                                                                      mContentRect,
                                                                      (float) candleWidth,
@@ -279,7 +279,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
       }
     }
 
-    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
+    if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator)) {
       ((CandlestickDataSetArrowDecorator) candlestickDataSet).reset();
     }
   }
