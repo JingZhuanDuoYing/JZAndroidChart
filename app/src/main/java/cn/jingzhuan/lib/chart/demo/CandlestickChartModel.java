@@ -125,7 +125,7 @@ public abstract class CandlestickChartModel extends DataBindingEpoxyModel {
     candlestickValues.add(new CandlestickValue(3367.36f, 3341.14f, 3361.45f, 3349.57f));
   }
 
-  @Override protected View buildView(@NonNull ViewGroup parent) {
+  @Override public View buildView(@NonNull ViewGroup parent) {
     View rootView = super.buildView(parent);
 
     final LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();

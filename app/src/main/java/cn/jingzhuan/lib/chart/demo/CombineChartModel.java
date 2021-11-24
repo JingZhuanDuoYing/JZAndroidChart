@@ -87,7 +87,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         line.setHighlightedVerticalEnable(true);
     }
 
-    @Override protected View buildView(ViewGroup parent) {
+    @Override public View buildView(ViewGroup parent) {
         View rootView =  super.buildView(parent);
 
         LayoutCombineChartBinding chartBinding = (LayoutCombineChartBinding) rootView.getTag();

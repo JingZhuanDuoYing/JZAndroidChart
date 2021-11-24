@@ -84,7 +84,7 @@ public abstract class MinuteChartModel extends DataBindingEpoxyModel {
         line.setLastClose(lastClose);
     }
 
-    @Override protected View buildView(ViewGroup parent) {
+    @Override public View buildView(ViewGroup parent) {
         View rootView = super.buildView(parent);
 
         final LayoutMinuteChartBinding minuteBinding = (LayoutMinuteChartBinding) rootView.getTag();

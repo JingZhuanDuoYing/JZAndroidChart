@@ -68,7 +68,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         line = new LineDataSet(values);
     }
 
-    @Override protected View buildView(@NonNull ViewGroup parent) {
+    @Override public View buildView(@NonNull ViewGroup parent) {
         View rootView = super.buildView(parent);
 
         final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();

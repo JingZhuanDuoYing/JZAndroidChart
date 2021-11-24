@@ -73,7 +73,7 @@ public abstract class CandlestickGapChartModel extends DataBindingEpoxyModel {
     candlestickValues.add(new CandlestickValue(34.18f, 31.41f, 32.6f, 33.4f));
   }
 
-  @Override protected View buildView(@NonNull ViewGroup parent) {
+  @Override public View buildView(@NonNull ViewGroup parent) {
     View rootView = super.buildView(parent);
 
     final LayoutCombineChartBinding b = (LayoutCombineChartBinding) rootView.getTag();

@@ -63,30 +63,14 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
                 3145.08f, 3145.06f, 3144.96f, 3143.86f);
 
         List<PointValue> values = new ArrayList<>();
-//        for (Float value: floats) {
-//            values.add(new PointValue(value));
-//        }
-        for (int i = 0; i < floats.size(); i++) {
-            if (i > 20){
-                PointValue pointValue = new PointValue(floats.get(i));
-                pointValue.setPathColor(Color.RED);
-                values.add(pointValue);
-            }
-
-            else{
-                PointValue pointValue = new PointValue(floats.get(i));
-                pointValue.setPathColor(Color.GREEN);
-                values.add(pointValue);
-            }
-
+        for (Float value: floats) {
+            values.add(new PointValue(value));
         }
 
-
         line = new LineDataSet(values);
-        line.setPartLine(true);
     }
 
-    @Override protected View buildView(@NonNull ViewGroup parent) {
+    @Override public View buildView(@NonNull ViewGroup parent) {
         View rootView = super.buildView(parent);
 
         final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();

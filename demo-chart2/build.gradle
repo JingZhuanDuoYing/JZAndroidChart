@@ -34,10 +34,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.airbnb.android:epoxy:2.19.0'
-    implementation 'com.airbnb.android:epoxy-databinding:2.19.0'
+    implementation 'com.airbnb.android:epoxy:4.6.2'
+    implementation 'com.airbnb.android:epoxy-databinding:4.6.2'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
-    kapt 'com.airbnb.android:epoxy-processor:2.19.0'
+    kapt 'com.airbnb.android:epoxy-processor:4.6.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

@@ -43,7 +43,7 @@ public abstract class BarChartClickableModel extends DataBindingEpoxyModel {
     barDataSet.setAutoBarWidth(true);
   }
 
-  @Override protected View buildView(final ViewGroup parent) {
+  @Override public View buildView(final ViewGroup parent) {
     View rootView = super.buildView(parent);
 
     LayoutBarChartClickableItemBinding barBinding = (LayoutBarChartClickableItemBinding) rootView.getTag();
