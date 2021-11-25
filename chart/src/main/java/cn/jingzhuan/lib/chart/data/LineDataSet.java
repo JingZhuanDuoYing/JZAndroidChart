@@ -26,7 +26,8 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     private float mShaderBaseValue = Float.NaN;
 
     private boolean isLineVisible = true;
-    private boolean isPartLine = false;
+    private boolean isPartLine = false; // 线段
+    private boolean isDrawBand = false; // 带状线
 
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
@@ -102,6 +103,19 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
 
         if (e.getValue() > mViewportYMax)
             mViewportYMax = e.getValue();
+
+        if (isDrawBand){
+            if (e.getSecondValue() < e.getValue()){
+                if (e.getSecondValue() < mViewportYMin)
+                mViewportYMin = e.getSecondValue();
+            }
+
+            if (e.getSecondValue() > e.getValue()){
+                if (e.getSecondValue() > mViewportYMax)
+                    mViewportYMax = e.getSecondValue();
+            }
+
+        }
     }
 
     @Override
@@ -198,4 +212,14 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     public void setPartLine(boolean partLine) {
         isPartLine = partLine;
     }
+
+    public boolean isDrawBand() {
+        return isDrawBand;
+    }
+
+    public void setDrawBand(boolean drawBand) {
+        isDrawBand = drawBand;
+    }
+
+
 }

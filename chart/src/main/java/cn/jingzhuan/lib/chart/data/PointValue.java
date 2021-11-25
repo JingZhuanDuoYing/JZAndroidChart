@@ -8,10 +8,17 @@ public class PointValue extends Value {
 
     private float value;
     private boolean isPathEnd = false;
-    private int pathColor = -1; //多段path 不同颜色 应用于:神龙趋势线
+    private int pathColor = -1; //多段path 不同颜色 应用于: 指标 神龙趋势线
+    private float secondValue; //第二条数据 应用于: 指标 高抛低吸
+    private float secondY;//第二条数据: y轴坐标
 
     public PointValue(float value) {
         this.value = value;
+    }
+
+    public PointValue(float value, float secondValue) {
+        this.value = value;
+        this.secondValue = secondValue;
     }
 
     public PointValue() {
@@ -49,4 +56,19 @@ public class PointValue extends Value {
         return pathColor != -1;
     }
 
+    public float getSecondValue() {
+        return secondValue;
+    }
+
+    public void setSecondValue(float secondValue) {
+        this.secondValue = secondValue;
+    }
+
+    public float getSecondY() {
+        return secondY;
+    }
+
+    public void setSecondY(float secondY) {
+        this.secondY = secondY;
+    }
 }

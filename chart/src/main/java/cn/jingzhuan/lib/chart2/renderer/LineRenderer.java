@@ -1,12 +1,19 @@
 package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Region;
 import android.graphics.Shader;
+import android.os.Build;
+import android.text.style.TtsSpan;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -24,7 +31,7 @@ import cn.jingzhuan.lib.chart2.widget.LineChart;
 
 /**
  * Line Renderer
- *
+ * <p>
  * Created by Donglua on 17/7/19.
  */
 
@@ -107,19 +114,19 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
             if (highlight != null) {
                 canvas.drawLine(highlight.getX(),
-                    0,
-                    highlight.getX(),
-                    mContentRect.bottom,
-                    mRenderPaint);
+                        0,
+                        highlight.getX(),
+                        mContentRect.bottom,
+                        mRenderPaint);
 
                 // Horizontal
                 for (LineDataSet lineDataSet : getDataSet()) {
                     if (lineDataSet.isHighlightedHorizontalEnable()) {
                         canvas.drawLine(0,
-                            highlight.getY(),
-                            mContentRect.right,
-                            highlight.getY(),
-                            mRenderPaint);
+                                highlight.getY(),
+                                mContentRect.right,
+                                highlight.getY(),
+                                mRenderPaint);
                     }
                 }
             }
@@ -127,12 +134,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mRenderPaint.setPathEffect(null);
     }
 
-    @Override public void removeDataSet(LineDataSet dataSet) {
+    @Override
+    public void removeDataSet(LineDataSet dataSet) {
         lineData.remove(dataSet);
         calcDataSetMinMax();
     }
 
-    @Override public void clearDataSet() {
+    @Override
+    public void clearDataSet() {
         lineData.clear();
         calcDataSetMinMax();
     }
@@ -142,12 +151,14 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         return lineData.getDataSets();
     }
 
-    @Override public ChartData<LineDataSet> getChartData() {
+    @Override
+    public ChartData<LineDataSet> getChartData() {
         if (lineData == null) lineData = new LineData();
         return lineData;
     }
 
-    @Override protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
         for (LineDataSet dataSet : getDataSet()) {
             if (dataSet.isVisible()) {
                 drawDataSet(canvas, dataSet,
@@ -158,7 +169,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     private void drawDataSet(Canvas canvas, final LineDataSet lineDataSet,
-        float lMax, float lMin, float rMax, float rMin) {
+                             float lMax, float lMin, float rMax, float rMin) {
 
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());
@@ -190,26 +201,26 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         final float count = lineDataSet.getVisibleRange(mViewport);
-        final float width = count > 0 ? (mContentRect.width() / count): 0;
+        final float width = count > 0 ? (mContentRect.width() / count) : 0;
 
         final int offset = lineDataSet.getStartIndexOffset();
 
         final float scale = 1 / mViewport.width();
         final float step = (valueCount > 1 && onlyLines) ?
-            (mContentRect.width() * scale / (valueCount - 1)) : (mContentRect.width() * scale / valueCount);
+                (mContentRect.width() * scale / (valueCount - 1)) : (mContentRect.width() * scale / valueCount);
         final float startX = mContentRect.left + (onlyLines ? 0f : step * 0.5f) - mViewport.left * mContentRect.width() * scale;
 
         PointValue prevValue = null;
 
         boolean shaderSplit = !Float.isNaN(lineDataSet.getShaderBaseValue()) &&
-                              lineDataSet.getShaderBaseValue() < max &&
-                              lineDataSet.getShaderBaseValue() > min;
+                lineDataSet.getShaderBaseValue() < max &&
+                lineDataSet.getShaderBaseValue() > min;
 
         int lastIndex = 0;
         if (mChartAnimator.getPhaseX() > 0) {
-          lastIndex = (int) (Math.floor(lineDataSet.getValues().size() * mChartAnimator.getPhaseX()) - 1);
+            lastIndex = (int) (Math.floor(lineDataSet.getValues().size() * mChartAnimator.getPhaseX()) - 1);
         }
-        
+
         if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
         PointValue startPoint = null;
@@ -221,6 +232,15 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         float splitStartBaseX = 0;
         int i = 0;
         float preBaseX = Float.NaN;
+
+        if (lineDataSet.isDrawBand()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, offset, max, min);
+                return;
+            }
+
+        }
+
         for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
@@ -233,19 +253,21 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
             point.setCoordinate(xPosition, yPosition);
 
-            if (i > 1 && lineDataSet.isPartLine()){
-                PointValue lastPoint = lineDataSet.getEntryForIndex( i - 1);
-                boolean split  = point.getPathColor() != lastPoint.getPathColor();
-                if (split){
-                    partLineDatas.add(new PartLineData(linePath,lastPoint.getPathColor()));
+            //分段线条
+            if (i > 1 && lineDataSet.isPartLine()) {
+                PointValue lastPoint = lineDataSet.getEntryForIndex(i - 1);
+                boolean split = point.getPathColor() != lastPoint.getPathColor();
+                if (split) {
+                    partLineDatas.add(new PartLineData(linePath, lastPoint.getPathColor()));
                     linePath = new Path();
-                    linePath.moveTo(lastPoint.getX(),lastPoint.getY());
+                    linePath.moveTo(lastPoint.getX(), lastPoint.getY());
                 }
-                if (i == lineDataSet.getValues().size() -1){
-                    partLineDatas.add(new PartLineData(linePath,point.getPathColor()));
+                if (i == lineDataSet.getValues().size() - 1) {
+                    partLineDatas.add(new PartLineData(linePath, point.getPathColor()));
                 }
             }
 
+            //普通线条
             if (isFirst) {
                 if (!point.isPathEnd()) {
                     isFirst = false;
@@ -260,6 +282,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 }
             }
 
+            //阴影
             if (shaderSplit) {
                 float baseValue = lineDataSet.getShaderBaseValue();
                 float baseValueY = mContentRect.height() / (max - min) * (max - baseValue);
@@ -367,18 +390,176 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
 
         if (lineDataSet.isLineVisible()) {
-            if (lineDataSet.isPartLine()){
+            if (lineDataSet.isPartLine()) {
                 for (PartLineData partLineData : partLineDatas) {
                     mRenderPaint.setColor(partLineData.getColor());
-                    canvas.drawPath(partLineData.getPath(),mRenderPaint);
+                    canvas.drawPath(partLineData.getPath(), mRenderPaint);
                 }
-            }else {
+            } else {
                 for (Path path : linePaths) {
                     canvas.drawPath(path, mRenderPaint);
                 }
 
             }
         }
+    }
+
+    /**
+     * 绘制带状线
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void drawBand(Canvas canvas, LineDataSet lineDataSet, int valuePhaseCount, float startX, float step, int offset, float max, float min) {
+        int i = 0;
+        Path cache1 = new Path();
+        Path cache2 = new Path();
+        //当数据1 > 数据2 将cache1连接控件底部形成不规则封闭图形 cache2连接控件顶部 取交集部分绘制
+        boolean isCloseToBottom;
+        boolean preStatus = false;
+        boolean newPath = true;
+        float pathStartX = 0;
+
+        ArrayList<PartLineData> paths = new ArrayList<>();
+
+
+        for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
+            PointValue point = lineDataSet.getEntryForIndex(i);
+
+            if (point.isValueNaN()) {
+                continue;
+            }
+
+            isCloseToBottom = point.getValue() > point.getSecondValue();
+//
+
+
+            float xPosition = startX + step * (i + offset);
+            float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
+            float secondYPosition = (max - point.getSecondValue()) / (max - min) * mContentRect.height();
+
+            point.setCoordinate(xPosition, yPosition);
+            point.setSecondY(secondYPosition);
+
+
+            if (newPath) {
+                cache1.moveTo(xPosition, yPosition);
+                cache2.moveTo(xPosition, secondYPosition);
+                newPath = false;
+                pathStartX = xPosition;
+            } else {
+                cache1.lineTo(xPosition, yPosition);
+                cache2.lineTo(xPosition, secondYPosition);
+            }
+
+            if (i == lineDataSet.getValues().size() - 1) { //结尾部分
+
+                //找到上一个点 做为起点
+                PointValue prePoint = lineDataSet.getEntryForIndex(i - 1);
+                boolean special = prePoint.getValue() > prePoint.getSecondValue();
+                if (special != isCloseToBottom){
+                    if (special) {
+                        cache1.lineTo(xPosition, mContentRect.height());
+                        cache1.lineTo(pathStartX, mContentRect.height());
+                        cache2.lineTo(xPosition, 0);
+                        cache2.lineTo(pathStartX, 0);
+                    } else {
+                        cache2.lineTo(xPosition, mContentRect.height());
+                        cache2.lineTo(pathStartX, mContentRect.height());
+                        cache1.lineTo(xPosition, 0);
+                        cache1.lineTo(pathStartX, 0);
+                    }
+                    cache1.close();
+                    cache2.close();
+                    cache1.op(cache2, Path.Op.INTERSECT);
+                    paths.add(new PartLineData(cache1, prePoint.getPathColor()));
+
+                    cache1 = new Path();
+                    cache2 = new Path();
+
+                    pathStartX = prePoint.getX();
+
+                    //相交代表 本来数据比较高的线变成低 低的线变成高
+
+
+                    cache1.moveTo(prePoint.getX(), prePoint.getY());
+                    cache1.lineTo(xPosition, yPosition);
+
+                    cache2.moveTo(prePoint.getX(), prePoint.getSecondY());
+                    cache2.lineTo(xPosition, secondYPosition);
+
+                }
+
+                    if (isCloseToBottom) {
+                        cache1.lineTo(xPosition, mContentRect.height());
+                        cache1.lineTo(pathStartX, mContentRect.height());
+                        cache2.lineTo(xPosition, 0);
+                        cache2.lineTo(pathStartX, 0);
+                    } else {
+                        cache2.lineTo(xPosition, mContentRect.height());
+                        cache2.lineTo(pathStartX, mContentRect.height());
+                        cache1.lineTo(xPosition, 0);
+                        cache1.lineTo(pathStartX, 0);
+                    }
+
+
+
+                cache1.close();
+                cache2.close();
+
+                cache1.op(cache2, Path.Op.INTERSECT);
+                paths.add(new PartLineData(cache1, point.getPathColor()));
+
+            } else {
+                if (preStatus != isCloseToBottom && i > 0) { //相交  两个值 高的连接底部 低的连接顶部
+                    if (isCloseToBottom) {
+                        cache2.lineTo(xPosition, mContentRect.height());
+                        cache2.lineTo(pathStartX, mContentRect.height());
+                        cache1.lineTo(xPosition, 0);
+                        cache1.lineTo(pathStartX, 0);
+                    } else {
+                        cache1.lineTo(xPosition, mContentRect.height());
+                        cache1.lineTo(pathStartX, mContentRect.height());
+                        cache2.lineTo(xPosition, 0);
+                        cache2.lineTo(pathStartX, 0);
+                    }
+                    cache1.close();
+                    cache2.close();
+                    cache1.op(cache2, Path.Op.INTERSECT);
+
+
+                    //找到上一个点 做为起点
+                    PointValue prePoint = lineDataSet.getEntryForIndex(i - 1);
+
+                    paths.add(new PartLineData(cache1, prePoint.getPathColor()));
+                    cache1 = new Path();
+                    cache2 = new Path();
+
+                    pathStartX = prePoint.getX();
+
+                    //相交代表 本来数据比较高的线变成低 低的线变成高
+
+
+                    cache1.moveTo(prePoint.getX(), prePoint.getY());
+                    cache1.lineTo(xPosition, yPosition);
+
+                    cache2.moveTo(prePoint.getX(), prePoint.getSecondY());
+                    cache2.lineTo(xPosition, secondYPosition);
+
+
+                }
+
+            }
+
+            preStatus = isCloseToBottom;
+        }
+
+        if (!paths.isEmpty()) {
+            for (PartLineData pathData : paths) {
+                mRenderPaint.setColor(pathData.getColor());
+                mRenderPaint.setStyle(Paint.Style.FILL);
+                canvas.drawPath(pathData.getPath(), mRenderPaint);
+            }
+        }
+
     }
 
     private float getBaseX(PointValue p1, PointValue p2, float baseY) {
