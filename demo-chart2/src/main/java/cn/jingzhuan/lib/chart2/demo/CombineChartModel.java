@@ -5,8 +5,12 @@ import android.graphics.Color;
 
 import android.view.View;
 import android.view.ViewGroup;
+
+import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
@@ -17,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterTextValue;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
 
 /**
@@ -25,9 +31,10 @@ import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineChartBinding;
 @EpoxyModelClass(layout = R.layout.layout_combine_chart)
 public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
-    private BarDataSet barDataSet;
+    private CandlestickDataSet barDataSet;
     private LineDataSet line;
-
+    List<ScatterTextValue> scatterTextValues = new ArrayList<>();
+    List<CandlestickValue> candlestickValues = new ArrayList<>();
     public CombineChartModel() {
 
         List<BarValue> barValueList = new ArrayList<>();
@@ -42,9 +49,30 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         barValueList.add(new BarValue(3));
         barValueList.add(new BarValue(5));
 
-        barDataSet = new BarDataSet(barValueList, AxisY.DEPENDENCY_RIGHT);
-        barDataSet.setAutoBarWidth(true);
+        candlestickValues.add(new CandlestickValue(3145.27f, 3117.44f, 3123.88f, 3134.57f));
+        candlestickValues.add(new CandlestickValue(3152.94f, 3131.41f, 3132.91f, 3140.85f));
+        candlestickValues.add(new CandlestickValue(3155.00f, 3097.33f, 3131.35f, 3152.18f));
+        candlestickValues.add(new CandlestickValue(3154.72f, 3136.58f, 3144.02f, 3154.65f));
+        candlestickValues.add(new CandlestickValue(3154.78f, 3136.54f, 3147.22f, 3143.70f));
+        candlestickValues.add(new CandlestickValue(3148.29f, 3123.75f, 3138.31f, 3135.35f));
+        candlestickValues.add(new CandlestickValue(3143.82f, 3111.38f, 3127.11f, 3127.37f));
+        candlestickValues.add(new CandlestickValue(3117.61f, 3092.09f, 3114.77f, 3103.04f));
+        candlestickValues.add(new CandlestickValue(3093.44f, 3067.68f, 3090.07f, 3078.61f));
+        candlestickValues.add(new CandlestickValue(3152.94f, 3131.41f, 3132.91f, 3140.85f));
+        barDataSet = new CandlestickDataSet(candlestickValues, AxisY.DEPENDENCY_BOTH);
+        barDataSet.setAutoWidth(true);
         barDataSet.setColor(Color.DKGRAY);
+
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(false,Float.NaN,0));
+        scatterTextValues.add(new ScatterTextValue(true,3093.44f, 5));
+        scatterTextValues.add(new ScatterTextValue(true,3152f, 3131.41f));
 
 
         final List<Float> floats = Arrays.asList(3134.55f, 3134.62f, 3134.34f, 3133.53f, 3133.37f,
@@ -85,6 +113,8 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         }
         line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
         line.setHighlightedVerticalEnable(true);
+
+
     }
 
     @Override public View buildView(ViewGroup parent) {
@@ -94,7 +124,15 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         chartBinding.combineChart.addDataSet(barDataSet);
-        chartBinding.combineChart.addDataSet(line);
+//        chartBinding.combineChart.addDataSet(line);
+        ScatterTextDataSet textDataSet = new ScatterTextDataSet(scatterTextValues);
+        textDataSet.setText("加自选");
+        textDataSet.setLineColor(Color.RED);
+        textDataSet.setTextBgColor(Color.BLACK);
+        textDataSet.setTextSize(40);
+
+        chartBinding.combineChart.addDataSet(textDataSet);
+
 
         return rootView;
     }

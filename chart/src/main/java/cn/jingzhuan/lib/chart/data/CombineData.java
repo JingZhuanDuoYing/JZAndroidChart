@@ -18,6 +18,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
 
     private PointLineData pointLineData;
+    private ScatterTextData scatterTextData;
 
     public CombineData() {
         barData = new BarData();
@@ -25,6 +26,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         candlestickData = new CandlestickData();
         scatterData = new ScatterData();
         pointLineData = new PointLineData();
+        scatterTextData = new ScatterTextData();
     }
 
     public List<BarDataSet> getBarData() {
@@ -65,6 +67,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public ScatterData getScatterChartData() {
         return scatterData;
     }
+    public List<ScatterTextDataSet> getScatterTextData() {
+        return scatterTextData.getDataSets();
+    }
+
+    public ScatterTextData getScatterTextChartData(){return  scatterTextData;}
 
     public boolean addDataSet(BarDataSet dataSet) {
         return barData.add(dataSet);
@@ -84,6 +91,9 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public boolean addDataSet(PointLineDataSet dataSet){
         return  pointLineData.add(dataSet);
     }
+    public boolean addDataSet(ScatterTextDataSet dataSet){
+        return  scatterTextData.add(dataSet);
+    }
 
     public void setCombineData(CombineData combineData) {
         this.leftMin = combineData.leftMin;
@@ -96,30 +106,35 @@ public class CombineData extends ChartData<AbstractDataSet> {
         candlestickData.setLeftMax(leftMax);
         scatterData.setLeftMax(leftMax);
         pointLineData.setLeftMax(leftMax);
+        scatterTextData.setLeftMax(leftMax);
 
         barData.setLeftMin(leftMin);
         lineData.setLeftMin(leftMin);
         candlestickData.setLeftMin(leftMin);
         scatterData.setLeftMin(leftMin);
         pointLineData.setLeftMin(leftMin);
+        scatterTextData.setLeftMin(leftMin);
 
         barData.setRightMax(rightMax);
         lineData.setRightMax(rightMax);
         candlestickData.setRightMax(rightMax);
         scatterData.setRightMax(rightMax);
         pointLineData.setRightMax(rightMax);
+        scatterTextData.setRightMax(rightMax);
 
         barData.setRightMin(rightMin);
         lineData.setRightMin(rightMin);
         candlestickData.setRightMin(rightMin);
         scatterData.setRightMin(rightMin);
         pointLineData.setRightMin(rightMin);
+        scatterTextData.setRightMin(rightMin);
 
         barData.getDataSets().addAll(combineData.getBarData());
         lineData.getDataSets().addAll(combineData.getLineData());
         candlestickData.getDataSets().addAll(combineData.getCandlestickData());
         scatterData.getDataSets().addAll(combineData.getScatterData());
         pointLineData.getDataSets().addAll(combineData.getPointLineData());
+        scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
     }
 
     @Override public void calcMaxMin(Viewport viewport, Rect content) {
@@ -168,30 +183,41 @@ public class CombineData extends ChartData<AbstractDataSet> {
             rightMax = Math.max(pointLineData.rightMax, rightMax);
         }
 
+        if (!scatterTextData.getDataSets().isEmpty()) {
+            scatterTextData.calcMaxMin(viewport, content);
+            leftMin = Math.min(scatterTextData.leftMin, leftMin);
+            leftMax = Math.max(scatterTextData.leftMax, leftMax);
+            rightMin = Math.min(scatterTextData.rightMin, rightMin);
+            rightMax = Math.max(scatterTextData.rightMax, rightMax);
+        }
 
         barData.setLeftMax(leftMax);
         lineData.setLeftMax(leftMax);
         candlestickData.setLeftMax(leftMax);
         scatterData.setLeftMax(leftMax);
         pointLineData.setLeftMax(leftMax);
+        scatterTextData.setLeftMax(leftMax);
 
         barData.setLeftMin(leftMin);
         lineData.setLeftMin(leftMin);
         candlestickData.setLeftMin(leftMin);
         scatterData.setLeftMin(leftMin);
         pointLineData.setLeftMin(leftMin);
+        scatterTextData.setLeftMin(leftMin);
 
         barData.setRightMax(rightMax);
         lineData.setRightMax(rightMax);
         candlestickData.setRightMax(rightMax);
         scatterData.setRightMax(rightMax);
         pointLineData.setRightMax(rightMax);
+        scatterTextData.setRightMax(rightMax);
 
         barData.setRightMin(rightMin);
         lineData.setRightMin(rightMin);
         candlestickData.setRightMin(rightMin);
         scatterData.setRightMin(rightMin);
         pointLineData.setRightMin(rightMin);
+        scatterTextData.setRightMin(rightMin);
 
         setMinMax();
     }
@@ -212,6 +238,9 @@ public class CombineData extends ChartData<AbstractDataSet> {
         }
         if (e instanceof PointLineDataSet){
             return  addDataSet((PointLineDataSet)e);
+        }
+        if (e instanceof ScatterTextDataSet){
+            return  addDataSet((ScatterTextDataSet) e);
         }
         return super.add(e);
     }

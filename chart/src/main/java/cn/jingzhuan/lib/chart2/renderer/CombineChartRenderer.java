@@ -13,6 +13,7 @@ import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
 import cn.jingzhuan.lib.chart.utils.RequestDataType;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -33,6 +34,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected ScatterChartRenderer scatterChartRenderer;
     public RangeRenderer rangeRenderer;//K线区域选择的renderer
     protected PointLineRenderer pointLineRenderer;
+    protected ScatterTextRenderer scatterTextRenderer;
     private Chart chart;
 
     private Boolean showRange = false;
@@ -48,6 +50,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterChartRenderer = initScatterChartRenderer(chart);
         rangeRenderer = initRangeChartRenderer(chart);
         pointLineRenderer = initPointLineRenderer(chart);
+        scatterTextRenderer = initScatterTextRenderer(chart);
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
@@ -57,6 +60,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             }
         });
         showRange = chart.getRangeEnable();
+    }
+
+    private ScatterTextRenderer initScatterTextRenderer(Chart chart) {
+        return new ScatterTextRenderer(chart);
     }
 
     private PointLineRenderer initPointLineRenderer(Chart chart) {
@@ -95,7 +102,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterChartRenderer.renderDataSet(canvas, getChartData().getScatterChartData());
         if (showRange) rangeRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
         pointLineRenderer.renderDataSet(canvas,getChartData().getPointLineChartData());
-
+        scatterTextRenderer.renderDataSet(canvas,getChartData().getScatterTextChartData());
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
@@ -166,6 +173,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             scatterChartRenderer.addDataSet((ScatterDataSet) dataSet);
         } else if (dataSet instanceof PointLineDataSet){
             pointLineRenderer.addDataSet((PointLineDataSet)dataSet);
+        }else  if (dataSet instanceof ScatterTextDataSet){
+            scatterTextRenderer.addDataSet((ScatterTextDataSet) dataSet);
         }
 
         calcDataSetMinMax();
@@ -180,6 +189,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         rangeRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         pointLineRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
+        scatterTextRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
     @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
@@ -191,6 +201,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         rangeRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         pointLineRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
+        scatterTextRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
     @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
@@ -202,6 +213,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         rangeRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         pointLineRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
+        scatterTextRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
     @Override public void removeDataSet(AbstractDataSet dataSet) {
@@ -218,6 +230,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         cleanCandlestickDataSet();
         cleanScatterDataSet();
         cleanPointLineDataSet();
+        cleanScatterTextDataSet();
 
         calcDataSetMinMax();
     }
@@ -246,6 +259,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         getChartData().getPointLineChartData().clear();
     }
 
+    public void cleanScatterTextDataSet(){
+        scatterTextRenderer.clearDataSet();
+        getChartData().getScatterTextChartData().clear();
+    }
+
     @Override
     protected List<AbstractDataSet> getDataSet() {
         return combineData.getDataSets();
@@ -264,6 +282,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.scatterChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.rangeRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.pointLineRenderer.enableHighlightDashPathEffect(intervals, phase);
+        this.scatterTextRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
     @Override public void setTypeface(Typeface tf) {
@@ -273,6 +292,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.scatterChartRenderer.setTypeface(tf);
         this.rangeRenderer.setTypeface(tf);
         this.pointLineRenderer.setTypeface(tf);
+        this.scatterTextRenderer.setTypeface(tf);
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {
@@ -290,6 +310,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
         if (!getChartData().getPointLineData().isEmpty()) {
             return pointLineRenderer.getEntryIndexByCoordinate(x, y);
+        }
+        if (!getChartData().getScatterTextData().isEmpty()) {
+            return scatterTextRenderer.getEntryIndexByCoordinate(x, y);
         }
 
         return super.getEntryIndexByCoordinate(x, y);

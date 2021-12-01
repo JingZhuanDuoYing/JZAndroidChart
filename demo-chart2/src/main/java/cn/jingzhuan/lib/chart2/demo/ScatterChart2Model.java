@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.content.res.AppCompatResources;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterTextValue;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutScatterChartBinding;

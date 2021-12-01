@@ -14,6 +14,7 @@ import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
@@ -79,6 +80,9 @@ public class CombineChart extends BaseChart {
             addDataSet(scatterDataSet);
         }
         for (PointLineDataSet pointLineDataSet : combineData.getPointLineData()) {
+            addDataSet(pointLineDataSet);
+        }
+        for (ScatterTextDataSet pointLineDataSet : combineData.getScatterTextData()) {
             addDataSet(pointLineDataSet);
         }
     }

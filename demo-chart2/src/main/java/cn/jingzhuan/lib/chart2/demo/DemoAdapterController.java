@@ -50,8 +50,8 @@ public class DemoAdapterController extends EpoxyController {
         new LayoutDescTextBindingModel_().id("Combine").text("Combine Chart").addTo(this);
         combineChartModel_.addTo(this);
 
-//        new LayoutDescTextBindingModel_().id("Candlestick").text("Candlestick Chart").addTo(this);
-//        candlestickChartModel_.addTo(this);
+        new LayoutDescTextBindingModel_().id("Candlestick").text("Candlestick Chart").addTo(this);
+        candlestickChartModel_.addTo(this);
 
 //        new LayoutDescTextBindingModel_().id("View Pager").text("ViewPager").addTo(this);
 //        viewPagerModel_.pagerAdapter(new ChartViewPagerAdapter(context)).addTo(this);
