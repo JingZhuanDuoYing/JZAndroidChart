@@ -267,7 +267,7 @@ public abstract class Chart extends BitmapCachedChart {
 
             if (zoomIn) {
                 setCanZoomOut(true);
-                if (!canZoomOut)
+                if (!canZoomIn)
                     return false;
             }
 
