@@ -131,8 +131,8 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         textDataSet.setTextBgColor(Color.BLACK);
         textDataSet.setTextSize(40);
 
+        chartBinding.combineChart.setMinVisibleEntryCount(10);
         chartBinding.combineChart.addDataSet(textDataSet);
-
 
         return rootView;
     }

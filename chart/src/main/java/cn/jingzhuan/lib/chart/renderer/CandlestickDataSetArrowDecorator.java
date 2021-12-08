@@ -60,6 +60,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     setStrokeThickness(candlestickDataSet.getStrokeThickness());
     setVisible(candlestickDataSet.isVisible());
 
+    setTag(candlestickDataSet.getTag());
+
     mPaint = new Paint(ANTI_ALIAS_FLAG);
     mPaint.setColor(0xffA1abbb);
     mPaint.setTextSize(30);
