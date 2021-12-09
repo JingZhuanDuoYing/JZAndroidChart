@@ -260,8 +260,8 @@ public abstract class Chart extends BitmapCachedChart {
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
             float spanX = scaleGestureDetector.getCurrentSpanX();
-            boolean zoomOut = lastSpanX > spanX;
-            boolean zoomIn = spanX > lastSpanX;
+            boolean zoomOut = lastSpanX > spanX; // 双指距离比上次小，为缩小
+            boolean zoomIn = spanX > lastSpanX; // 双指距离比上次大，为放大
 
             boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
@@ -279,15 +279,16 @@ public abstract class Chart extends BitmapCachedChart {
 
             float scaleSpanX = lastSpanX;
             if (canZoom) {
-                if (zoomIn)
+                if (zoomOut) {
                     lastSpanX = lastSpanX * scaleSensitivity;
-                else if (zoomOut)
+                } else if (zoomIn) {
                     scaleSpanX = spanX * scaleSensitivity;
+                }
             }
 
             float newWidth;
             if (canZoom) {
-                if (zoomOut)
+                if (zoomIn)
                     newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
                 else
                     newWidth = lastSpanX / spanX * mCurrentViewport.width();
@@ -302,9 +303,9 @@ public abstract class Chart extends BitmapCachedChart {
             float focusY = scaleGestureDetector.getFocusY();
 
             if (canZoom) {
-                if (zoomIn)
+                if (zoomOut)
                     focusX *= scaleSensitivity;
-                else if (zoomOut)
+                else if (zoomIn)
                     focusX /= scaleSensitivity;
             }
 
