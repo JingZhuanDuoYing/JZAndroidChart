@@ -98,45 +98,25 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   }
 
   public List<T> getVisiblePoints(Viewport viewport) {
-    //生成一个拷贝,利用不可变的思想保证这里不存在并发问题
-    ArrayList<T> backUpList = new ArrayList<>(getValues());
-    //防止多次调用
-    int listSize = backUpList.size();
+    ArrayList<T> allValue = new ArrayList<>(getValues());
+    int listSize = allValue.size();
+
     int from = Math.round(viewport.left * listSize);
     int to = Math.round(viewport.right * listSize);
-    if (RequestDataType.DATA_TYPE != RequestDataType.DATA_TYPE_RANGE){
-      if (Float.compare(viewport.width(), 1f) == 0
-              && defaultVisibleEntryCount > 0
-              && defaultVisibleEntryCount < listSize) {
-        from = to - defaultVisibleEntryCount;
-//          viewport.left = from / (float) listSize;
-      } else {
-        if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
-          from = to - maxVisibleEntryCount;
-//            viewport.left = from / (float) listSize;
-        }
-        if (minVisibleEntryCount > 0
-                && minVisibleEntryCount < listSize
-                && to - from < minVisibleEntryCount) {
-          if (to >= minVisibleEntryCount) {
-            from = to - minVisibleEntryCount;
-            //防止越界
-            if (from < 0) {
-              from = 0;
-            }
-//              viewport.left = from / (float) listSize;
-          } else {
-            to = from + minVisibleEntryCount;
-            //防止越界
-            if (to >= listSize) {
-              to = listSize - 1;
-            }
-//              viewport.right = to / (float) listSize;
-          }
-        }
-      }
+
+    if (listSize <= minVisibleEntryCount) {
+      return allValue;
     }
-    return backUpList.subList(from, to);
+
+    return safeSubList(allValue, from, to);
+  }
+
+  private List<T> safeSubList(List<T> list, int from, int to) {
+    if (list == null || list.isEmpty()) return list;
+    int size = list.size();
+    int safeFrom =  (from >= size) ? 0 : from;
+    int safeTo = Math.min(to, size);
+    return list.subList(safeFrom, safeTo);
   }
 
   public float getVisibleRange(Viewport viewport) {
