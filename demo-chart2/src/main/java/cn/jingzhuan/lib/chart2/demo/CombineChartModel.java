@@ -124,7 +124,7 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
 
         chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         chartBinding.combineChart.addDataSet(barDataSet);
-//        chartBinding.combineChart.addDataSet(line);
+        chartBinding.combineChart.addDataSet(line);
         ScatterTextDataSet textDataSet = new ScatterTextDataSet(scatterTextValues);
         textDataSet.setText("加自选");
         textDataSet.setLineColor(Color.RED);

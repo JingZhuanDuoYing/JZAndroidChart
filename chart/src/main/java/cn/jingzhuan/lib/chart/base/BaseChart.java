@@ -24,6 +24,7 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AbstractDataRenderer;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
+import cn.jingzhuan.lib.chart2.renderer.LineRenderer;
 
 import static cn.jingzhuan.lib.chart.animation.Easing.*;
 
@@ -197,6 +198,11 @@ public class BaseChart extends Chart {
         drawEdgeEffectsUnclipped(canvas);
         renderHighlighted(canvas);
     }
+
+    public void highLightDisMiss(){
+
+    }
+
 
     public void renderHighlighted(Canvas canvas) {
         if (mRenderer != null && getHighlights() != null) {

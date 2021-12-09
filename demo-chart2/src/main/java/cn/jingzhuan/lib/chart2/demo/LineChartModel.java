@@ -27,6 +27,7 @@ import static cn.jingzhuan.lib.chart.Viewport.*;
 public abstract class LineChartModel extends DataBindingEpoxyModel {
 
     private LineDataSet line;
+    private LineDataSet line2;
 
     public LineChartModel() {
 
@@ -67,7 +68,12 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
             values.add(new PointValue(value));
         }
 
+
         line = new LineDataSet(values);
+        line2 = new LineDataSet(values);
+        line2.setZCYLX(true);
+        line2.setTag("MA5");
+        line2.setColor(Color.RED);
     }
 
     @Override public View buildView(@NonNull ViewGroup parent) {
@@ -77,6 +83,8 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
         bd.lineChart.setDoubleTapToZoom(true);
         bd.lineChart.addLine(line);
+        bd.lineChart.addLine(line2);
+
 
         bd.btMoveLeft.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
