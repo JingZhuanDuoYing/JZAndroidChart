@@ -2,10 +2,13 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.text.style.TtsSpan;
 
@@ -15,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -26,6 +30,8 @@ import cn.jingzhuan.lib.chart.data.PartLineData;
 import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart2.TimeUtil;
+import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.widget.LineChart;
 
@@ -45,9 +51,13 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     private List<PartLineData> partLineDatas;
 
     private boolean onlyLines = false;
+    private boolean isDrawHighLight = false;
+    private Paint mTextPaint;
+    private Chart chart;
 
     public LineRenderer(final Chart chart) {
         super(chart);
+        this.chart = chart;
 
         linePaths = new ArrayList<>();
         shaderPath = new Path();
@@ -58,6 +68,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         if (chart instanceof LineChart) {
             onlyLines = true;
         }
+
+        initPaint();
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -71,6 +83,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
             @Override
             public void touch(float x, float y) {
+
                 if (chart.isHighlightDisable()) return;
 
                 synchronized (chart) {
@@ -96,8 +109,23 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                     }
                 }
             }
+
         });
     }
+
+    private void initPaint() {
+        mTextPaint = new Paint();
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setStrokeWidth(8);
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setTextSize(20f);
+    }
+
+
+
+
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
@@ -105,13 +133,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mRenderPaint.setStyle(Paint.Style.FILL);
         mRenderPaint.setStrokeWidth(1f);
         mRenderPaint.setColor(getHighlightColor());
-
-        if (mHighlightedDashPathEffect != null) {
-            mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
-        }
-
         for (Highlight highlight : highlights) {
-
             if (highlight != null) {
                 canvas.drawLine(highlight.getX(),
                         0,
@@ -170,7 +192,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private void drawDataSet(Canvas canvas, final LineDataSet lineDataSet,
                              float lMax, float lMin, float rMax, float rMin) {
-
         mRenderPaint.setStyle(Paint.Style.STROKE);
         mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());
         mRenderPaint.setColor(lineDataSet.getColor());
@@ -238,7 +259,10 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, offset, max, min);
                 return;
             }
-
+        }
+        if (lineDataSet.isZCYLX()) {
+            drawZCYLX(canvas, lineDataSet, linePath, max, min);
+            return;
         }
 
         for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
@@ -404,6 +428,59 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
     }
 
+    private void drawZCYLX(Canvas canvas, LineDataSet lineDataSet, Path linePath, float max, float min) {
+        if (chart instanceof BaseChart){
+            isDrawHighLight = ((BaseChart)chart).getHighlights() != null;
+        }
+        mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));
+        mRenderPaint.setColor(lineDataSet.getColor());
+
+        PointValue value = lineDataSet.getEntryForIndex(lineDataSet.getValues().size() - 1);
+        float yPosition = (max - value.getValue()) / (max - min) * mContentRect.height();
+        linePath.moveTo(0, yPosition);
+        linePath.lineTo(mContentRect.width(), yPosition);
+        canvas.drawPath(linePath, mRenderPaint);
+
+        mRenderPaint.setPathEffect(null);
+        mRenderPaint.setStyle(Paint.Style.FILL);
+        mRenderPaint.setStrokeWidth(2f);
+        mRenderPaint.setTextSize(25f);
+
+        String text = "";
+        if (isDrawHighLight)
+            text = value.getValue() + "";
+        else
+            text = lineDataSet.getTag();
+
+        Rect textBound = new Rect();
+
+        mRenderPaint.getTextBounds(text, 0, text.length(), textBound);
+
+
+        int padding = 10;
+        Rect textRect = new Rect();
+        textRect.left = 0;
+        textRect.top = (int) (yPosition - textBound.height());
+        textRect.right = textBound.width() + padding * 2;
+        textRect.bottom = (int) (yPosition + textBound.height());
+
+        if (TimeUtil.isInTime()){
+            textRect.left = mContentRect.width() - textBound.width() - padding * 2;
+            textRect.right = mContentRect.width();
+        }
+
+
+        canvas.drawRect(textRect, mRenderPaint);
+
+
+        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+        float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
+        float baseline = textRect.centerY() + distance;
+
+
+        canvas.drawText(text, textRect.centerX(), baseline, mTextPaint);
+    }
+
     /**
      * 绘制带状线
      */
@@ -455,7 +532,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 //找到上一个点 做为起点
                 PointValue prePoint = lineDataSet.getEntryForIndex(i - 1);
                 boolean special = prePoint.getValue() > prePoint.getSecondValue();
-                if (special != isCloseToBottom){
+                if (special != isCloseToBottom) {
                     if (special) {
                         cache1.lineTo(xPosition, mContentRect.height());
                         cache1.lineTo(pathStartX, mContentRect.height());
@@ -488,18 +565,17 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
                 }
 
-                    if (isCloseToBottom) {
-                        cache1.lineTo(xPosition, mContentRect.height());
-                        cache1.lineTo(pathStartX, mContentRect.height());
-                        cache2.lineTo(xPosition, 0);
-                        cache2.lineTo(pathStartX, 0);
-                    } else {
-                        cache2.lineTo(xPosition, mContentRect.height());
-                        cache2.lineTo(pathStartX, mContentRect.height());
-                        cache1.lineTo(xPosition, 0);
-                        cache1.lineTo(pathStartX, 0);
-                    }
-
+                if (isCloseToBottom) {
+                    cache1.lineTo(xPosition, mContentRect.height());
+                    cache1.lineTo(pathStartX, mContentRect.height());
+                    cache2.lineTo(xPosition, 0);
+                    cache2.lineTo(pathStartX, 0);
+                } else {
+                    cache2.lineTo(xPosition, mContentRect.height());
+                    cache2.lineTo(pathStartX, mContentRect.height());
+                    cache1.lineTo(xPosition, 0);
+                    cache1.lineTo(pathStartX, 0);
+                }
 
 
                 cache1.close();

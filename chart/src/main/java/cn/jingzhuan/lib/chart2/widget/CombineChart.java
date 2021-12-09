@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -15,9 +16,12 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
+import cn.jingzhuan.lib.chart2.renderer.LineRenderer;
+
 import java.util.List;
 
 /**
@@ -155,4 +159,6 @@ public class CombineChart extends BaseChart {
         }
         return super.onTouchEvent(event);
     }
+
+
 }

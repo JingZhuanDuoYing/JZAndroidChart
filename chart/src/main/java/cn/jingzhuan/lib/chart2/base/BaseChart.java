@@ -166,14 +166,14 @@ public class BaseChart extends Chart {
         }
 
         mHighlights = highlights;
-
+        System.out.println("high light show");
         invalidate();
     }
 
     @Override
     public void cleanHighlight() {
         mHighlights = null;
-
+        System.out.println("high light dismiss");
         if (mHighlightStatusChangeListener != null)
             mHighlightStatusChangeListener.onHighlightHide();
 
