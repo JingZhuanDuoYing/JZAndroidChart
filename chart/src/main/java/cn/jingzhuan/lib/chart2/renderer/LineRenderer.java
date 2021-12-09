@@ -120,7 +120,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mTextPaint.setColor(Color.WHITE);
-        mTextPaint.setTextSize(20f);
+        mTextPaint.setTextSize(25f);
     }
 
 
