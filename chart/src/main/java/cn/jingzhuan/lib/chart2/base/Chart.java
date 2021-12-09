@@ -247,7 +247,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
-            if (!mScaleGestureEnable) return super.onScaleBegin(scaleGestureDetector);
+            if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
 
             lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
@@ -256,8 +256,8 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
 
-            if (!mScaleXEnable) return false;
-            if (!mScaleGestureEnable) return super.onScale(scaleGestureDetector);
+            if (!isScaleXEnable()) return false;
+            if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
             float spanX = scaleGestureDetector.getCurrentSpanX();
             boolean zoomIn = lastSpanX > spanX;
