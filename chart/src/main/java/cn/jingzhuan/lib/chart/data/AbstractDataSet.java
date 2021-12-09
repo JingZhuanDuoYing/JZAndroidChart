@@ -109,11 +109,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
               && defaultVisibleEntryCount > 0
               && defaultVisibleEntryCount < listSize) {
         from = to - defaultVisibleEntryCount;
-          viewport.left = from / (float) listSize;
+//          viewport.left = from / (float) listSize;
       } else {
         if (maxVisibleEntryCount > 0 && to - from > maxVisibleEntryCount) {
           from = to - maxVisibleEntryCount;
-            viewport.left = from / (float) listSize;
+//            viewport.left = from / (float) listSize;
         }
         if (minVisibleEntryCount > 0
                 && minVisibleEntryCount < listSize
@@ -124,14 +124,14 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
             if (from < 0) {
               from = 0;
             }
-              viewport.left = from / (float) listSize;
+//              viewport.left = from / (float) listSize;
           } else {
             to = from + minVisibleEntryCount;
             //防止越界
             if (to >= listSize) {
               to = listSize - 1;
             }
-              viewport.right = to / (float) listSize;
+//              viewport.right = to / (float) listSize;
           }
         }
       }
