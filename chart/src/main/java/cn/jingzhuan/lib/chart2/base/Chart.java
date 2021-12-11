@@ -906,6 +906,12 @@ public abstract class Chart extends BitmapCachedChart {
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
         this.mOnLoadMoreKlineListener = onLoadMoreKlineListener;
     }
+
+    public void finishScroll() {
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
+        }
+    }
 }
 
 
