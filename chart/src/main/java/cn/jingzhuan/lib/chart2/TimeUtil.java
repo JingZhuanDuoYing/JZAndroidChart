@@ -15,14 +15,21 @@ public  class TimeUtil {
      */
     public static boolean isInTime() {
         try {
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-            Date startTime = format.parse("09:30");
-            Date endTime = format.parse("14:00");
+            String date = longToDate();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm");
+            Date startTime = format.parse( date + " 09:30");
+            Date endTime = format.parse(date + " 14:00");
             return startTime.before(new Date()) && endTime.after(new Date());
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    public static String longToDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(System.currentTimeMillis());
     }
 
 }
