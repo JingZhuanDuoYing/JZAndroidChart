@@ -469,6 +469,18 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             textRect.right = mContentRect.width();
         }
 
+        if (textRect.top < 0){
+            int height = textRect.height();
+            textRect.top = 0;
+            textRect.bottom = height;
+        }
+
+        if (textRect.bottom > mContentRect.height()){
+            int height = textRect.height();
+            textRect.bottom = mContentRect.height();
+            textRect.top = mContentRect.height() - height;
+        }
+
 
         canvas.drawRect(textRect, mRenderPaint);
 
