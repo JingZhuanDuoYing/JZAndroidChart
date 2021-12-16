@@ -469,13 +469,13 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             textRect.right = mContentRect.width();
         }
 
-        if (textRect.top < 0){
+        if (textRect.top < 0 && yPosition >=0){
             int height = textRect.height();
             textRect.top = 0;
             textRect.bottom = height;
         }
 
-        if (textRect.bottom > mContentRect.height()){
+        if (textRect.bottom > mContentRect.height() && yPosition <= mContentRect.height()){
             int height = textRect.height();
             textRect.bottom = mContentRect.height();
             textRect.top = mContentRect.height() - height;
