@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 
 /**
  * Created by donglua on 10/19/17.
@@ -11,6 +12,7 @@ public class ScatterValue extends Value {
   private float value;
   private boolean visible = true;
   private int color = Color.TRANSPARENT;
+  private Drawable shape = null;
 
   public ScatterValue(float value) {
     this.value = value;
@@ -49,5 +51,13 @@ public class ScatterValue extends Value {
 
   public int getColor() {
     return color;
+  }
+
+  public Drawable getShape() {
+    return shape;
+  }
+
+  public void setShape(Drawable shape) {
+    this.shape = shape;
   }
 }

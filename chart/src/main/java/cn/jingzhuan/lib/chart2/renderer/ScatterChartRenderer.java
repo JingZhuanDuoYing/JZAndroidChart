@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
@@ -82,8 +84,9 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     } else {
       yOffset = 0;
     }
+    Drawable shape = dataSet.getShape();
 
-    for (int i = 0; i < valueCount && i < dataSet.getValues().size() && dataSet.getShape() != null; i++) {
+    for (int i = 0; i < valueCount && i < dataSet.getValues().size() && shape != null; i++) {
       ScatterValue point = dataSet.getEntryForIndex(i);
 
       if (!point.isVisible()) continue;
@@ -99,19 +102,24 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
       else
         yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
 
+      shape = dataSet.getShape();
+      if (point.getShape() != null) {
+        shape = point.getShape();
+      }
+
       point.setCoordinate(xPosition, yPosition);
 
       int x = (int) (xPosition + dataSet.getDrawOffsetX());
       int y = (int) (yPosition + dataSet.getDrawOffsetY());
       if (point.getColor() != Color.TRANSPARENT) {
-        dataSet.getShape().setColorFilter(point.getColor(), PorterDuff.Mode.SRC_OVER);
+        shape.setColorFilter(point.getColor(), PorterDuff.Mode.SRC_OVER);
       }
-      dataSet.getShape().setBounds(x,
-                                   y,
-                                  (int) (x + shapeWidth),
-                                  (int) (y + shapeHeight));
+      shape.setBounds(x,
+                      y,
+                      (int) (x + shapeWidth),
+                      (int) (y + shapeHeight));
       int saveId = canvas.save();
-      dataSet.getShape().draw(canvas);
+      shape.draw(canvas);
       canvas.restoreToCount(saveId);
 
       if (dataSet.getTextValueRenderers() != null) {
@@ -128,8 +136,9 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     if (scatterData.getDataSets().size() > 0) {
       ScatterDataSet dataSet = scatterData.getDataSets().get(0);
       RectF rect = new RectF();
-      float shapeWidth = dataSet.getShape().getIntrinsicWidth();
-      float shapeHeight = dataSet.getShape().getIntrinsicHeight();
+      Drawable shape = dataSet.getShape();
+      float shapeWidth = shape.getIntrinsicWidth();
+      float shapeHeight = shape.getIntrinsicHeight();
       for (int i = 0; i < dataSet.getValues().size(); i++) {
         final ScatterValue value = dataSet.getEntryForIndex(i);
         float pX = value.getX();
