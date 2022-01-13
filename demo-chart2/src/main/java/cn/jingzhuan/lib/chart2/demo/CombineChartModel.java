@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart2.demo;
 import androidx.databinding.ViewDataBinding;
 import android.graphics.Color;
 
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,6 +37,8 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
     private LineDataSet line;
     List<ScatterTextValue> scatterTextValues = new ArrayList<>();
     List<CandlestickValue> candlestickValues = new ArrayList<>();
+    List<PointValue> lineValues = new ArrayList<>();
+
     public CombineChartModel() {
 
         List<BarValue> barValueList = new ArrayList<>();
@@ -59,6 +63,18 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         candlestickValues.add(new CandlestickValue(3117.61f, 3092.09f, 3114.77f, 3103.04f));
         candlestickValues.add(new CandlestickValue(3093.44f, 3067.68f, 3090.07f, 3078.61f));
         candlestickValues.add(new CandlestickValue(3152.94f, 3131.41f, 3132.91f, 3140.85f));
+
+        lineValues.add(new PointValue(3117.44f));
+        lineValues.add(new PointValue(3131.41f));
+        lineValues.add(new PointValue(3097.33f));
+        lineValues.add(new PointValue(3136.58f));
+        lineValues.add(new PointValue(3136.54f));
+        lineValues.add(new PointValue(3123.75f));
+        lineValues.add(new PointValue(3111.38f));
+        lineValues.add(new PointValue(3092.09f));
+        lineValues.add(new PointValue(3067.68f));
+        lineValues.add(new PointValue(3131.41f));
+
         barDataSet = new CandlestickDataSet(candlestickValues, AxisY.DEPENDENCY_BOTH);
         barDataSet.setAutoWidth(true);
         barDataSet.setColor(Color.DKGRAY);
@@ -113,8 +129,6 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         }
         line = new LineDataSet(values, AxisY.DEPENDENCY_LEFT);
         line.setHighlightedVerticalEnable(true);
-
-
     }
 
     @Override public View buildView(ViewGroup parent) {
@@ -125,6 +139,12 @@ public abstract class CombineChartModel extends DataBindingEpoxyModel {
         chartBinding.combineChart.enableHighlightDashPathEffect(new float[] {10, 10}, 10);
         chartBinding.combineChart.addDataSet(barDataSet);
         chartBinding.combineChart.addDataSet(line);
+
+        LineDataSet lineDataSet = new LineDataSet(lineValues);
+        lineDataSet.setColor(Color.YELLOW);
+        lineDataSet.setShader(new LinearGradient(0f, 0f, 0f, 0f, 0x20ffaa00, 0x20ffaa00, Shader.TileMode.MIRROR));
+        chartBinding.combineChart.addDataSet(lineDataSet);
+
         ScatterTextDataSet textDataSet = new ScatterTextDataSet(scatterTextValues);
         textDataSet.setText("加自选");
         textDataSet.setLineColor(Color.RED);

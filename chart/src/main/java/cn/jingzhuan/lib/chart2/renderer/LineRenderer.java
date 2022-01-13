@@ -244,8 +244,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         if (lastIndex >= valueCount) lastIndex = valueCount - 1;
 
-        PointValue startPoint = null;
-
         int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
 
         Path linePath = new Path();
@@ -389,8 +387,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 PointValue pointValue = lineDataSet.getEntryForIndex(i - 1);
 
                 if (pointValue != null) {
-                    shaderPath.lineTo(startX + pointValue.getX(), mContentRect.bottom);
-                    shaderPath.lineTo(startX + offset * width, mContentRect.bottom);
+                    shaderPath.lineTo(pointValue.getX(), mContentRect.bottom);
+                    shaderPath.lineTo(startX + offset * width - 0.5f, mContentRect.bottom);
                     shaderPath.lineTo(startX + offset * width, lineDataSet.getValues().get(0).getY());
                     shaderPath.close();
                     mRenderPaint.setShader(lineDataSet.getShader());
@@ -423,7 +421,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 for (Path path : linePaths) {
                     canvas.drawPath(path, mRenderPaint);
                 }
-
             }
         }
     }
