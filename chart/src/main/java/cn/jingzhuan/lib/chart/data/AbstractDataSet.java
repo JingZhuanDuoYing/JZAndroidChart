@@ -37,6 +37,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   private String tag;
 
+  private DataFormatter formatter; // 数据格式化器
+
   public AbstractDataSet() {
   }
 
@@ -184,5 +186,13 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   public void setTag(String tag) {
     this.tag = tag;
+  }
+
+  public DataFormatter getFormatter() {
+    return formatter;
+  }
+
+  public void setFormatter(DataFormatter formatter) {
+    this.formatter = formatter;
   }
 }
