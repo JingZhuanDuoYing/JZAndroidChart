@@ -26,6 +26,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private List<ScatterValue> scatterValues;
 
   private Drawable shape;
+  private int shapeOrder = 0; // 正数从value向上排，负数向下排，0不变
   private float drawOffsetX = 0f;
   private float drawOffsetY = 0f;
   private float shapeMinWidth = 0f;
@@ -48,8 +49,16 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    for (ScatterValue e : getVisiblePoints(viewport)) {
-      calcViewportMinMax(e);
+    List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
+    if (shape != null && shapeOrder == 0) {
+      if (drawOffsetY > 0) {
+        shapeOrder = - 1;
+      } else {
+        shapeOrder = 1;
+      }
+    }
+    for (ScatterValue e : visiblePoints) {
+      calcViewportMinMax(e, content);
     }
 
     float range = mViewportYMax - mViewportYMin;
@@ -67,6 +76,34 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
     if (e.getValue() > mViewportYMax)
       mViewportYMax = e.getValue();
+    if (content == null) return;
+    if (shape == null) return;
+    if (!e.isVisible()) return;
+
+    float range = mViewportYMax - mViewportYMin;
+    float shapeHeight = shape.getIntrinsicHeight(); // + 4f; // 间隙4px
+    float percent = shapeHeight / (float) content.height();
+    float expand = range * percent;
+
+    if (expand <= 0f) return;
+
+    float offset = shapeOrder * expand;
+    if (shapeOrder > 0) {
+      float newMax = mViewportYMax + offset;
+      mViewportYMax += offset;
+      if (newMax > mViewportYMax) {
+        mViewportYMax = newMax;
+      }
+      return;
+    }
+
+    if (shapeOrder < 0) {
+      float newMin = mViewportYMin + offset;
+      if (newMin < mViewportYMin) {
+        mViewportYMin = newMin;
+      }
+    }
+
   }
 
   @Override public int getEntryCount() {
@@ -199,6 +236,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public void setShapeAlign(int shapeAlign) {
     this.shapeAlign = shapeAlign;
+  }
+
+  public int getShapeOrder() {
+    return shapeOrder;
+  }
+
+  public void setShapeOrder(int shapeOrder) {
+    this.shapeOrder = shapeOrder;
   }
 }
 
