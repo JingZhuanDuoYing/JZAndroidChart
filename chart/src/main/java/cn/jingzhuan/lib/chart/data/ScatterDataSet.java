@@ -57,6 +57,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
         shapeOrder = 1;
       }
     }
+
+    List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
     for (ScatterValue e : visiblePoints) {
       calcViewportMinMax(e, content);
     }
@@ -76,32 +78,28 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
     if (e.getValue() > mViewportYMax)
       mViewportYMax = e.getValue();
+
     if (content == null) return;
     if (shape == null) return;
     if (!e.isVisible()) return;
 
     float range = mViewportYMax - mViewportYMin;
-    float shapeHeight = shape.getIntrinsicHeight(); // + 4f; // 间隙4px
+    float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
     float percent = shapeHeight / (float) content.height();
-    float expand = range * percent;
+    float expand = (float) Math.ceil(range * percent);
 
     if (expand <= 0f) return;
 
     float offset = shapeOrder * expand;
+    float newValue = e.getValue() + offset;
+
     if (shapeOrder > 0) {
-      float newMax = mViewportYMax + offset;
-      mViewportYMax += offset;
-      if (newMax > mViewportYMax) {
-        mViewportYMax = newMax;
-      }
+      mViewportYMax = Math.max(newValue, mViewportYMax);
       return;
     }
 
     if (shapeOrder < 0) {
-      float newMin = mViewportYMin + offset;
-      if (newMin < mViewportYMin) {
-        mViewportYMin = newMin;
-      }
+      mViewportYMin = Math.min(newValue, mViewportYMin);
     }
 
   }
