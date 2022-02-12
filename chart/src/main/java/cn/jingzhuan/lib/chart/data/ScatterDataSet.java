@@ -49,7 +49,6 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
 
-    List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
     if (shape != null && shapeOrder == 0) {
       if (drawOffsetY > 0) {
         shapeOrder = - 1;
