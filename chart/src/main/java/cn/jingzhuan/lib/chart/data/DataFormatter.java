@@ -15,8 +15,45 @@ public class DataFormatter {
     }
 
     public DataFormatter(int precision, String unit) {
+        if (unit == null || !unit.equals("万") || !unit.equals("亿")
+                || !unit.equals("%") || !unit.equals("")) {
+            unit = "";
+        }
+        if (precision < 0) {
+            precision = 2;
+        }
         this.precision = precision;
         this.unit = unit;
+    }
+
+    public DataFormatter(int unit) {
+        switch (unit) {
+            case 1:
+                this.unit = "万";
+                break;
+            case 2:
+                this.unit = "亿";
+                break;
+            case 3:
+                this.unit = "%";
+                break;
+            case 4:
+                this.unit = "*"; // 服务器不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
+                this.precision = 2;
+                break;
+            default:
+                this.unit = "";
+                this.precision = 2;
+                break;
+        }
+    }
+
+    public DataFormatter(int precision, int unit) {
+        this(unit);
+        if (precision < 0) {
+            precision = 2;
+        }
+        this.precision = precision;
     }
 
     public DataFormatter(String formatterString) {
