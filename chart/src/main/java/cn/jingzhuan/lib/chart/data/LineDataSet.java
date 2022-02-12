@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 
+import android.graphics.Rect;
 import android.graphics.Shader;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
     @Override
-    public void calcMinMax(Viewport viewport) {
+    public void calcMinMax(Viewport viewport, Rect content) {
 
         if (mPointValues == null || mPointValues.isEmpty())
             return;

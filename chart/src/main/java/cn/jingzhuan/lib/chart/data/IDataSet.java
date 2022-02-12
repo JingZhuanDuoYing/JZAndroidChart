@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Rect;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
@@ -9,7 +11,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 public interface IDataSet {
 
-  void calcMinMax(Viewport viewport);
+  void calcMinMax(Viewport viewport, Rect content);
 
   int getEntryCount();
 

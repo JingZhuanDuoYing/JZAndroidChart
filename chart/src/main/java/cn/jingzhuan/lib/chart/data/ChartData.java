@@ -95,7 +95,7 @@ public class ChartData<T extends IDataSet> {
 
           if (!t.isEnable()) continue;
 
-          t.calcMinMax(viewport);
+          t.calcMinMax(viewport, content);
           if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
             leftMax = Math.max(leftMax, t.getViewportYMax());
             leftMin = Math.min(leftMin, t.getViewportYMin());

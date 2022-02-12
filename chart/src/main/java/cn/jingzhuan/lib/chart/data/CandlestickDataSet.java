@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
@@ -51,7 +52,7 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     setAxisDependency(axisDependency);
   }
 
-  @Override public void calcMinMax(Viewport viewport) {
+  @Override public void calcMinMax(Viewport viewport, Rect content) {
 
     if (candlestickValues == null || candlestickValues.isEmpty())
       return;

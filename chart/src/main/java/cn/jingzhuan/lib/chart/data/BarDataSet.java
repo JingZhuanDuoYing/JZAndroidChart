@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
+import android.graphics.Rect;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
     }
 
     @Override
-    public void calcMinMax(Viewport viewport) {
+    public void calcMinMax(Viewport viewport, Rect content) {
 
         if (mBarValues == null || mBarValues.isEmpty())
             return;

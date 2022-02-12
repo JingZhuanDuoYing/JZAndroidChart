@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueXOffset;
@@ -31,6 +32,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private float shapeMaxWidth = Float.NaN;
   private int shapeAlign = SHAPE_ALIGN_CENTER;
 
+  private Rect mContentRect;
+
   private boolean autoWidth = true;
 
   private List<TextValueRenderer> mTextValueRenderers;
@@ -39,7 +42,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     this.scatterValues = scatterValues;
   }
 
-  @Override public void calcMinMax(Viewport viewport) {
+  @Override public void calcMinMax(Viewport viewport, Rect content) {
+    mContentRect = content;
 
     mViewportYMax = -Float.MAX_VALUE;
     mViewportYMin = Float.MAX_VALUE;
@@ -57,7 +61,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
   }
 
-  private void calcViewportMinMax(ScatterValue e) {
+  private void calcViewportMinMax(ScatterValue e, Rect content) {
     if (e.getValue() < mViewportYMin)
       mViewportYMin = e.getValue();
 
@@ -80,7 +84,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   }
 
   @Override public boolean addEntry(ScatterValue e) {
-    calcViewportMinMax(e);
+    calcViewportMinMax(e, mContentRect);
     return scatterValues.add(e);
   }
 

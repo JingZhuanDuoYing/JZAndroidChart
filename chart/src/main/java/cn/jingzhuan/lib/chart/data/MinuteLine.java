@@ -1,5 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Rect;
+
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -30,8 +32,8 @@ public class MinuteLine extends LineDataSet {
     }
 
     @Override
-    public void calcMinMax(Viewport viewport) {
-        super.calcMinMax(viewport);
+    public void calcMinMax(Viewport viewport, Rect content) {
+        super.calcMinMax(viewport, content);
 
         if (mLastClose > 0) {
             if (getValues() != null && getValues().size() > 0) {
