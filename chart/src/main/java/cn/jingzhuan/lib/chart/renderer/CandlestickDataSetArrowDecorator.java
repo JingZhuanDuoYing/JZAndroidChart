@@ -71,8 +71,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     return mPaint;
   }
 
-  @Override public void calcMinMax(Viewport viewport, Rect content) {
-    super.calcMinMax(viewport, content);
+  @Override public void calcMinMax(Viewport viewport) {
+    super.calcMinMax(viewport);
   }
 
   public void setTextSize(int textSize) {

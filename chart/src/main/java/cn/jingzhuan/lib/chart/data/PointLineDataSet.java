@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart.data;
 
 import static cn.jingzhuan.lib.chart.component.AxisY.DEPENDENCY_BOTH;
 
-import android.graphics.Rect;
 import android.graphics.Shader;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class PointLineDataSet extends AbstractDataSet<PointValue>{
     }
 
     @Override
-    public void calcMinMax(Viewport viewport, Rect content) {
+    public void calcMinMax(Viewport viewport) {
 
         if (mPointValues == null || mPointValues.isEmpty())
             return;

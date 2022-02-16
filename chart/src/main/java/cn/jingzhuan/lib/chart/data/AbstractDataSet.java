@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
+import android.graphics.Rect;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
@@ -45,6 +47,11 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   public AbstractDataSet(String tag) {
     this.tag = tag;
   }
+
+  @Override
+  public void calcMinMax(Viewport viewport) {}
+  @Override
+  public void calcMinMax(Viewport viewport, Rect content) {}
 
   public abstract List<T> getValues();
 

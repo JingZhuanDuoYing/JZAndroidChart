@@ -56,7 +56,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
     }
 
     @Override
-    public void calcMinMax(Viewport viewport, Rect content) {
+    public void calcMinMax(Viewport viewport) {
 
         if (mBarValues == null || mBarValues.isEmpty())
             return;

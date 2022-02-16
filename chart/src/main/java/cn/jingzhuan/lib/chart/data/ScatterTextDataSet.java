@@ -1,7 +1,5 @@
 package cn.jingzhuan.lib.chart.data;
 
-import android.graphics.Rect;
-
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -82,7 +80,7 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     }
 
     @Override
-    public void calcMinMax(Viewport viewport, Rect content) {
+    public void calcMinMax(Viewport viewport) {
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 

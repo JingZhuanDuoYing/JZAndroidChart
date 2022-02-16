@@ -11,6 +11,8 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
 
 public interface IDataSet {
 
+  void calcMinMax(Viewport viewport);
+
   void calcMinMax(Viewport viewport, Rect content);
 
   int getEntryCount();
