@@ -254,7 +254,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         if (lineDataSet.isDrawBand()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, offset, max, min);
+                try {
+                    // 这里有潜在的崩溃问题，先catch，后续重写
+                    drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, offset, max, min);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return;
             }
         }
@@ -493,6 +498,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     /**
      * 绘制带状线
      */
+    @Deprecated
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void drawBand(Canvas canvas, LineDataSet lineDataSet, int valuePhaseCount, float startX, float step, int offset, float max, float min) {
         int i = 0;
@@ -536,7 +542,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 cache2.lineTo(xPosition, secondYPosition);
             }
 
-            if (i == lineDataSet.getValues().size() - 1) { //结尾部分
+            if (i > 0 && i == lineDataSet.getValues().size() - 1) { //结尾部分
 
                 //找到上一个点 做为起点
                 PointValue prePoint = lineDataSet.getEntryForIndex(i - 1);
