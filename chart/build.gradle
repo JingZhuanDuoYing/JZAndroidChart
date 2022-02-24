@@ -12,7 +12,7 @@ android {
     minSdkVersion 16
     targetSdkVersion 28
     versionCode 2
-    versionName "1.8.4.220222"
+    versionName "1.8.4.220224"
 
     testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
   }

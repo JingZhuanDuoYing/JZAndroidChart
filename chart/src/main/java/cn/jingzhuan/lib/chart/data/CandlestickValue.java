@@ -21,6 +21,7 @@ public class CandlestickValue extends Value {
   private float close = 0f;
 
   private long time = -1;
+  private boolean visible = true;
 
   private Paint.Style mPaintStyle = null;
   private int color = COLOR_NONE;
@@ -129,6 +130,14 @@ public class CandlestickValue extends Value {
 
   public long getTime() {
     return time;
+  }
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
   }
 
   @Override

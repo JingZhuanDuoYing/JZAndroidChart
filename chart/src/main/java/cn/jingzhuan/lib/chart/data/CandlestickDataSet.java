@@ -105,6 +105,8 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
   private void calcViewportMinMax(CandlestickValue e) {
 
+    if (e == null || !e.isVisible()) return;
+
     if (Float.isNaN(e.getLow())) return;
     if (Float.isNaN(e.getHigh())) return;
 
