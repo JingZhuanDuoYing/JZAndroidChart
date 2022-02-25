@@ -78,6 +78,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     if (e.getValue() > mViewportYMax)
       mViewportYMax = e.getValue();
 
+    if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_BOTTOM
+            || shapeAlign == SHAPE_ALIGN_CENTER) {
+      calcViewportMinMaxExpansion(e, content);
+    }
+
+  }
+
+  private void calcViewportMinMaxExpansion(ScatterValue e, Rect content) {
     if (content == null) return;
     if (shape == null) return;
     if (!e.isVisible()) return;
@@ -100,7 +108,6 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     if (shapeOrder < 0) {
       mViewportYMin = Math.min(newValue, mViewportYMin);
     }
-
   }
 
   @Override public int getEntryCount() {
