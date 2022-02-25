@@ -78,28 +78,28 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     if (e.getValue() > mViewportYMax)
       mViewportYMax = e.getValue();
 
-    if (content == null) return;
-    if (shape == null) return;
-    if (!e.isVisible()) return;
-
-    float range = mViewportYMax - mViewportYMin;
-    float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
-    float percent = shapeHeight / (float) content.height();
-    float expand = (float) Math.ceil(range * percent);
-
-    if (expand <= 0f) return;
-
-    float offset = shapeOrder * expand;
-    float newValue = e.getValue() + offset;
-
-    if (shapeOrder > 0) {
-      mViewportYMax = Math.max(newValue, mViewportYMax);
-      return;
-    }
-
-    if (shapeOrder < 0) {
-      mViewportYMin = Math.min(newValue, mViewportYMin);
-    }
+//    if (content == null) return;
+//    if (shape == null) return;
+//    if (!e.isVisible()) return;
+//
+//    float range = mViewportYMax - mViewportYMin;
+//    float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+//    float percent = shapeHeight / (float) content.height();
+//    float expand = (float) Math.ceil(range * percent);
+//
+//    if (expand <= 0f) return;
+//
+//    float offset = shapeOrder * expand;
+//    float newValue = e.getValue() + offset;
+//
+//    if (shapeOrder > 0) {
+//      mViewportYMax = Math.max(newValue, mViewportYMax);
+//      return;
+//    }
+//
+//    if (shapeOrder < 0) {
+//      mViewportYMin = Math.min(newValue, mViewportYMin);
+//    }
 
   }
 
