@@ -276,7 +276,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
 
             float xPosition = startX + step * (i + offset);
-            float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
+            // 垂直方向绘制范围收缩至能容下线条的宽度
+            int lineThickness = lineDataSet.getLineThickness();
+            float yPosition = (lineThickness / 2) + (max - point.getValue()) / (max - min) * (mContentRect.height() - lineThickness);
 
             point.setCoordinate(xPosition, yPosition);
 
