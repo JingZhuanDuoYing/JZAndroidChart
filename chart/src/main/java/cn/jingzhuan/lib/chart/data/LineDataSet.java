@@ -83,6 +83,10 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         for (PointValue e : getVisiblePoints(viewport)) {
             calcViewportMinMax(e);
         }
+        if (mViewportYMax == 0 && mViewportYMin == 0) {
+            mViewportYMax = 1;
+            mViewportYMin = -1;
+        }
     }
 
     @Override

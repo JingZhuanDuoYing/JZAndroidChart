@@ -72,6 +72,9 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   }
 
   private void calcViewportMinMax(ScatterValue e, Rect content) {
+    if (e == null || !e.isVisible()) return;
+    if (Float.isNaN(e.getValue())) return;
+
     if (e.getValue() < mViewportYMin)
       mViewportYMin = e.getValue();
 
@@ -88,7 +91,6 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private void calcViewportMinMaxExpansion(ScatterValue e, Rect content) {
     if (content == null) return;
     if (shape == null) return;
-    if (!e.isVisible()) return;
 
     float range = mViewportYMax - mViewportYMin;
     float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
