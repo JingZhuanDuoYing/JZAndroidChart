@@ -6,7 +6,8 @@ public class DataFormatter {
     public static final String HIDE = "HIDE";
     public static final String UNIT_TEN_THOUSAND = "万";
     public static final String UNIT_BILLION = "亿";
-    public static final String UNIT_PERCENT = "%"; // 数值先*100，再添加%为单位
+    public static final String UNIT_PERCENT = "%"; // 数值先*100，再添加%
+    public static final String UNIT_PERCENT_DIRECT = "+%"; // 数值不变，直接添加%
     public static final String UNIT_CALC = "*"; // 服务器不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
     public static final String UNIT_EMPTY = "";
     private int precision = 2; // 数据精度
@@ -21,7 +22,7 @@ public class DataFormatter {
 
     public DataFormatter(int precision, String unit) {
         if (unit == null || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
-                || !unit.equals(UNIT_PERCENT)
+                || !unit.equals(UNIT_PERCENT)|| !unit.equals(UNIT_PERCENT_DIRECT)
                 || !unit.equals(UNIT_CALC) || !unit.equals(UNIT_EMPTY)) {
             unit = "";
         }
@@ -46,6 +47,9 @@ public class DataFormatter {
             case 4:
                 this.unit = UNIT_CALC; // 服务器不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
                 this.precision = 2;
+                break;
+            case 5:
+                this.unit = UNIT_PERCENT_DIRECT; // 数值不变，直接添加%
                 break;
             default:
                 this.unit = UNIT_EMPTY;
