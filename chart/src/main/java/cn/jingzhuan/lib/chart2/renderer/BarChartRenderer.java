@@ -112,6 +112,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         float visibleRange = barDataSet.getVisibleRange(mViewport);
         if (barDataSet.isAutoBarWidth() && visibleRange > 0) {
             width = mContentRect.width() / visibleRange;
+            if (barDataSet.getMinBarWidth() > 0.0f && width < barDataSet.getMinBarWidth()) {
+                width = barDataSet.getMinBarWidth();
+            }
         }
         final float percent = barDataSet.getBarWidthPercent();
 

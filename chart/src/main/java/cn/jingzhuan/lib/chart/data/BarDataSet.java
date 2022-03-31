@@ -21,6 +21,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     private List<BarValue> mBarValues;
     private float mBarWidth = 20;
+    private float mMinBarWidth = 0.0f;
     private boolean mAutoBarWidth = false;
     private int mForceValueCount = -1;
     private float strokeThickness = 2;
@@ -138,6 +139,14 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     public void setBarWidth(float mBarWidth) {
         this.mBarWidth = mBarWidth;
+    }
+
+    public float getMinBarWidth() {
+        return mMinBarWidth;
+    }
+
+    public void setMinBarWidth(float minBarWidth) {
+        this.mMinBarWidth = minBarWidth;
     }
 
     public void setAutoBarWidth(boolean mAutoBarWidth) {
