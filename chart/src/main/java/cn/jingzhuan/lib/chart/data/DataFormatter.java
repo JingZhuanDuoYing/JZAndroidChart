@@ -45,10 +45,10 @@ public class DataFormatter {
     }
 
     public DataFormatter(String unit) {
-        if (unit == null || !unit.equals(UNIT_TRILLION)
-                || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
-                || !unit.equals(UNIT_PERCENT)|| !unit.equals(UNIT_PERCENT_DIRECT)
-                || !unit.equals(UNIT_CALC) || !unit.equals(UNIT_EMPTY)) {
+        if (unit == null || (!unit.equals(UNIT_TRILLION)
+                && !unit.equals(UNIT_TEN_THOUSAND) && !unit.equals(UNIT_BILLION)
+                && !unit.equals(UNIT_PERCENT)&& !unit.equals(UNIT_PERCENT_DIRECT)
+                && !unit.equals(UNIT_CALC) && !unit.equals(UNIT_EMPTY))) {
             unit = "";
         }
         this.precision = 2;
@@ -56,10 +56,10 @@ public class DataFormatter {
     }
 
     public DataFormatter(int precision, String unit) {
-        if (unit == null || !unit.equals(UNIT_TRILLION)
-                || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
-                || !unit.equals(UNIT_PERCENT)|| !unit.equals(UNIT_PERCENT_DIRECT)
-                || !unit.equals(UNIT_CALC) || !unit.equals(UNIT_EMPTY)) {
+        if (unit == null || (!unit.equals(UNIT_TRILLION)
+                && !unit.equals(UNIT_TEN_THOUSAND) && !unit.equals(UNIT_BILLION)
+                && !unit.equals(UNIT_PERCENT)&& !unit.equals(UNIT_PERCENT_DIRECT)
+                && !unit.equals(UNIT_CALC) && !unit.equals(UNIT_EMPTY))) {
             unit = "";
         }
         if (precision < 0) {
