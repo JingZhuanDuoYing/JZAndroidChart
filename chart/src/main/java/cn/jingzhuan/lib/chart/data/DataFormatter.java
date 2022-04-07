@@ -1,9 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
-import java.util.Locale;
-
 public class DataFormatter {
     public static final String HIDE = "HIDE";
+    public static final String UNIT_TRILLION = "万亿";
     public static final String UNIT_TEN_THOUSAND = "万";
     public static final String UNIT_BILLION = "亿";
     public static final String UNIT_PERCENT = "%"; // 数值先*100，再添加%
@@ -14,14 +13,51 @@ public class DataFormatter {
     private String unit = ""; // 数据单位
     private boolean isHide = false;
 
+    public static DataFormatter TRILLION() {
+        return new DataFormatter(UNIT_TRILLION);
+    }
+    public static DataFormatter TEN_THOUSAND() {
+        return new DataFormatter(UNIT_TEN_THOUSAND);
+    }
+    public static DataFormatter BILLION() {
+        return new DataFormatter(UNIT_BILLION);
+    }
+    public static DataFormatter PERCENT() {
+        return new DataFormatter(UNIT_PERCENT);
+    }
+    public static DataFormatter PERCENT_DIRECT() {
+        return new DataFormatter(UNIT_PERCENT_DIRECT);
+    }
+    public static DataFormatter CALC() {
+        return new DataFormatter(UNIT_CALC);
+    }
+    public static DataFormatter EMPTY() {
+        return new DataFormatter(UNIT_EMPTY);
+    }
+    public static DataFormatter HIDE() {
+        return new DataFormatter(true);
+    }
+
     public DataFormatter() {}
 
     public DataFormatter(boolean isHide) {
         this.isHide = isHide;
     }
 
+    public DataFormatter(String unit) {
+        if (unit == null || !unit.equals(UNIT_TRILLION)
+                || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
+                || !unit.equals(UNIT_PERCENT)|| !unit.equals(UNIT_PERCENT_DIRECT)
+                || !unit.equals(UNIT_CALC) || !unit.equals(UNIT_EMPTY)) {
+            unit = "";
+        }
+        this.precision = 2;
+        this.unit = unit;
+    }
+
     public DataFormatter(int precision, String unit) {
-        if (unit == null || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
+        if (unit == null || !unit.equals(UNIT_TRILLION)
+                || !unit.equals(UNIT_TEN_THOUSAND) || !unit.equals(UNIT_BILLION)
                 || !unit.equals(UNIT_PERCENT)|| !unit.equals(UNIT_PERCENT_DIRECT)
                 || !unit.equals(UNIT_CALC) || !unit.equals(UNIT_EMPTY)) {
             unit = "";
@@ -66,45 +102,45 @@ public class DataFormatter {
         this.precision = precision;
     }
 
-    public DataFormatter(String formatterString) {
-        if (formatterString == null || formatterString.length() == 0) {
-            return;
-        }
-        if (formatterString.equals(HIDE)) {
-            isHide = true;
-        } else {
-            String[] formatterList = formatterString.toUpperCase(Locale.ROOT).split("_");
-            for (String formatter : formatterList) {
-                if (formatter.contains("W")) {
-                    unit = UNIT_TEN_THOUSAND;
-                    String precisionString = formatter.replace("W", "");
-                    precision = parsePrecision(precisionString);
-                } else if (formatter.contains("Y")) {
-                    unit = UNIT_BILLION;
-                    String precisionString = formatter.replace("Y", "");
-                    precision = parsePrecision(precisionString);
-                } else if (formatter.contains("F")) {
-//                    unit = "%"; // 在 PERCENT 分支再决定
-                    String precisionString = formatter.replace("F", "");
-                    precision = parsePrecision(precisionString);
-                } else if (formatter.contains("PERCENT")) {
-                    unit = UNIT_PERCENT;
-                }
-            }
-
-        }
-    }
-
-    private int parsePrecision(String precisionString) {
-        int result = 2;
-        if (precisionString != null && precisionString.length() != 0) {
-            try {
-                result = Integer.parseInt(precisionString);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return result;
-    }
+//    public DataFormatter(String formatterString) {
+//        if (formatterString == null || formatterString.length() == 0) {
+//            return;
+//        }
+//        if (formatterString.equals(HIDE)) {
+//            isHide = true;
+//        } else {
+//            String[] formatterList = formatterString.toUpperCase(Locale.ROOT).split("_");
+//            for (String formatter : formatterList) {
+//                if (formatter.contains("W")) {
+//                    unit = UNIT_TEN_THOUSAND;
+//                    String precisionString = formatter.replace("W", "");
+//                    precision = parsePrecision(precisionString);
+//                } else if (formatter.contains("Y")) {
+//                    unit = UNIT_BILLION;
+//                    String precisionString = formatter.replace("Y", "");
+//                    precision = parsePrecision(precisionString);
+//                } else if (formatter.contains("F")) {
+////                    unit = "%"; // 在 PERCENT 分支再决定
+//                    String precisionString = formatter.replace("F", "");
+//                    precision = parsePrecision(precisionString);
+//                } else if (formatter.contains("PERCENT")) {
+//                    unit = UNIT_PERCENT;
+//                }
+//            }
+//
+//        }
+//    }
+//
+//    private int parsePrecision(String precisionString) {
+//        int result = 2;
+//        if (precisionString != null && precisionString.length() != 0) {
+//            try {
+//                result = Integer.parseInt(precisionString);
+//            } catch (NumberFormatException e) {
+//            }
+//        }
+//        return result;
+//    }
 
     public int getPrecision() {
         return precision;
