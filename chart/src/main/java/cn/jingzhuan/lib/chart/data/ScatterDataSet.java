@@ -58,8 +58,16 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
 
     List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
-    for (ScatterValue e : visiblePoints) {
+    for (int i = 0; i < visiblePoints.size(); i++) {
+      ScatterValue e = visiblePoints.get(i);
       calcViewportMinMax(e, content);
+//      if (mViewportYMax > 0) {
+//        float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+//        Log.d("ScatterDataSet", "calcMinMax:" + i + "/" + visiblePoints.size()
+//            + ", e.value:" + e.getValue() + ", mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin + ", shapeHeight:" + shapeHeight
+//                + ", contentRect.height():" + mContentRect.height());
+//      }
     }
 
     float range = mViewportYMax - mViewportYMin;
@@ -95,7 +103,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     float range = mViewportYMax - mViewportYMin;
     float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
     float percent = shapeHeight / (float) content.height();
-    float expand = (float) Math.ceil(range * percent);
+//    float expand = (float) Math.ceil(range * percent);
+    float expand = (float) (range * percent);
 
     if (expand <= 0f) return;
 
@@ -103,12 +112,37 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     float newValue = e.getValue() + offset;
 
     if (shapeOrder > 0) {
+      float oldViewportYMax = mViewportYMax;
       mViewportYMax = Math.max(newValue, mViewportYMax);
+
+//      if (mViewportYMax > 0 && oldViewportYMax != mViewportYMax) {
+//        Log.w("ScatterDataSet", "calcMinMax:" + i
+//                + ", e.value:" + e.getValue()
+//                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
+//                + ", percent:" + percent
+//                + ", (range * percent):" + (range * percent)
+//                + ", expand:" + expand
+//                + ", offset:" + offset
+//                + ", mViewportYMax:" + mViewportYMax
+//                + ", mViewportYMin:" + mViewportYMin);
+//      }
       return;
     }
 
     if (shapeOrder < 0) {
+      float oldViewportYMin = mViewportYMin;
       mViewportYMin = Math.min(newValue, mViewportYMin);
+//      if (mViewportYMax > 0 && oldViewportYMin != mViewportYMin) {
+//        Log.w("ScatterDataSet", "calcMinMax:" + i
+//                + ", e.value:" + e.getValue()
+//                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
+//                + ", percent:" + percent
+//                + ", (range * percent):" + (range * percent)
+//                + ", expand:" + expand
+//                + ", offset:" + offset
+//                + ", mViewportYMax:" + mViewportYMax
+//                + ", mViewportYMin:" + mViewportYMin);
+//      }
     }
   }
 
