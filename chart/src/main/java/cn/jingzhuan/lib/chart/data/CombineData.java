@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.List;
 
@@ -167,14 +168,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
             rightMax = Math.max(barData.rightMax, rightMax);
         }
 
-        if (!scatterData.getDataSets().isEmpty()) {
-            scatterData.calcMaxMin(viewport, content);
-            leftMin = Math.min(scatterData.leftMin, leftMin);
-            leftMax = Math.max(scatterData.leftMax, leftMax);
-            rightMin = Math.min(scatterData.rightMin, rightMin);
-            rightMax = Math.max(scatterData.rightMax, rightMax);
-        }
-
         if (!pointLineData.getDataSets().isEmpty()) {
             pointLineData.calcMaxMin(viewport, content);
             leftMin = Math.min(pointLineData.leftMin, leftMin);
@@ -191,33 +184,46 @@ public class CombineData extends ChartData<AbstractDataSet> {
             rightMax = Math.max(scatterTextData.rightMax, rightMax);
         }
 
+//        Log.d("CombineData", "calcMaxMin_0 leftMax:" + leftMax
+//                + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
+//        ScatterData的calcMaxMin放在其它Data后面调用，利用其它Data计算好的leftMax, leftMin, rightMax, rightMin，计算要扩展的数值。
+        if (!scatterData.getDataSets().isEmpty()) {
+            scatterData.calcMaxMin(viewport, content, leftMax, leftMin, rightMax, rightMin);
+            leftMin = Math.min(scatterData.leftMin, leftMin);
+            leftMax = Math.max(scatterData.leftMax, leftMax);
+            rightMin = Math.min(scatterData.rightMin, rightMin);
+            rightMax = Math.max(scatterData.rightMax, rightMax);
+        }
+//        Log.d("CombineData", "calcMaxMin_1 leftMax:" + leftMax
+//                + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
+
         barData.setLeftMax(leftMax);
         lineData.setLeftMax(leftMax);
         candlestickData.setLeftMax(leftMax);
-        scatterData.setLeftMax(leftMax);
         pointLineData.setLeftMax(leftMax);
         scatterTextData.setLeftMax(leftMax);
+        scatterData.setLeftMax(leftMax);
 
         barData.setLeftMin(leftMin);
         lineData.setLeftMin(leftMin);
         candlestickData.setLeftMin(leftMin);
-        scatterData.setLeftMin(leftMin);
         pointLineData.setLeftMin(leftMin);
         scatterTextData.setLeftMin(leftMin);
+        scatterData.setLeftMin(leftMin);
 
         barData.setRightMax(rightMax);
         lineData.setRightMax(rightMax);
         candlestickData.setRightMax(rightMax);
-        scatterData.setRightMax(rightMax);
         pointLineData.setRightMax(rightMax);
         scatterTextData.setRightMax(rightMax);
+        scatterData.setRightMax(rightMax);
 
         barData.setRightMin(rightMin);
         lineData.setRightMin(rightMin);
         candlestickData.setRightMin(rightMin);
-        scatterData.setRightMin(rightMin);
         pointLineData.setRightMin(rightMin);
         scatterTextData.setRightMin(rightMin);
+        scatterData.setRightMin(rightMin);
 
         setMinMax();
     }

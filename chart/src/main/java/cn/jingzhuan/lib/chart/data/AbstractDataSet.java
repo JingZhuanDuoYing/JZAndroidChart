@@ -51,7 +51,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   @Override
   public void calcMinMax(Viewport viewport) {}
   @Override
-  public void calcMinMax(Viewport viewport, Rect content) {
+  public void calcMinMax(Viewport viewport, Rect content, float max, float mix) {
     calcMinMax(viewport);
   }
 

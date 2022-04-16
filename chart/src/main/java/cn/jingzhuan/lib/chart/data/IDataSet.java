@@ -13,7 +13,7 @@ public interface IDataSet {
 
   void calcMinMax(Viewport viewport);
 
-  void calcMinMax(Viewport viewport, Rect content);
+  void calcMinMax(Viewport viewport, Rect content, float max, float mix);
 
   int getEntryCount();
 

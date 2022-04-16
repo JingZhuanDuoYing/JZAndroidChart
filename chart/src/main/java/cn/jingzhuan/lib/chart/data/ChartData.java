@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
+import android.util.Log;
+
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -82,10 +84,14 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void calcMaxMin(Viewport viewport, Rect content) {
-    leftMin = Float.MAX_VALUE;
-    leftMax = -Float.MAX_VALUE;
-    rightMin = Float.MAX_VALUE;
-    rightMax = -Float.MAX_VALUE;
+    calcMaxMin(viewport, content, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE);
+  }
+
+  public void calcMaxMin(Viewport viewport, Rect content, float lMax, float lMin, float rMax, float rMin) {
+    leftMin = lMin;
+    leftMax = lMax;
+    rightMin = rMin;
+    rightMax = rMax;
 
     entryCount = 0;
 
@@ -93,9 +99,33 @@ public class ChartData<T extends IDataSet> {
       synchronized (this) {
         for (T t : getDataSets()) {
 
-          if (!t.isEnable()) continue;
+          if (!t.isEnable() || t instanceof ScatterDataSet) continue;
 
-          t.calcMinMax(viewport, content);
+          t.calcMinMax(viewport, content, -Float.MAX_VALUE, Float.MAX_VALUE);
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
+            leftMax = Math.max(leftMax, t.getViewportYMax());
+            leftMin = Math.min(leftMin, t.getViewportYMin());
+          }
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
+            rightMax = Math.max(rightMax, t.getViewportYMax());
+            rightMin = Math.min(rightMin, t.getViewportYMin());
+          }
+          if (t.getEntryCount() > entryCount) {
+            entryCount = t.getEntryCount();
+          }
+        }
+//        Log.d("ChartData", "calcMaxMin_0 leftMax:" + leftMax
+//                + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
+        for (T t : getDataSets()) {
+
+          if (!t.isEnable() || !(t instanceof ScatterDataSet)) continue;
+
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
+            t.calcMinMax(viewport, content, leftMax, leftMin);
+          }
+          if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_RIGHT) {
+            t.calcMinMax(viewport, content, rightMax, rightMin);
+          }
           if (t.getAxisDependency() == AxisY.DEPENDENCY_BOTH || t.getAxisDependency() == AxisY.DEPENDENCY_LEFT) {
             leftMax = Math.max(leftMax, t.getViewportYMax());
             leftMin = Math.min(leftMin, t.getViewportYMin());
@@ -109,6 +139,8 @@ public class ChartData<T extends IDataSet> {
           }
         }
       }
+//      Log.d("ChartData", "calcMaxMin_1 leftMax:" + leftMax
+//              + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
       setMinMax();
     }
   }

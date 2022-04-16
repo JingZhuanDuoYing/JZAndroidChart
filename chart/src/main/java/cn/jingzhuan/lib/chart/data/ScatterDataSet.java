@@ -2,6 +2,8 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueXOffset;
 import cn.jingzhuan.lib.chart.component.HasValueYOffset;
@@ -43,11 +45,11 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     this.scatterValues = scatterValues;
   }
 
-  @Override public void calcMinMax(Viewport viewport, Rect content) {
+  @Override public void calcMinMax(Viewport viewport, Rect content, float max, float mix) {
     mContentRect = content;
 
-    mViewportYMax = -Float.MAX_VALUE;
-    mViewportYMin = Float.MAX_VALUE;
+    mViewportYMax = max;
+    mViewportYMin = mix;
 
     if (shape != null && shapeOrder == 0) {
       if (drawOffsetY > 0) {
@@ -58,17 +60,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
 
     List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
+//    Log.e("ScatterDataSet", "calcMinMax_0 mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
     for (int i = 0; i < visiblePoints.size(); i++) {
       ScatterValue e = visiblePoints.get(i);
-      calcViewportMinMax(e, content);
-//      if (mViewportYMax > 0) {
-//        float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
-//        Log.d("ScatterDataSet", "calcMinMax:" + i + "/" + visiblePoints.size()
-//            + ", e.value:" + e.getValue() + ", mViewportYMax:" + mViewportYMax
-//            + ", mViewportYMin:" + mViewportYMin + ", shapeHeight:" + shapeHeight
-//                + ", contentRect.height():" + mContentRect.height());
-//      }
+      calcViewportMinMax(i, e, content);
     }
+//    Log.e("ScatterDataSet", "calcMinMax_1 mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
 
     float range = mViewportYMax - mViewportYMin;
     if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
@@ -79,28 +78,46 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
   }
 
-  private void calcViewportMinMax(ScatterValue e, Rect content) {
+  private void calcViewportMinMax(int i, ScatterValue e, Rect content) {
     if (e == null || !e.isVisible()) return;
     if (Float.isNaN(e.getValue())) return;
 
-    if (e.getValue() < mViewportYMin)
+    if (e.getValue() < mViewportYMin) {
       mViewportYMin = e.getValue();
+//      Log.w("ScatterDataSet", "calcViewportMinMax:" + i
+//              + ", e.value:" + e.getValue()
+//              + ", mViewportYMax:" + mViewportYMax
+//              + ", mViewportYMin:" + mViewportYMin);
+    }
 
-    if (e.getValue() > mViewportYMax)
+    if (e.getValue() > mViewportYMax) {
       mViewportYMax = e.getValue();
+//      Log.w("ScatterDataSet", "calcViewportMinMax:" + i
+//              + ", e.value:" + e.getValue()
+//              + ", mViewportYMax:" + mViewportYMax
+//              + ", mViewportYMin:" + mViewportYMin);
+    }
 
     if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_BOTTOM
             || shapeAlign == SHAPE_ALIGN_CENTER) {
-      calcViewportMinMaxExpansion(e, content);
+      calcViewportMinMaxExpansion(i, e, content);
     }
-
   }
 
-  private void calcViewportMinMaxExpansion(ScatterValue e, Rect content) {
+  private void calcViewportMinMaxExpansion(int i, ScatterValue e, Rect content) {
     if (content == null) return;
     if (shape == null) return;
 
     float range = mViewportYMax - mViewportYMin;
+//    if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE) {
+//      float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+//      Log.d("ScatterDataSet", "calcViewportMinMaxExpansion:" + i + ", range:" + range
+//              + ", e.value:" + e.getValue() + ", mViewportYMax:" + mViewportYMax
+//              + ", mViewportYMin:" + mViewportYMin + ", shapeHeight:" + shapeHeight
+//              + ", contentRect.height():" + mContentRect.height());
+//    }
+    if (range <= 0f) return;
+
     float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
     float percent = shapeHeight / (float) content.height();
 //    float expand = (float) Math.ceil(range * percent);
@@ -111,12 +128,12 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     float offset = shapeOrder * expand;
     float newValue = e.getValue() + offset;
 
-    if (shapeOrder > 0) {
+    if (offset > 0) {
       float oldViewportYMax = mViewportYMax;
       mViewportYMax = Math.max(newValue, mViewportYMax);
 
-//      if (mViewportYMax > 0 && oldViewportYMax != mViewportYMax) {
-//        Log.w("ScatterDataSet", "calcMinMax:" + i
+      if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE && oldViewportYMax != mViewportYMax) {
+//        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
 //                + ", e.value:" + e.getValue()
 //                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
 //                + ", percent:" + percent
@@ -125,15 +142,15 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 //                + ", offset:" + offset
 //                + ", mViewportYMax:" + mViewportYMax
 //                + ", mViewportYMin:" + mViewportYMin);
-//      }
+      }
       return;
     }
 
-    if (shapeOrder < 0) {
+    if (offset < 0) {
       float oldViewportYMin = mViewportYMin;
       mViewportYMin = Math.min(newValue, mViewportYMin);
-//      if (mViewportYMax > 0 && oldViewportYMin != mViewportYMin) {
-//        Log.w("ScatterDataSet", "calcMinMax:" + i
+      if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE && oldViewportYMin != mViewportYMin) {
+//        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
 //                + ", e.value:" + e.getValue()
 //                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
 //                + ", percent:" + percent
@@ -142,7 +159,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 //                + ", offset:" + offset
 //                + ", mViewportYMax:" + mViewportYMax
 //                + ", mViewportYMin:" + mViewportYMin);
-//      }
+      }
     }
   }
 
@@ -161,7 +178,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   }
 
   @Override public boolean addEntry(ScatterValue e) {
-    calcViewportMinMax(e, mContentRect);
+    calcViewportMinMax(scatterValues.size(), e, mContentRect);
     return scatterValues.add(e);
   }
 
