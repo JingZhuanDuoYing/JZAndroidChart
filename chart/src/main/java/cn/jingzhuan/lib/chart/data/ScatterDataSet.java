@@ -27,7 +27,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private List<ScatterValue> scatterValues;
 
   private Drawable shape;
-  private int shapeOrder = 0; // 正数从value向上排，负数向下排，0不变
+  private int shapeLevel = 0; // 正数向上扩展，负数向下扩展，0上下扩展一半
   private float drawOffsetX = 0f;
   private float drawOffsetY = 0f;
   private float shapeMinWidth = 0f;
@@ -54,14 +54,6 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     mViewportYMin = mix;
     ORIGINAL_VIEWPORT_YMAX = max;
     ORIGINAL_VIEWPORT_YMIN = mix;
-
-    if (shape != null && shapeOrder == 0) {
-      if (drawOffsetY > 0) {
-        shapeOrder = - 1;
-      } else {
-        shapeOrder = 1;
-      }
-    }
 
     List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
 //    Log.e("ScatterDataSet", "calcMinMax_0 mViewportYMax:" + mViewportYMax
@@ -109,60 +101,51 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     if (content == null) return;
     if (shape == null) return;
 
-    float anchor = e.getValue();
-    if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_BOTTOM
-            || shapeAlign == SHAPE_ALIGN_CENTER) {
-      anchor = e.getValue();
-    } else if (shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
-      anchor = ORIGINAL_VIEWPORT_YMAX;
-      shapeOrder = 1;
-    } else if (shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
-      anchor = ORIGINAL_VIEWPORT_YMIN;
-      shapeOrder = -1;
-    }
-
     float range = mViewportYMax - mViewportYMin;
-    if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE) {
-      float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+//      float oldViewportYMax = mViewportYMax;
+//      float oldViewportYMin = mViewportYMin;
+//    if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE) {
+//      float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
 //      Log.d("ScatterDataSet", "calcViewportMinMaxExpansion:" + i + ", range:" + range
 //              + ", e.value:" + e.getValue() + ", mViewportYMax:" + mViewportYMax
 //              + ", mViewportYMin:" + mViewportYMin + ", shapeHeight:" + shapeHeight
 //              + ", contentRect.height():" + mContentRect.height());
-    }
+//    }
     if (range <= 0f) return;
 
     float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
     float percent = shapeHeight / (float) content.height();
 //    float expand = (float) Math.ceil(range * percent);
-    float expand = (float) (range * percent);
+    float expand = range * percent;
 
     if (expand <= 0f) return;
 
-    float offset = shapeOrder * expand;
-    float newValue = anchor + offset;
+    float anchor;
+    if (shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
+      anchor = ORIGINAL_VIEWPORT_YMAX;
+    } else if (shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
+      anchor = ORIGINAL_VIEWPORT_YMIN;
+    } else {
+      anchor = e.getValue();
+    }
 
-    if (offset > 0) {
-      float oldViewportYMax = mViewportYMax;
+    float newValue;
+    if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
+      newValue = anchor + expand;
       mViewportYMax = Math.max(newValue, mViewportYMax);
 
-//      if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE && oldViewportYMax != mViewportYMax) {
-//        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
-//                + ", e.value:" + e.getValue()
-//                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
-//                + ", percent:" + percent
-//                + ", (range * percent):" + (range * percent)
-//                + ", expand:" + expand
-//                + ", offset:" + offset
-//                + ", mViewportYMax:" + mViewportYMax
-//                + ", mViewportYMin:" + mViewportYMin);
-//      }
-      return;
+    } else if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
+      newValue = anchor - expand;
+      mViewportYMin = Math.min(newValue, mViewportYMin);
+
+    } else { // shapeAlign == SHAPE_ALIGN_CENTER
+      float newMaxValue = anchor + (expand / 2);
+      float newMinValue = anchor - (expand / 2);
+      mViewportYMax = Math.max(newMaxValue, mViewportYMax);
+      mViewportYMin = Math.min(newMinValue, mViewportYMin);
     }
 
-    if (offset < 0) {
-      float oldViewportYMin = mViewportYMin;
-      mViewportYMin = Math.min(newValue, mViewportYMin);
-//      if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE && oldViewportYMin != mViewportYMin) {
+//      if (oldViewportYMax != mViewportYMax) {
 //        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
 //                + ", e.value:" + e.getValue()
 //                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
@@ -173,7 +156,31 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 //                + ", mViewportYMax:" + mViewportYMax
 //                + ", mViewportYMin:" + mViewportYMin);
 //      }
-    }
+//      if (oldViewportYMin != mViewportYMin) {
+//        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
+//                + ", e.value:" + e.getValue()
+//                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
+//                + ", percent:" + percent
+//                + ", (range * percent):" + (range * percent)
+//                + ", expand:" + expand
+//                + ", offset:" + offset
+//                + ", mViewportYMax:" + mViewportYMax
+//                + ", mViewportYMin:" + mViewportYMin);
+//      }
+
+
+
+//    float offset = shapeLevel * expand;
+//    float newValue = anchor + offset;
+//
+//    if (offset > 0) {
+//      mViewportYMax = Math.max(newValue, mViewportYMax);
+//      return;
+//    }
+//
+//    if (offset < 0) {
+//      mViewportYMin = Math.min(newValue, mViewportYMin);
+//    }
   }
 
   @Override public int getEntryCount() {
@@ -308,12 +315,12 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     this.shapeAlign = shapeAlign;
   }
 
-  public int getShapeOrder() {
-    return shapeOrder;
+  public int getShapeLevel() {
+    return shapeLevel;
   }
 
-  public void setShapeOrder(int shapeOrder) {
-    this.shapeOrder = shapeOrder;
+  public void setShapeLevel(int shapeLevel) {
+    this.shapeLevel = shapeLevel;
   }
 }
 
