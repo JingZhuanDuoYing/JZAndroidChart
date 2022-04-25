@@ -113,6 +113,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
       final CandlestickValue candlestick = candlestickDataSet.getEntryForIndex(i);
 
+      if (!candlestick.isVisible()) continue;
       if (!visibleValues.contains(candlestick)) {
         continue;
       }
