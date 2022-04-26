@@ -33,6 +33,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private float shapeMinWidth = 0f;
   private float shapeMaxWidth = Float.NaN;
   private int shapeAlign = SHAPE_ALIGN_CENTER;
+//  private String shapeAlignDesc = "CENTER";
 
   protected float ORIGINAL_VIEWPORT_YMIN = Float.MAX_VALUE;
   protected float ORIGINAL_VIEWPORT_YMAX = -Float.MAX_VALUE;
@@ -52,18 +53,19 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
     mViewportYMax = max;
     mViewportYMin = mix;
-    ORIGINAL_VIEWPORT_YMAX = max;
-    ORIGINAL_VIEWPORT_YMIN = mix;
 
     List<ScatterValue> visiblePoints = getVisiblePoints(viewport);
-//    Log.e("ScatterDataSet", "calcMinMax_0 mViewportYMax:" + mViewportYMax
-//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
+
     for (int i = 0; i < visiblePoints.size(); i++) {
       ScatterValue e = visiblePoints.get(i);
       calcViewportMinMax(i, e, content);
     }
-//    Log.e("ScatterDataSet", "calcMinMax_1 mViewportYMax:" + mViewportYMax
-//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
+    ORIGINAL_VIEWPORT_YMAX = mViewportYMax;
+    ORIGINAL_VIEWPORT_YMIN = mViewportYMin;
+    for (int i = 0; i < visiblePoints.size(); i++) {
+      ScatterValue e = visiblePoints.get(i);
+      calcViewportMinMaxExpansion(i, e, viewport, content);
+    }
 
     float range = mViewportYMax - mViewportYMin;
     if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
@@ -93,27 +95,45 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 //              + ", mViewportYMax:" + mViewportYMax
 //              + ", mViewportYMin:" + mViewportYMin);
     }
-
-    calcViewportMinMaxExpansion(i, e, content);
   }
 
-  private void calcViewportMinMaxExpansion(int i, ScatterValue e, Rect content) {
+  private void calcViewportMinMaxExpansion(int i, ScatterValue e, Viewport viewport, Rect content) {
+    if (e == null || !e.isVisible()) return;
+    if (Float.isNaN(e.getValue())) return;
     if (content == null) return;
     if (shape == null) return;
 
     float range = mViewportYMax - mViewportYMin;
-//      float oldViewportYMax = mViewportYMax;
-//      float oldViewportYMin = mViewportYMin;
-//    if (mViewportYMax > -Float.MAX_VALUE || mViewportYMin < Float.MAX_VALUE) {
-//      float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
-//      Log.d("ScatterDataSet", "calcViewportMinMaxExpansion:" + i + ", range:" + range
-//              + ", e.value:" + e.getValue() + ", mViewportYMax:" + mViewportYMax
-//              + ", mViewportYMin:" + mViewportYMin + ", shapeHeight:" + shapeHeight
-//              + ", contentRect.height():" + mContentRect.height());
-//    }
+//    float oldViewportYMax = mViewportYMax;
+//    float oldViewportYMin = mViewportYMin;
+
     if (range <= 0f) return;
 
-    float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+//    float shapeHeight = shape.getIntrinsicHeight() + 4f; // 间隙4px
+    final float width = (mContentRect.width() - getStartXOffset() - getEndXOffset())
+            / getVisibleRange(viewport) + 1;
+
+    float shapeWidth = shape.getIntrinsicWidth();
+    float shapeHeight = shape.getIntrinsicHeight();
+    if (isAutoWidth()) {
+      shapeWidth = Math.max(width * 0.8f, getShapeMinWidth());
+      if (!Float.isNaN(getShapeMaxWidth())) {
+        shapeWidth = Math.min(shapeWidth, getShapeMaxWidth());
+      }
+      shapeHeight = shapeHeight * (shapeWidth / ((float) shape.getIntrinsicWidth()));
+      shapeHeight += 4f;
+    }
+//    Log.d("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
+//            + ", shapeAlign:" + shapeAlignDesc
+//            + ", e.value:" + e.getValue()
+//            + ", e.isVisible:" + e.isVisible()
+//            + ", VIEWPORT_YMAX:" + VIEWPORT_YMAX_BEFORE_EXPAN
+//            + ", VIEWPORT_YMIN:" + VIEWPORT_YMIN_BEFORE_EXPAN
+//            + ", mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin
+//            + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
+//    );
+
     float percent = shapeHeight / (float) content.height();
 //    float expand = (float) Math.ceil(range * percent);
     float expand = range * percent;
@@ -130,11 +150,11 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
 
     float newValue;
-    if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
+    if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
       newValue = anchor + expand;
       mViewportYMax = Math.max(newValue, mViewportYMax);
 
-    } else if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
+    } else if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
       newValue = anchor - expand;
       mViewportYMin = Math.min(newValue, mViewportYMin);
 
@@ -147,40 +167,34 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
 //      if (oldViewportYMax != mViewportYMax) {
 //        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
+//                + ", expand:" + expand
+//                + ", anchor:" + anchor
+//                + ", shapeAlign:" + shapeAlignDesc
 //                + ", e.value:" + e.getValue()
+//                + ", VIEWPORT_YMAX:" + VIEWPORT_YMAX_BEFORE_EXPAN
+//                + ", VIEWPORT_YMIN:" + VIEWPORT_YMIN_BEFORE_EXPAN
+//                + ", mViewportYMax:" + mViewportYMax
+//                + ", mViewportYMin:" + mViewportYMin
 //                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
 //                + ", percent:" + percent
 //                + ", (range * percent):" + (range * percent)
-//                + ", expand:" + expand
-//                + ", offset:" + offset
-//                + ", mViewportYMax:" + mViewportYMax
-//                + ", mViewportYMin:" + mViewportYMin);
+//        );
 //      }
 //      if (oldViewportYMin != mViewportYMin) {
 //        Log.w("ScatterDataSet", "calcViewportMinMaxExpansion:" + i
+//                + ", expand:" + expand
+//                + ", anchor:" + anchor
+//                + ", shapeAlign:" + shapeAlignDesc
 //                + ", e.value:" + e.getValue()
+//                + ", VIEWPORT_YMAX:" + VIEWPORT_YMAX_BEFORE_EXPAN
+//                + ", VIEWPORT_YMIN:" + VIEWPORT_YMIN_BEFORE_EXPAN
+//                + ", mViewportYMax:" + mViewportYMax
+//                + ", mViewportYMin:" + mViewportYMin
 //                + ", range:" + range + ", shapeHeight:" + shapeHeight + ", contentRect.height:" + content.height()
 //                + ", percent:" + percent
 //                + ", (range * percent):" + (range * percent)
-//                + ", expand:" + expand
-//                + ", offset:" + offset
-//                + ", mViewportYMax:" + mViewportYMax
-//                + ", mViewportYMin:" + mViewportYMin);
+//        );
 //      }
-
-
-
-//    float offset = shapeLevel * expand;
-//    float newValue = anchor + offset;
-//
-//    if (offset > 0) {
-//      mViewportYMax = Math.max(newValue, mViewportYMax);
-//      return;
-//    }
-//
-//    if (offset < 0) {
-//      mViewportYMin = Math.min(newValue, mViewportYMin);
-//    }
   }
 
   @Override public int getEntryCount() {
@@ -313,6 +327,26 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public void setShapeAlign(int shapeAlign) {
     this.shapeAlign = shapeAlign;
+//    switch (shapeAlign) {
+//      case SHAPE_ALIGN_CENTER:
+//        shapeAlignDesc = "CENTER";
+//        break;
+//      case SHAPE_ALIGN_TOP:
+//        shapeAlignDesc = "TOP";
+//        break;
+//      case SHAPE_ALIGN_BOTTOM:
+//        shapeAlignDesc = "BOTTOM";
+//        break;
+//      case SHAPE_ALIGN_PARENT_TOP:
+//        shapeAlignDesc = "PARENT_TOP";
+//        break;
+//      case SHAPE_ALIGN_PARENT_BOTTOM:
+//        shapeAlignDesc = "PARENT_BOTTOM";
+//        break;
+//      default:
+//        shapeAlignDesc = "Error";
+//        break;
+//    }
   }
 
   public int getShapeLevel() {

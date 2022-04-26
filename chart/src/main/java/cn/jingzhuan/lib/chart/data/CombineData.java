@@ -186,7 +186,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
 //        Log.d("CombineData", "calcMaxMin_0 leftMax:" + leftMax
 //                + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
-//        ScatterData的calcMaxMin放在其它Data后面调用，利用其它Data计算好的leftMax, leftMin, rightMax, rightMin，计算要扩展的数值。
+        /** ScatterData的calcMaxMin放在其它Data后面调用，利用其它Data计算好的leftMax, leftMin, rightMax, rightMin，计算要扩展的数值。**/
         if (!scatterData.getDataSets().isEmpty()) {
             scatterData.calcMaxMin(viewport, content, leftMax, leftMin, rightMax, rightMin);
             leftMin = Math.min(scatterData.leftMin, leftMin);

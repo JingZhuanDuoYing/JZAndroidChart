@@ -61,10 +61,14 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     List<CandlestickValue> visiblePoints = getVisiblePoints(viewport);
 
+//    Log.e("CandlestickDataSet", "calcMinMax_0 mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
     for (int i = 0; i < visiblePoints.size(); i++) {
       CandlestickValue e = visiblePoints.get(i);
       calcViewportMinMax(e);
     }
+//    Log.e("CandlestickDataSet", "calcMinMax_1 mViewportYMax:" + mViewportYMax
+//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
 
     if (mEnableGap) {
       float max = -Float.MAX_VALUE;
@@ -113,11 +117,21 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     if (Float.isInfinite(e.getLow())) return;
     if (Float.isInfinite(e.getHigh())) return;
 
-    if (e.getLow() < mViewportYMin)
+    if (e.getLow() < mViewportYMin) {
       mViewportYMin = e.getLow();
+//      Log.w("CandlestickDataSet", "calcViewportMinMax:"
+//              + ", e.getLow:" + e.getLow()
+//              + ", mViewportYMax:" + mViewportYMax
+//              + ", mViewportYMin:" + mViewportYMin);
+    }
 
-    if (e.getHigh() > mViewportYMax)
+    if (e.getHigh() > mViewportYMax) {
       mViewportYMax = e.getHigh();
+//      Log.w("CandlestickDataSet", "calcViewportMinMax:"
+//              + ", e.getHigh:" + e.getHigh()
+//              + ", mViewportYMax:" + mViewportYMax
+//              + ", mViewportYMin:" + mViewportYMin);
+    }
   }
 
   @Override public int getEntryCount() {
