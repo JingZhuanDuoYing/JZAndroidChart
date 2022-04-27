@@ -11,8 +11,8 @@ import android.os.Build;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.view.ScaleGestureDetectorCompat;
 
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -234,6 +234,20 @@ public abstract class Chart extends BitmapCachedChart {
 
 
     private boolean isScaling = false;
+    private ScalingTimeCount scalingTimeCount;
+    class ScalingTimeCount extends CountDownTimer {
+        public ScalingTimeCount() {
+            super(200, 200);
+        }
+        @Override
+        public void onFinish() {
+            isScaling = false;
+        }
+        @Override
+        public void onTick(long millisUntilFinished) {}
+    }
+
+
     /**
      * The scale listener, used for handling multi-finger scale gestures.
      */
@@ -251,6 +265,9 @@ public abstract class Chart extends BitmapCachedChart {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
 
             isScaling = true;
+            if (scalingTimeCount != null) {
+                scalingTimeCount.cancel();
+            }
             lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
@@ -261,7 +278,8 @@ public abstract class Chart extends BitmapCachedChart {
                 super.onScaleEnd(detector);
                 return;
             }
-            isScaling = false;
+            scalingTimeCount = new ScalingTimeCount();
+            scalingTimeCount.start();
         }
 
         @Override
@@ -291,6 +309,8 @@ public abstract class Chart extends BitmapCachedChart {
 
             if (canZoom) {
                 float scalingFactor = ((spanX - lastSpanX) / lastSpanX) * 5;
+                scalingFactor = Math.min(1f, scalingFactor);
+                scalingFactor = Math.max(-1f, scalingFactor);
                 Log.d("Chart", "onScale zoom("
                         + scalingFactor
                         + "), spanDiff:" + spanDiff
@@ -417,10 +437,12 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (isScaling) return true;
             if (!isDraggingToMoveEnable()) {
                 onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
+            Log.d("Chart", "onScroll");
 
             // Scrolling uses math based on the viewport (as opposed to math using pixels).
             /**
@@ -464,7 +486,12 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (isScaling) return true;
+            boolean isMulti = e2.getPointerCount() > 1;
+            if (isMulti) return true;
+
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
+            Log.d("Chart", "onFling velocityX:" + velocityX);
 
             fling((int) -velocityX);
 
@@ -552,14 +579,6 @@ public abstract class Chart extends BitmapCachedChart {
 //                (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 mCurrentViewport.right,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        Log.d("Chart", "zoom mCurrentViewport.left:" + mCurrentViewport.left
-                + ", mCurrentViewport.right:" + mCurrentViewport.right
-                + ", focusX:" + mCurrentViewport.right
-                + ", focusY:" + (mCurrentViewport.bottom + mCurrentViewport.top) / 2
-                + ", mContentRect.left:" + mContentRect.left
-                + ", mContentRect.right:" + mContentRect.right
-                + ", mContentRect.width():" + mContentRect.width()
-        );
         triggerViewportChange();
     }
 
@@ -715,8 +734,10 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
             isTouching = true;
+            Log.d("Chart", "ACTION_DOWN || ACTION_MOVE");
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             isTouching = false;
+            Log.d("Chart", "ACTION_UP");
         }
 //        Log.w("Chart", "onTouchEvent event(" + event.getX()
 //                + ", " + event.getY() + "), PointerCount:" + event.getPointerCount() + ", eventAction:" + event.getAction());
