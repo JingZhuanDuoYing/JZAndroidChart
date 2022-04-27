@@ -233,6 +233,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
 
+    private boolean isScaling = false;
     /**
      * The scale listener, used for handling multi-finger scale gestures.
      */
@@ -249,8 +250,18 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
 
+            isScaling = true;
             lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            if (!isScaleGestureEnable()) {
+                super.onScaleEnd(detector);
+                return;
+            }
+            isScaling = false;
         }
 
         @Override
@@ -263,7 +274,8 @@ public abstract class Chart extends BitmapCachedChart {
             boolean zoomOut = lastSpanX > spanX; // 双指距离比上次小，为缩小
             boolean zoomIn = spanX > lastSpanX; // 双指距离比上次大，为放大
 
-            boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
+            float spanDiff = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX));
+            boolean canZoom = spanDiff >= 5f;
 
             if (zoomIn) {
                 setCanZoomOut(true);
@@ -277,48 +289,62 @@ public abstract class Chart extends BitmapCachedChart {
                     return false;
             }
 
-            float scaleSpanX = lastSpanX;
             if (canZoom) {
-                if (zoomOut) {
-                    lastSpanX = lastSpanX * scaleSensitivity;
-                } else if (zoomIn) {
-                    scaleSpanX = spanX * scaleSensitivity;
-                }
+                float scalingFactor = ((spanX - lastSpanX) / lastSpanX) * 5;
+                Log.d("Chart", "onScale zoom("
+                        + scalingFactor
+                        + "), spanDiff:" + spanDiff
+                        + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
+                        + ", lastSpanX:" + lastSpanX
+                        + ", mContentRect.width():" + mContentRect.width()
+                );
+                lastSpanX = scaleGestureDetector.getCurrentSpanX();
+                zoom(scalingFactor);
             }
 
-            float newWidth;
-            if (canZoom) {
-                if (zoomIn)
-                    newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
-                else
-                    newWidth = lastSpanX / spanX * mCurrentViewport.width();
-            } else
-                newWidth = lastSpanX / spanX * mCurrentViewport.width();
-
-            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
-                return true;
-            }
-
-            float focusX = scaleGestureDetector.getFocusX();
-            float focusY = scaleGestureDetector.getFocusY();
-
-            if (canZoom) {
-                if (zoomOut)
-                    focusX *= scaleSensitivity;
-                else if (zoomIn)
-                    focusX /= scaleSensitivity;
-            }
-
-            hitTest(focusX, focusY, viewportFocus);
-
-            mCurrentViewport.left = viewportFocus.x
-                    - newWidth * (focusX - mContentRect.left)
-                    / mContentRect.width();
-
-            mCurrentViewport.right = mCurrentViewport.left + newWidth;
-            mCurrentViewport.constrainViewport();
-            triggerViewportChange();
-            lastSpanX = spanX;
+//            float scaleSpanX = lastSpanX;
+//            if (canZoom) {
+//                if (zoomOut) {
+//                    lastSpanX = lastSpanX * scaleSensitivity;
+//                } else if (zoomIn) {
+//                    scaleSpanX = spanX * scaleSensitivity;
+//                }
+//            }
+//
+//            float newWidth;
+//            if (canZoom) {
+//                if (zoomIn)
+//                    newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
+//                else
+//                    newWidth = lastSpanX / spanX * mCurrentViewport.width();
+//            } else
+//                newWidth = lastSpanX / spanX * mCurrentViewport.width();
+//
+//            if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
+//                return true;
+//            }
+//
+//            float focusX = scaleGestureDetector.getFocusX();
+////            float focusX = mCurrentViewport.left;
+//            float focusY = scaleGestureDetector.getFocusY();
+//
+//            if (canZoom) {
+//                if (zoomOut)
+//                    focusX *= scaleSensitivity;
+//                else if (zoomIn)
+//                    focusX /= scaleSensitivity;
+//            }
+//
+//            hitTest(focusX, focusY, viewportFocus);
+//
+//            mCurrentViewport.left = viewportFocus.x
+//                    - newWidth * (focusX - mContentRect.left)
+//                    / mContentRect.width();
+//
+//            mCurrentViewport.right = mCurrentViewport.left + newWidth;
+//            mCurrentViewport.constrainViewport();
+//            triggerViewportChange();
+//            lastSpanX = spanX;
 
             return true;
         }
@@ -523,8 +549,17 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomer.forceFinished(true);
         mZoomer.startZoom(scalingFactor);
         mZoomFocalPoint.set(
-                (mCurrentViewport.right + mCurrentViewport.left) / 2,
+//                (mCurrentViewport.right + mCurrentViewport.left) / 2,
+                mCurrentViewport.right,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+        Log.d("Chart", "zoom mCurrentViewport.left:" + mCurrentViewport.left
+                + ", mCurrentViewport.right:" + mCurrentViewport.right
+                + ", focusX:" + mCurrentViewport.right
+                + ", focusY:" + (mCurrentViewport.bottom + mCurrentViewport.top) / 2
+                + ", mContentRect.left:" + mContentRect.left
+                + ", mContentRect.right:" + mContentRect.right
+                + ", mContentRect.width():" + mContentRect.width()
+        );
         triggerViewportChange();
     }
 
@@ -545,7 +580,7 @@ public abstract class Chart extends BitmapCachedChart {
                 forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
                 break;
             default:
-                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                forceX = mCurrentViewport.right;
                 break;
         }
         mZoomFocalPoint.set(forceX,
@@ -573,10 +608,9 @@ public abstract class Chart extends BitmapCachedChart {
                 forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
                 break;
             default:
-                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                forceX = mCurrentViewport.right;
                 break;
         }
-
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
@@ -684,10 +718,37 @@ public abstract class Chart extends BitmapCachedChart {
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             isTouching = false;
         }
+//        Log.w("Chart", "onTouchEvent event(" + event.getX()
+//                + ", " + event.getY() + "), PointerCount:" + event.getPointerCount() + ", eventAction:" + event.getAction());
+//        if (event.getPointerCount() > 1) {
+//            MotionEvent eventNew = MotionEvent.obtain(event);
+//            eventNew.setAction(MotionEvent.ACTION_CANCEL);
+////            eventNew.offsetLocation(10, 20);
+//            eventNew.setLocation(mCurrentViewport.right, event.getY());
+//            boolean retVal = mScaleGestureDetector.onTouchEvent(eventNew);
+//            Log.e("Chart", "onTouchEvent eventNew1(" + eventNew.getX()
+//                    + ", " + event.getY() + "), PointerCount:" + event.getPointerCount()
+//                    + ", eventAction:" + event.getAction()
+//                    + ", retVal:" + retVal
+//            );
+//
+//            retVal = mGestureDetector.onTouchEvent(eventNew) || retVal;
+//            Log.e("Chart", "onTouchEvent eventNew2(" + eventNew.getX()
+//                    + ", " + event.getY() + "), PointerCount:" + event.getPointerCount()
+//                    + ", eventAction:" + event.getAction()
+//                    + ", retVal:" + retVal
+//            );
+//
+//            return retVal || super.onTouchEvent(eventNew);
+//        } else {
+//            return super.onTouchEvent(event);
+//        }
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
 
-        retVal = mGestureDetector.onTouchEvent(event) || retVal;
+        if (!isScaling) {
+            retVal = mGestureDetector.onTouchEvent(event) || retVal;
+        }
 
         return retVal || super.onTouchEvent(event);
     }
