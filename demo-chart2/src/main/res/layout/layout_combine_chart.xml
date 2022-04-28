@@ -6,6 +6,6 @@
     <cn.jingzhuan.lib.chart2.widget.CombineChart
         android:id="@+id/combine_chart"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="400dp" />
 
 </layout>
