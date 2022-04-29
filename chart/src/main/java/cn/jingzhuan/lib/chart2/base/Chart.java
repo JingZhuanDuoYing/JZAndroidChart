@@ -12,6 +12,7 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -32,6 +33,7 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +95,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected boolean canLoadMore = true;
 
-    private float scaleSensitivity = 1.1f;
+    private float scaleSensitivity = 2.3f; // 大于1.5后就区别不大了
     private boolean canZoomIn = true;
     private boolean canZoomOut = true;
 
@@ -204,6 +206,14 @@ public abstract class Chart extends BitmapCachedChart {
     private void setupInteractions(Context context) {
 
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
+        //设置 mMinSpan ，防止不能缩小
+        try {
+            Field field = mScaleGestureDetector.getClass().getDeclaredField("mMinSpan");
+            field.setAccessible(true);
+            field.set(mScaleGestureDetector, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(true);
 
@@ -242,25 +252,35 @@ public abstract class Chart extends BitmapCachedChart {
          * variable but kept here to minimize per-frame allocations.
          */
         private PointF viewportFocus = new PointF();
-        private float lastSpanX;
+//        private float lastSpanX;
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
+            Log.e("Chart", "onScaleBegin");
 
-            lastSpanX = scaleGestureDetector.getCurrentSpanX();
+            isScaling = true;
+//            lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
 
         @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            super.onScaleEnd(detector);
+            Log.e("Chart", "onScaleEnd");
+        }
+
+        @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+            Log.e("Chart", "onScale");
 
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
-            float spanX = scaleGestureDetector.getCurrentSpanX();
-            boolean zoomOut = lastSpanX > spanX; // 双指距离比上次小，为缩小
+            float spanX = scaleGestureDetector.getCurrentSpan();
+            float lastSpanX = scaleGestureDetector.getPreviousSpan();
             boolean zoomIn = spanX > lastSpanX; // 双指距离比上次大，为放大
+            boolean zoomOut = lastSpanX > spanX; // 双指距离比上次小，为缩小
 
             boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
@@ -278,21 +298,23 @@ public abstract class Chart extends BitmapCachedChart {
 
             float scaleSpanX = lastSpanX;
             if (canZoom) {
-                if (zoomOut) {
-                    lastSpanX = lastSpanX * scaleSensitivity;
-                } else if (zoomIn) {
+                if (zoomIn) {
                     scaleSpanX = spanX * scaleSensitivity;
+                } else if (zoomOut) {
+                    lastSpanX = lastSpanX * scaleSensitivity;
                 }
             }
 
             float newWidth;
             if (canZoom) {
-                if (zoomIn)
+                if (zoomIn) {
                     newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
-                else
+                } else {
                     newWidth = lastSpanX / spanX * mCurrentViewport.width();
-            } else
+                }
+            } else {
                 newWidth = lastSpanX / spanX * mCurrentViewport.width();
+            }
 
             if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
                 return true;
@@ -310,15 +332,39 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-            mCurrentViewport.left = viewportFocus.x
-                    - newWidth * (focusX - mContentRect.left)
-                    / mContentRect.width();
+            Log.d("Chart", "onScale"
+                    + ", viewportFocus.x:" + viewportFocus.x
+                    + ", newWidth:" + newWidth
+                    + ", focusX:" + focusX
+                    + ", focusY:" + focusY
+                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
+                    + ", spanX:" + spanX
+                    + ", lastSpanX:" + lastSpanX
+                    + ", mCurrentViewport.left:" + mCurrentViewport.left
+                    + ", mContentRect.left:" + mContentRect.left
+                    + ", mContentRect.width():" + mContentRect.width()
+            );
 
+            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
             // mCurrentViewport.right = mCurrentViewport.left + newWidth;
+
+            Log.w("Chart", "onScale"
+                    + ", viewportFocus.x:" + viewportFocus.x
+                    + ", newWidth:" + newWidth
+                    + ", focusX:" + focusX
+                    + ", focusY:" + focusY
+                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
+                    + ", spanX:" + spanX
+                    + ", lastSpanX:" + lastSpanX
+                    + ", mCurrentViewport.left:" + mCurrentViewport.left
+                    + ", mContentRect.left:" + mContentRect.left
+                    + ", mContentRect.width():" + mContentRect.width()
+            );
+
             mCurrentViewport.constrainViewport();
 
             triggerViewportChange();
-            lastSpanX = spanX;
+//            lastSpanX = spanX;
 
             return true;
         }
@@ -403,6 +449,7 @@ public abstract class Chart extends BitmapCachedChart {
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) {
                 return true;
             }
+            Log.w("Chart", "onScroll");
 
             // Scrolling uses math based on the viewport (as opposed to math using pixels).
             /**
@@ -684,20 +731,67 @@ public abstract class Chart extends BitmapCachedChart {
         triggerViewportChange();
     }
 
+//    private int lastEvAction = -1;
+//    private int lastPointerCount = -1;
+    private boolean isScaling = false;
+    private ScalingTimeCount scalingTimeCount;
+    class ScalingTimeCount extends CountDownTimer {
+        public ScalingTimeCount() {
+            super(350, 350);
+        }
+        @Override
+        public void onFinish() {
+            isScaling = false;
+        }
+        @Override
+        public void onTick(long millisUntilFinished) {}
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.v("Chart", "ACTION_DOWN: " + event.getPointerCount());
+            }
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                Log.d("Chart", "ACTION_MOVE: pointerCount: " + event.getPointerCount()
+//                        + ", lastPointerCount: " + lastPointerCount
+                );
+            }
             isTouching = true;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            Log.e("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
+//                    + ", lastPointerCount: " + lastPointerCount
+            );
             isTouching = false;
         }
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
 
-        retVal = mGestureDetector.onTouchEvent(event) || retVal;
 
-        return retVal || super.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (isScaling) {
+                scalingTimeCount = new ScalingTimeCount();
+                scalingTimeCount.start();
+            }
+        }
+        if (!isScaling) {
+            retVal = mGestureDetector.onTouchEvent(event) || retVal;
+        }
+
+//        lastEvAction = event.getAction();
+//        lastPointerCount = event.getPointerCount();
+
+        Log.e("Chart", "eventAction: " + event.getAction() + "pointerCount: " + event.getPointerCount()
+                + ", retVal: " + retVal
+                + ", isScaling: " + isScaling
+//                + ", lastPointerCount: " + lastPointerCount
+        );
+        if (isScaling) {
+            return true;
+        } else {
+            return retVal || super.onTouchEvent(event);
+        }
     }
 
     protected void setupEdgeEffect(Context context) {
