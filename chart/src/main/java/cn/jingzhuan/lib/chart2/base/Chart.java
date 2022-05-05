@@ -96,7 +96,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected boolean canLoadMore = true;
 
-    private float scaleSensitivity = 2.3f; // 大于1.5后就区别不大了
+    private float scaleSensitivity = 1f;
     private boolean canZoomIn = true;
     private boolean canZoomOut = true;
 
