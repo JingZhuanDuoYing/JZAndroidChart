@@ -63,6 +63,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mScaleGestureEnable = true;
 
     private boolean mHighlightDisable = false;
+    private boolean mHighlightVolatile = true;
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
@@ -406,7 +407,7 @@ public abstract class Chart extends BitmapCachedChart {
             } else {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
                 if (index >= 0) {
-                    if (mHighlights != null || mHighlightDisable) {
+                    if (mHighlightVolatile && (mHighlights != null || mHighlightDisable)) {
                         cleanHighlight();
                     } else {
                         onTouchPoint(e);
@@ -987,6 +988,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setHighlightDisable(boolean highlightDisable) {
         this.mHighlightDisable = highlightDisable;
+    }
+
+    public boolean isHighlightVolatile() {
+        return mHighlightVolatile;
+    }
+
+    public void setHighlightVolatile(boolean highlightVolatile) {
+        this.mHighlightVolatile = highlightVolatile;
     }
 
     public Zoomer getZoomer() {
