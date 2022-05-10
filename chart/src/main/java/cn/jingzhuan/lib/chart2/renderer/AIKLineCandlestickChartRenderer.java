@@ -166,9 +166,9 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
 
       if (i > 0) {
         final CandlestickValue previousValue = candlestickDataSet.getEntryForIndex(i - 1);
-        boolean isLimitUp = Float.compare(
-            (candlestick.getClose() - previousValue.getClose()) / previousValue.getClose(), 0.095f)
-            > 0;
+        boolean isLimitUp = (Float.compare(
+                candlestick.getClose(),
+                previousValue.getClose() * 1.1f - 0.01f) > 0) && candlestick.getClose() == candlestick.getHigh();
         if (candlestickDataSet.getLimitUpColor() != Color.TRANSPARENT) {
           if (isLimitUp) {
             mRenderPaint.setColor(candlestickDataSet.getLimitUpColor());

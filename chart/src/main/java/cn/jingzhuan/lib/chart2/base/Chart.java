@@ -598,8 +598,6 @@ public abstract class Chart extends BitmapCachedChart {
                 forceX = mCurrentViewport.right;
                 break;
             case ForceAlign.CENTER:
-                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
-                break;
             default:
                 forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
                 break;
@@ -626,8 +624,6 @@ public abstract class Chart extends BitmapCachedChart {
                 forceX = mCurrentViewport.right;
                 break;
             case ForceAlign.CENTER:
-                forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
-                break;
             default:
                 forceX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
                 break;
