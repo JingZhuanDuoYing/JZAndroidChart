@@ -7,10 +7,12 @@ public class DataFormatter {
     public static final String UNIT_BILLION = "亿";
     public static final String UNIT_PERCENT = "%"; // 数值先*100，再添加%
     public static final String UNIT_PERCENT_DIRECT = "+%"; // 数值不变，直接添加%
-    public static final String UNIT_CALC = "*"; // 服务器不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
+    public static final String UNIT_CALC = "*"; // 不指定单位，由客户端根据数值范围决定基本单位。这时精度默认为2
+    public static final String UNIT_CALC_SUFFIX = "*+"; // 指定附加单位，由客户端根据数值范围决定基本单位。这时精度默认为2
     public static final String UNIT_EMPTY = "";
     private int precision = 2; // 数据精度
-    private String unit = ""; // 数据单位
+    private String unit = ""; // 数据基本单位
+    private String unitSuffix = ""; // 数据附加单位
     private boolean isHide = false;
 
     public static DataFormatter TRILLION() {
@@ -31,6 +33,9 @@ public class DataFormatter {
     public static DataFormatter CALC() {
         return new DataFormatter(UNIT_CALC);
     }
+    public static DataFormatter CALC_SUFFIX(String unitSuffix) {
+        return new DataFormatter(UNIT_CALC_SUFFIX, unitSuffix);
+    }
     public static DataFormatter EMPTY() {
         return new DataFormatter(UNIT_EMPTY);
     }
@@ -45,14 +50,19 @@ public class DataFormatter {
     }
 
     public DataFormatter(String unit) {
+        this(unit, "");
+    }
+    public DataFormatter(String unit, String unitSuffix) {
         if (unit == null || (!unit.equals(UNIT_TRILLION)
                 && !unit.equals(UNIT_TEN_THOUSAND) && !unit.equals(UNIT_BILLION)
                 && !unit.equals(UNIT_PERCENT)&& !unit.equals(UNIT_PERCENT_DIRECT)
-                && !unit.equals(UNIT_CALC) && !unit.equals(UNIT_EMPTY))) {
+                && !unit.equals(UNIT_CALC) && !unit.equals(UNIT_CALC_SUFFIX)
+                && !unit.equals(UNIT_EMPTY))) {
             unit = "";
         }
         this.precision = 2;
         this.unit = unit;
+        this.unitSuffix = unitSuffix;
     }
 
     public DataFormatter(int precision, String unit) {
@@ -81,7 +91,7 @@ public class DataFormatter {
                 this.unit = UNIT_PERCENT;
                 break;
             case 4:
-                this.unit = UNIT_CALC; // 服务器不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
+                this.unit = UNIT_CALC; // 不指定单位，由客户端根据数值范围决定单位。这时精度默认为2
                 this.precision = 2;
                 break;
             case 5:
@@ -156,6 +166,14 @@ public class DataFormatter {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getUnitSuffix() {
+        return unitSuffix;
+    }
+
+    public void setUnitSuffix(String unitSuffix) {
+        this.unitSuffix = unitSuffix;
     }
 
     public boolean isHide() {
