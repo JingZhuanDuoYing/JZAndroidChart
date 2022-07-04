@@ -14,6 +14,7 @@ import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
+import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart.utils.RequestDataType;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class CombineChartRenderer extends AbstractDataRenderer {
 
+    protected TreeChartRenderer treeChartRenderer;
     protected BarChartRenderer barChartRenderer;
     protected LineRenderer lineRenderer;
     protected CandlestickChartRenderer candlestickChartRenderer;
@@ -44,6 +46,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public CombineChartRenderer(final Chart chart) {
         super(chart);
 
+        treeChartRenderer = initTreeChartRenderer(chart);
         lineRenderer = initLineRenderer(chart);
         barChartRenderer = initBarChartRenderer(chart);
         candlestickChartRenderer = initCandlestickChartRenderer(chart);
@@ -60,6 +63,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             }
         });
         showRange = chart.getRangeEnable();
+    }
+
+    private TreeChartRenderer initTreeChartRenderer(Chart chart) {
+        return new TreeChartRenderer(chart);
     }
 
     private ScatterTextRenderer initScatterTextRenderer(Chart chart) {
@@ -96,6 +103,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     protected void renderDataSet(Canvas canvas) {
+        treeChartRenderer.renderDataSet(canvas,getChartData().getTreeChartData());
         barChartRenderer.renderDataSet(canvas, getChartData().getBarChartData());
         candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
         lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
@@ -162,7 +170,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
 
 
-        if (dataSet instanceof LineDataSet) {
+        if (dataSet instanceof TreeDataSet){
+            treeChartRenderer.addDataSet((TreeDataSet) dataSet);
+        } else if (dataSet instanceof LineDataSet) {
             lineRenderer.addDataSet((LineDataSet) dataSet);
         } else if (dataSet instanceof BarDataSet) {
             barChartRenderer.addDataSet((BarDataSet) dataSet);
@@ -183,6 +193,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
         if (defaultVisibleEntryCount <= 0) return;
 
+        treeChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         barChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         lineRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         scatterChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
@@ -195,6 +206,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
         if (maxVisibleEntryCount <= 0) return;
 
+        treeChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         barChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         lineRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
         scatterChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
@@ -207,6 +219,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
         if (minVisibleEntryCount <= 0) return;
 
+        treeChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         barChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         lineRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
         scatterChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
@@ -225,6 +238,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void clearDataSet() {
         getChartData().clear();
 
+        cleanTreeDataSet();
         cleanLineDataSet();
         cleanBarDataSet();
         cleanCandlestickDataSet();
@@ -264,6 +278,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         getChartData().getScatterTextChartData().clear();
     }
 
+    public void cleanTreeDataSet(){
+        treeChartRenderer.clearDataSet();
+        getChartData().getTreeChartData().clear();
+    }
+
     @Override
     protected List<AbstractDataSet> getDataSet() {
         return combineData.getDataSets();
@@ -276,6 +295,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override public void enableHighlightDashPathEffect(float[] intervals, float phase) {
         super.enableHighlightDashPathEffect(intervals, phase);
+        this.treeChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.lineRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.barChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.candlestickChartRenderer.enableHighlightDashPathEffect(intervals, phase);
@@ -286,6 +306,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public void setTypeface(Typeface tf) {
+        this.treeChartRenderer.setTypeface(tf);
         this.lineRenderer.setTypeface(tf);
         this.barChartRenderer.setTypeface(tf);
         this.candlestickChartRenderer.setTypeface(tf);
@@ -296,6 +317,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {
+        if (!getChartData().getTreeData().isEmpty()) {
+            return treeChartRenderer.getEntryIndexByCoordinate(x, y);
+        }
         if (!getChartData().getCandlestickData().isEmpty()) {
             return candlestickChartRenderer.getEntryIndexByCoordinate(x, y);
         }

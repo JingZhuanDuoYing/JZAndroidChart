@@ -1,0 +1,159 @@
+package cn.jingzhuan.lib.chart.data;
+
+import android.graphics.Color;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
+
+
+/**
+ * Statistic Data Set
+ * Created by guobosheng on 22/6/23.
+ */
+
+public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueYOffset {
+
+    private List<TreeValue> mTreeValues;
+    private float strokeThickness = 2;
+    private int positiveColor = Color.RED;
+    private int negativeColor = Color.GREEN;
+
+    public TreeDataSet(List<TreeValue> treeValues) {
+        this(treeValues, AxisY.DEPENDENCY_BOTH);
+    }
+
+    public TreeDataSet(List<TreeValue> treeValues, @AxisDependency int axisDependency) {
+        this.mTreeValues = treeValues;
+        setAxisDependency(axisDependency);
+    }
+
+    @Override
+    public int getEntryCount() {
+        if (mTreeValues != null) {
+            if (getMinValueCount() > mTreeValues.size()) {
+                return getMinValueCount();
+            } else {
+                return mTreeValues.size();
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public void calcMinMax(Viewport viewport) {
+
+        if (mTreeValues == null || mTreeValues.isEmpty())
+            return;
+
+        mViewportYMax = -Float.MAX_VALUE;
+        mViewportYMin = Float.MAX_VALUE;
+
+        for (TreeValue e : getVisiblePoints(viewport)) {
+            calcMinMaxY(e);
+        }
+        float range = mViewportYMax - mViewportYMin;
+        if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
+            mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+        }
+        if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
+            mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+        }
+    }
+
+    protected void calcMinMaxY(TreeValue e) {
+        if (e == null || !e.isEnable()) return;
+
+        float v = e.getHigh();
+        if (!Float.isNaN(v) && !Float.isInfinite(v)) {
+            mViewportYMin = Math.min(mViewportYMin, v);
+            mViewportYMax = Math.max(mViewportYMax, v);
+        }
+    }
+
+    @Override
+    public void setValues(List<TreeValue> values) {
+        this.mTreeValues = values;
+    }
+
+    @Override
+    public List<TreeValue> getValues() {
+        return mTreeValues;
+    }
+
+    @Override
+    public boolean addEntry(TreeValue e) {
+        if (e == null) return false;
+
+        if (mTreeValues == null) {
+            mTreeValues = new ArrayList<>();
+        }
+
+        calcMinMaxY(e);
+
+        return mTreeValues.add(e);
+    }
+
+    @Override
+    public boolean removeEntry(TreeValue e) {
+        if (e == null) return false;
+        calcMinMaxY(e);
+        return mTreeValues.remove(e);
+    }
+
+    @Override
+    public int getEntryIndex(TreeValue e) {
+        return mTreeValues.indexOf(e);
+    }
+
+    @Override
+    public TreeValue getEntryForIndex(int index) {
+        return mTreeValues.get(index);
+    }
+
+    public float getStrokeThickness() {
+        return strokeThickness;
+    }
+
+    public void setStrokeThickness(float strokeThickness) {
+        this.strokeThickness = strokeThickness;
+    }
+
+    public int getPositiveColor() {
+        return positiveColor;
+    }
+
+    public void setPositiveColor(int positiveColor) {
+        this.positiveColor = positiveColor;
+    }
+
+    public int getNegativeColor() {
+        return negativeColor;
+    }
+
+    public void setNegativeColor(int negativeColor) {
+        this.negativeColor = negativeColor;
+    }
+
+    @Override public float getMaxValueOffsetPercent() {
+        return maxValueOffsetPercent;
+    }
+
+    @Override public float getMinValueOffsetPercent() {
+        return minValueOffsetPercent;
+    }
+
+    @Override
+    public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+        this.minValueOffsetPercent = minValueOffsetPercent;
+    }
+
+    @Override
+    public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+        this.maxValueOffsetPercent = maxValueOffsetPercent;
+    }
+}
