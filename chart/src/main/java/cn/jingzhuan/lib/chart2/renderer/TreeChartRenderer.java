@@ -41,38 +41,6 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
             }
         });
 
-//        final Highlight highlight = new Highlight();
-//        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-//            @Override
-//            public void touch(float touchX, float touchY) {
-//                if (chart.isHighlightDisable()) return;
-//
-//                for (TreeDataSet dataSet : getDataSet()) {
-//                    if (dataSet.isHighlightedVerticalEnable()) {
-//                        highlight.setTouchX(touchX);
-//                        highlight.setTouchY(touchY);
-//                        int index = getEntryIndexByCoordinate(touchX, touchY) - dataSet.getStartIndexOffset();
-//                        if (index < dataSet.getValues().size()) {
-//                            TreeValue treeValue = dataSet.getEntryForIndex(index);
-//                            float yPosition = treeValue.getY();
-//
-//                            if (yPosition >= 0) {
-//                                highlight.setX(touchX);
-//                                highlight.setY(yPosition);
-//                                highlight.setDataIndex(index);
-//                                Log.d("筹码分布1", "TreeChartRenderer addOnTouchPointChangeListener highlight.x: " + highlight.getX()
-//                                        + ", y: " + highlight.getX()
-//                                        + ", touchX: " + highlight.getTouchX()
-//                                        + ", touchY: " + highlight.getTouchY()
-//                                        + ", dataIndex: " + highlight.getDataIndex()
-//                                );
-//                                chart.highlightValue(highlight);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
     }
 
     @Override
@@ -149,31 +117,6 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
-//        mRenderPaint.setStyle(Paint.Style.FILL);
-//        mRenderPaint.setStrokeWidth(1f);
-//        mRenderPaint.setColor(getHighlightColor());
-////        mRenderPaint.setColor(Color.RED);
-//        for (Highlight highlight : highlights) {
-//            if (highlight != null) {
-//                canvas.drawLine(highlight.getX(),
-//                        0,
-//                        highlight.getX(),
-//                        mContentRect.bottom,
-//                        mRenderPaint);
-//
-//                // Horizontal
-//                for (TreeDataSet treeDataSet : getDataSet()) {
-//                    if (treeDataSet.isHighlightedHorizontalEnable()) {
-//                        canvas.drawLine(0,
-//                                highlight.getY(),
-//                                mContentRect.right,
-//                                highlight.getY(),
-//                                mRenderPaint);
-//                    }
-//                }
-//            }
-//        }
-//        mRenderPaint.setPathEffect(null);
     }
 
     @Override

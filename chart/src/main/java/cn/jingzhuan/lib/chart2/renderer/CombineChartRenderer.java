@@ -321,9 +321,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override public int getEntryIndexByCoordinate(float x, float y) {
-        if (!getChartData().getTreeData().isEmpty()) {
-            return treeChartRenderer.getEntryIndexByCoordinate(x, y);
-        }
         if (!getChartData().getCandlestickData().isEmpty()) {
             return candlestickChartRenderer.getEntryIndexByCoordinate(x, y);
         }
