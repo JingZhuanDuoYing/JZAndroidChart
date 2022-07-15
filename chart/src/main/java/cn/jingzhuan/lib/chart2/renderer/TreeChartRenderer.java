@@ -2,8 +2,10 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 
 import java.util.List;
 
@@ -25,10 +27,11 @@ import cn.jingzhuan.lib.chart2.base.Chart;
 public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
 
     private TreeData mTreeDataSets;
-    private int mIndex;
+    private Chart mChart;
 
     public TreeChartRenderer(final Chart chart) {
         super(chart);
+        mChart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -38,40 +41,47 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
             }
         });
 
-        final Highlight highlight = new Highlight();
-        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-            @Override
-            public void touch(float touchX, float touchY) {
-                if (chart.isHighlightDisable()) return;
-
-                for (TreeDataSet dataSet : getDataSet()) {
-                    if (dataSet.isHighlightedVerticalEnable()) {
-                        highlight.setTouchX(touchX);
-                        highlight.setTouchY(touchY);
-                        int index = getEntryIndexByCoordinate(touchX, touchY) - dataSet.getStartIndexOffset();
-                        mIndex = index;
-                        if (index < dataSet.getValues().size()) {
-                            TreeValue treeValue = dataSet.getEntryForIndex(index);
-                            float yPosition = treeValue.getY();
-
-                            if (yPosition >= 0) {
-                                highlight.setX(touchX);
-                                highlight.setY(yPosition);
-                                highlight.setDataIndex(index);
-                                chart.highlightValue(highlight);
-                            }
-                        }
-                    }
-                }
-            }
-        });
+//        final Highlight highlight = new Highlight();
+//        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
+//            @Override
+//            public void touch(float touchX, float touchY) {
+//                if (chart.isHighlightDisable()) return;
+//
+//                for (TreeDataSet dataSet : getDataSet()) {
+//                    if (dataSet.isHighlightedVerticalEnable()) {
+//                        highlight.setTouchX(touchX);
+//                        highlight.setTouchY(touchY);
+//                        int index = getEntryIndexByCoordinate(touchX, touchY) - dataSet.getStartIndexOffset();
+//                        if (index < dataSet.getValues().size()) {
+//                            TreeValue treeValue = dataSet.getEntryForIndex(index);
+//                            float yPosition = treeValue.getY();
+//
+//                            if (yPosition >= 0) {
+//                                highlight.setX(touchX);
+//                                highlight.setY(yPosition);
+//                                highlight.setDataIndex(index);
+//                                Log.d("筹码分布1", "TreeChartRenderer addOnTouchPointChangeListener highlight.x: " + highlight.getX()
+//                                        + ", y: " + highlight.getX()
+//                                        + ", touchX: " + highlight.getTouchX()
+//                                        + ", touchY: " + highlight.getTouchY()
+//                                        + ", dataIndex: " + highlight.getDataIndex()
+//                                );
+//                                chart.highlightValue(highlight);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        });
     }
 
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<TreeDataSet> chartData) {
         for (TreeDataSet dataSet : chartData.getDataSets()) {
-            if (dataSet.isVisible()) {
-                drawTreeDataSet(canvas, dataSet, dataSet.getEntryCount() - 1,
+            if (mChart.getFocusIndex() == -1) mChart.setFocusIndex(dataSet.getValues().size() - 1);
+            if (dataSet.isVisible() && dataSet.getValues().size() > mChart.getFocusIndex()) {
+                Log.d("筹码分布", "renderDataSet, mFocusIndex: " + mChart.getFocusIndex());
+                drawTreeDataSet(canvas, dataSet, mChart.getFocusIndex(),
                         chartData.getLeftMax(), chartData.getLeftMin(),
                         chartData.getRightMax(), chartData.getRightMin());
             }
@@ -101,31 +111,33 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
         TreeValue treeValue = dataSet.getEntryForIndex(index);
 
         if (!treeValue.isEnable()) return;
-        int valueCount = treeValue.getLeafCount();
-        if (valueCount < 1) return;
+        int leafCount = treeValue.getLeafCount();
+        if (leafCount < 1) return;
 
         float zeroX = mContentRect.width() / 2f;
-        float maxSpace = mContentRect.width() / 4f;
-        float maxLeafLength = treeValue.getMaxLeafValue();
-        for (int i = 0; i < valueCount; i++) {
+        float maxLeafSpace = mContentRect.width() / 4f;
+        float maxLeafValue = treeValue.getMaxLeafValue();
+
+        for (int i = 0; i < leafCount; i++) {
             Leaf leaf = treeValue.getLeafs().get(i);
             if (Float.isNaN(leaf.getHigh())) continue;
 
-            float leftLeafLength = leaf.getLeftValue();
+            float leftValue = leaf.getLeftValue();
             float rightValue = leaf.getRightValue();
             float high = leaf.getHigh() * mChartAnimator.getPhaseY();
 
             float y = calcHeight(high, max, min);
             treeValue.setCoordinate(mContentRect.width() / 2f, y);
 
-            float left = zeroX - (leftLeafLength / maxLeafLength) * maxSpace;
-
-            mRenderPaint.setColor(dataSet.getPositiveColor());
+            float left = zeroX - (leftValue / maxLeafValue) * maxLeafSpace;
+            int positiveColor = ColorUtils.setAlphaComponent(dataSet.getPositiveColor(), dataSet.getColorAlpha());
+            mRenderPaint.setColor(positiveColor);
             canvas.drawLine(left, y, zeroX, y, mRenderPaint);
 
-            float right = zeroX + (rightValue / maxLeafLength) * maxSpace;
+            float right = zeroX + (rightValue / maxLeafValue) * maxLeafSpace;
 
-            mRenderPaint.setColor(dataSet.getNegativeColor());
+            int negativeColor = ColorUtils.setAlphaComponent(dataSet.getNegativeColor(), dataSet.getColorAlpha());
+            mRenderPaint.setColor(negativeColor);
             canvas.drawLine(zeroX, y, right, y, mRenderPaint);
         }
     }
@@ -137,6 +149,31 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+//        mRenderPaint.setStyle(Paint.Style.FILL);
+//        mRenderPaint.setStrokeWidth(1f);
+//        mRenderPaint.setColor(getHighlightColor());
+////        mRenderPaint.setColor(Color.RED);
+//        for (Highlight highlight : highlights) {
+//            if (highlight != null) {
+//                canvas.drawLine(highlight.getX(),
+//                        0,
+//                        highlight.getX(),
+//                        mContentRect.bottom,
+//                        mRenderPaint);
+//
+//                // Horizontal
+//                for (TreeDataSet treeDataSet : getDataSet()) {
+//                    if (treeDataSet.isHighlightedHorizontalEnable()) {
+//                        canvas.drawLine(0,
+//                                highlight.getY(),
+//                                mContentRect.right,
+//                                highlight.getY(),
+//                                mRenderPaint);
+//                    }
+//                }
+//            }
+//        }
+//        mRenderPaint.setPathEffect(null);
     }
 
     @Override

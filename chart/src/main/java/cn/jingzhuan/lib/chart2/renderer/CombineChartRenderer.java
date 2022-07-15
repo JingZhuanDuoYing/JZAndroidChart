@@ -120,6 +120,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void setHighlightColor(int highlightColor) {
         super.setHighlightColor(highlightColor);
+        treeChartRenderer.setHighlightColor(highlightColor);
         lineRenderer.setHighlightColor(highlightColor);
         barChartRenderer.setHighlightColor(highlightColor);
         candlestickChartRenderer.setHighlightColor(highlightColor);
@@ -131,6 +132,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
+        if (treeChartRenderer.getDataSet() != null && !treeChartRenderer.getDataSet().isEmpty()) {
+            treeChartRenderer.renderHighlighted(canvas, highlights);
+        }
         if (lineRenderer.getDataSet() != null && !lineRenderer.getDataSet().isEmpty()) {
             lineRenderer.renderHighlighted(canvas, highlights);
         }

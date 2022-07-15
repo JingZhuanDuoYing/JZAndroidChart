@@ -93,6 +93,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean isShowRange = false;
 
     protected Highlight[] mHighlights;
+    int mFocusIndex = -1;
 
     protected boolean canLoadMore = true;
 
@@ -972,6 +973,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setScaleGestureEnable(boolean mScaleGestureEnable) {
         this.mScaleGestureEnable = mScaleGestureEnable;
+    }
+
+    public int getFocusIndex() {
+        return mFocusIndex;
+    }
+
+    public void setFocusIndex(int focusIndex) {
+        this.mFocusIndex = focusIndex;
     }
 
     public boolean isScaleGestureEnable() {

@@ -22,6 +22,7 @@ public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueY
     private float strokeThickness = 2;
     private int positiveColor = Color.RED;
     private int negativeColor = Color.GREEN;
+    private int colorAlpha = 255;
 
     public TreeDataSet(List<TreeValue> treeValues) {
         this(treeValues, AxisY.DEPENDENCY_BOTH);
@@ -68,10 +69,11 @@ public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueY
     protected void calcMinMaxY(TreeValue e) {
         if (e == null || !e.isEnable()) return;
 
-        float v = e.getHigh();
-        if (!Float.isNaN(v) && !Float.isInfinite(v)) {
-            mViewportYMin = Math.min(mViewportYMin, v);
-            mViewportYMax = Math.max(mViewportYMax, v);
+        float high = e.getHigh();
+        float low = e.getLow();
+        if (!Float.isNaN(high) && !Float.isInfinite(high)) {
+            mViewportYMin = Math.min(mViewportYMin, low);
+            mViewportYMax = Math.max(mViewportYMax, high);
         }
     }
 
@@ -137,6 +139,22 @@ public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueY
 
     public void setNegativeColor(int negativeColor) {
         this.negativeColor = negativeColor;
+    }
+
+    public int getColorAlpha() {
+        return colorAlpha;
+    }
+
+    public void setColorAlpha(int colorAlpha) {
+        if (colorAlpha < 0) {
+            this.colorAlpha = 0;
+            return;
+        }
+        if (colorAlpha > 255) {
+            this.colorAlpha = 255;
+            return;
+        }
+        this.colorAlpha = colorAlpha;
     }
 
     @Override public float getMaxValueOffsetPercent() {
