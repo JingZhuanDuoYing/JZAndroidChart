@@ -269,12 +269,12 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
-            Log.e("Chart", "onScaleEnd");
+            Log.d("Chart", "onScaleEnd");
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            Log.e("Chart", "onScale");
+            Log.d("Chart", "onScale");
 
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
@@ -519,7 +519,7 @@ public abstract class Chart extends BitmapCachedChart {
                     try {
                         mOnViewportChangeListener.onViewportChange(mCurrentViewport);
                     } catch (Exception e) {
-                        Log.e("Chart", "onViewportChange", e);
+                        Log.d("Chart", "onViewportChange", e);
                     }
                 }
             }
@@ -758,7 +758,7 @@ public abstract class Chart extends BitmapCachedChart {
             }
             isTouching = true;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            Log.e("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
+            Log.d("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
 //                    + ", lastPointerCount: " + lastPointerCount
             );
             isTouching = false;
@@ -780,11 +780,11 @@ public abstract class Chart extends BitmapCachedChart {
 //        lastEvAction = event.getAction();
 //        lastPointerCount = event.getPointerCount();
 
-        Log.e("Chart", "eventAction: " + event.getAction() + "pointerCount: " + event.getPointerCount()
-                + ", retVal: " + retVal
-                + ", isScaling: " + isScaling
-//                + ", lastPointerCount: " + lastPointerCount
-        );
+//        Log.d("Chart", "eventAction: " + event.getAction() + "pointerCount: " + event.getPointerCount()
+//                + ", retVal: " + retVal
+//                + ", isScaling: " + isScaling
+////                + ", lastPointerCount: " + lastPointerCount
+//        );
         if (isScaling) {
             return true;
         } else {
