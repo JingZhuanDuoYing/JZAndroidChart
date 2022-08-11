@@ -268,6 +268,34 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             return;
         }
 
+        int lineThickness = lineDataSet.getLineThickness();
+
+        PointValue headPoint = lineDataSet.getHeadPoint();
+        if (headPoint != null && !headPoint.isValueNaN()) {
+            float headXPosition = startX;
+            // 垂直方向绘制范围收缩至能容下线条的宽度
+            float headYPosition = (lineThickness / 2) + (max - headPoint.getValue()) / (max - min) * (mContentRect.height() - lineThickness);
+            linePath.moveTo(headXPosition, headYPosition);
+
+
+            PointValue firstPoint = null;
+            float firstXPosition = startX;
+            for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
+                PointValue point = lineDataSet.getEntryForIndex(i);
+
+                if (!point.isValueNaN()) {
+                    firstPoint = point;
+                    firstXPosition = startX + step * (i + offset);
+                    break;
+                }
+            }
+
+            if (firstPoint != null) {
+                float firstYPosition = (lineThickness / 2) + (max - firstPoint.getValue()) / (max - min) * (mContentRect.height() - lineThickness);
+                linePath.lineTo(firstXPosition, firstYPosition);
+            }
+        }
+
         for (; i < valuePhaseCount && i < lineDataSet.getValues().size(); i++) {
             PointValue point = lineDataSet.getEntryForIndex(i);
 
@@ -276,8 +304,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
             }
 
             float xPosition = startX + step * (i + offset);
-            // 垂直方向绘制范围收缩至能容下线条的宽度
-            int lineThickness = lineDataSet.getLineThickness();
             float yPosition = (lineThickness / 2) + (max - point.getValue()) / (max - min) * (mContentRect.height() - lineThickness);
 
             point.setCoordinate(xPosition, yPosition);

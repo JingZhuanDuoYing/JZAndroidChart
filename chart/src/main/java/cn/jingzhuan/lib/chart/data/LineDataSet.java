@@ -18,6 +18,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     private int mLineThickness = 2;
 
     protected List<PointValue> mPointValues;
+    protected PointValue mHeadPoint;
 
     private int mForceValueCount = -1;
     private Shader shader;
@@ -80,6 +81,9 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
+        if (mHeadPoint != null) {
+            calcViewportMinMax(mHeadPoint);
+        }
         for (PointValue e : getVisiblePoints(viewport)) {
             calcViewportMinMax(e);
         }
@@ -97,6 +101,14 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     @Override
     public List<PointValue> getValues() {
         return mPointValues;
+    }
+
+    public PointValue getHeadPoint() {
+        return mHeadPoint;
+    }
+
+    public void setHeadPoint(PointValue headPoint) {
+        this.mHeadPoint = headPoint;
     }
 
     private void calcViewportMinMax(PointValue e) {
