@@ -170,14 +170,14 @@ public class BaseChart extends Chart {
 //        mFocusIndex = Math.max(mFocusIndex, 0);
 
         mHighlights = highlights;
-        System.out.println("high light show");
+//        System.out.println("high light show");
         invalidate();
     }
 
     @Override
     public void cleanHighlight() {
         mHighlights = null;
-        System.out.println("high light dismiss");
+//        System.out.println("high light dismiss");
         if (mHighlightStatusChangeListener != null)
             mHighlightStatusChangeListener.onHighlightHide();
 
