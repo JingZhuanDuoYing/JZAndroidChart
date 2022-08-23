@@ -183,9 +183,9 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   public int getStartIndexOffset() {
     int startIndex = 0;
-    if (minValueCount > 0 && getValues() != null && getValues().size() > 0) {
-      startIndex = getEntryCount() - getValues().size();
-    }
+//    if (minValueCount > 0 && getValues() != null && getValues().size() > 0) {
+//      startIndex = getEntryCount() - getValues().size();
+//    }
     return startIndex;
   }
 
