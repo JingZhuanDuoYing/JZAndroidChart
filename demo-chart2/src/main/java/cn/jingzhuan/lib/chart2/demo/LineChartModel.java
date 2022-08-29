@@ -71,7 +71,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
 
         line = new LineDataSet(values);
         line2 = new LineDataSet(values);
-        line2.setZCYLX(true);
+        line2.setHorizontalLine(true);
         line2.setTag("MA5");
         line2.setColor(Color.RED);
     }

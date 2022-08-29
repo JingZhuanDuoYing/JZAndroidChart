@@ -29,7 +29,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     private boolean isLineVisible = true;
     private boolean isPartLine = false; // 线段
     private boolean isDrawBand = false; // 带状线
-    private boolean isZCYLX = false;//支撑压力线
+    private boolean isHorizontalLine = false; // 单值水平线
 
     public LineDataSet(List<PointValue> pointValues) {
         this(pointValues, DEPENDENCY_BOTH);
@@ -239,11 +239,11 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
     }
 
 
-    public boolean isZCYLX() {
-        return isZCYLX;
+    public boolean isHorizontalLine() {
+        return isHorizontalLine;
     }
 
-    public void setZCYLX(boolean ZCYLX) {
-        isZCYLX = ZCYLX;
+    public void setHorizontalLine(boolean horizontalLine) {
+        isHorizontalLine = horizontalLine;
     }
 }

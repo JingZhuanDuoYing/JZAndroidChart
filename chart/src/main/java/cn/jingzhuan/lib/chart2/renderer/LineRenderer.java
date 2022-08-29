@@ -6,19 +6,14 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.Region;
 import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.os.Build;
-import android.text.style.TtsSpan;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -27,7 +22,6 @@ import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PartLineData;
-import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointValue;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.TimeUtil;
@@ -263,8 +257,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 return;
             }
         }
-        if (lineDataSet.isZCYLX()) {
-            drawZCYLX(canvas, lineDataSet, linePath, max, min);
+        if (lineDataSet.isHorizontalLine()) {
+            drawHorizontalLine(canvas, lineDataSet, linePath, max, min);
             return;
         }
 
@@ -458,7 +452,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         }
     }
 
-    private void drawZCYLX(Canvas canvas, LineDataSet lineDataSet, Path linePath, float max, float min) {
+    private void drawHorizontalLine(Canvas canvas, LineDataSet lineDataSet, Path linePath, float max, float min) {
         if (chart instanceof BaseChart){
             isDrawHighLight = ((BaseChart)chart).getHighlights() != null;
         }
