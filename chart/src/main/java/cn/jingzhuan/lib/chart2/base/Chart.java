@@ -439,10 +439,10 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!isDraggingToMoveEnable()) {
-                onTouchPoint(e2);
-                return super.onScroll(e1, e2, distanceX, distanceY);
-            }
+//            if (!isDraggingToMoveEnable()) {
+//                onTouchPoint(e2);
+//                return super.onScroll(e1, e2, distanceX, distanceY);
+//            }
 
             if (mScaleGestureDetector.isInProgress()) {
                 return false;
@@ -499,9 +499,9 @@ public abstract class Chart extends BitmapCachedChart {
 
             fling((int) -velocityX);
 
-            if (!isDraggingToMoveEnable()) {
-                onTouchPoint(e2);
-            }
+//            if (!isDraggingToMoveEnable()) {
+//                onTouchPoint(e2);
+//            }
 
             return true;
         }
