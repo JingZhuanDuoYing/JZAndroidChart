@@ -6,11 +6,16 @@ import cn.jingzhuan.lib.chart.Viewport;
 
 public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
 
+    public final static int ALIGN_TOP = 1;
+    public final static int ALIGN_BOTTOM = 2;
+
     private List<ScatterTextValue> scatterTextValues;
     private int textBgColor;
     private int lineColor;
     private String text;
+    private int textColor;
     private int textSize = 11;
+    private int align = ALIGN_TOP;
 
     public int getTextBgColor() {
         return textBgColor;
@@ -34,6 +39,22 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+    }
+
+    public int getAlign() {
+        return align;
+    }
+
+    public void setAlign(int align) {
+        this.align = align;
     }
 
     public ScatterTextDataSet(List<ScatterTextValue> scatterTextValues) {

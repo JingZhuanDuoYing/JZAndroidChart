@@ -1,10 +1,14 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.RectF;
+
 public class ScatterTextValue extends Value{
 
     private boolean visible = false;
     private float high;
     private float low;
+    private RectF roundRect;
+    private float anchor;
 
     public ScatterTextValue() {
     }
@@ -39,5 +43,19 @@ public class ScatterTextValue extends Value{
         this.low = low;
     }
 
+    public RectF getRoundRect() {
+        return roundRect;
+    }
 
+    public void setRoundRect(RectF roundRect) {
+        this.roundRect = roundRect;
+    }
+
+    public float getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(float anchor) {
+        this.anchor = anchor;
+    }
 }
