@@ -170,6 +170,7 @@ public class BaseChart extends Chart {
 //        mFocusIndex = Math.max(mFocusIndex, 0);
 
         mHighlights = highlights;
+        setIsHighlight(true);
 //        System.out.println("high light show");
         invalidate();
     }
@@ -182,6 +183,7 @@ public class BaseChart extends Chart {
             mHighlightStatusChangeListener.onHighlightHide();
 
         mFocusIndex = -1;
+        setIsHighlight(false);
         invalidate();
     }
 

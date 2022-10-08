@@ -59,6 +59,8 @@ public abstract class Chart extends BitmapCachedChart {
 
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
+    private boolean mIsMainChart = false;
+    private boolean mIsHighlight = false;
     private boolean mDoubleTapToZoom = false;
     private boolean mScaleGestureEnable = true;
 
@@ -439,7 +441,11 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!isDraggingToMoveEnable()) {
+            // 不拖动，只触发点击
+            if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
+                    || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
+                    || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
+            ) {
                 onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
@@ -926,6 +932,22 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isDraggingToMoveEnable() {
         return mDraggingToMoveEnable;
+    }
+
+    public boolean isMainChart() {
+        return mIsMainChart;
+    }
+
+    public void setIsMainChart(boolean isMainChart) {
+        this.mIsMainChart = isMainChart;
+    }
+
+    public boolean isHighlight() {
+        return mIsHighlight;
+    }
+
+    public void setIsHighlight(boolean isHighlight) {
+        this.mIsHighlight = isHighlight;
     }
 
     public void moveLeft() {
