@@ -411,7 +411,8 @@ public abstract class Chart extends BitmapCachedChart {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
                 if (index >= 0) {
                     if (mHighlightVolatile && (mHighlights != null || mHighlightDisable)) {
-                        cleanHighlight();
+                        if (isMainChart()) cleanHighlight();
+                        else onTouchPoint(e);
                     } else {
                         onTouchPoint(e);
                     }
