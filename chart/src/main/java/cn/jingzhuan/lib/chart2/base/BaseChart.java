@@ -150,6 +150,14 @@ public class BaseChart extends Chart {
         }
     }
 
+    @Override protected void onTouchHighlight(MotionEvent e) {
+        if (e.getPointerCount() == 1) {
+            for (OnTouchHighlightChangeListener touchHighlightChangeListener : mTouchHighlightChangeListeners) {
+                touchHighlightChangeListener.highlight(e.getX(), e.getY());
+            }
+        }
+    }
+
     @Override
     public void highlightValue(Highlight highlight) {
 

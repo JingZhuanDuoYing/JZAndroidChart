@@ -68,6 +68,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mHighlightVolatile = true;
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
+    protected List<OnTouchHighlightChangeListener> mTouchHighlightChangeListeners;
     private List<OnViewportChangeListener> mOnViewportChangeListeners;
     protected OnViewportChangeListener mInternalViewportChangeListener;
     protected OnLoadMoreKlineListener mOnLoadMoreKlineListener;
@@ -129,6 +130,7 @@ public abstract class Chart extends BitmapCachedChart {
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
         mTouchPointChangeListeners = Collections.synchronizedList(new ArrayList<OnTouchPointChangeListener>());
+        mTouchHighlightChangeListeners = Collections.synchronizedList(new ArrayList<OnTouchHighlightChangeListener>());
         mOnViewportChangeListeners = Collections.synchronizedList(new ArrayList<OnViewportChangeListener>());
 
         mAxisTop.setGridLineEnable(false);
@@ -375,6 +377,7 @@ public abstract class Chart extends BitmapCachedChart {
     };
 
     protected abstract void onTouchPoint(MotionEvent e);
+    protected abstract void onTouchHighlight(MotionEvent e);
 
     /**
      * The gesture listener, used for handling simple gestures such as double touches, scrolls,
@@ -448,7 +451,7 @@ public abstract class Chart extends BitmapCachedChart {
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
                 Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ")");
-                if (isMainChart()) onTouchPoint(e2);
+                if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
 
@@ -925,6 +928,22 @@ public abstract class Chart extends BitmapCachedChart {
     public void removeOnTouchPointChangeListener(OnTouchPointChangeListener touchPointChangeListener) {
         synchronized (this) {
             this.mTouchPointChangeListeners.remove(touchPointChangeListener);
+        }
+    }
+
+    public interface OnTouchHighlightChangeListener {
+        void highlight(float x, float y);
+    }
+
+    public void addOnTouchHighlightChangeListener(OnTouchHighlightChangeListener touchHighlightChangeListener) {
+        synchronized (this) {
+            this.mTouchHighlightChangeListeners.add(touchHighlightChangeListener);
+        }
+    }
+
+    public void removeOnTouchHighlightChangeListener(OnTouchHighlightChangeListener touchHighlightChangeListener) {
+        synchronized (this) {
+            this.mTouchHighlightChangeListeners.remove(touchHighlightChangeListener);
         }
     }
 
