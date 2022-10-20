@@ -150,6 +150,15 @@ public class CombineChart extends BaseChart {
 
     public void cleanRangeData(){getRenderer().rangeRenderer.resetData();}
 
+    public void addLine(LineDataSet lineDataSet) {
+        mRenderer.addDataSet(lineDataSet);
+    }
+
+    public void setLine(LineDataSet lineDataSet) {
+        mRenderer.clearDataSet();
+        addLine(lineDataSet);
+    }
+
     /**
      * 把触摸事件传到RangeRenderer 用于处理拖动区间统计范围
      */

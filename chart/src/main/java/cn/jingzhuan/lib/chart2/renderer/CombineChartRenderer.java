@@ -158,6 +158,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public void addDataSet(AbstractDataSet dataSet) {
+        if (dataSet == null) return;
         getChartData().add(dataSet);
         int dataSize = dataSet.getValues().size();
         if (lastDataSize== 0) lastDataSize = dataSize;
@@ -171,8 +172,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 lastDataSize = dataSize;
             }
         }
-
-
 
         if (dataSet instanceof TreeDataSet){
             treeChartRenderer.addDataSet((TreeDataSet) dataSet);

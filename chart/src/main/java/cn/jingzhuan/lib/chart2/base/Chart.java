@@ -447,7 +447,8 @@ public abstract class Chart extends BitmapCachedChart {
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
-                onTouchPoint(e2);
+                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ")");
+                if (isMainChart()) onTouchPoint(e2);
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
 
