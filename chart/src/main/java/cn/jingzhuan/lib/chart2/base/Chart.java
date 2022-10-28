@@ -445,13 +445,12 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            // 不拖动，只触发点击
+            // 主图高亮时 不滚动，只触发点击
             if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
-                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ")");
-                if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2);
+                if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
 
