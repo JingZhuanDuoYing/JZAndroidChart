@@ -118,11 +118,16 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<PointLineDataSet> chartData) {
         for (PointLineDataSet dataSet : getDataSet()) {
-            if (dataSet.isVisible()) {
-                drawDataSet(canvas, dataSet,
-                        chartData.getLeftMax(), chartData.getLeftMin(),
-                        chartData.getRightMax(), chartData.getRightMin());
-            }
+            renderDataSet(canvas, chartData, dataSet);
+        }
+    }
+
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<PointLineDataSet> chartData, PointLineDataSet dataSet) {
+        if (dataSet.isVisible()) {
+            drawDataSet(canvas, dataSet,
+                    chartData.getLeftMax(), chartData.getLeftMin(),
+                    chartData.getRightMax(), chartData.getRightMin());
         }
     }
 

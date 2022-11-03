@@ -95,6 +95,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         drawCanvas(canvas);
     }
 
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData, CandlestickDataSet dataSet) {
+        drawCanvas(canvas);
+    }
+
     public void initPaint() {
         paint.setAntiAlias(true);
         paint.setColor(getLineColor());

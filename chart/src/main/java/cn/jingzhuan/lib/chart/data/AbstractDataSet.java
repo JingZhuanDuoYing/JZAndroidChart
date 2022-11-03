@@ -37,6 +37,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   private int minValueCount = -1;
 
+  private int drawIndex = -1;
+
   private String tag;
 
   private DataFormatter formatter; // 数据格式化器
@@ -187,6 +189,14 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 //      startIndex = getEntryCount() - getValues().size();
 //    }
     return startIndex;
+  }
+
+  public int getDrawIndex() {
+    return drawIndex;
+  }
+
+  public void setDrawIndex(int drawIndex) {
+    this.drawIndex = drawIndex;
   }
 
   public String getTag() {

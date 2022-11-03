@@ -179,11 +179,16 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData) {
         for (LineDataSet dataSet : getDataSet()) {
-            if (dataSet.isVisible()) {
-                drawDataSet(canvas, dataSet,
-                        chartData.getLeftMax(), chartData.getLeftMin(),
-                        chartData.getRightMax(), chartData.getRightMin());
-            }
+            renderDataSet(canvas, chartData, dataSet);
+        }
+    }
+
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<LineDataSet> chartData, LineDataSet dataSet) {
+        if (dataSet.isVisible()) {
+            drawDataSet(canvas, dataSet,
+                    chartData.getLeftMax(), chartData.getLeftMin(),
+                    chartData.getRightMax(), chartData.getRightMin());
         }
     }
 

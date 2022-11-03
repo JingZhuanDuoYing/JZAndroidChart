@@ -76,11 +76,15 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
     for (CandlestickDataSet dataSet : chartData.getDataSets()) {
-      if (dataSet.isVisible()) {
-        drawDataSet(canvas, dataSet,
-            chartData.getLeftMax(), chartData.getLeftMin(),
-            chartData.getRightMax(), chartData.getRightMin());
-      }
+      renderDataSet(canvas, chartData, dataSet);
+    }
+  }
+
+  @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData, CandlestickDataSet dataSet) {
+    if (dataSet.isVisible()) {
+      drawDataSet(canvas, dataSet,
+              chartData.getLeftMax(), chartData.getLeftMin(),
+              chartData.getRightMax(), chartData.getRightMin());
     }
   }
 

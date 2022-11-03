@@ -33,11 +33,15 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData) {
     for (ScatterDataSet dataSet : getDataSet()) {
-      if (dataSet.isVisible()) {
-        drawDataSet(canvas, dataSet,
-            chartData.getLeftMax(), chartData.getLeftMin(),
-            chartData.getRightMax(), chartData.getRightMin());
-      }
+      renderDataSet(canvas, chartData, dataSet);
+    }
+  }
+
+  @Override protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData, ScatterDataSet dataSet) {
+    if (dataSet.isVisible()) {
+      drawDataSet(canvas, dataSet,
+              chartData.getLeftMax(), chartData.getLeftMin(),
+              chartData.getRightMax(), chartData.getRightMin());
     }
   }
 

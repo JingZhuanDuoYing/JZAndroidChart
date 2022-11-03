@@ -2,6 +2,8 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
@@ -103,17 +105,64 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     protected void renderDataSet(Canvas canvas) {
-        treeChartRenderer.renderDataSet(canvas,getChartData().getTreeChartData());
-        barChartRenderer.renderDataSet(canvas, getChartData().getBarChartData());
-        candlestickChartRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
-        lineRenderer.renderDataSet(canvas, getChartData().getLineChartData());
-        scatterChartRenderer.renderDataSet(canvas, getChartData().getScatterChartData());
-        if (showRange) rangeRenderer.renderDataSet(canvas, getChartData().getCandlestickChartData());
-        pointLineRenderer.renderDataSet(canvas,getChartData().getPointLineChartData());
-        scatterTextRenderer.renderDataSet(canvas,getChartData().getScatterTextChartData());
+        CombineData combineData = getChartData();
+        List<AbstractDataSet> sortedDataSets = combineData.getSortedData();
+        Log.v("sortedData", "combineData.sortedData.size: " + sortedDataSets.size()
+            + "; BarData.size: " + combineData.getBarData().size()
+            + "; LineData.size: " + combineData.getLineData().size());
+
+        if (sortedDataSets.isEmpty()) {
+            treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData());
+            barChartRenderer.renderDataSet(canvas, combineData.getBarChartData());
+            candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData());
+            lineRenderer.renderDataSet(canvas, combineData.getLineChartData());
+            scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData());
+            if (showRange) rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData());
+            pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData());
+            scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData());
+
+        } else { // 云引擎指定绘制顺序的dataSet
+            for (int i = 0; i < sortedDataSets.size(); i++) {
+                AbstractDataSet dataSet = sortedDataSets.get(i);
+//            }
+//            for (AbstractDataSet dataSet: sortedDataSets) {
+                if (dataSet instanceof TreeDataSet){
+                    Log.v("renderDataSet", i + ": TreeDataSet");
+                    treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData(), (TreeDataSet) dataSet);
+                }
+                if (dataSet instanceof CandlestickDataSet) {
+                    Log.v("renderDataSet", i + ": CandlestickDataSet");
+                    candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
+                }
+                if (dataSet instanceof LineDataSet) {
+                    Log.v("renderDataSet", i + ": LineDataSet");
+                    lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
+                }
+                if (dataSet instanceof BarDataSet) {
+                    Log.v("renderDataSet", i + ": BarDataSet");
+                    barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
+                }
+                if (dataSet instanceof ScatterDataSet) {
+                    Log.v("renderDataSet", i + ": ScatterDataSet");
+                    scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData(), (ScatterDataSet) dataSet);
+                }
+                if (dataSet instanceof PointLineDataSet){
+                    Log.v("renderDataSet", i + ": PointLineDataSet");
+                    pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData(), (PointLineDataSet) dataSet);
+                }
+                if (dataSet instanceof ScatterTextDataSet){
+                    Log.v("renderDataSet", i + ": ScatterTextDataSet");
+                    scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
+                }
+            }
+        }
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
+        // ignore
+    }
+
+    @Override protected void renderDataSet(Canvas canvas, ChartData chartData, AbstractDataSet dataSet) {
         // ignore
     }
 
@@ -241,6 +290,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void clearDataSet() {
         getChartData().clear();
 
+        cleanSortedDataSet();
         cleanTreeDataSet();
         cleanLineDataSet();
         cleanBarDataSet();
@@ -284,6 +334,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void cleanTreeDataSet(){
         treeChartRenderer.clearDataSet();
         getChartData().getTreeChartData().clear();
+    }
+
+    public void cleanSortedDataSet(){
+        getChartData().getSortedData().clear();
     }
 
     @Override

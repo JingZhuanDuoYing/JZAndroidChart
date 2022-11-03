@@ -54,11 +54,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
         List<ScatterTextDataSet> dataSets = getDataSet();
         for (int i = dataSets.size() - 1; i >= 0; i--) {
             ScatterTextDataSet dataSet = dataSets.get(i);
-            if (dataSet.isVisible()) {
-                drawDataSet(canvas, dataSet, i,
-                        chartData.getLeftMax(), chartData.getLeftMin(),
-                        chartData.getRightMax(), chartData.getRightMin());
-            }
+            renderDataSet(canvas, chartData, dataSet);
         }
 //        for (int i = dataSets.size() - 1; i >= 0; i--) {
 //            ScatterTextDataSet dataSet = dataSets.get(i);
@@ -77,6 +73,16 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 //            }
 //        }
 
+    }
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<ScatterTextDataSet> chartData, ScatterTextDataSet dataSet) {
+        List<ScatterTextDataSet> dataSets = getDataSet();
+        int i = dataSets.indexOf(dataSet);
+        if (dataSet.isVisible()) {
+            drawDataSet(canvas, dataSet, i,
+                    chartData.getLeftMax(), chartData.getLeftMin(),
+                    chartData.getRightMax(), chartData.getRightMin());
+        }
     }
 
     private void drawDataSet(Canvas canvas, ScatterTextDataSet dataSet, int index, float leftMax, float leftMin, float rightMax, float rightMin) {

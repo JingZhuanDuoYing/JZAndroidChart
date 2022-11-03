@@ -3,6 +3,9 @@ package cn.jingzhuan.lib.chart.data;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
@@ -21,7 +24,10 @@ public class CombineData extends ChartData<AbstractDataSet> {
     private PointLineData pointLineData;
     private ScatterTextData scatterTextData;
 
+    private SortedData sortedData;
+
     public CombineData() {
+        sortedData = new SortedData();
         treeData = new TreeData();
         barData = new BarData();
         lineData = new LineData();
@@ -29,6 +35,10 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData = new ScatterData();
         pointLineData = new PointLineData();
         scatterTextData = new ScatterTextData();
+    }
+
+    public List<AbstractDataSet> getSortedData() {
+        return sortedData.getDataSets();
     }
 
     public List<BarDataSet> getBarData() {
@@ -83,31 +93,41 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
     public boolean addDataSet(BarDataSet dataSet) {
+        sortedData.add(dataSet);
         return barData.add(dataSet);
     }
 
     public boolean addDataSet(LineDataSet dataSet) {
+        sortedData.add(dataSet);
         return lineData.add(dataSet);
     }
 
     public boolean addDataSet(CandlestickDataSet dataSet) {
+        sortedData.add(dataSet);
         return candlestickData.add(dataSet);
     }
 
     public boolean addDataSet(ScatterDataSet dataSet) {
+        sortedData.add(dataSet);
         return scatterData.add(dataSet);
     }
     public boolean addDataSet(PointLineDataSet dataSet){
+        sortedData.add(dataSet);
         return  pointLineData.add(dataSet);
     }
     public boolean addDataSet(ScatterTextDataSet dataSet){
+        sortedData.add(dataSet);
         return  scatterTextData.add(dataSet);
     }
     public boolean addDataSet(TreeDataSet dataSet){
+        sortedData.add(dataSet);
         return  treeData.add(dataSet);
     }
 
     public void setCombineData(CombineData combineData) {
+        Log.e("setCombineData", "combineData.sortedData.size: " + combineData.getSortedData().size()
+                + "; BarData.size: " + combineData.getBarData().size()
+                + "; LineData.size: " + combineData.getLineData().size());
         this.leftMin = combineData.leftMin;
         this.rightMin = combineData.rightMin;
         this.leftMax = combineData.leftMax;
@@ -152,6 +172,10 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData.getDataSets().addAll(combineData.getScatterData());
         pointLineData.getDataSets().addAll(combineData.getPointLineData());
         scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
+        sortedData.getDataSets().addAll(combineData.getSortedData());
+        Log.e("setCombineData", "this.sortedData.size: " + getSortedData().size()
+                + "; BarData.size: " + getBarData().size()
+                + "; LineData.size: " + getLineData().size());
     }
 
     @Override public void calcMaxMin(Viewport viewport, Rect content) {
@@ -258,6 +282,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
     @Override
     public boolean add(AbstractDataSet e) {
+        sortedData.add(e);
         if (e instanceof TreeDataSet){
             return addDataSet((TreeDataSet) e);
         }
@@ -301,4 +326,22 @@ public class CombineData extends ChartData<AbstractDataSet> {
         }
     }
 
+    public List<AbstractDataSet<?>> getAllDataSet() {
+        List allDataSet = Collections.synchronizedList(new ArrayList());
+        allDataSet.addAll(treeData.getDataSets());
+        allDataSet.addAll(barData.getDataSets());
+        allDataSet.addAll(lineData.getDataSets());
+        allDataSet.addAll(candlestickData.getDataSets());
+        allDataSet.addAll(scatterData.getDataSets());
+        allDataSet.addAll(pointLineData.getDataSets());
+        allDataSet.addAll(scatterTextData.getDataSets());
+
+        Collections.sort(allDataSet, new Comparator<AbstractDataSet>() {
+            @Override
+            public int compare(AbstractDataSet dataSet1, AbstractDataSet dataSet2) {
+                return dataSet1.getDrawIndex() - dataSet2.getDrawIndex();
+            }
+        });
+        return allDataSet;
+    }
 }
