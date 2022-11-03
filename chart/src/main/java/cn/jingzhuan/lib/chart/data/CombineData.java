@@ -24,10 +24,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
     private PointLineData pointLineData;
     private ScatterTextData scatterTextData;
 
-    private SortedData sortedData;
-
     public CombineData() {
-        sortedData = new SortedData();
         treeData = new TreeData();
         barData = new BarData();
         lineData = new LineData();
@@ -35,10 +32,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData = new ScatterData();
         pointLineData = new PointLineData();
         scatterTextData = new ScatterTextData();
-    }
-
-    public List<AbstractDataSet> getSortedData() {
-        return sortedData.getDataSets();
     }
 
     public List<BarDataSet> getBarData() {
@@ -93,39 +86,32 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
     public boolean addDataSet(BarDataSet dataSet) {
-        sortedData.add(dataSet);
         return barData.add(dataSet);
     }
 
     public boolean addDataSet(LineDataSet dataSet) {
-        sortedData.add(dataSet);
         return lineData.add(dataSet);
     }
 
     public boolean addDataSet(CandlestickDataSet dataSet) {
-        sortedData.add(dataSet);
         return candlestickData.add(dataSet);
     }
 
     public boolean addDataSet(ScatterDataSet dataSet) {
-        sortedData.add(dataSet);
         return scatterData.add(dataSet);
     }
     public boolean addDataSet(PointLineDataSet dataSet){
-        sortedData.add(dataSet);
         return  pointLineData.add(dataSet);
     }
     public boolean addDataSet(ScatterTextDataSet dataSet){
-        sortedData.add(dataSet);
         return  scatterTextData.add(dataSet);
     }
     public boolean addDataSet(TreeDataSet dataSet){
-        sortedData.add(dataSet);
         return  treeData.add(dataSet);
     }
 
     public void setCombineData(CombineData combineData) {
-        Log.e("setCombineData", "combineData.sortedData.size: " + combineData.getSortedData().size()
+        Log.e("setCombineData", "combineData.getAllDataSet.size: " + combineData.getAllDataSet().size()
                 + "; BarData.size: " + combineData.getBarData().size()
                 + "; LineData.size: " + combineData.getLineData().size());
         this.leftMin = combineData.leftMin;
@@ -172,8 +158,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData.getDataSets().addAll(combineData.getScatterData());
         pointLineData.getDataSets().addAll(combineData.getPointLineData());
         scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
-        sortedData.getDataSets().addAll(combineData.getSortedData());
-        Log.e("setCombineData", "this.sortedData.size: " + getSortedData().size()
+        Log.e("setCombineData", "this.getAllDataSet.size: " + getAllDataSet().size()
                 + "; BarData.size: " + getBarData().size()
                 + "; LineData.size: " + getLineData().size());
     }
@@ -282,7 +267,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
     @Override
     public boolean add(AbstractDataSet e) {
-        sortedData.add(e);
         if (e instanceof TreeDataSet){
             return addDataSet((TreeDataSet) e);
         }

@@ -106,54 +106,36 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override
     protected void renderDataSet(Canvas canvas) {
         CombineData combineData = getChartData();
-        List<AbstractDataSet> sortedDataSets = combineData.getSortedData();
-        Log.v("sortedData", "combineData.sortedData.size: " + sortedDataSets.size()
-            + "; BarData.size: " + combineData.getBarData().size()
-            + "; LineData.size: " + combineData.getLineData().size());
-
-        if (sortedDataSets.isEmpty()) {
-            treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData());
-            barChartRenderer.renderDataSet(canvas, combineData.getBarChartData());
-            candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData());
-            lineRenderer.renderDataSet(canvas, combineData.getLineChartData());
-            scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData());
-            if (showRange) rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData());
-            pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData());
-            scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData());
-
-        } else { // 云引擎指定绘制顺序的dataSet
-            for (int i = 0; i < sortedDataSets.size(); i++) {
-                AbstractDataSet dataSet = sortedDataSets.get(i);
-//            }
-//            for (AbstractDataSet dataSet: sortedDataSets) {
-                if (dataSet instanceof TreeDataSet){
-                    Log.v("renderDataSet", i + ": TreeDataSet");
-                    treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData(), (TreeDataSet) dataSet);
-                }
-                if (dataSet instanceof CandlestickDataSet) {
-                    Log.v("renderDataSet", i + ": CandlestickDataSet");
-                    candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
-                }
-                if (dataSet instanceof LineDataSet) {
-                    Log.v("renderDataSet", i + ": LineDataSet");
-                    lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
-                }
-                if (dataSet instanceof BarDataSet) {
-                    Log.v("renderDataSet", i + ": BarDataSet");
-                    barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
-                }
-                if (dataSet instanceof ScatterDataSet) {
-                    Log.v("renderDataSet", i + ": ScatterDataSet");
-                    scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData(), (ScatterDataSet) dataSet);
-                }
-                if (dataSet instanceof PointLineDataSet){
-                    Log.v("renderDataSet", i + ": PointLineDataSet");
-                    pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData(), (PointLineDataSet) dataSet);
-                }
-                if (dataSet instanceof ScatterTextDataSet){
-                    Log.v("renderDataSet", i + ": ScatterTextDataSet");
-                    scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
-                }
+        List<AbstractDataSet<?>> sortedDataSets = combineData.getAllDataSet();
+        // 按云引擎指定顺序绘制dataSet
+        for (AbstractDataSet dataSet : sortedDataSets) {
+            if (dataSet instanceof TreeDataSet) {
+                Log.v("renderDataSet", "TreeDataSet, drawIndex:" + dataSet.getDrawIndex());
+                treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData(), (TreeDataSet) dataSet);
+            }
+            if (dataSet instanceof CandlestickDataSet) {
+                Log.v("renderDataSet", "CandlestickDataSet, drawIndex:" + dataSet.getDrawIndex());
+                candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
+            }
+            if (dataSet instanceof LineDataSet) {
+                Log.v("renderDataSet", "LineDataSet, drawIndex:" + dataSet.getDrawIndex());
+                lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
+            }
+            if (dataSet instanceof BarDataSet) {
+                Log.v("renderDataSet", "BarDataSet, drawIndex:" + dataSet.getDrawIndex());
+                barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
+            }
+            if (dataSet instanceof ScatterDataSet) {
+                Log.v("renderDataSet", "ScatterDataSet, drawIndex:" + dataSet.getDrawIndex());
+                scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData(), (ScatterDataSet) dataSet);
+            }
+            if (dataSet instanceof PointLineDataSet) {
+                Log.v("renderDataSet", "PointLineDataSet, drawIndex:" + dataSet.getDrawIndex());
+                pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData(), (PointLineDataSet) dataSet);
+            }
+            if (dataSet instanceof ScatterTextDataSet) {
+                Log.v("renderDataSet", "ScatterTextDataSet, drawIndex:" + dataSet.getDrawIndex());
+                scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
             }
         }
     }
@@ -290,7 +272,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     @Override public void clearDataSet() {
         getChartData().clear();
 
-        cleanSortedDataSet();
         cleanTreeDataSet();
         cleanLineDataSet();
         cleanBarDataSet();
@@ -334,10 +315,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void cleanTreeDataSet(){
         treeChartRenderer.clearDataSet();
         getChartData().getTreeChartData().clear();
-    }
-
-    public void cleanSortedDataSet(){
-        getChartData().getSortedData().clear();
     }
 
     @Override
