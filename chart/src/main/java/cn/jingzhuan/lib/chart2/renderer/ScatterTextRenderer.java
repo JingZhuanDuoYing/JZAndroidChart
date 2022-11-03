@@ -96,6 +96,8 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
         String text = dataSet.getText();
         int bgColor = dataSet.getTextBgColor();
         int lineColor = dataSet.getLineColor();
+        int frameColor = dataSet.getFrameColor();
+        int axisDependency = dataSet.getAxisDependency();
         int dashLength;
 
         Rect textBound = new Rect();
@@ -130,11 +132,11 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
         for (; i < valuePhaseCount && i < dataSet.getValues().size(); i++) {
             ScatterTextValue value = dataSet.getEntryForIndex(i);
-            if (!value.isVisible() || Float.isNaN(value.getHigh())|| Float.isNaN(value.getLow()))
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow()))
                 continue;
 
             int offset = calOffset(index, i);
-            dashLength = BASE_DASH_LENGTH +  offset;
+            dashLength = BASE_DASH_LENGTH + offset;
             Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
             Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
 
@@ -149,34 +151,51 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
 
             RectF roundRect = new RectF();
-            float right = candlestickCenterX + textRectWidth * 0.5f + PADDING;
-            float left = candlestickCenterX - textRectWidth * 0.5f - PADDING;
+            float right, left;
+            switch (axisDependency) {
+                case AxisY.DEPENDENCY_LEFT:
+                    right = candlestickCenterX + PADDING;
+                    left = candlestickCenterX - textRectWidth - PADDING;
+                    break;
+                case AxisY.DEPENDENCY_RIGHT:
+                    right = candlestickCenterX + textRectWidth + PADDING;
+                    left = candlestickCenterX - PADDING;
+                    break;
+                case AxisY.DEPENDENCY_BOTH:
+                default:
+                    right = candlestickCenterX + textRectWidth * 0.5f + PADDING;
+                    left = candlestickCenterX - textRectWidth * 0.5f - PADDING;
+                    break;
+            }
             float bottom = anchor - dashLength + PADDING;
-            float top = bottom - textRectHeight - PADDING * 2;
+            float top = Math.max(bottom - textRectHeight - PADDING * 2, PADDING);
             float pathEnd  = bottom;
 
-            float maxRight = mContentRect.width() - PADDING;
-            if (right > maxRight && candlestickCenterX < mContentRect.width()) {
-                right = maxRight;
-                left = maxRight - textRectWidth - PADDING * 2;
-            }
+            if (axisDependency == AxisY.DEPENDENCY_BOTH) {
+                float maxRight = mContentRect.width() - PADDING;
+                if (right > maxRight && candlestickCenterX < mContentRect.width()) {
+                    right = maxRight;
+                    left = maxRight - textRectWidth - PADDING * 2;
+                }
 
-            float minLeft = PADDING;
-            if (left < minLeft && candlestickCenterX > 0) {
-                left = minLeft;
-                right = minLeft + textRectWidth + PADDING * 2;
+                float minLeft = PADDING;
+                if (left < minLeft && candlestickCenterX > 0) {
+                    left = minLeft;
+                    right = minLeft + textRectWidth + PADDING * 2;
+                }
             }
             Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
 
-            if ((dataSet.getAlign() == ALIGN_TOP && top < 0)) {
-                dataSet.setAlign(ALIGN_BOTTOM);
-                offset = calOffset(index, i);
-                dashLength = BASE_DASH_LENGTH + offset;
-                Log.d("ScatterTextRenderer", ">------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
-                Log.v("ScatterTextRenderer", ">drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
-            }
+//            if ((dataSet.getAlign() == ALIGN_TOP && top < 0)) {
+//                dataSet.setAlign(ALIGN_BOTTOM);
+//                offset = calOffset(index, i);
+//                dashLength = BASE_DASH_LENGTH + offset;
+//                Log.d("ScatterTextRenderer", ">------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
+//                Log.v("ScatterTextRenderer", ">drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
+//            }
 
-            if ((dataSet.getAlign() == ALIGN_TOP && top < 0) || dataSet.getAlign() == ALIGN_BOTTOM) {
+//            if ((dataSet.getAlign() == ALIGN_TOP && top < 0) || dataSet.getAlign() == ALIGN_BOTTOM) {
+            if (dataSet.getAlign() == ALIGN_BOTTOM) {
                 anchor = antiYPosition;
                 bottom = Math.min(anchor + dashLength + textRectHeight + PADDING, mContentRect.height() - PADDING);
                 top = bottom - textRectHeight - PADDING * 2;
@@ -191,7 +210,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             canvas.drawRoundRect(roundRect, 2f, 2f, mRenderPaint);
 
             mRenderPaint.setStyle(Paint.Style.STROKE);
-            mRenderPaint.setColor(lineColor);
+            mRenderPaint.setColor(frameColor);
             canvas.drawRoundRect(roundRect, 2f, 2f, mRenderPaint);
 
             Paint.FontMetrics fontMetrics=mTextPaint.getFontMetrics();
@@ -203,6 +222,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             path.moveTo(candlestickCenterX, anchor);
             path.lineTo(candlestickCenterX, pathEnd);
 
+            mRenderPaint.setColor(lineColor);
             mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));
             canvas.drawPath(path, mRenderPaint);
 
@@ -251,7 +271,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
         for (; i < valuePhaseCount && i < dataSet.getValues().size(); i++) {
             ScatterTextValue value = dataSet.getEntryForIndex(i);
-            if (!value.isVisible() || Float.isNaN(value.getHigh())|| Float.isNaN(value.getLow()))
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow()))
                 continue;
 
             float antiYPosition = (max - value.getLow()) / (max - min) * mContentRect.height();
@@ -345,7 +365,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
         for (; i < valuePhaseCount && i < dataSet.getValues().size(); i++) {
             ScatterTextValue value = dataSet.getEntryForIndex(i);
-            if (!value.isVisible() || Float.isNaN(value.getHigh())|| Float.isNaN(value.getLow()))
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow()))
                 continue;
 
             int offset = calOffset(index, i);
@@ -410,7 +430,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             }
 
             ScatterTextValue value = dataSet.getEntryForIndex(i);
-            if (!value.isVisible() || Float.isNaN(value.getHigh())|| Float.isNaN(value.getLow())) {
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow())) {
                 invalidTime ++;
                 continue;
             }

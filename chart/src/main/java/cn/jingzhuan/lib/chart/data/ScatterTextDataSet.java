@@ -12,6 +12,7 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     private List<ScatterTextValue> scatterTextValues;
     private int textBgColor;
     private int lineColor;
+    private int frameColor;
     private String text;
     private int textColor;
     private int textSize = 11;
@@ -31,6 +32,14 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
 
     public void setLineColor(int lineColor) {
         this.lineColor = lineColor;
+    }
+
+    public int getFrameColor() {
+        return frameColor;
+    }
+
+    public void setFrameColor(int frameColor) {
+        this.frameColor = frameColor;
     }
 
     public String getText() {
