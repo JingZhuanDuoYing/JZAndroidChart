@@ -312,10 +312,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
     public List<AbstractDataSet<?>> getAllDataSet() {
         List allDataSet = Collections.synchronizedList(new ArrayList());
+        // 按分类顺序添加，当drawIndex是默认值-1时，按下列顺序绘制
         allDataSet.addAll(treeData.getDataSets());
         allDataSet.addAll(barData.getDataSets());
-        allDataSet.addAll(lineData.getDataSets());
         allDataSet.addAll(candlestickData.getDataSets());
+        allDataSet.addAll(lineData.getDataSets());
         allDataSet.addAll(scatterData.getDataSets());
         allDataSet.addAll(pointLineData.getDataSets());
         allDataSet.addAll(scatterTextData.getDataSets());
