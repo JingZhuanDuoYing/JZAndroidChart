@@ -111,9 +111,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
     public void setCombineData(CombineData combineData) {
-        Log.e("setCombineData", "combineData.getAllDataSet.size: " + combineData.getAllDataSet().size()
-                + "; BarData.size: " + combineData.getBarData().size()
-                + "; LineData.size: " + combineData.getLineData().size());
         this.leftMin = combineData.leftMin;
         this.rightMin = combineData.rightMin;
         this.leftMax = combineData.leftMax;
@@ -158,9 +155,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData.getDataSets().addAll(combineData.getScatterData());
         pointLineData.getDataSets().addAll(combineData.getPointLineData());
         scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
-        Log.e("setCombineData", "this.getAllDataSet.size: " + getAllDataSet().size()
-                + "; BarData.size: " + getBarData().size()
-                + "; LineData.size: " + getLineData().size());
     }
 
     @Override public void calcMaxMin(Viewport viewport, Rect content) {
