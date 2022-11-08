@@ -61,6 +61,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mDraggingToMoveEnable = true;
     private boolean mIsMainChart = false;
     private boolean mIsHighlight = false;
+    private boolean mIsLongPress = false;
     private boolean mDoubleTapToZoom = false;
     private boolean mScaleGestureEnable = true;
 
@@ -400,6 +401,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            mIsLongPress = true;
             onTouchPoint(e);
             e.setAction(MotionEvent.ACTION_UP);
             mGestureDetector.onTouchEvent(e);
@@ -968,6 +970,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setIsHighlight(boolean isHighlight) {
         this.mIsHighlight = isHighlight;
+    }
+
+    public boolean isLongPress() {
+        return mIsLongPress;
+    }
+
+    public void setIsLongPress(boolean isLongPress) {
+        this.mIsLongPress = isLongPress;
     }
 
     public void moveLeft() {
