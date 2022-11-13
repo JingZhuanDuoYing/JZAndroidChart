@@ -31,6 +31,12 @@ public class AIKLineCandlestickChartRenderer extends CandlestickChartRenderer {
     aikLineDrawSelectRangeHelper.drawCanvas(canvas);
   }
 
+  @Override
+  protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData, CandlestickDataSet dataSet) {
+    super.renderDataSet(canvas, chartData, dataSet);
+    aikLineDrawSelectRangeHelper.drawCanvas(canvas);
+  }
+
   Viewport getViewPort() {
     return mViewport;
   }
