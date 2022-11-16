@@ -408,12 +408,20 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
+            return super.onSingleTapUp(e);
+        }
+
+        @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
                 performClick();
             } else {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
                 if (index >= 0) {
                     if (mHighlightVolatile && (mHighlights != null || mHighlightDisable)) {
                         if (isMainChart()) cleanHighlight();
@@ -447,11 +455,13 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
             // 主图高亮时 不滚动，只触发点击
             if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
+                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
                 if (isLongPress()) {
                     if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
                 }
