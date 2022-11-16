@@ -452,7 +452,9 @@ public abstract class Chart extends BitmapCachedChart {
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
-                if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
+                if (isLongPress()) {
+                    if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
+                }
                 return super.onScroll(e1, e2, distanceX, distanceY);
             }
 
