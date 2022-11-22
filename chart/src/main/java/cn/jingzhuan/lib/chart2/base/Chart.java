@@ -264,7 +264,6 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
-            Log.e("Chart", "onScaleBegin");
 
             isScaling = true;
 //            lastSpanX = scaleGestureDetector.getCurrentSpanX();
@@ -339,34 +338,34 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-            Log.d("Chart", "onScale"
-                    + ", viewportFocus.x:" + viewportFocus.x
-                    + ", newWidth:" + newWidth
-                    + ", focusX:" + focusX
-                    + ", focusY:" + focusY
-                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
-                    + ", spanX:" + spanX
-                    + ", lastSpanX:" + lastSpanX
-                    + ", mCurrentViewport.left:" + mCurrentViewport.left
-                    + ", mContentRect.left:" + mContentRect.left
-                    + ", mContentRect.width():" + mContentRect.width()
-            );
+//            Log.d("Chart", "onScale"
+//                    + ", viewportFocus.x:" + viewportFocus.x
+//                    + ", newWidth:" + newWidth
+//                    + ", focusX:" + focusX
+//                    + ", focusY:" + focusY
+//                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
+//                    + ", spanX:" + spanX
+//                    + ", lastSpanX:" + lastSpanX
+//                    + ", mCurrentViewport.left:" + mCurrentViewport.left
+//                    + ", mContentRect.left:" + mContentRect.left
+//                    + ", mContentRect.width():" + mContentRect.width()
+//            );
 
             mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
             // mCurrentViewport.right = mCurrentViewport.left + newWidth;
 
-            Log.w("Chart", "onScale"
-                    + ", viewportFocus.x:" + viewportFocus.x
-                    + ", newWidth:" + newWidth
-                    + ", focusX:" + focusX
-                    + ", focusY:" + focusY
-                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
-                    + ", spanX:" + spanX
-                    + ", lastSpanX:" + lastSpanX
-                    + ", mCurrentViewport.left:" + mCurrentViewport.left
-                    + ", mContentRect.left:" + mContentRect.left
-                    + ", mContentRect.width():" + mContentRect.width()
-            );
+//            Log.w("Chart", "onScale"
+//                    + ", viewportFocus.x:" + viewportFocus.x
+//                    + ", newWidth:" + newWidth
+//                    + ", focusX:" + focusX
+//                    + ", focusY:" + focusY
+//                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
+//                    + ", spanX:" + spanX
+//                    + ", lastSpanX:" + lastSpanX
+//                    + ", mCurrentViewport.left:" + mCurrentViewport.left
+//                    + ", mContentRect.left:" + mContentRect.left
+//                    + ", mContentRect.width():" + mContentRect.width()
+//            );
 
             mCurrentViewport.constrainViewport();
 
@@ -409,19 +408,19 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
+//            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
             return super.onSingleTapUp(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
+//            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
                 performClick();
             } else {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
-                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
+//                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
                 if (index >= 0) {
                     if (mHighlightVolatile && (mHighlights != null || mHighlightDisable)) {
                         if (isMainChart()) cleanHighlight();
@@ -455,13 +454,13 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
+//            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
             // 主图高亮时 不滚动，只触发点击
             if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                     || (isDraggingToMoveEnable() && isMainChart() && isHighlight()) // K线主图，高亮时
             ) {
-                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
+//                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
                 if (isLongPress()) {
                     if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
                 }
@@ -773,18 +772,18 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.v("Chart", "ACTION_DOWN: " + event.getPointerCount());
+//                Log.v("Chart", "ACTION_DOWN: " + event.getPointerCount());
             }
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                Log.d("Chart", "ACTION_MOVE: pointerCount: " + event.getPointerCount()
+//                Log.d("Chart", "ACTION_MOVE: pointerCount: " + event.getPointerCount()
 //                        + ", lastPointerCount: " + lastPointerCount
-                );
+//                );
             }
             isTouching = true;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            Log.d("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
+//            Log.d("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
 //                    + ", lastPointerCount: " + lastPointerCount
-            );
+//            );
             isTouching = false;
         }
 

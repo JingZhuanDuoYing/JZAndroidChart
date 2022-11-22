@@ -111,31 +111,24 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         for (int i = 0; i < sortedDataSets.size(); i++) {
             AbstractDataSet dataSet = sortedDataSets.get(i);
             if (dataSet instanceof TreeDataSet) {
-                Log.v("renderDataSet", i + ":TreeDataSet, drawIndex:" + dataSet.getDrawIndex());
                 treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData(), (TreeDataSet) dataSet);
             }
             if (dataSet instanceof CandlestickDataSet) {
-                Log.v("renderDataSet", i + ":CandlestickDataSet, drawIndex:" + dataSet.getDrawIndex());
                 candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
             }
             if (dataSet instanceof LineDataSet) {
-                Log.v("renderDataSet", i + ":LineDataSet, drawIndex:" + dataSet.getDrawIndex());
                 lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
             }
             if (dataSet instanceof BarDataSet) {
-                Log.v("renderDataSet", i + ":BarDataSet, drawIndex:" + dataSet.getDrawIndex());
                 barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
             }
             if (dataSet instanceof ScatterDataSet) {
-                Log.v("renderDataSet", i + ":ScatterDataSet, drawIndex:" + dataSet.getDrawIndex());
                 scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData(), (ScatterDataSet) dataSet);
             }
             if (dataSet instanceof PointLineDataSet) {
-                Log.v("renderDataSet", i + ":PointLineDataSet, drawIndex:" + dataSet.getDrawIndex());
                 pointLineRenderer.renderDataSet(canvas, combineData.getPointLineChartData(), (PointLineDataSet) dataSet);
             }
             if (dataSet instanceof ScatterTextDataSet) {
-                Log.v("renderDataSet", i + ":ScatterTextDataSet, drawIndex:" + dataSet.getDrawIndex());
                 scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
             }
         }

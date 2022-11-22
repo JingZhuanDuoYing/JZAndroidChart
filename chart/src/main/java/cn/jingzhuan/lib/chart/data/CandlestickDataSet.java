@@ -61,14 +61,10 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
     List<CandlestickValue> visiblePoints = getVisiblePoints(viewport);
 
-//    Log.e("CandlestickDataSet", "calcMinMax_0 mViewportYMax:" + mViewportYMax
-//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
     for (int i = 0; i < visiblePoints.size(); i++) {
       CandlestickValue e = visiblePoints.get(i);
       calcViewportMinMax(e);
     }
-//    Log.e("CandlestickDataSet", "calcMinMax_1 mViewportYMax:" + mViewportYMax
-//            + ", mViewportYMin:" + mViewportYMin + ", visiblePoints:" + visiblePoints.size());
 
     if (mEnableGap) {
       float max = -Float.MAX_VALUE;

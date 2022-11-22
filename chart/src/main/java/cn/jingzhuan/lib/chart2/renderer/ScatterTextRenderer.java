@@ -137,8 +137,8 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
             int offset = calOffset(index, i);
             dashLength = BASE_DASH_LENGTH + offset;
-            Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
-            Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
+//            Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
+//            Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
 
             float xPosition = startX + step * (i + dataSet.getStartIndexOffset());
             float yPosition = (max - value.getHigh()) / (max - min) * mContentRect.height();
@@ -184,7 +184,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                     right = minLeft + textRectWidth + PADDING * 2;
                 }
             }
-            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
 
 //            if ((dataSet.getAlign() == ALIGN_TOP && top < 0)) {
 //                dataSet.setAlign(ALIGN_BOTTOM);
@@ -200,7 +200,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 bottom = Math.min(anchor + dashLength + textRectHeight + PADDING, mContentRect.height() - PADDING);
                 top = bottom - textRectHeight - PADDING * 2;
                 pathEnd = top;
-                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
             }
 
             roundRect.set(left, top, right, bottom);
@@ -285,20 +285,20 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             float top = value.getRoundRect().top;
             float pathEnd  = bottom;
 
-            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
 
             if ((dataSet.getAlign() == ALIGN_TOP && top < 0)) {
                 dataSet.setAlign(ALIGN_BOTTOM);
                 int offset = calOffset(index, i);
                 dashLength = BASE_DASH_LENGTH + offset;
-                Log.d("ScatterTextRenderer", ">------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
-                Log.v("ScatterTextRenderer", ">drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
+//                Log.d("ScatterTextRenderer", ">------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
+//                Log.v("ScatterTextRenderer", ">drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
 
                 anchor = antiYPosition;
                 bottom = Math.min(anchor + dashLength + textRectHeight + PADDING, mContentRect.height() - PADDING);
                 top = bottom - textRectHeight - PADDING * 2;
                 pathEnd = top;
-                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
             }
 
             roundRect.set(left, top, right, bottom);
@@ -370,8 +370,8 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
             int offset = calOffset(index, i);
             dashLength = BASE_DASH_LENGTH +  offset;
-            Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
-            Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
+//            Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
+//            Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
 
             float xPosition = startX + step * (i + dataSet.getStartIndexOffset());
             float yPosition = (max - value.getHigh()) / (max - min) * mContentRect.height();
@@ -398,14 +398,14 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 left = minLeft;
                 right = minLeft + textRectWidth + PADDING * 2;
             }
-            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//            Log.i("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
 
             if (dataSet.getAlign() == ALIGN_BOTTOM) {
                 anchor = antiYPosition;
                 bottom = Math.min(anchor + dashLength + textRectHeight + PADDING, mContentRect.height() - PADDING);
                 top = bottom - textRectHeight - PADDING * 2;
                 pathEnd = top;
-                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+//                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
             }
             RectF roundRect = new RectF();
             roundRect.set(left, top, right, bottom);
@@ -442,14 +442,14 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             int textHeight = textBound.height();
             int oldOffset = offset;
             offset += textHeight + PADDING * 2;
-            Log.d("ScatterTextRenderer", "------calOffset " + i + " index_" + j + ":" + text + ", textHeight:" + textHeight + ", offset = " + oldOffset + " + textHeight:" + textHeight + " + PADDING * 2 = " + offset);
+//            Log.d("ScatterTextRenderer", "------calOffset " + i + " index_" + j + ":" + text + ", textHeight:" + textHeight + ", offset = " + oldOffset + " + textHeight:" + textHeight + " + PADDING * 2 = " + offset);
         }
         int oldOffset = offset;
         if (offset > 0) {
             offset += PADDING * (index - invalidTime);
-            Log.d("ScatterTextRenderer", "------------offset = " + oldOffset + " + PADDING * " + (index - invalidTime) + " = " + offset);
+//            Log.d("ScatterTextRenderer", "------------offset = " + oldOffset + " + PADDING * " + (index - invalidTime) + " = " + offset);
         } else {
-            Log.d("ScatterTextRenderer", "------------offset = 0");
+//            Log.d("ScatterTextRenderer", "------------offset = 0");
         }
         return offset;
     }

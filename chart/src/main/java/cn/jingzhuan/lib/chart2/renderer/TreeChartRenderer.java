@@ -54,7 +54,6 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
     protected void renderDataSet(Canvas canvas,  ChartData<TreeDataSet> chartData, TreeDataSet dataSet) {
         if (mChart.getFocusIndex() == -1) mChart.setFocusIndex(dataSet.getValues().size() - 1);
         if (dataSet.isVisible() && dataSet.getValues().size() > mChart.getFocusIndex()) {
-            Log.d("筹码分布", "renderDataSet, mFocusIndex: " + mChart.getFocusIndex());
             drawTreeDataSet(canvas, dataSet, mChart.getFocusIndex(),
                     chartData.getLeftMax(), chartData.getLeftMin(),
                     chartData.getRightMax(), chartData.getRightMin());
