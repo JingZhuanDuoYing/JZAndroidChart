@@ -60,7 +60,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
     private boolean mIsMainChart = false;
-    private boolean mIsHighlight = false;
+    protected boolean mIsHighlight = false;
     private boolean mIsLongPress = false;
     private boolean mDoubleTapToZoom = false;
     private boolean mScaleGestureEnable = true;
@@ -977,10 +977,6 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isHighlight() {
         return mIsHighlight;
-    }
-
-    public void setIsHighlight(boolean isHighlight) {
-        this.mIsHighlight = isHighlight;
     }
 
     public boolean isLongPress() {
