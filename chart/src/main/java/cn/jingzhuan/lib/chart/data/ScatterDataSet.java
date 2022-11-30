@@ -41,6 +41,7 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
   private Rect mContentRect;
 
   private boolean autoWidth = true;
+  private boolean autoExpand = true;
 
   private List<TextValueRenderer> mTextValueRenderers;
 
@@ -62,9 +63,11 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
     }
     ORIGINAL_VIEWPORT_YMAX = mViewportYMax;
     ORIGINAL_VIEWPORT_YMIN = mViewportYMin;
-    for (int i = 0; i < visiblePoints.size(); i++) {
-      ScatterValue e = visiblePoints.get(i);
-      calcViewportMinMaxExpansion(i, e, viewport, content);
+    if (isAutoExpand()) {
+      for (int i = 0; i < visiblePoints.size(); i++) {
+        ScatterValue e = visiblePoints.get(i);
+        calcViewportMinMaxExpansion(i, e, viewport, content);
+      }
     }
 
     float range = mViewportYMax - mViewportYMin;
@@ -258,6 +261,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public boolean isAutoWidth() {
     return autoWidth;
+  }
+
+  public boolean isAutoExpand() {
+    return autoExpand;
+  }
+
+  public void setAutoExpand(boolean autoExpand) {
+    this.autoExpand = autoExpand;
   }
 
   @Override public float getMaxValueOffsetPercent() {
