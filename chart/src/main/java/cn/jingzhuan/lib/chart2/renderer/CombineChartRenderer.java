@@ -367,6 +367,29 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return super.getEntryIndexByCoordinate(x, y);
     }
 
+    @Override public float getEntryCoordinateByIndex(int index) {
+        if (!getChartData().getCandlestickData().isEmpty()) {
+            return candlestickChartRenderer.getEntryCoordinateByIndex(index);
+        }
+        if (!getChartData().getLineData().isEmpty()) {
+            return lineRenderer.getEntryCoordinateByIndex(index);
+        }
+        if (!getChartData().getBarData().isEmpty()) {
+            return barChartRenderer.getEntryCoordinateByIndex(index);
+        }
+        if (!getChartData().getScatterData().isEmpty()) {
+            return scatterChartRenderer.getEntryCoordinateByIndex(index);
+        }
+        if (!getChartData().getPointLineData().isEmpty()) {
+            return pointLineRenderer.getEntryCoordinateByIndex(index);
+        }
+        if (!getChartData().getScatterTextData().isEmpty()) {
+            return scatterTextRenderer.getEntryCoordinateByIndex(index);
+        }
+
+        return super.getEntryCoordinateByIndex(index);
+    }
+
     public Boolean getShowRange() {
         return showRange;
     }

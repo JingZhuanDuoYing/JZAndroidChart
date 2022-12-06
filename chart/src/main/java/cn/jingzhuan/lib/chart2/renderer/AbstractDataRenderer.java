@@ -99,6 +99,17 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         return index;
     }
 
+    public float getEntryCoordinateByIndex(int index) {
+        float valueCount = getChartData().getEntryCount();
+
+        float x = mContentRect.left + ((index / valueCount - mViewport.left) / mViewport.width()) * mContentRect.width();
+
+        if (x > mContentRect.right) x = mContentRect.right;
+        if (x < mContentRect.left)  x = mContentRect.left;
+
+        return x;
+    }
+
     protected void calcDataSetMinMax() {
         getChartData().calcMaxMin(mViewport, mContentRect);
     }
