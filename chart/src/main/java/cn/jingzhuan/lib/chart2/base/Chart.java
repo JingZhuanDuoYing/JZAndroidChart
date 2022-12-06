@@ -458,7 +458,7 @@ public abstract class Chart extends BitmapCachedChart {
             // 主图高亮时 不滚动，只触发点击
             if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                     || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
-                    || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile()) // K线主图，高亮且能关闭高亮光标时
+                    || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile() || isLongPress()) // K线主图，高亮且能关闭高亮光标时
             ) {
 //                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
                 if (isLongPress()) {
