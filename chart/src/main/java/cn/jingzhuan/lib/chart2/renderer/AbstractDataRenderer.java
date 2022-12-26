@@ -31,6 +31,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     private int mHighlightColor = Color.WHITE;
     protected ChartAnimator mChartAnimator;
+    private float mHighlightThickness = 3;
 
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
@@ -147,6 +148,14 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public ChartAnimator getChartAnimator() {
         return mChartAnimator;
+    }
+
+    public float getHighlightThickness() {
+        return mHighlightThickness;
+    }
+
+    public void setHighlightThickness(float highlightThickness) {
+        this.mHighlightThickness = highlightThickness;
     }
 
     public void setTypeface(Typeface tf) {

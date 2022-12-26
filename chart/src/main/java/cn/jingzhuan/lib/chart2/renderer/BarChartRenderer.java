@@ -208,7 +208,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
         mRenderPaint.setColor(getHighlightColor());
-        mRenderPaint.setStrokeWidth(1);
+        mRenderPaint.setStrokeWidth(getHighlightThickness());
         mRenderPaint.setStyle(Paint.Style.STROKE);
         if (mHighlightedDashPathEffect != null) {
             mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
