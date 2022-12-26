@@ -30,6 +30,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
   private float[] mBodyBuffers = new float[4];
   private CandlestickData chartData;
 
+  protected Paint mHighlightRenderPaint;
+
+
   public CandlestickChartRenderer(final Chart chart) {
     super(chart);
 
@@ -72,6 +75,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         }
       }
     });
+
+    mHighlightRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    mHighlightRenderPaint.setStyle(Paint.Style.FILL);
   }
 
   @Override protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
@@ -293,13 +299,14 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     }
   }
 
-  @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
-    mRenderPaint.setColor(getHighlightColor());
-    mRenderPaint.setStyle(Paint.Style.FILL);
+  @Override
+  public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+
+    mHighlightRenderPaint.setColor(getHighlightColor());
     if (mHighlightedDashPathEffect != null) {
-      mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
+      mHighlightRenderPaint.setPathEffect(mHighlightedDashPathEffect);
     }
-    mRenderPaint.setStrokeWidth(getHighlightThickness());
+    mHighlightRenderPaint.setStrokeWidth(getHighlightThickness());
 
     for (Highlight highlight : highlights) {
 
@@ -309,19 +316,19 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                           mContentRect.top,
                           highlight.getX(),
                           mContentRect.bottom,
-                          mRenderPaint);
+                          mHighlightRenderPaint);
         }
         if (dataSet.isHighlightedHorizontalEnable()) {
           canvas.drawLine(mContentRect.left,
                           highlight.getY(),
                           mContentRect.right,
                           highlight.getY(),
-                          mRenderPaint);
+                          mHighlightRenderPaint);
         }
       }
     }
 
-    mRenderPaint.setPathEffect(null);
+    mHighlightRenderPaint.setPathEffect(null);
   }
 
   @Override public void removeDataSet(CandlestickDataSet dataSet) {
