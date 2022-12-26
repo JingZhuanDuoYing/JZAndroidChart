@@ -126,7 +126,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
 
         mRenderPaint.setStyle(Paint.Style.FILL);
-        mRenderPaint.setStrokeWidth(1f);
+        mRenderPaint.setStrokeWidth(getHighlightThickness());
         mRenderPaint.setColor(getHighlightColor());
         for (Highlight highlight : highlights) {
             if (highlight != null) {
