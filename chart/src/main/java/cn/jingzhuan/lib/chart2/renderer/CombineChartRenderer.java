@@ -39,11 +39,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public RangeRenderer rangeRenderer;//K线区域选择的renderer
     protected PointLineRenderer pointLineRenderer;
     protected ScatterTextRenderer scatterTextRenderer;
-    private Chart chart;
+    private final Chart chart;
 
     private Boolean showRange = false;
     private CombineData combineData;
-    private  int lastDataSize = 0;
+    private int lastDataSize = 0;
 
     public CombineChartRenderer(final Chart chart) {
         super(chart);
@@ -109,7 +109,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         List<AbstractDataSet<?>> sortedDataSets = combineData.getAllDataSet();
         // 按云引擎指定顺序绘制dataSet
         for (int i = 0; i < sortedDataSets.size(); i++) {
-            AbstractDataSet dataSet = sortedDataSets.get(i);
+            AbstractDataSet<?> dataSet = sortedDataSets.get(i);
             if (dataSet instanceof TreeDataSet) {
                 treeChartRenderer.renderDataSet(canvas, combineData.getTreeChartData(), (TreeDataSet) dataSet);
             }
