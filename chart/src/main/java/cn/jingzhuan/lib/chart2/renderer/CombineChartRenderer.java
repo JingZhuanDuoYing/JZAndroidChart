@@ -397,4 +397,12 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void setShowRange(Boolean showRange) {
         this.showRange = showRange;
     }
+
+    @Override
+    public void setHighlightThickness(float highlightThickness) {
+        super.setHighlightThickness(highlightThickness);
+        barChartRenderer.setHighlightThickness(highlightThickness);
+        lineRenderer.setHighlightThickness(highlightThickness);
+        candlestickChartRenderer.setHighlightThickness(highlightThickness);
+    }
 }

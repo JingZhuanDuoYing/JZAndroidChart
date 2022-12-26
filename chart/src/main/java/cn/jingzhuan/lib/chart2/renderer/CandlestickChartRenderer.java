@@ -32,7 +32,6 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
   protected Paint mHighlightRenderPaint;
 
-
   public CandlestickChartRenderer(final Chart chart) {
     super(chart);
 
