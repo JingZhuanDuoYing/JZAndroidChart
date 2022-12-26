@@ -199,11 +199,6 @@ public class BaseChart extends Chart {
         renderHighlighted(canvas);
     }
 
-    public void highLightDisMiss(){
-
-    }
-
-
     public void renderHighlighted(Canvas canvas) {
         if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
