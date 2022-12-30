@@ -164,7 +164,7 @@ public class CombineChart extends BaseChart {
      */
     public boolean onTouchEvent(MotionEvent event) {
         CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
-        if (renderer.getShowRange() && renderer.rangeRenderer != null){
+        if (getRangeEnable() && renderer.rangeRenderer != null){
             renderer.rangeRenderer.onTouchEvent(event);
         }
         return super.onTouchEvent(event);

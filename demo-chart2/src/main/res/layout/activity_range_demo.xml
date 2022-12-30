@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".RangeDemoActivity">
+
+    <cn.jingzhuan.lib.chart2.demo.TestChartKLineView
+        android:layout_marginTop="30dp"
+        android:id="@+id/combine_chart"
+        android:layout_width="match_parent"
+        app:axisColor="#ffe5e5e5"
+        app:axisThickness="0.5dp"
+        app:gridColor="#ffe5e5e5"
+        app:labelTextColor="#A1ABBB"
+        app:labelTextSize="11dp"
+        android:layout_height="200dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_range"
+            android:text="开启区间统计"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

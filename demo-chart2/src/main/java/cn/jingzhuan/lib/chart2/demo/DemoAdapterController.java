@@ -22,6 +22,7 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel ViewPagerModel_ viewPagerModel_;
     @AutoModel ScatterChartModel_ scatterChartModel_;
     @AutoModel ScatterChart2Model_ scatterChart2Model_;
+    @AutoModel CombineRangeChartModel_ combineRangeChartModel_;
 
     private Context context;
 
@@ -31,6 +32,9 @@ public class DemoAdapterController extends EpoxyController {
 
     @Override
     protected void buildModels() {
+
+        new LayoutDescTextBindingModel_().id("CombineRange").text("CombineRange Chart").addTo(this);
+        combineRangeChartModel_.addTo(this);
 
         new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
         lineChartModel.addTo(this);

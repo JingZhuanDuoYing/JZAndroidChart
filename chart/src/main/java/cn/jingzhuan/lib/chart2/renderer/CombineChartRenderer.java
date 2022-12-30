@@ -41,13 +41,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected ScatterTextRenderer scatterTextRenderer;
     private final Chart chart;
 
-    private Boolean showRange = false;
     private CombineData combineData;
     private int lastDataSize = 0;
 
     public CombineChartRenderer(final Chart chart) {
         super(chart);
-
         treeChartRenderer = initTreeChartRenderer(chart);
         lineRenderer = initLineRenderer(chart);
         barChartRenderer = initBarChartRenderer(chart);
@@ -64,7 +62,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 calcDataSetMinMax();
             }
         });
-        showRange = chart.getRangeEnable();
     }
 
     private TreeChartRenderer initTreeChartRenderer(Chart chart) {
@@ -115,6 +112,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             }
             if (dataSet instanceof CandlestickDataSet) {
                 candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
+                if(chart.getRangeEnable())
+                    rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
             }
             if (dataSet instanceof LineDataSet) {
                 lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
@@ -388,14 +387,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         }
 
         return super.getEntryCoordinateByIndex(index);
-    }
-
-    public Boolean getShowRange() {
-        return showRange;
-    }
-
-    public void setShowRange(Boolean showRange) {
-        this.showRange = showRange;
     }
 
     @Override
