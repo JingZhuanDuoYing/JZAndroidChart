@@ -42,8 +42,10 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
             }
         })
 
-        axisBottom.isLabelEnable = false
-        axisBottom.labelHeight = 0
+        axisBottom.isLabelEnable = true
+        axisBottom.labelHeight = 30
+        axisBottom.labelTextSize = 28f
+        axisBottom.labelTextColor = BLACK
         setIsMainChart(true)
 
         setDoubleTapToZoom(true)

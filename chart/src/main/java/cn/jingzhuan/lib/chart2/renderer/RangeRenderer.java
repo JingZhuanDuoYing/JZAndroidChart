@@ -87,6 +87,8 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     private int mRangeColor = Color.parseColor("#1AFD263F");
 
+    private TouchDirection touchDirection = TouchDirection.none;
+
     /**
      * 用于划线
      */
@@ -123,14 +125,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         chart.addOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
+                if (viewport.width() == 1.0f) return;
                 if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
-                    chartLeft = chart.getContentRect().left;
-                    chartRight = chart.getContentRect().right;
                     int start = getEntryIndexByCoordinate(mStartX, 0);
                     int end = getEntryIndexByCoordinate(mEndX, 0);
                     if((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
                         mStartIndex = start;
                         mEndIndex = end;
+                        touchDirection = TouchDirection.none;
                         Log.d("rangeIndex", mStartIndex+"---"+mEndIndex);
                     }
                 }
@@ -183,6 +185,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             List<CandlestickValue> visiblePoints = candlestickDataSet.getVisiblePoints(mViewport);
             mEndIndex = getEntryIndexByCoordinate(visiblePoints.get(visiblePoints.size() - 1).getX(), 0);
             mEndX = getScaleCoordinateByIndex(mEndIndex);
+            touchDirection = TouchDirection.none;
             Log.d("rangeIndex", mStartIndex+"---"+mEndIndex);
         }
     }
@@ -205,8 +208,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mStartX = getScaleCoordinateByIndex(mStartIndex);
             // 获取区间统计结束的K线坐标
             mEndX = getScaleCoordinateByIndex(mEndIndex);
+            touchDirection = TouchDirection.none;
         }
-
+        if (mOnRangeListener != null)
+            mOnRangeListener.onRange(mStartX, mEndX, touchDirection);
         if(mStartX >= mEndX) return;
 
         if(mStartX < chartLeft || mStartX > chartRight) return;
@@ -252,10 +257,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 chart.getContentRect().top,
                 mEndX + bitmapSpanX * 3f,
                 chart.getContentRect().bottom);
-
-        //回调区间X轴坐标的范围
-        if (mOnRangeListener != null)
-            mOnRangeListener.onRange(mStartX, mEndX);
 
         /*
          * 缩放限制
@@ -303,6 +304,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mStartX = tempLeftX;
             chart.invalidate();
         }
+        touchDirection = TouchDirection.left;
         return true;
     }
 
@@ -340,6 +342,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mEndX = tempRightX;
             chart.invalidate();
         }
+        touchDirection = TouchDirection.right;
         return true;
     }
 
@@ -543,7 +546,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
          * @param startX 开始的X坐标
          * @param endX   结束的X坐标
          */
-        void onRange(float startX, float endX);
+        void onRange(float startX, float endX, TouchDirection direction);
     }
 
     /**
@@ -599,4 +602,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     public void setOnRangeKLineListener(OnRangeKLineListener listener) {
         this.mOnRangeKLineListener = listener;
     }
+}
+
+enum TouchDirection {
+    left,
+    right,
+    none
 }

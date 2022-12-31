@@ -7,18 +7,80 @@
     android:orientation="vertical"
     tools:context=".RangeDemoActivity">
 
-    <cn.jingzhuan.lib.chart2.demo.TestChartKLineView
-        android:layout_marginTop="30dp"
-        android:id="@+id/combine_chart"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        app:axisColor="#ffe5e5e5"
-        app:axisThickness="0.5dp"
-        app:gridColor="#ffe5e5e5"
-        app:labelTextColor="#A1ABBB"
-        app:labelTextSize="11dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:id="@+id/ll_range_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:orientation="horizontal"
+            android:visibility="invisible">
+            <TextView
+                android:id="@+id/tv_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="开：-- 高：-- 收：-- 低--"
+                android:textColor="@color/colorAccent"/>
+
+            <TextView
+                android:id="@+id/tv_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间统计"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/tv_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="周期数：--"
+                android:textColor="@android:color/black"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <cn.jingzhuan.lib.chart2.demo.TestChartKLineView
+            android:id="@+id/combine_chart"
+            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            app:axisColor="#ffe5e5e5"
+            app:axisThickness="0.5dp"
+            app:gridColor="#ffe5e5e5"
+            app:labelTextColor="#A1ABBB"
+            app:labelTextSize="11dp"
+            app:layout_constraintTop_toBottomOf="@+id/ll_range_info"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/tv_close_range"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闭"
+            android:background="@drawable/bg_red_close_range"
+            android:textSize="11dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:visibility="gone"
+            android:textColor="@android:color/white"
+            app:layout_constraintLeft_toLeftOf="@id/combine_chart"
+            app:layout_constraintBottom_toBottomOf="@id/combine_chart"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +89,7 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_range"
-            android:text="开启区间统计"
+            android:text="区间统计"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />

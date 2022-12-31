@@ -4,15 +4,29 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart2.widget.CombineChart
 
 class RangeDemoActivity : AppCompatActivity() {
 
     private var candlestickValues: MutableList<CandlestickValue> = ArrayList()
+
+    private lateinit var llRangeInfo: LinearLayout
+
+    private lateinit var tvCloseRange: TextView
+
+    private lateinit var tvInfo: TextView
+
+    private lateinit var tvOpen: TextView
+
+    private lateinit var tvNumber: TextView
 
     private lateinit var combineChart: TestChartKLineView
 
@@ -21,6 +35,11 @@ class RangeDemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
+        llRangeInfo = findViewById(R.id.ll_range_info)
+        tvCloseRange = findViewById(R.id.tv_close_range)
+        tvInfo = findViewById(R.id.tv_info)
+        tvOpen = findViewById(R.id.tv_open)
+        tvNumber = findViewById(R.id.tv_number)
         combineChart = findViewById(R.id.combine_chart)
         btnRange = findViewById(R.id.btn_range)
         initData()
@@ -33,22 +52,82 @@ class RangeDemoActivity : AppCompatActivity() {
 
         combineChart.addDataSet(dataSet)
 
-        btnRange.setOnClickListener(View.OnClickListener {
-            if (combineChart.rangeEnable) {
-                btnRange.text = "开启区间统计"
-                combineChart.rangeEnable = false
-                combineChart.isDraggingToMoveEnable = true
-                combineChart.isHighlightDisable = false
-                combineChart.postInvalidate()
-            } else {
-                btnRange.text = "关闭区间统计"
-                combineChart.cleanHighlight()
-                combineChart.rangeEnable = true
-                combineChart.isDraggingToMoveEnable = false
-                combineChart.isHighlightDisable = true
-                combineChart.postInvalidate()
+        btnRange.setOnClickListener {
+            if (combineChart.rangeEnable) return@setOnClickListener
+            combineChart.renderer.rangeRenderer.resetData()
+            combineChart.cleanHighlight()
+            combineChart.rangeEnable = true
+            combineChart.isDraggingToMoveEnable = false
+            combineChart.isHighlightDisable = true
+            combineChart.postInvalidate()
+            tvCloseRange.visibility = View.VISIBLE
+            llRangeInfo.visibility = View.VISIBLE
+            tvOpen.visibility = View.GONE
+            tvNumber.visibility = View.VISIBLE
+        }
+
+        tvCloseRange.setOnClickListener {
+            combineChart.rangeEnable = false
+            combineChart.isDraggingToMoveEnable = true
+            combineChart.isHighlightDisable = false
+            combineChart.postInvalidate()
+            llRangeInfo.visibility = View.INVISIBLE
+            tvOpen.visibility = View.VISIBLE
+            tvNumber.visibility = View.GONE
+            tvCloseRange.visibility = View.GONE
+        }
+
+        tvOpen.setOnClickListener {
+            if (combineChart.rangeEnable) return@setOnClickListener
+            combineChart.cleanHighlight()
+            combineChart.rangeEnable = true
+            combineChart.isDraggingToMoveEnable = false
+            combineChart.isHighlightDisable = true
+            combineChart.postInvalidate()
+            llRangeInfo.visibility = View.VISIBLE
+            tvCloseRange.visibility = View.VISIBLE
+            tvOpen.visibility = View.GONE
+            tvNumber.visibility = View.VISIBLE
+
+        }
+
+        combineChart.onHighlightStatusChangeListener =
+            object : HighlightStatusChangeListener {
+                override fun onHighlightShow(highlights: Array<out Highlight>?) {
+                    llRangeInfo.visibility = View.VISIBLE
+                    if (!highlights.isNullOrEmpty()) {
+                        val data = candlestickValues[highlights[0].dataIndex]
+                        tvInfo.text = "开：${data.open} 高：${data.high} 收：${data.close} 低：${data.low}"
+                    }
+
+                }
+
+                override fun onHighlightHide() {
+                    llRangeInfo.visibility = View.INVISIBLE
+                }
             }
-        })
+
+        combineChart.renderer.rangeRenderer.setOnRangeListener { startX, endX, direction ->
+            val startIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(startX, 0f)
+            val endIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(endX, 0f)
+            tvNumber.text = "周期数：${endIndex - startIndex}"
+            updateCloseRangeButton(startX, endX)
+        }
+    }
+
+    private fun updateCloseRangeButton(startX: Float, endX: Float) {
+
+        val centerX = (startX + endX) * 0.5f
+
+        var transX = centerX - tvCloseRange.width * 0.5f
+
+        if (transX < combineChart.left) {
+            transX = 0f
+        } else if (transX > combineChart.width - tvCloseRange.width) {
+            transX = combineChart.width.toFloat() - tvCloseRange.width
+        }
+
+        tvCloseRange.translationX = transX
     }
 
     private fun initData() {
