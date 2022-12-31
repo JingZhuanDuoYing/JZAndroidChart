@@ -263,6 +263,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+            if(getRangeEnable()) return super.onScaleBegin(scaleGestureDetector);
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
 
             isScaling = true;
@@ -279,7 +280,7 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
             Log.d("Chart", "onScale");
-
+            if(getRangeEnable()) return false;
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
@@ -400,6 +401,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            if(getRangeEnable()) return;
             mIsLongPress = true;
             onTouchPoint(e);
             e.setAction(MotionEvent.ACTION_UP);
@@ -414,6 +416,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
+            if(getRangeEnable()) return false;
 //            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
@@ -441,6 +444,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
+            if(getRangeEnable()) return false;
             if (mDoubleTapToZoom) {
 
                 mZoomer.forceFinished(true);
