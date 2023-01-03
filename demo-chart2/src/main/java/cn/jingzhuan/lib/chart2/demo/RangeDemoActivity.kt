@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
+import cn.jingzhuan.lib.chart2.renderer.TouchDirection
 import cn.jingzhuan.lib.chart2.widget.CombineChart
 
 class RangeDemoActivity : AppCompatActivity() {
@@ -107,7 +108,7 @@ class RangeDemoActivity : AppCompatActivity() {
                 }
             }
 
-        combineChart.renderer.rangeRenderer.setOnRangeListener { startX, endX, direction ->
+        combineChart.renderer.rangeRenderer.setOnRangeListener{ startX, endX, _ ->
             val startIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(startX, 0f)
             val endIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(endX, 0f)
             tvNumber.text = "周期数：${endIndex - startIndex}"

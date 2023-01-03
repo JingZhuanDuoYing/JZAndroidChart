@@ -630,9 +630,3 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     }
 }
 
-enum TouchDirection {
-    left,
-    right,
-    both,
-    none
-}
