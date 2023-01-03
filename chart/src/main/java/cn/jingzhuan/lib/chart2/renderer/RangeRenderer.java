@@ -65,10 +65,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     RectF leftTouchRect, rightTouchRect;
 
-    /**
-     * 当前手指按下的是左边 还是右边
-     */
-    boolean leftPress, rightPress = false;
+//    /**
+//     * 当前手指按下的是左边 还是右边
+//     */
+//    boolean leftPress, rightPress = false;
 
     /**
      * 上一次触摸的x、y坐标
@@ -87,6 +87,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     private int mRangeColor = Color.parseColor("#1AFD263F");
 
+    /**
+     * 当前区间内按下的状态 左边、右边、公共区域
+     */
     private TouchDirection touchDirection = TouchDirection.none;
 
     /**
@@ -304,7 +307,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mStartX = tempLeftX;
             chart.invalidate();
         }
-        touchDirection = TouchDirection.left;
         return true;
     }
 
@@ -342,24 +344,55 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mEndX = tempRightX;
             chart.invalidate();
         }
-        touchDirection = TouchDirection.right;
+        return true;
+    }
+
+    private boolean touchBothToLeftOrRight(float deltaX) {
+        final CandlestickDataSet candlestickDataSet = dataVaild();
+        if (candlestickDataSet == null) {
+            return false;
+        }
+        if (deltaX < chartLeft - mStartX) {
+            deltaX = chartLeft - mStartX;
+        }
+
+        if (deltaX > chartRight - mEndX) {
+            deltaX = chartRight - mEndX;
+        }
+
+        float tempLeftX = deltaX + mStartX;
+        float tempRightX = deltaX + mEndX;
+
+        if (tempRightX <= chartRight && tempLeftX >= chartLeft) {
+            mStartX = tempLeftX;
+            mEndX = tempRightX;
+
+            mStartIndex = getEntryIndexByCoordinate(tempLeftX, 0);
+            mEndIndex = getEntryIndexByCoordinate(tempRightX, 0);
+            chart.invalidate();
+        } else {
+            return false;
+        }
         return true;
     }
 
     public boolean onTouchEvent(@NotNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                leftPress = false;
-                rightPress = false;
+                touchDirection = TouchDirection.none;
                 float currentX = event.getX();
                 float currentY = event.getY();
                 lastPreX = currentX;
                 lastPreY = currentY;
-                if (leftTouchRect.contains(currentX, currentY)) {
-                    leftPress = true;
+                if((currentX > leftTouchRect.right && currentX < rightTouchRect.left)) {
+                    // 在左右touch之内 认为是同时滑动
+                    touchDirection = TouchDirection.both;
+                    return true;
+                }else if (leftTouchRect.contains(currentX, currentY)) {
+                    touchDirection = TouchDirection.left;
                     return true;
                 } else if (rightTouchRect.contains(currentX, currentY)) {
-                    rightPress = true;
+                    touchDirection = TouchDirection.right;
                     return true;
                 } else {
                     return false;
@@ -370,17 +403,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 float currentY = event.getY();
                 float deltaX = currentX - lastPreX;
                 try {
-                    if (leftPress && rightPress) {
-                        if(deltaX < 0) {
-                            // 向左
-                            touchToLeft(deltaX);
-                        }else {
-                            //向右
-                            touchToRight(deltaX);
-                        }
-                    } else if (leftPress) {
+                    if (touchDirection == TouchDirection.both) {
+                        touchBothToLeftOrRight(deltaX);
+                    } else if (touchDirection == TouchDirection.left) {
                         touchToLeft(deltaX);
-                    } else if(rightPress){
+                    } else if(touchDirection == TouchDirection.right){
                         touchToRight(deltaX);
                     } else {
                         return false;
@@ -393,8 +420,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 return true;
             }
             case MotionEvent.ACTION_UP:
-                rightPress = false;
-                leftPress = false;
+                touchDirection = TouchDirection.none;
                 break;
             case MotionEvent.ACTION_CANCEL:
         }
@@ -607,5 +633,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 enum TouchDirection {
     left,
     right,
+    both,
     none
 }
