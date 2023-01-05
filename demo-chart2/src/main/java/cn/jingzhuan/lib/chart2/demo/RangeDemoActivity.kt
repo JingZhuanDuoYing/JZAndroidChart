@@ -262,6 +262,8 @@ class RangeDemoActivity : AppCompatActivity() {
         candlestickValues.add(CandlestickValue(3287.18f, 3261.31f, 3269.32f, 3262.08f))
         candlestickValues.add(CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f))
         candlestickValues.add(CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f))
+        candlestickValues.add(CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f))
+        candlestickValues.add(CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f))
     }
 
 }

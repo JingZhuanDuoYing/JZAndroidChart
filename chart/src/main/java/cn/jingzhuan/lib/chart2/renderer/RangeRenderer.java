@@ -173,12 +173,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull @NotNull Highlight[] highlights) {
         if(highlights.length > 0) {
-            mStartX = highlights[0].getX();
-            mStartIndex = getEntryIndexByCoordinate(mStartX, 0);
             CandlestickDataSet candlestickDataSet = dataVaild();
             if (candlestickDataSet == null) return;
-            List<CandlestickValue> visiblePoints = candlestickDataSet.getVisiblePoints(mViewport);
-            mEndIndex = getEntryIndexByCoordinate(visiblePoints.get(visiblePoints.size() - 1).getX(), 0);
+            mStartX = highlights[0].getX();
+            mStartIndex = getEntryIndexByCoordinate(mStartX, 0);
+
+            int listSize = candlestickDataSet.getEntryCount();
+            mEndIndex = Math.round(mViewport.right * listSize - 1);
+
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             touchDirection = TouchDirection.none;
             Log.d("rangeIndex", mStartIndex+"---"+mEndIndex);
@@ -191,14 +193,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
         //默认选中当前屏幕内全部
         if (mStartIndex == 0 && mEndIndex == 0) {
-            List<CandlestickValue> visiblePoints = candlestickDataSet.getVisiblePoints(mViewport);
+            int listSize = candlestickDataSet.getEntryCount();
 
-            CandlestickValue startVisible = visiblePoints.get(0);
-            CandlestickValue endVisible = visiblePoints.get(visiblePoints.size() - 1);
-            float startVisibleX = startVisible.getX();
-            float endVisibleX = endVisible.getX();
-            mStartIndex = getEntryIndexByCoordinate(startVisibleX, 0);
-            mEndIndex = getEntryIndexByCoordinate(endVisibleX, 0);
+            mStartIndex = Math.round(mViewport.left * listSize);
+            mEndIndex = Math.round(mViewport.right * listSize - 1);
+
             // 获取区间统计开始的K线坐标
             mStartX = getScaleCoordinateByIndex(mStartIndex);
             // 获取区间统计结束的K线坐标
@@ -558,6 +557,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     public void setRangeLeftIndex(int index) {
         this.mStartIndex = index;
+        this.mStartX = getScaleCoordinateByIndex(index);
     }
 
     /**
@@ -565,6 +565,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     public void setRangeRightIndex(int index) {
         this.mEndIndex = index;
+        this.mEndX = getScaleCoordinateByIndex(index);
     }
 
     /**
