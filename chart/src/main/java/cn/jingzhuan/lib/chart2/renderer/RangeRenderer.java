@@ -13,9 +13,7 @@ import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -23,9 +21,7 @@ import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
@@ -36,7 +32,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     private CandlestickData chartData;
 
     /**
-     * 最小周期
+     * 最小间隔
      */
     final int MAX_DIFF_ENTRY = 1;
 
@@ -64,11 +60,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      * 左、右两边 touch的矩形区域
      */
     RectF leftTouchRect, rightTouchRect;
-
-//    /**
-//     * 当前手指按下的是左边 还是右边
-//     */
-//    boolean leftPress, rightPress = false;
 
     /**
      * 上一次触摸的x、y坐标
@@ -128,6 +119,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         chart.addOnViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
+                mViewport.set(viewport);
                 if (viewport.width() == 1.0f) return;
                 if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
                     int start = getEntryIndexByCoordinate(mStartX, 0);
@@ -559,6 +551,20 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     public void setRangeRightBitmap(Bitmap icon) {
         this.rightTouchBitmap = icon;
+    }
+
+    /**
+     * 设置区间统计左边Index
+     */
+    public void setRangeLeftIndex(int index) {
+        this.mStartIndex = index;
+    }
+
+    /**
+     * 设置区间统计右边Index
+     */
+    public void setRangeRightIndex(int index) {
+        this.mEndIndex = index;
     }
 
     /**
