@@ -100,6 +100,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     Chart chart;
 
+    // 用于标记当前 正在移动的下标
+    private int mCurrentIndex = 0;
+
     private OnRangeListener mOnRangeListener;
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
     private OnRangeKLineListener mOnRangeKLineListener;
@@ -183,7 +186,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             touchDirection = TouchDirection.none;
-            Log.d("rangeIndex", mStartIndex+"---"+mEndIndex);
         }
     }
 
@@ -264,108 +266,211 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mOnRangeKLineListener.onRangeKLine(mStartIndex,mEndIndex);
     }
 
-    private boolean touchToLeft(float deltaX) {
+    private boolean touchToLeft(float currentX) {
         final CandlestickDataSet candlestickDataSet = dataVaild();
         if (candlestickDataSet == null) {
             return false;
         }
-        if (deltaX + mStartX < chartLeft) {
-            deltaX = chartLeft - mStartX;
-        }
-        float tempLeftX = mStartX + deltaX;
-
-        if(tempLeftX <= chartLeft) {
-            tempLeftX = chartLeft;
-        }
-        if (tempLeftX >= chartRight) {
-            tempLeftX = chartRight;
-        }
-        int leftIndex = getEntryIndexByCoordinate(tempLeftX, 0);
+        int leftIndex = getEntryIndexByCoordinate(currentX, 0);
         int rightIndex = getEntryIndexByCoordinate(mEndX, 0);
-        mStartIndex = leftIndex;
-        mEndIndex = rightIndex;
 
-        if (mEndIndex - mStartIndex <= MAX_DIFF_ENTRY && tempLeftX > mStartX) {
-            mEndIndex = mEndIndex + MAX_DIFF_ENTRY;
-            mStartIndex = mEndIndex - MAX_DIFF_ENTRY;
-            if (tempLeftX >= chartRight - getItemWidth()) {
-                return true;
+        int listSize = candlestickDataSet.getEntryCount();
+        int chartLeftIndex = Math.round(mViewport.left * listSize);
+        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+
+        float newStartX = currentX - lastPreX + mStartX;
+
+        if(leftIndex != mStartIndex && leftIndex >= chartLeftIndex && leftIndex < chartRightIndex){
+            if (rightIndex - leftIndex <= MAX_DIFF_ENTRY && newStartX >= mStartX) {
+                mStartIndex = leftIndex;
+                mEndIndex = leftIndex + 1;
+                Log.d("rangeIndex3", mStartIndex+"---"+mEndIndex);
+            } else {
+                mStartIndex = leftIndex;
+                mEndIndex = rightIndex;
+                Log.d("rangeIndex1", mStartIndex+"---"+mEndIndex);
             }
-            mStartX = tempLeftX;
-            mEndX = tempLeftX + getItemWidth();
-            chart.invalidate();
-        } else {
-            mStartX = tempLeftX;
+
+            mStartX = getScaleCoordinateByIndex(mStartIndex);
+            mEndX = getScaleCoordinateByIndex(mEndIndex);
             chart.invalidate();
         }
         return true;
     }
 
-    private boolean touchToRight(float deltaX) {
+    private boolean touchToRight(float currentX) {
         final CandlestickDataSet candlestickDataSet = dataVaild();
         if (candlestickDataSet == null) {
             return false;
         }
-        if (deltaX + mEndX > chartRight) {
-            deltaX = chartRight - mEndX;
-        }
-        float tempRightX = deltaX + mEndX;
-        if (tempRightX <= chartLeft) {
-            tempRightX = chartLeft;
-        }
-        if(tempRightX >= chartRight) {
-            tempRightX = chartRight;
-        }
-
         int leftIndex = getEntryIndexByCoordinate(mStartX, 0);
-        int rightIndex = getEntryIndexByCoordinate(tempRightX, 0);
-        mStartIndex = leftIndex;
-        mEndIndex = rightIndex;
+        int rightIndex = getEntryIndexByCoordinate(currentX, 0);
 
-        if (mEndIndex - mStartIndex <= MAX_DIFF_ENTRY && tempRightX < mEndX) {
-            mStartIndex = mStartIndex - MAX_DIFF_ENTRY;
-            mEndIndex = mStartIndex + MAX_DIFF_ENTRY;
-            if (tempRightX <= chartLeft + getItemWidth()) {
-                return true;
+        int listSize = candlestickDataSet.getEntryCount();
+        int chartLeftIndex = Math.round(mViewport.left * listSize);
+        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+
+        float newEndX = currentX - lastPreX + mEndX;
+
+        if(rightIndex != mEndIndex && rightIndex > chartLeftIndex && rightIndex <= chartRightIndex){
+            mEndIndex = rightIndex;
+            if (rightIndex - leftIndex <= MAX_DIFF_ENTRY && newEndX < mEndX) {
+                mStartIndex = rightIndex - 1;
+            } else {
+                mStartIndex = leftIndex;
             }
-            mEndX = tempRightX;
-            mStartX = mEndX - getItemWidth();
-            chart.invalidate();
-        } else {
-            mEndX = tempRightX;
+            Log.d("rangeIndex2", mStartIndex+"---"+mEndIndex);
+            mStartX = getScaleCoordinateByIndex(mStartIndex);
+            mEndX = getScaleCoordinateByIndex(mEndIndex);
             chart.invalidate();
         }
         return true;
     }
 
-    private boolean touchBothToLeftOrRight(float deltaX) {
+    private boolean touchBothToLeftOrRight(float currentX) {
         final CandlestickDataSet candlestickDataSet = dataVaild();
         if (candlestickDataSet == null) {
             return false;
         }
-        if (deltaX < chartLeft - mStartX) {
-            deltaX = chartLeft - mStartX;
-        }
 
-        if (deltaX > chartRight - mEndX) {
-            deltaX = chartRight - mEndX;
-        }
+        int leftIndex = mStartIndex;
+        int rightIndex = mEndIndex;
+        int currentIndex = getEntryIndexByCoordinate(currentX, 0);
 
-        float tempLeftX = deltaX + mStartX;
-        float tempRightX = deltaX + mEndX;
+        float deltaX = currentX - lastPreX;
+        if(deltaX == 0) return true;
 
-        if (tempRightX <= chartRight && tempLeftX >= chartLeft) {
-            mStartX = tempLeftX;
-            mEndX = tempRightX;
+        int listSize = candlestickDataSet.getEntryCount();
+        int chartLeftIndex = Math.round(mViewport.left * listSize);
+        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
-            mStartIndex = getEntryIndexByCoordinate(tempLeftX, 0);
-            mEndIndex = getEntryIndexByCoordinate(tempRightX, 0);
-            chart.invalidate();
-        } else {
-            return false;
+        if(currentIndex != mCurrentIndex){
+            mCurrentIndex = currentIndex;
+            if(deltaX < 0) {
+                // 同时向左
+                leftIndex -= 1;
+                rightIndex -= 1;
+            }else {
+                // 同时向右
+                leftIndex += 1;
+                rightIndex += 1;
+            }
+
+            if(leftIndex >= chartLeftIndex && rightIndex <= chartRightIndex){
+                mStartIndex = leftIndex;
+                mEndIndex = rightIndex;
+                mStartX = getScaleCoordinateByIndex(mStartIndex);
+                mEndX = getScaleCoordinateByIndex(mEndIndex);
+                chart.invalidate();
+            }
         }
         return true;
     }
+
+
+    //这里暂时注释 这个是平滑移动 不以蜡烛中心为每次滑动的间隔
+//    private boolean touchToLeft(float deltaX) {
+//        final CandlestickDataSet candlestickDataSet = dataVaild();
+//        if (candlestickDataSet == null) {
+//            return false;
+//        }
+//        if (deltaX + mStartX < chartLeft) {
+//            deltaX = chartLeft - mStartX;
+//        }
+//        float tempLeftX = mStartX + deltaX;
+//
+//        if(tempLeftX <= chartLeft) {
+//            tempLeftX = chartLeft;
+//        }
+//        if (tempLeftX >= chartRight) {
+//            tempLeftX = chartRight;
+//        }
+//        int leftIndex = getEntryIndexByCoordinate(tempLeftX, 0);
+//        int rightIndex = getEntryIndexByCoordinate(mEndX, 0);
+//        mStartIndex = leftIndex;
+//        mEndIndex = rightIndex;
+//
+//        if (mEndIndex - mStartIndex <= MAX_DIFF_ENTRY && tempLeftX > mStartX) {
+//            mEndIndex = mEndIndex + MAX_DIFF_ENTRY;
+//            mStartIndex = mEndIndex - MAX_DIFF_ENTRY;
+//            if (tempLeftX >= chartRight - getItemWidth()) {
+//                return true;
+//            }
+//            mStartX = tempLeftX;
+//            mEndX = tempLeftX + getItemWidth();
+//            chart.invalidate();
+//        } else {
+//            mStartX = tempLeftX;
+//            chart.invalidate();
+//        }
+//        return true;
+//    }
+
+//    private boolean touchToRight(float deltaX) {
+//        final CandlestickDataSet candlestickDataSet = dataVaild();
+//        if (candlestickDataSet == null) {
+//            return false;
+//        }
+//        if (deltaX + mEndX > chartRight) {
+//            deltaX = chartRight - mEndX;
+//        }
+//        float tempRightX = deltaX + mEndX;
+//        if (tempRightX <= chartLeft) {
+//            tempRightX = chartLeft;
+//        }
+//        if(tempRightX >= chartRight) {
+//            tempRightX = chartRight;
+//        }
+//
+//        int leftIndex = getEntryIndexByCoordinate(mStartX, 0);
+//        int rightIndex = getEntryIndexByCoordinate(tempRightX, 0);
+//        mStartIndex = leftIndex;
+//        mEndIndex = rightIndex;
+//
+//        if (mEndIndex - mStartIndex <= MAX_DIFF_ENTRY && tempRightX < mEndX) {
+//            mStartIndex = mStartIndex - MAX_DIFF_ENTRY;
+//            mEndIndex = mStartIndex + MAX_DIFF_ENTRY;
+//            if (tempRightX <= chartLeft + getItemWidth()) {
+//                return true;
+//            }
+//            mEndX = tempRightX;
+//            mStartX = mEndX - getItemWidth();
+//            chart.invalidate();
+//        } else {
+//            mEndX = tempRightX;
+//            chart.invalidate();
+//        }
+//        return true;
+//    }
+
+//    private boolean touchBothToLeftOrRight(float deltaX) {
+//        final CandlestickDataSet candlestickDataSet = dataVaild();
+//        if (candlestickDataSet == null) {
+//            return false;
+//        }
+//        if (deltaX < chartLeft - mStartX) {
+//            deltaX = chartLeft - mStartX;
+//        }
+//
+//        if (deltaX > chartRight - mEndX) {
+//            deltaX = chartRight - mEndX;
+//        }
+//
+//        float tempLeftX = deltaX + mStartX;
+//        float tempRightX = deltaX + mEndX;
+//
+//        if (tempRightX <= chartRight && tempLeftX >= chartLeft) {
+//            mStartX = tempLeftX;
+//            mEndX = tempRightX;
+//
+//            mStartIndex = getEntryIndexByCoordinate(tempLeftX, 0);
+//            mEndIndex = getEntryIndexByCoordinate(tempRightX, 0);
+//            chart.invalidate();
+//        } else {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public boolean onTouchEvent(@NotNull MotionEvent event) {
         switch (event.getAction()) {
@@ -395,11 +500,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 float deltaX = currentX - lastPreX;
                 try {
                     if (touchDirection == TouchDirection.both) {
-                        touchBothToLeftOrRight(deltaX);
+                        touchBothToLeftOrRight(currentX);
                     } else if (touchDirection == TouchDirection.left) {
-                        touchToLeft(deltaX);
+                        touchToLeft(currentX);
                     } else if(touchDirection == TouchDirection.right){
-                        touchToRight(deltaX);
+                        touchToRight(currentX);
                     } else {
                         return false;
                     }
