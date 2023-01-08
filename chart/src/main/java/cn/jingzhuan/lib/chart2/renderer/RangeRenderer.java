@@ -103,11 +103,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     Chart chart;
 
-    /**
-     * 用于标记当前 正在移动的下标
-     */
-    private int mCurrentIndex = 0;
-
     private OnRangeListener mOnRangeListener;
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
     private OnRangeKLineListener mOnRangeKLineListener;
