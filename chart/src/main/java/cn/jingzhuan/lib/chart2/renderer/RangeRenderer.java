@@ -510,6 +510,8 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             }
             case MotionEvent.ACTION_UP:
                 touchDirection = TouchDirection.none;
+                if (mOnRangeListener != null)
+                    mOnRangeListener.onRange(mStartX, mEndX, touchDirection);
                 break;
             case MotionEvent.ACTION_CANCEL:
         }
