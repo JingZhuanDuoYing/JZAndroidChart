@@ -98,9 +98,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     Paint shadowPaint = new Paint();
 
+    /**
+     * 当前chart
+     */
     Chart chart;
 
-    // 用于标记当前 正在移动的下标
+    /**
+     * 用于标记当前 正在移动的下标
+     */
     private int mCurrentIndex = 0;
 
     private OnRangeListener mOnRangeListener;
@@ -123,6 +128,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             @Override
             public void onViewportChange(Viewport viewport) {
                 mViewport.set(viewport);
+                initChartBoundary();
                 if (viewport.width() == 1.0f) return;
                 if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
                     int start = getEntryIndexByCoordinate(mStartX, 0);
@@ -137,7 +143,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             }
         });
     }
-
 
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<CandlestickDataSet> chartData) {
@@ -155,10 +160,16 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                     @Override
                     public void onGlobalLayout() {
                         chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        chartLeft = chart.getContentRect().left;
-                        chartRight = chart.getContentRect().right;
+                        initChartBoundary();
                     }
                 });
+    }
+
+    private void initChartBoundary() {
+        if(chartLeft != chart.getContentRect().left)
+            chartLeft = chart.getContentRect().left;
+        if(chartRight != chart.getContentRect().right)
+            chartRight = chart.getContentRect().right;
     }
 
     public void initPaint() {
@@ -176,6 +187,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull @NotNull Highlight[] highlights) {
         if(highlights.length > 0) {
+            initChartBoundary();
             CandlestickDataSet candlestickDataSet = dataVaild();
             if (candlestickDataSet == null) return;
             mStartX = highlights[0].getX();
@@ -284,11 +296,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             if (rightIndex - leftIndex <= MAX_DIFF_ENTRY && newStartX >= mStartX) {
                 mStartIndex = leftIndex;
                 mEndIndex = leftIndex + 1;
-                Log.d("rangeIndex3", mStartIndex+"---"+mEndIndex);
             } else {
                 mStartIndex = leftIndex;
                 mEndIndex = rightIndex;
-                Log.d("rangeIndex1", mStartIndex+"---"+mEndIndex);
             }
 
             mStartX = getScaleCoordinateByIndex(mStartIndex);
@@ -319,7 +329,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             } else {
                 mStartIndex = leftIndex;
             }
-            Log.d("rangeIndex2", mStartIndex+"---"+mEndIndex);
             mStartX = getScaleCoordinateByIndex(mStartIndex);
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             chart.invalidate();
@@ -333,42 +342,31 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             return false;
         }
 
-        int leftIndex = mStartIndex;
-        int rightIndex = mEndIndex;
         int currentIndex = getEntryIndexByCoordinate(currentX, 0);
+        int lastPreIndex = getEntryIndexByCoordinate(lastPreX, 0);
 
-        float deltaX = currentX - lastPreX;
-        if(deltaX == 0) return true;
+        int deltaIndex = currentIndex - lastPreIndex;
+        if(deltaIndex == 0) return true;
 
         int listSize = candlestickDataSet.getEntryCount();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
-        if(currentIndex != mCurrentIndex){
-            mCurrentIndex = currentIndex;
-            if(deltaX < 0) {
-                // 同时向左
-                leftIndex -= 1;
-                rightIndex -= 1;
-            }else {
-                // 同时向右
-                leftIndex += 1;
-                rightIndex += 1;
-            }
+        int leftIndex = mStartIndex + deltaIndex;
+        int rightIndex = mEndIndex + deltaIndex;
 
-            if(leftIndex >= chartLeftIndex && rightIndex <= chartRightIndex){
-                mStartIndex = leftIndex;
-                mEndIndex = rightIndex;
-                mStartX = getScaleCoordinateByIndex(mStartIndex);
-                mEndX = getScaleCoordinateByIndex(mEndIndex);
-                chart.invalidate();
-            }
+
+        if(leftIndex >= chartLeftIndex && rightIndex <= chartRightIndex){
+            mStartIndex = leftIndex;
+            mEndIndex = rightIndex;
+            mStartX = getScaleCoordinateByIndex(mStartIndex);
+            mEndX = getScaleCoordinateByIndex(mEndIndex);
+            chart.invalidate();
         }
         return true;
     }
 
-
-    //这里暂时注释 这个是平滑移动 不以蜡烛中心为每次滑动的间隔
+//     //这里暂时注释 这个是平滑移动 不以蜡烛宽度为每次滑动的间隔
 //    private boolean touchToLeft(float deltaX) {
 //        final CandlestickDataSet candlestickDataSet = dataVaild();
 //        if (candlestickDataSet == null) {
@@ -405,7 +403,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 //        }
 //        return true;
 //    }
-
+//
 //    private boolean touchToRight(float deltaX) {
 //        final CandlestickDataSet candlestickDataSet = dataVaild();
 //        if (candlestickDataSet == null) {
