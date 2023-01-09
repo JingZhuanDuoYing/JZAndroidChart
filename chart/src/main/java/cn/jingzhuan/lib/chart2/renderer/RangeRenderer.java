@@ -191,6 +191,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             int listSize = candlestickDataSet.getEntryCount();
             mEndIndex = Math.round(mViewport.right * listSize - 1);
 
+            int chartSize = candlestickDataSet.getValues().size();
+            if(mEndIndex > chartSize - 1) mEndIndex = chartSize - 1;
+
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             touchDirection = TouchDirection.none;
         }
@@ -206,6 +209,8 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
             mStartIndex = Math.round(mViewport.left * listSize);
             mEndIndex = Math.round(mViewport.right * listSize - 1);
+            int chartSize = candlestickDataSet.getValues().size();
+            if(mEndIndex > chartSize - 1) mEndIndex = chartSize - 1;
 
             // 获取区间统计开始的K线坐标
             mStartX = getScaleCoordinateByIndex(mStartIndex);
@@ -215,7 +220,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         }
         if (mOnRangeListener != null)
             mOnRangeListener.onRange(mStartX, mEndX, touchDirection);
-        if(mStartX >= mEndX) return;
+        if(mStartX > mEndX) mStartX = mEndX;
 
         if(mStartX < chartLeft || mStartX > chartRight) return;
 
@@ -241,10 +246,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         // 绘制左右touch icon
         float bitmapSpanX = leftTouchBitmap.getWidth() / 2f;
         float bitmapSpanY = leftTouchBitmap.getHeight() / 2f;
-        if(leftTouchBitmap != null)
-            canvas.drawBitmap(leftTouchBitmap, mStartX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, btPaint);
         if(rightTouchBitmap != null)
             canvas.drawBitmap(rightTouchBitmap, mEndX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, btPaint);
+        if(leftTouchBitmap != null)
+            canvas.drawBitmap(leftTouchBitmap, mStartX - bitmapSpanX, chart.getContentRect().height() / 2f - bitmapSpanY, btPaint);
 
         /*
          * 创建开始&结束矩阵 用于判断触摸点是否在该区域内
@@ -285,6 +290,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
+        int chartSize = candlestickDataSet.getValues().size();
+        if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
+
         float newStartX = currentX - lastPreX + mStartX;
 
         if(leftIndex != mStartIndex && leftIndex >= chartLeftIndex && leftIndex < chartRightIndex){
@@ -314,6 +322,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         int listSize = candlestickDataSet.getEntryCount();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+
+        int chartSize = candlestickDataSet.getValues().size();
+        if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
 
         float newEndX = currentX - lastPreX + mEndX;
 
@@ -346,6 +357,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         int listSize = candlestickDataSet.getEntryCount();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+
+        int chartSize = candlestickDataSet.getValues().size();
+        if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
 
         int leftIndex = mStartIndex + deltaIndex;
         int rightIndex = mEndIndex + deltaIndex;
