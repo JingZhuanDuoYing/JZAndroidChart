@@ -23,6 +23,8 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,6 +106,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected void renderDataSet(Canvas canvas) {
         CombineData combineData = getChartData();
         List<AbstractDataSet<?>> sortedDataSets = combineData.getAllDataSet();
+        List<AbstractDataSet<?>> candlestickDataSets = new ArrayList<>();
         // 按云引擎指定顺序绘制dataSet
         for (int i = 0; i < sortedDataSets.size(); i++) {
             AbstractDataSet<?> dataSet = sortedDataSets.get(i);
@@ -112,8 +115,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             }
             if (dataSet instanceof CandlestickDataSet) {
                 candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
-                if(chart.getRangeEnable())
-                    rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
+                candlestickDataSets.add(dataSet);
             }
             if (dataSet instanceof LineDataSet) {
                 lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
@@ -131,6 +133,13 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
             }
         }
+        // k线叠加时 区间统计只画一次
+        if(chart.getRangeEnable()) {
+            if(!candlestickDataSets.isEmpty()){
+                rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) candlestickDataSets.get(0));
+            }
+        }
+
     }
 
     @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
