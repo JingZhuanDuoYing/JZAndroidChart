@@ -70,7 +70,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      * 左、右两边touch的矩形区域中间 线的颜色
      * 默认为 #FD263F的 %8透明度
      */
-    private int mLineColor = Color.parseColor("#1AFD263F");
+    private int mLineColor = Color.parseColor("#FD263F");
 
     /**
      * 区间的颜色
@@ -86,7 +86,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 用于划线
      */
-    Paint paint = new Paint();
+    Paint linePaint = new Paint();
 
     /**
      * 用于画bitmap
@@ -169,13 +169,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     public void initPaint() {
         btPaint.setAntiAlias(true);
-        paint.setAntiAlias(true);
-        paint.setColor(getLineColor());
-        paint.setSubpixelText(true);
-        paint.setStrokeWidth(3);
-        shadowPaint = new Paint(paint);
-        shadowPaint.setStyle(Paint.Style.FILL);
+        linePaint.setAntiAlias(true);
+        linePaint.setColor(getLineColor());
+        linePaint.setSubpixelText(true);
+        linePaint.setStrokeWidth(3);
+        linePaint.setAlpha(20);
+        shadowPaint.setAntiAlias(true);
         shadowPaint.setColor(getRangeColor());
+        shadowPaint.setStyle(Paint.Style.FILL);
         shadowPaint.setAlpha(20);
     }
 
@@ -235,8 +236,8 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         /*
          * 根据K线数据的中点绘制线条
          */
-        canvas.drawLine(mStartX, 0, mStartX, chart.getContentRect().height(), paint);
-        canvas.drawLine(mEndX, 0, mEndX, chart.getContentRect().height(), paint);
+        canvas.drawLine(mStartX, 0, mStartX, chart.getContentRect().height(), linePaint);
+        canvas.drawLine(mEndX, 0, mEndX, chart.getContentRect().height(), linePaint);
 
         // 如果leftTouchBitmap和rightTouchBitmap 没有设置 用默认的
         if(leftTouchBitmap == null)

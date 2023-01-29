@@ -53,6 +53,16 @@ class RangeDemoActivity : AppCompatActivity() {
 
         combineChart.addDataSet(dataSet)
 
+        val dataSet2 = CandlestickDataSet(candlestickValues)
+        dataSet.isHighlightedHorizontalEnable = true
+        dataSet.isHighlightedVerticalEnable = true
+        dataSet.color = 0xFFFD263F.toInt()
+        dataSet.increasingPaintStyle = Paint.Style.FILL_AND_STROKE
+        dataSet.strokeThickness = 2f
+        dataSet.decreasingColor = 0xFF00AA3B.toInt()
+        dataSet.increasingColor = 0xFFFD263F.toInt()
+        combineChart.addDataSet(dataSet2)
+
         btnRange.setOnClickListener {
             if (combineChart.rangeEnable) return@setOnClickListener
             combineChart.renderer.rangeRenderer.resetData()
