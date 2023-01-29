@@ -76,7 +76,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      * 区间的颜色
      * 默认为 #FD263F的 %8透明度
      */
-    private int mRangeColor = Color.parseColor("#1AFD263F");
+    private int mRangeColor = Color.parseColor("#FD263F");
 
     /**
      * 当前区间内按下的状态 左边、右边、公共区域
@@ -176,6 +176,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         shadowPaint = new Paint(paint);
         shadowPaint.setStyle(Paint.Style.FILL);
         shadowPaint.setColor(getRangeColor());
+        shadowPaint.setAlpha(20);
     }
 
 
