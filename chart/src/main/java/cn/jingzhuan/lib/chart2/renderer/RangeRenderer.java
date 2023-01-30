@@ -128,6 +128,26 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
                     int start = getEntryIndexByCoordinate(mStartX, 0);
                     int end = getEntryIndexByCoordinate(mEndX, 0);
+                    if(chart.isScaling()) {
+                        final CandlestickDataSet candlestickDataSet = dataVaild();
+                        int listSize = candlestickDataSet.getEntryCount();
+                        int chartLeftIndex = Math.round(mViewport.left * listSize);
+                        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+                        if(mStartIndex < chartLeftIndex) {
+                            mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
+                            if(mEndIndex > chartRightIndex) {
+                                mEndIndex = chartRightIndex;
+                            }
+                            mStartIndex = chartLeftIndex;
+
+                        }
+                        if(mEndIndex > chartRightIndex) {
+                            mEndIndex = chartRightIndex;
+                        }
+
+                        mStartX = getScaleCoordinateByIndex(mStartIndex);
+                        mEndX = getScaleCoordinateByIndex(mEndIndex);
+                    }
                     if((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
                         mStartIndex = start;
                         mEndIndex = end;
@@ -179,7 +199,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         shadowPaint.setStyle(Paint.Style.FILL);
         shadowPaint.setAlpha(20);
     }
-
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull @NotNull Highlight[] highlights) {
