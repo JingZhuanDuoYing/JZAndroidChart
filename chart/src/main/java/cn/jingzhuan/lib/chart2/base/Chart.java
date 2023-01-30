@@ -1074,6 +1074,13 @@ public abstract class Chart extends BitmapCachedChart {
         return isTouching;
     }
 
+    /**
+     * 是否是伸缩状态
+     */
+    public boolean isScaling() {
+        return isScaling;
+    }
+
     public boolean getRangeEnable() {
         return isShowRange;
     }
