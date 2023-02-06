@@ -600,11 +600,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 || dataSet.size() <= 0) {
             return null;
         } else {
-            CandlestickDataSet candlestickDataSet = dataSet.get(0);
+            CandlestickDataSet candlestickDataSet = dataSet.get(dataSet.size() - 1);
             if (candlestickDataSet.getValues().size() < 2) {
                 return null;
             } else {
-                return dataSet.get(0);
+                return dataSet.get(dataSet.size() - 1);
             }
         }
     }
