@@ -75,8 +75,8 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         if (abstractDataSet is CandlestickDataSet) {
             if (abstractDataSet.neutralColor != Color.TRANSPARENT)
                 abstractDataSet.neutralColor = Color.GRAY
-            super.addDataSet(abstractDataSet)
         }
+        super.addDataSet(abstractDataSet)
     }
 
 

@@ -16,6 +16,8 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     private String text;
     private int textColor;
     private int textSize = 11;
+    private int textPadding = 10;
+    private int lineDashHeight = 40;
     private int align = ALIGN_TOP;
 
     public int getTextBgColor() {
@@ -134,4 +136,31 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
         this.textSize = textSize;
     }
 
+    /**
+     * @return 获取文本边距
+     */
+    public int getTextPadding() {
+        return this.textPadding;
+    }
+
+    /**
+     * @param padding 文本边距
+     */
+    public void setTextPadding(int padding) {
+        this.textPadding = padding;
+    }
+
+    /**
+     * @return 获取虚线长度
+     */
+    public int getLineDashHeight() {
+        return this.lineDashHeight;
+    }
+
+    /**
+     * @param dashHeight 虚线长度
+     */
+    public void setLineDashLength(int dashHeight) {
+        this.lineDashHeight = dashHeight;
+    }
 }

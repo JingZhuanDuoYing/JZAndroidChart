@@ -7,21 +7,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import androidx.annotation.NonNull;
-
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
 
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import cn.jingzhuan.lib.chart.R;
-import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
@@ -112,48 +108,41 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         this.chart = chart;
         initPaint();
         initMeasure();
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
-        chart.addOnViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                initChartBoundary();
-                if (viewport.width() == 1.0f) return;
-                if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
-                    int start = getEntryIndexByCoordinate(mStartX, 0);
-                    int end = getEntryIndexByCoordinate(mEndX, 0);
-                    if(chart.isScaling()) {
-                        final CandlestickDataSet candlestickDataSet = dataVaild();
-                        int listSize = candlestickDataSet.getEntryCount();
-                        int chartLeftIndex = Math.round(mViewport.left * listSize);
-                        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
-                        if(mStartIndex < chartLeftIndex) {
-                            mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
-                            if(mEndIndex > chartRightIndex) {
-                                mEndIndex = chartRightIndex;
-                            }
-                            mStartIndex = chartLeftIndex;
-
-                        }
+        chart.addOnViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            initChartBoundary();
+            if (viewport.width() == 1.0f) return;
+            if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
+                int start = getEntryIndexByCoordinate(mStartX, 0);
+                int end = getEntryIndexByCoordinate(mEndX, 0);
+                if(chart.isScaling()) {
+                    final CandlestickDataSet candlestickDataSet = dataValid();
+                    int listSize = candlestickDataSet.getValues().size();
+                    int chartLeftIndex = Math.round(mViewport.left * listSize);
+                    int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+                    if(mStartIndex < chartLeftIndex) {
+                        mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
                         if(mEndIndex > chartRightIndex) {
                             mEndIndex = chartRightIndex;
                         }
+                        mStartIndex = chartLeftIndex;
 
-                        mStartX = getScaleCoordinateByIndex(mStartIndex);
-                        mEndX = getScaleCoordinateByIndex(mEndIndex);
                     }
-                    if((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
-                        mStartIndex = start;
-                        mEndIndex = end;
-                        touchDirection = TouchDirection.none;
-                        Log.d("rangeIndex", mStartIndex+"---"+mEndIndex);
+                    if(mEndIndex > chartRightIndex) {
+                        mEndIndex = chartRightIndex;
                     }
+
+                    mStartX = getScaleCoordinateByIndex(mStartIndex);
+                    mEndX = getScaleCoordinateByIndex(mEndIndex);
+                }
+                if((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
+                    mStartIndex = start;
+                    mEndIndex = end;
+                    touchDirection = TouchDirection.none;
                 }
             }
         });
@@ -204,16 +193,13 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     public void renderHighlighted(Canvas canvas, @NonNull @NotNull Highlight[] highlights) {
         if(highlights.length > 0) {
             initChartBoundary();
-            CandlestickDataSet candlestickDataSet = dataVaild();
+            CandlestickDataSet candlestickDataSet = dataValid();
             if (candlestickDataSet == null) return;
             mStartX = highlights[0].getX();
             mStartIndex = getEntryIndexByCoordinate(mStartX, 0);
 
-            int listSize = candlestickDataSet.getEntryCount();
+            int listSize = candlestickDataSet.getValues().size();
             mEndIndex = Math.round(mViewport.right * listSize - 1);
-
-            int chartSize = candlestickDataSet.getValues().size();
-            if(mEndIndex > chartSize - 1) mEndIndex = chartSize - 1;
 
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             touchDirection = TouchDirection.none;
@@ -221,12 +207,12 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     }
 
     public void drawCanvas(Canvas canvas) {
-        CandlestickDataSet candlestickDataSet = dataVaild();
+        CandlestickDataSet candlestickDataSet = dataValid();
         if (candlestickDataSet == null) return;
 
         //默认选中当前屏幕内全部
         if (mStartIndex == 0 && mEndIndex == 0) {
-            int listSize = candlestickDataSet.getEntryCount();
+            int listSize = candlestickDataSet.getValues().size();
 
             mStartIndex = Math.round(mViewport.left * listSize);
             mEndIndex = Math.round(mViewport.right * listSize - 1);
@@ -300,14 +286,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     }
 
     private boolean touchToLeft(float currentX) {
-        final CandlestickDataSet candlestickDataSet = dataVaild();
+        final CandlestickDataSet candlestickDataSet = dataValid();
         if (candlestickDataSet == null) {
             return false;
         }
         int leftIndex = getEntryIndexByCoordinate(currentX, 0);
         int rightIndex = getEntryIndexByCoordinate(mEndX, 0);
 
-        int listSize = candlestickDataSet.getEntryCount();
+        int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
@@ -333,14 +319,14 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     }
 
     private boolean touchToRight(float currentX) {
-        final CandlestickDataSet candlestickDataSet = dataVaild();
+        final CandlestickDataSet candlestickDataSet = dataValid();
         if (candlestickDataSet == null) {
             return false;
         }
         int leftIndex = getEntryIndexByCoordinate(mStartX, 0);
         int rightIndex = getEntryIndexByCoordinate(currentX, 0);
 
-        int listSize = candlestickDataSet.getEntryCount();
+        int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
@@ -364,7 +350,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     }
 
     private boolean touchBothToLeftOrRight(float currentX) {
-        final CandlestickDataSet candlestickDataSet = dataVaild();
+        final CandlestickDataSet candlestickDataSet = dataValid();
         if (candlestickDataSet == null) {
             return false;
         }
@@ -375,7 +361,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         int deltaIndex = currentIndex - lastPreIndex;
         if(deltaIndex == 0) return true;
 
-        int listSize = candlestickDataSet.getEntryCount();
+        int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
         int chartRightIndex = Math.round(mViewport.right * listSize - 1);
 
@@ -559,7 +545,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      * @return X轴坐标
      */
     public float getScaleCoordinateByIndex(int index) {
-        CandlestickDataSet candlestickDataSet = dataVaild();
+        CandlestickDataSet candlestickDataSet = dataValid();
         int valueCount = candlestickDataSet.getEntryCount();
         final float scale = 1.0f / mViewport.width();
         float candleWidth = candlestickDataSet.getCandleWidth();
@@ -592,7 +578,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 数据有效且数据量大于2那么返回对应的数据集合，否则不返回
      */
-    public CandlestickDataSet dataVaild() {
+    public CandlestickDataSet dataValid() {
         List<CandlestickDataSet> dataSet = getDataSet();
 
         if (getChartData() == null
@@ -604,7 +590,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             if (candlestickDataSet.getValues().size() < 2) {
                 return null;
             } else {
-                return dataSet.get(dataSet.size() - 1);
+                return candlestickDataSet;
             }
         }
     }
