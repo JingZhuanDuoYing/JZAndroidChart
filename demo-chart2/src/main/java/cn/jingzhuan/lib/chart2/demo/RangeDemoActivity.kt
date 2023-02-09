@@ -8,9 +8,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import cn.jingzhuan.lib.chart.component.AxisY
 import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet.ALIGN_BOTTOM
+import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart2.renderer.TouchDirection
 import cn.jingzhuan.lib.chart2.widget.CombineChart
@@ -33,6 +37,8 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnRange: AppCompatButton
 
+    private lateinit var btnAddTag: AppCompatButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -43,6 +49,7 @@ class RangeDemoActivity : AppCompatActivity() {
         tvNumber = findViewById(R.id.tv_number)
         combineChart = findViewById(R.id.combine_chart)
         btnRange = findViewById(R.id.btn_range)
+        btnAddTag = findViewById(R.id.btn_add_tag)
         initData()
 
         val dataSet = CandlestickDataSet(candlestickValues)
@@ -53,15 +60,22 @@ class RangeDemoActivity : AppCompatActivity() {
 
         combineChart.addDataSet(dataSet)
 
-        val dataSet2 = CandlestickDataSet(candlestickValues)
-        dataSet.isHighlightedHorizontalEnable = true
-        dataSet.isHighlightedVerticalEnable = true
-        dataSet.color = 0xFFFD263F.toInt()
-        dataSet.increasingPaintStyle = Paint.Style.FILL_AND_STROKE
-        dataSet.strokeThickness = 2f
-        dataSet.decreasingColor = 0xFF00AA3B.toInt()
-        dataSet.increasingColor = 0xFFFD263F.toInt()
-        combineChart.addDataSet(dataSet2)
+//        val dataSet2 = CandlestickDataSet(candlestickValues)
+//        dataSet.isHighlightedHorizontalEnable = true
+//        dataSet.isHighlightedVerticalEnable = true
+//        dataSet.color = 0xFFFD263F.toInt()
+//        dataSet.increasingPaintStyle = Paint.Style.FILL_AND_STROKE
+//        dataSet.strokeThickness = 2f
+//        dataSet.decreasingColor = 0xFF00AA3B.toInt()
+//        dataSet.increasingColor = 0xFFFD263F.toInt()
+//        combineChart.addDataSet(dataSet2)
+
+        btnAddTag.setOnClickListener {
+            val textDataSet = addTextData()
+            textDataSet.drawIndex = 11000
+            combineChart.addDataSet(textDataSet)
+            combineChart.postInvalidate()
+        }
 
         btnRange.setOnClickListener {
             if (combineChart.rangeEnable) return@setOnClickListener
@@ -124,6 +138,24 @@ class RangeDemoActivity : AppCompatActivity() {
             tvNumber.text = "周期数：${endIndex - startIndex}"
             updateCloseRangeButton(startX, endX)
         }
+    }
+
+    private fun addTextData(): ScatterTextDataSet {
+        val entries = java.util.ArrayList<ScatterTextValue>(candlestickValues.size)
+        candlestickValues.forEachIndexed { index, value ->
+            entries.add(ScatterTextValue(true, value.high,value.low))
+        }
+        val dataSet = ScatterTextDataSet(entries)
+
+        dataSet.axisDependency = AxisY.DEPENDENCY_BOTH
+        dataSet.text = "加自选"
+        dataSet.textColor = 0xffFD263F.toInt()
+        dataSet.textBgColor = 0xB3FFFFFF.toInt()
+        dataSet.lineColor = 0xffFD263F.toInt()
+        dataSet.frameColor = 0xffFD263F.toInt()
+        dataSet.textSize = 30
+
+        return dataSet
     }
 
     private fun updateCloseRangeButton(startX: Float, endX: Float) {

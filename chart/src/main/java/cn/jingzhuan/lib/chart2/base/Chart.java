@@ -263,7 +263,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
-            if(getRangeEnable()) return super.onScaleBegin(scaleGestureDetector);
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
 
             isScaling = true;
@@ -280,7 +279,6 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
             Log.d("Chart", "onScale");
-            if(getRangeEnable()) return false;
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
@@ -1072,6 +1070,13 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isTouching() {
         return isTouching;
+    }
+
+    /**
+     * 是否是伸缩状态
+     */
+    public boolean isScaling() {
+        return isScaling;
     }
 
     public boolean getRangeEnable() {

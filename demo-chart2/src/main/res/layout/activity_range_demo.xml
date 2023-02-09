@@ -94,6 +94,13 @@
             android:layout_height="wrap_content"
             />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_add_tag"
+            android:text="添加文本标记"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
     </LinearLayout>
 
 </LinearLayout>
