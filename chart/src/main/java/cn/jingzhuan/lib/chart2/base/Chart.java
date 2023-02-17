@@ -787,6 +787,7 @@ public abstract class Chart extends BitmapCachedChart {
 //                    + ", lastPointerCount: " + lastPointerCount
 //            );
             isTouching = false;
+            mIsLongPress = false;
         }
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
