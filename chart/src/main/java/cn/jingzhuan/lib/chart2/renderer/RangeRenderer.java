@@ -629,6 +629,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         }
     }
 
+    public Boolean isRangeMoving() {
+        return touchDirection != TouchDirection.none;
+    }
+
     /**
      * @return 线条颜色
      */
