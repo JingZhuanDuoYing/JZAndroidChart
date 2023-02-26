@@ -75,7 +75,7 @@ public abstract class Chart extends BitmapCachedChart {
     protected OnViewportChangeListener mInternalViewportChangeListener;
     protected OnLoadMoreKlineListener mOnLoadMoreKlineListener;
 
-    protected OnScaleListener mOnScaleListener;
+    protected OnScaleListener mScaleListener;
 
     /**
      * The scaling factor for a single zoom 'step'.
@@ -267,7 +267,9 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
             isScaling = true;
-            mOnScaleListener.onScaleStart(mCurrentViewport);
+            if(mScaleListener != null)  {
+                mScaleListener.onScaleStart(mCurrentViewport);
+            }
 //            lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
@@ -275,7 +277,9 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
-            mOnScaleListener.onScaleEnd(mCurrentViewport);
+            if(mScaleListener != null)  {
+                mScaleListener.onScaleEnd(mCurrentViewport);
+            }
             Log.d("Chart", "onScaleEnd");
         }
 
@@ -373,7 +377,9 @@ public abstract class Chart extends BitmapCachedChart {
 
             triggerViewportChange();
 //            lastSpanX = spanX;
-            mOnScaleListener.onScale(mCurrentViewport);
+            if(mScaleListener != null)  {
+                mScaleListener.onScale(mCurrentViewport);
+            }
             return true;
         }
     };
@@ -1096,7 +1102,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     public void setOnScaleListener(OnScaleListener onScaleListener) {
-        this.mOnScaleListener = onScaleListener;
+        this.mScaleListener = onScaleListener;
     }
 
     public void finishScroll() {
