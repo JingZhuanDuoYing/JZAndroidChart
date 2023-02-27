@@ -617,6 +617,9 @@ public abstract class Chart extends BitmapCachedChart {
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -640,6 +643,9 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         postInvalidateOnAnimation();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     /**
@@ -667,6 +673,9 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     @Override
