@@ -24,8 +24,9 @@ import android.widget.OverScroller;
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
+import cn.jingzhuan.lib.chart.event.OnScaleListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -74,6 +75,7 @@ public abstract class Chart extends BitmapCachedChart {
     protected OnViewportChangeListener mInternalViewportChangeListener;
     protected OnLoadMoreKlineListener mOnLoadMoreKlineListener;
 
+    protected OnScaleListener mScaleListener;
 
     /**
      * The scaling factor for a single zoom 'step'.
@@ -264,8 +266,10 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
-
             isScaling = true;
+            if(mScaleListener != null)  {
+                mScaleListener.onScaleStart(mCurrentViewport);
+            }
 //            lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
@@ -273,6 +277,9 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
+            if(mScaleListener != null)  {
+                mScaleListener.onScaleEnd(mCurrentViewport);
+            }
             Log.d("Chart", "onScaleEnd");
         }
 
@@ -370,7 +377,9 @@ public abstract class Chart extends BitmapCachedChart {
 
             triggerViewportChange();
 //            lastSpanX = spanX;
-
+            if(mScaleListener != null)  {
+                mScaleListener.onScale(mCurrentViewport);
+            }
             return true;
         }
     };
@@ -608,6 +617,9 @@ public abstract class Chart extends BitmapCachedChart {
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -631,6 +643,9 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         postInvalidateOnAnimation();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     /**
@@ -658,6 +673,9 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
     }
 
     @Override
@@ -787,6 +805,7 @@ public abstract class Chart extends BitmapCachedChart {
 //                    + ", lastPointerCount: " + lastPointerCount
 //            );
             isTouching = false;
+            mIsLongPress = false;
         }
 
         boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
@@ -1089,6 +1108,10 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
         this.mOnLoadMoreKlineListener = onLoadMoreKlineListener;
+    }
+
+    public void setOnScaleListener(OnScaleListener onScaleListener) {
+        this.mScaleListener = onScaleListener;
     }
 
     public void finishScroll() {

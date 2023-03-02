@@ -2,22 +2,22 @@ package cn.jingzhuan.lib.chart2.demo
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import cn.jingzhuan.lib.chart.Viewport
 import cn.jingzhuan.lib.chart.component.AxisY
 import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet
-import cn.jingzhuan.lib.chart.data.ScatterTextDataSet.ALIGN_BOTTOM
 import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
-import cn.jingzhuan.lib.chart2.renderer.TouchDirection
-import cn.jingzhuan.lib.chart2.widget.CombineChart
+import cn.jingzhuan.lib.chart.event.OnScaleListener
+import kotlin.math.round
 
 class RangeDemoActivity : AppCompatActivity() {
 
@@ -115,6 +115,22 @@ class RangeDemoActivity : AppCompatActivity() {
             tvNumber.visibility = View.VISIBLE
 
         }
+
+        combineChart.setOnScaleListener(object : OnScaleListener{
+            override fun onScaleStart(viewport: Viewport) {
+
+            }
+
+            override fun onScale(viewport: Viewport) {
+            }
+
+            override fun onScaleEnd(viewport: Viewport) {
+                val from = round(candlestickValues.size * viewport.left)
+                val to = round(candlestickValues.size * viewport.right)
+                Log.d("Chart", "onScaleEnd->size=${to - from}")
+            }
+
+        })
 
         combineChart.onHighlightStatusChangeListener =
             object : HighlightStatusChangeListener {
