@@ -1,15 +1,24 @@
 package cn.jingzhuan.lib.chart2.base;
 
+
+import static cn.jingzhuan.lib.chart.config.JZChartConfig.ZOOM_AMOUNT;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 
@@ -18,49 +27,67 @@ import java.util.Collections;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.R;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.event.OnScaleListener;
 import cn.jingzhuan.lib.chart.event.OnTouchHighlightChangeListener;
 import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
+import cn.jingzhuan.lib.chart.utils.ForceAlign;
 
 /**
  * @author yilei
  * @since 2023-03-22
  */
-public abstract class AbstractChart extends BitmapCachedChart implements
-        GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener {
+public abstract class AbstractChart extends BitmapCachedChart implements ScaleGestureDetector.OnScaleGestureListener, IAbstractChart {
 
     private GestureDetectorCompat mDetector;
     private ScaleGestureDetector mScaleDetector;
     private OverScroller mScroller;
 
-    private Zoomer zoomer;
+    // Edge effect / overscroll tracking objects.
+    private EdgeEffect mEdgeEffectLeft, mEdgeEffectRight;
+
+    private boolean mEdgeEffectLeftActive, mEdgeEffectRightActive;
+
+    /**
+     * Used only for zooms and flings.
+     */
+    private RectF mScrollerStartViewport = new RectF();
+
     /**
      * 矩形边界 - 左
      */
     protected AxisY mAxisLeft = new AxisY(AxisY.LEFT_INSIDE);
+
     /**
      * 矩形边界 - 右
      */
     protected AxisY mAxisRight = new AxisY(AxisY.RIGHT_INSIDE);
+
     /**
      * 矩形边界 - 上
      */
     protected AxisX mAxisTop = new AxisX(AxisX.TOP);
+
     /**
      * 矩形边界 - 下
      */
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners;
+
     protected List<OnTouchHighlightChangeListener> mTouchHighlightChangeListeners;
+
     protected List<OnViewportChangeListener> mOnViewportChangeListeners;
 
-    // Edge effect / overscroll tracking objects.
-    private EdgeEffect mEdgeEffectLeft, mEdgeEffectRight;
+    /**
+     * 手指触摸缩放回调
+     */
+    protected OnScaleListener mScaleListener;
 
     /**
      * 是否触摸状态
@@ -68,9 +95,19 @@ public abstract class AbstractChart extends BitmapCachedChart implements
     private boolean mIsTouching = false;
 
     /**
+     * 是否长按状态
+     */
+    private boolean mIsLongPress = false;
+
+    /**
+     * 是否光标高亮状态
+     */
+    protected boolean mIsHighlight = false;
+
+    /**
      * 是否展示区间统计 - 默认否
      */
-    private boolean mEnableRange = false;
+    private boolean mRangeEnable = false;
 
     /**
      * 双击放大
@@ -78,12 +115,44 @@ public abstract class AbstractChart extends BitmapCachedChart implements
     private boolean mDoubleTapToZoom = false;
 
     /**
-     * The scaling factor for a single zoom 'step'.
-     *
-     * @see #zoomIn()
-     * @see #zoomOut()
+     * 是否能够放大
      */
-    private static final float ZOOM_AMOUNT = 0.2f;
+    private boolean canZoomIn = true;
+
+    /**
+     * 是否能够缩小
+     */
+    private boolean canZoomOut = true;
+
+    /**
+     * 是否允许伸缩
+     */
+    private boolean enableScaleGesture = true;
+
+    /**
+     * 是否允许滑动
+     */
+    private boolean enableDraggingToMove = true;
+
+    /**
+     * 是否允许显示十字光标
+     */
+    private boolean enableHighlight = true;
+
+    /**
+     * 总是显示十字光标
+     */
+    private boolean alwaysHighlight = false;
+
+    /**
+     * 伸缩灵敏度
+     */
+    private float scaleSensitivity = 1f;
+
+    private Zoomer zoomer;
+    private PointF mZoomFocalPoint = new PointF();
+
+    private final Point mSurfaceSizeBuffer = new Point();
 
     public AbstractChart(Context context) {
         this(context, null);
@@ -156,9 +225,15 @@ public abstract class AbstractChart extends BitmapCachedChart implements
         mEdgeEffectRight = new EdgeEffect(context);
     }
 
+    private void releaseEdgeEffects() {
+        mEdgeEffectLeftActive = mEdgeEffectRightActive = false;
+        mEdgeEffectLeft.onRelease();
+        mEdgeEffectRight.onRelease();
+    }
+
     private void setupInteractions(Context context) {
         setWillNotDraw(false);
-        mDetector = new GestureDetectorCompat(context, this);
+        mDetector = new GestureDetectorCompat(context, mGestureListener);
         mScaleDetector = new ScaleGestureDetector(context, this);
         mScroller = new OverScroller(context);
         zoomer = new Zoomer(context);
@@ -170,7 +245,21 @@ public abstract class AbstractChart extends BitmapCachedChart implements
         mOnViewportChangeListeners = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public abstract void initChart();
+    /**
+     * Finds the lib point (i.e. within the lib's domain and range) represented by the
+     * given pixel coordinates, if that pixel is within the lib region described by
+     * {@link #mContentRect}. If the point is found, the "dest" argument is set to the point and
+     * this function returns true. Otherwise, this function returns false and "dest" is unchanged.
+     */
+    private boolean hitTest(float x, float y, PointF dest) {
+        if (!mContentRect.contains((int) x, (int) y)) {
+            return false;
+        }
+
+        dest.set(mCurrentViewport.left + mCurrentViewport.width() * (x - mContentRect.left) / mContentRect.width(),
+                mCurrentViewport.top + mCurrentViewport.height() * (y - mContentRect.bottom) / -mContentRect.height());
+        return true;
+    }
 
     public void addOnTouchPointChangeListener(OnTouchPointChangeListener listener) {
         synchronized (this) {
@@ -185,6 +274,13 @@ public abstract class AbstractChart extends BitmapCachedChart implements
     }
 
     /**
+     * 是否伸缩状态
+     */
+    public boolean isScaling() {
+        return mScaleDetector.isInProgress();
+    }
+
+    /**
      * 获取触摸状态
      */
     public boolean isTouching() {
@@ -192,69 +288,589 @@ public abstract class AbstractChart extends BitmapCachedChart implements
     }
 
     /**
-     * 设置区间统计
+     * 获取光标高亮状态
      */
+    public boolean isHighlight() {
+        return mIsHighlight;
+    }
+
+    public boolean isLongPress() {
+        return this.mIsLongPress;
+    }
+
+    public void setIsLongPress(boolean isLongPress) {
+        this.mIsLongPress = isLongPress;
+    }
+
+    public boolean isEnableHighlight() {
+        return enableHighlight;
+    }
+
+    public void setEnableHighlight(boolean enableHighlight) {
+        this.enableHighlight = enableHighlight;
+    }
+
+    public boolean isAlwaysHighlight() {
+        return alwaysHighlight;
+    }
+
+    public void setAlwaysHighlight(boolean alwaysHighlight) {
+        this.alwaysHighlight = alwaysHighlight;
+    }
+
     public void setRangeEnable(boolean enableRange) {
-        this.mEnableRange = enableRange;
+        this.mRangeEnable = enableRange;
     }
 
     public boolean getRangeEnable() {
-        return this.mEnableRange;
+        return this.mRangeEnable;
     }
 
-    /**
-     * 设置双击放大
-     */
     public void setDoubleTapToZoom(boolean doubleTapToZoom) {
         this.mDoubleTapToZoom = doubleTapToZoom;
     }
 
-    public boolean DoubleTapToZoom() {
+    public boolean getDoubleTapToZoom() {
         return this.mDoubleTapToZoom;
+    }
+
+    public boolean isCanZoomIn() {
+        return canZoomIn;
+    }
+
+    public void setCanZoomIn(boolean canZoomIn) {
+        this.canZoomIn = canZoomIn;
+    }
+
+    public boolean isCanZoomOut() {
+        return canZoomOut;
+    }
+
+    public void setCanZoomOut(boolean canZoomOut) {
+        this.canZoomOut = canZoomOut;
+    }
+
+    public boolean isScaleGestureEnable() {
+        return this.enableScaleGesture;
+    }
+
+    public void setScaleGestureEnable(boolean enableScaleGesture) {
+        this.enableScaleGesture = enableScaleGesture;
+    }
+
+    public void setDraggingToMoveEnable(boolean enableDraggingToMove) {
+        this.enableDraggingToMove = enableDraggingToMove;
+    }
+
+    public boolean isDraggingToMoveEnable() {
+        return this.enableDraggingToMove;
+    }
+
+    public float getScaleSensitivity() {
+        return this.scaleSensitivity;
+    }
+
+    public void setScaleSensitivity(float scaleSensitivity) {
+        this.scaleSensitivity = scaleSensitivity;
     }
 
     /**
      * Smoothly zooms the lib in one step.
      */
     public void zoomIn() {
-        zoom(ZOOM_AMOUNT);
+        zoom(ZOOM_AMOUNT, -1);
+    }
+
+    public void zoomIn(@ForceAlign.XForce int forceAlignX) {
+        zoom(ZOOM_AMOUNT, forceAlignX);
     }
 
     /**
      * Smoothly zooms the lib out one step.
      */
     public void zoomOut() {
-        zoom(-ZOOM_AMOUNT);
+        zoom(-ZOOM_AMOUNT, -1);
     }
 
-    public void zoom(float scalingFactor) {
+    public void zoomOut(@ForceAlign.XForce int forceAlignX) {
+        zoom(-ZOOM_AMOUNT, forceAlignX);
+    }
 
+    public void zoom(float scalingFactor, int forceAlignX) {
+        mScrollerStartViewport.set(mCurrentViewport);
+        zoomer.forceFinished(true);
+        zoomer.startZoom(scalingFactor);
+        float pointFX;
+        if(forceAlignX == -1){
+            pointFX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+        } else {
+            switch (forceAlignX) {
+                case ForceAlign.LEFT:
+                    pointFX = mCurrentViewport.left;
+                    break;
+                case ForceAlign.RIGHT:
+                    pointFX = mCurrentViewport.right;
+                    break;
+                case ForceAlign.CENTER:
+                default:
+                    pointFX = (mCurrentViewport.right + mCurrentViewport.left) / 2;
+                    break;
+            }
+        }
+
+        mZoomFocalPoint.set(pointFX, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+        triggerViewportChange();
+        if(mScaleListener != null) {
+            mScaleListener.onScale(mCurrentViewport);
+        }
+    }
+
+    protected void triggerViewportChange() {
+        postInvalidateOnAnimation();
+//        if (mInternalViewportChangeListener != null) {
+//            mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
+//        }
+        if (mOnViewportChangeListeners != null && !mOnViewportChangeListeners.isEmpty()) {
+            synchronized (this) {
+                for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
+                    try {
+                        mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+                    } catch (Exception e) {
+                        Log.d("Chart", "onViewportChange", e);
+                    }
+                }
+            }
+        }
     }
 
     /**
-     * 手指在触摸屏幕双击的时候回调
+     * 设置触摸伸缩回调监听
+     */
+    public void setOnScaleListener(OnScaleListener onScaleListener) {
+        this.mScaleListener = onScaleListener;
+    }
+
+    /**
+     * 多指触摸屏幕开始伸缩的时候回调
      */
     @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        if(mEnableRange) return false;
-
-        if (mDoubleTapToZoom) {
-            zoomer.forceFinished(true);
-//            if (hitTest(e.getX(), e.getY(), mZoomFocalPoint)) {
-//                zoomer.startZoom(ZOOM_AMOUNT);
-//            }
-            postInvalidateOnAnimation();
+    public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+        if (!enableScaleGesture) return false;
+        inScaling = true;
+        Log.d("Chart", "onScaleBegin");
+        if(mScaleListener != null)  {
+            mScaleListener.onScaleStart(mCurrentViewport);
         }
         return true;
     }
 
     /**
-     * 手指在触摸屏幕滑动的时候回调
+     * 多指触摸屏幕结束伸缩的时候回调
      */
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+    public void onScaleEnd(ScaleGestureDetector detector) {
+        if (!enableScaleGesture) return;
+        Log.d("Chart", "onScaleEnd");
+        if(mScaleListener != null)  {
+            mScaleListener.onScaleEnd(mCurrentViewport);
+        }
+    }
 
+    /**
+     * 多指触摸屏幕伸缩的时候回调
+     */
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        Log.d("Chart", "onScale");
+        if (!enableScaleGesture) return false;
+        PointF viewportFocus = new PointF();
+
+        float spanX = mScaleDetector.getCurrentSpan();
+        float lastSpanX = mScaleDetector.getPreviousSpan();
+        // 双指距离比上次大，为放大
+        boolean zoomIn = spanX > lastSpanX;
+        // 双指距离比上次小，为缩小
+        boolean zoomOut = lastSpanX > spanX;
+
+        boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
+
+        // 如果当前是放大 则能够缩小
+        if (zoomIn) {
+            setCanZoomOut(true);
+            // 不能放大时 return
+            if (!isCanZoomIn()) return false;
+        }
+
+        // 如果当前是缩小 则能够放大
+        if (zoomOut) {
+            setCanZoomIn(true);
+            // 不能缩小时 return
+            if (!isCanZoomOut()) return false;
+        }
+
+        float scaleSpanX = lastSpanX;
+        if (canZoom) {
+            if (zoomIn) {
+                scaleSpanX = spanX * scaleSensitivity;
+            } else if (zoomOut) {
+                lastSpanX = lastSpanX * scaleSensitivity;
+            }
+        }
+
+        float newWidth;
+        if (canZoom) {
+            if (zoomIn) {
+                newWidth = lastSpanX / scaleSpanX * mCurrentViewport.width();
+            } else {
+                newWidth = lastSpanX / spanX * mCurrentViewport.width();
+            }
+        } else {
+            newWidth = lastSpanX / spanX * mCurrentViewport.width();
+        }
+
+        if (newWidth < mCurrentViewport.width() && mCurrentViewport.width() < 0.001) {
+            return true;
+        }
+
+        float focusX = mScaleDetector.getFocusX();
+        float focusY = mScaleDetector.getFocusY();
+
+        if (canZoom) {
+            if (zoomOut)
+                focusX *= scaleSensitivity;
+            else if (zoomIn)
+                focusX /= scaleSensitivity;
+        }
+
+        hitTest(focusX, focusY, viewportFocus);
+
+        mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+        // mCurrentViewport.right = mCurrentViewport.left + newWidth;
+
+        mCurrentViewport.constrainViewport();
+
+        triggerViewportChange();
+        if(mScaleListener != null)  {
+            mScaleListener.onScale(mCurrentViewport);
+        }
         return true;
+    }
+
+    private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
+        /**
+         * 手指在触摸屏幕按下时回调
+         */
+        @Override
+        public boolean onDown(MotionEvent e) {
+            releaseEdgeEffects();
+            mScrollerStartViewport.set(mCurrentViewport);
+            mScroller.forceFinished(true);
+            postInvalidateOnAnimation();
+            return true;
+        }
+
+        /**
+         * 手指在屏幕长按时回调
+         */
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if(getRangeEnable()) return;
+            mIsLongPress = true;
+            onTouchPoint(e);
+            e.setAction(MotionEvent.ACTION_UP);
+            mDetector.onTouchEvent(e);
+        }
+
+        /**
+         * 手指在屏幕单击的时候回调
+         */
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if(getRangeEnable()) return false;
+//            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
+            if (isClickable() && hasOnClickListeners()) {
+                if(getHighlights() != null) cleanHighlight();
+                performClick();
+            } else {
+                int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+//                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
+                if (index >= 0) {
+                    if(enableHighlight){
+                        // 如果不是一直显示光标 并且 光标数组当前不为null 清除光标
+                        if(!alwaysHighlight && getHighlights() != null) {
+                            cleanHighlight();
+                        }else {
+                            onTouchPoint(e);
+                        }
+                    } else {
+                        if(getHighlights() != null) cleanHighlight();
+                    }
+                } else {
+                    if(getHighlights() != null) cleanHighlight();
+                    if (isClickable() && hasOnClickListeners()) {
+                        performClick();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /**
+         * 手指在屏幕双击的时候回调
+         */
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            // 区间统计打开时 双击无效
+            if (mRangeEnable) return false;
+
+            if (mDoubleTapToZoom) {
+                zoomer.forceFinished(true);
+                if (hitTest(e.getX(), e.getY(), mZoomFocalPoint)) {
+                    zoomer.startZoom(ZOOM_AMOUNT);
+                }
+                postInvalidateOnAnimation();
+            }
+            return true;
+        }
+
+        /**
+         * 手指在触摸屏幕滑动的时候回调
+         */
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            if ((!enableDraggingToMove && mIsHighlight)
+//                    || (!enableDraggingToMove && !enableHighlight)
+//                    || (enableDraggingToMove && enableHighlight && mIsHighlight && !alwaysHighlight || mIsLongPress)
+//            ) {
+//
+//                if (isLongPress()) {
+//                    if (enableHighlight) onTouchPoint(e2); else onTouchHighlight(e2);
+//                }
+//                return true;
+//
+//            }
+            return false;
+        }
+
+        /**
+         * 手指迅速移动并松开的时候回调
+         */
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if(enableDraggingToMove) {
+
+                releaseEdgeEffects();
+                // Flings use math in pixels (as opposed to math based on the viewport).
+                computeScrollSurfaceSize(mSurfaceSizeBuffer);
+                mScrollerStartViewport.set(mCurrentViewport);
+                int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN) / (
+                        Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+                mScroller.forceFinished(true);
+                mScroller.fling(
+                        startX,
+                        0,
+                        (int) -velocityX,
+                        0,
+                        0, mSurfaceSizeBuffer.x - mContentRect.width(),
+                        0, mSurfaceSizeBuffer.y - mContentRect.height(),
+                        mContentRect.width() / 2,
+                        0);
+                postInvalidateOnAnimation();
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                mIsTouching = true;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                postInvalidateOnAnimation();
+                break;
+            case MotionEvent.ACTION_UP:
+                mIsLongPress = false;
+                mIsTouching = false;
+                postInvalidateOnAnimation();
+                if (inScaling) {
+                    scalingTimeCount.onFinish();
+                    scalingTimeCount = new ScalingTimeCount();
+                    scalingTimeCount.start();
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                mIsLongPress = false;
+                mIsTouching = false;
+                postInvalidateOnAnimation();
+                break;
+        }
+        boolean retVal = event.getPointerCount() > 1 && mScaleDetector.onTouchEvent(event);
+        if (!inScaling) {
+            retVal = mScaleDetector.onTouchEvent(event) || retVal;
+        }
+
+        if (inScaling) {
+            return true;
+        } else {
+            return retVal || super.onTouchEvent(event);
+        }
+    }
+
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+
+        boolean needsInvalidate = false;
+
+        if (mScroller.computeScrollOffset()) {
+            // The scroller isn't finished, meaning a fling or programmatic pan operation is
+            // currently active.
+
+            computeScrollSurfaceSize(mSurfaceSizeBuffer);
+            int currX = mScroller.getCurrX();
+
+            boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
+                    || mCurrentViewport.right < Viewport.AXIS_X_MAX);
+
+            if (canScrollX
+                    && currX < 0
+                    && mEdgeEffectLeft.isFinished()
+                    && !mEdgeEffectLeftActive) {
+                mEdgeEffectLeft.onAbsorb((int) mScroller.getCurrVelocity());
+                mEdgeEffectLeftActive = true;
+                needsInvalidate = true;
+            } else if (canScrollX
+                    && currX > (mSurfaceSizeBuffer.x - mContentRect.width())
+                    && mEdgeEffectRight.isFinished()
+                    && !mEdgeEffectRightActive) {
+                mEdgeEffectRight.onAbsorb((int) mScroller.getCurrVelocity());
+                mEdgeEffectRightActive = true;
+                needsInvalidate = true;
+            }
+
+            float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
+                    * currX / mSurfaceSizeBuffer.x;
+            setViewportBottomLeft(currXRange);
+        }
+
+        if (zoomer.computeZoom()) {
+            // Performs the zoom since a zoom is in progress (either programmatically or via
+            // double-touch).
+            float newWidth = (1f - zoomer.getCurrZoom()) * mScrollerStartViewport.width();
+            float newHeight = (1f - zoomer.getCurrZoom()) * mScrollerStartViewport.height();
+            float pointWithinViewportX = (mZoomFocalPoint.x - mScrollerStartViewport.left)
+                    / mScrollerStartViewport.width();
+            float pointWithinViewportY = (mZoomFocalPoint.y - mScrollerStartViewport.top)
+                    / mScrollerStartViewport.height();
+            mCurrentViewport.set(
+                    mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+                    mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+                    mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+                    mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+            mCurrentViewport.constrainViewport();
+            needsInvalidate = true;
+        }
+
+        if (needsInvalidate) {
+            triggerViewportChange();
+        }
+    }
+
+    /**
+     * Computes the current scrollable surface size, in pixels. For example, if the entire lib
+     * area is visible, this is simply the current size of {@link #mContentRect}. If the lib
+     * is zoomed in 200% in both directions, the returned size will be twice as large horizontally
+     * and vertically.
+     */
+    private void computeScrollSurfaceSize(Point out) {
+        out.set((int) (mContentRect.width() * (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
+                        / mCurrentViewport.width()),
+                (int) (mContentRect.height() * (Viewport.AXIS_Y_MAX - Viewport.AXIS_Y_MIN)
+                        / mCurrentViewport.height()));
+    }
+
+    public void moveLeft() {
+        moveLeft(0.2f);
+    }
+
+    public void moveRight() {
+        moveRight(0.2f);
+    }
+
+    public void moveLeft(@FloatRange(from = 0f, to = 1.0f) float percent) {
+        releaseEdgeEffects();
+        computeScrollSurfaceSize(mSurfaceSizeBuffer);
+        mScrollerStartViewport.set(mCurrentViewport);
+
+        float moveDistance = mContentRect.width() * percent;
+        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
+                / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
+        }
+        mScroller.startScroll(startX, 0, (int) -moveDistance, 0, 300);
+        postInvalidateOnAnimation();
+    }
+
+    public void moveRight(@FloatRange(from = 0f, to = 1.0f) float percent) {
+//        releaseEdgeEffects();
+        computeScrollSurfaceSize(mSurfaceSizeBuffer);
+        mScrollerStartViewport.set(mCurrentViewport);
+
+        float moveDistance = mContentRect.width() * percent;
+        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN)
+                / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
+        }
+        mScroller.startScroll(startX, 0, (int) moveDistance, 0, 300);
+        postInvalidateOnAnimation();
+    }
+
+    /**
+     * Sets the current viewport (defined by {@link #mCurrentViewport}) to the given
+     * X and Y positions. Note that the Y value represents the topmost pixel position, and thus
+     * the bottom of the {@link #mCurrentViewport} rectangle. For more details on why top and
+     * bottom are flipped, see {@link #mCurrentViewport}.
+     */
+    private void setViewportBottomLeft(float x) {
+        /**
+         * Constrains within the scroll range. The scroll range is simply the viewport extremes
+         * (AXIS_X_MAX, etc.) minus the viewport size. For example, if the extrema were 0 and 10,
+         * and the viewport size was 2, the scroll range would be 0 to 8.
+         */
+
+        float curWidth = mCurrentViewport.width();
+        x = Math.max(Viewport.AXIS_X_MIN, Math.min(x, Viewport.AXIS_X_MAX - curWidth));
+
+        mCurrentViewport.left = x;
+        mCurrentViewport.right = x + curWidth;
+        mCurrentViewport.constrainViewport();
+        triggerViewportChange();
+    }
+
+    public void setCurrentViewport(RectF viewport) {
+        mCurrentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom);
+        mCurrentViewport.constrainViewport();
+        triggerViewportChange();
+    }
+
+    private boolean inScaling = false;
+    private ScalingTimeCount scalingTimeCount;
+    class ScalingTimeCount extends CountDownTimer {
+        public ScalingTimeCount() {
+            super(350, 350);
+        }
+        @Override
+        public void onFinish() {
+            inScaling = false;
+        }
+        @Override
+        public void onTick(long millisUntilFinished) {}
     }
 
 }
