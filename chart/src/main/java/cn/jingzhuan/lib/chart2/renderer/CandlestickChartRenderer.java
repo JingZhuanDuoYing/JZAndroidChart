@@ -6,15 +6,13 @@ import android.graphics.Paint;
 import androidx.annotation.NonNull;
 import android.util.Pair;
 
-import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import java.util.List;
 
@@ -25,49 +23,45 @@ import java.util.List;
 
 public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
-  private float[] mUpperShadowBuffers = new float[4];
-  private float[] mLowerShadowBuffers = new float[4];
-  private float[] mBodyBuffers = new float[4];
+  private final float[] mUpperShadowBuffers = new float[4];
+  private final float[] mLowerShadowBuffers = new float[4];
+  private final float[] mBodyBuffers = new float[4];
   private CandlestickData chartData;
 
   protected Paint mHighlightRenderPaint;
 
-  public CandlestickChartRenderer(final Chart chart) {
+  public CandlestickChartRenderer(final AbstractChart chart) {
     super(chart);
 
-    chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-      @Override public void onViewportChange(Viewport viewport) {
-        mViewport.set(viewport);
-        calcDataSetMinMax();
-      }
+    chart.setInternalViewportChangeListener(viewport -> {
+      mViewport.set(viewport);
+      calcDataSetMinMax();
     });
 
     final Highlight highlight = new Highlight();
-    chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-      @Override
-      public void touch(float x, float y) {
-        if (chart.isHighlightDisable()) return;
+    chart.addOnTouchPointChangeListener((x, y) -> {
 
-        for (CandlestickDataSet dataSet : getDataSet()) {
-          if (dataSet.isHighlightedVerticalEnable()) {
-            final int valueCount = dataSet.getEntryCount();
-            int index;
-            float xPosition;
-            float yPosition;
-            highlight.setTouchX(x);
-            highlight.setTouchY(y);
-            if (x >= mContentRect.left) {
-              index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
-              if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
-                final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-                xPosition = candlestickValue.getX();
-                yPosition = candlestickValue.getY();
-                if (xPosition >= 0 && yPosition >= 0) {
-                  highlight.setX(xPosition);
-                  highlight.setY(yPosition);
-                  highlight.setDataIndex(index);
-                  chart.highlightValue(highlight);
-                }
+      if (!chart.isEnableHighlight()) return;
+
+      for (CandlestickDataSet dataSet : getDataSet()) {
+        if (dataSet.isHighlightedVerticalEnable()) {
+          final int valueCount = dataSet.getEntryCount();
+          int index;
+          float xPosition;
+          float yPosition;
+          highlight.setTouchX(x);
+          highlight.setTouchY(y);
+          if (x >= mContentRect.left) {
+            index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
+            if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
+              final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
+              xPosition = candlestickValue.getX();
+              yPosition = candlestickValue.getY();
+              if (xPosition >= 0 && yPosition >= 0) {
+                highlight.setX(xPosition);
+                highlight.setY(yPosition);
+                highlight.setDataIndex(index);
+                chart.highlightValue(highlight);
               }
             }
           }

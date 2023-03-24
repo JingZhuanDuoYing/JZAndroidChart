@@ -7,7 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
@@ -46,6 +47,19 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRenderPaint.setStyle(Paint.Style.STROKE);
     }
+
+    public AbstractDataRenderer(AbstractChart chart) {
+        this.mViewport = chart.getCurrentViewport();
+        this.mContentRect = chart.getContentRect();
+
+        this.mChartAnimator = chart.getChartAnimator();
+
+        getChartData().setChart(chart);
+
+        mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mRenderPaint.setStyle(Paint.Style.STROKE);
+    }
+
 
     @Override
     public final void renderer(Canvas canvas) {

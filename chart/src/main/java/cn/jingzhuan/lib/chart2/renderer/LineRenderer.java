@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
+import cn.jingzhuan.lib.chart.base.BaseFunChart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -23,6 +25,7 @@ import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PartLineData;
 import cn.jingzhuan.lib.chart.data.PointValue;
+import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.TimeUtil;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
@@ -38,18 +41,18 @@ import cn.jingzhuan.lib.chart2.widget.LineChart;
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private LineData lineData;
-    private List<Path> shaderPaths;
-    private List<Shader> shaderPathColors;
-    private List<Path> linePaths;
+    private final List<Path> shaderPaths;
+    private final List<Shader> shaderPathColors;
+    private final List<Path> linePaths;
     private Path shaderPath;
-    private List<PartLineData> partLineDatas;
+    private final List<PartLineData> partLines;
 
     private boolean onlyLines = false;
     private boolean isDrawHighLight = false;
     private Paint mTextPaint;
-    private Chart chart;
+    private final AbstractChart chart;
 
-    public LineRenderer(final Chart chart) {
+    public LineRenderer(final AbstractChart chart) {
         super(chart);
         this.chart = chart;
 
@@ -57,7 +60,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPath = new Path();
         shaderPaths = new ArrayList<>();
         shaderPathColors = new ArrayList<>();
-        partLineDatas = new ArrayList<>();
+        partLines = new ArrayList<>();
 
         if (chart instanceof LineChart) {
             onlyLines = true;
@@ -65,46 +68,39 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         initPaint();
 
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
 
         final Highlight highlight = new Highlight();
-        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-            @Override
-            public void touch(float x, float y) {
+        chart.addOnTouchPointChangeListener((x, y) -> {
 
-                if (chart.isHighlightDisable()) return;
+            if (!chart.isEnableHighlight()) return;
 
-                synchronized (chart) {
-                    for (LineDataSet line : getDataSet()) {
-                        if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
-                            highlight.setTouchX(x);
-                            highlight.setTouchY(y);
-                            int offset = line.getStartIndexOffset();
-                            int index = getEntryIndexByCoordinate(x, y) - offset;
-                            index = Math.max(index, 0);
-                            index = Math.min(index, line.getValues().size() - 1);
+            synchronized (chart) {
+                for (LineDataSet line : getDataSet()) {
+                    if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
+                        highlight.setTouchX(x);
+                        highlight.setTouchY(y);
+                        int offset = line.getStartIndexOffset();
+                        int index = getEntryIndexByCoordinate(x, y) - offset;
+                        index = Math.max(index, 0);
+                        index = Math.min(index, line.getValues().size() - 1);
 
-                            final PointValue pointValue = line.getEntryForIndex(index);
-                            float xPosition = pointValue.getX();
-                            float yPosition = pointValue.getY();
+                        final PointValue pointValue = line.getEntryForIndex(index);
+                        float xPosition = pointValue.getX();
+                        float yPosition = pointValue.getY();
 
-                            if (xPosition >= 0 && yPosition >= 0) {
-                                highlight.setX(xPosition);
-                                highlight.setY(yPosition);
-                                highlight.setDataIndex(index);
-                                chart.highlightValue(highlight);
-                            }
+                        if (xPosition >= 0 && yPosition >= 0) {
+                            highlight.setX(xPosition);
+                            highlight.setY(yPosition);
+                            highlight.setDataIndex(index);
+                            chart.highlightValue(highlight);
                         }
                     }
                 }
             }
-
         });
     }
 
@@ -117,10 +113,6 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mTextPaint.setColor(Color.WHITE);
         mTextPaint.setTextSize(25f);
     }
-
-
-
-
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
@@ -205,7 +197,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         shaderPathColors.clear();
 
         linePaths.clear();
-        partLineDatas.clear();
+        partLines.clear();
 
         boolean isFirst = true;
 
@@ -315,12 +307,12 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 PointValue lastPoint = lineDataSet.getEntryForIndex(i - 1);
                 boolean split = point.getPathColor() != lastPoint.getPathColor();
                 if (split) {
-                    partLineDatas.add(new PartLineData(linePath, lastPoint.getPathColor()));
+                    partLines.add(new PartLineData(linePath, lastPoint.getPathColor()));
                     linePath = new Path();
                     linePath.moveTo(lastPoint.getX(), lastPoint.getY());
                 }
                 if (i == lineDataSet.getValues().size() - 1) {
-                    partLineDatas.add(new PartLineData(linePath, point.getPathColor()));
+                    partLines.add(new PartLineData(linePath, point.getPathColor()));
                 }
             }
 
@@ -448,7 +440,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
         if (lineDataSet.isLineVisible()) {
             if (lineDataSet.isPartLine()) {
-                for (PartLineData partLineData : partLineDatas) {
+                for (PartLineData partLineData : partLines) {
                     mRenderPaint.setColor(partLineData.getColor());
                     canvas.drawPath(partLineData.getPath(), mRenderPaint);
                 }
@@ -461,8 +453,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     private void drawHorizontalLine(Canvas canvas, LineDataSet lineDataSet, Path linePath, float max, float min) {
-        if (chart instanceof BaseChart){
-            isDrawHighLight = ((BaseChart)chart).getHighlights() != null;
+        if (chart instanceof BaseFunChart){
+            isDrawHighLight = chart.getHighlights() != null;
         }
         mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));
         mRenderPaint.setColor(lineDataSet.getColor());

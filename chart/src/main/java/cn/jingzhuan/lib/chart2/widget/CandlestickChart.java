@@ -5,8 +5,9 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
+
+import cn.jingzhuan.lib.chart.base.BaseFunChart;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
-import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.renderer.CandlestickChartRenderer;
 
 /**
@@ -14,7 +15,7 @@ import cn.jingzhuan.lib.chart2.renderer.CandlestickChartRenderer;
  * Created by donglua on 8/29/17.
  */
 
-public class CandlestickChart extends BaseChart {
+public class CandlestickChart extends BaseFunChart {
 
   public CandlestickChart(Context context) {
     super(context);

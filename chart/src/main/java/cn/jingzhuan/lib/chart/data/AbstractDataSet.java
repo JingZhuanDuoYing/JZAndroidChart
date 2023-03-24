@@ -6,7 +6,6 @@ import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
-import cn.jingzhuan.lib.chart.utils.RequestDataType;
 
 import java.util.ArrayList;
 import java.util.List;

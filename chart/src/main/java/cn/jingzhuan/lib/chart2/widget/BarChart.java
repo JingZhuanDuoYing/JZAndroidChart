@@ -6,15 +6,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
+
+import cn.jingzhuan.lib.chart.base.BaseFunChart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
-import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart2.renderer.BarChartRenderer;
 
 /**
  * Created by Donglua on 17/8/2.
  */
 
-public class BarChart extends BaseChart {
+public class BarChart extends BaseFunChart {
 
     public BarChart(Context context) {
         super(context);

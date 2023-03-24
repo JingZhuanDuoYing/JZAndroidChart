@@ -2,13 +2,14 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
 import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
+import cn.jingzhuan.lib.chart.base.BaseFunChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -18,7 +19,6 @@ import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
 import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart.utils.RequestDataType;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
@@ -38,15 +38,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     protected LineRenderer lineRenderer;
     protected CandlestickChartRenderer candlestickChartRenderer;
     protected ScatterChartRenderer scatterChartRenderer;
-    public RangeRenderer rangeRenderer;//K线区域选择的renderer
+
+    //K线区域选择的renderer
+    public RangeRenderer rangeRenderer;
     protected PointLineRenderer pointLineRenderer;
     protected ScatterTextRenderer scatterTextRenderer;
-    private final Chart chart;
+    private final BaseFunChart chart;
 
     private CombineData combineData;
     private int lastDataSize = 0;
 
-    public CombineChartRenderer(final Chart chart) {
+    public CombineChartRenderer(final BaseFunChart chart) {
         super(chart);
         treeChartRenderer = initTreeChartRenderer(chart);
         lineRenderer = initLineRenderer(chart);
@@ -66,39 +68,39 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         });
     }
 
-    private TreeChartRenderer initTreeChartRenderer(Chart chart) {
+    private TreeChartRenderer initTreeChartRenderer(AbstractChart chart) {
         return new TreeChartRenderer(chart);
     }
 
-    private ScatterTextRenderer initScatterTextRenderer(Chart chart) {
+    private ScatterTextRenderer initScatterTextRenderer(AbstractChart chart) {
         return new ScatterTextRenderer(chart);
     }
 
-    private PointLineRenderer initPointLineRenderer(Chart chart) {
+    private PointLineRenderer initPointLineRenderer(AbstractChart chart) {
         return new PointLineRenderer(chart);
     }
 
-    private RangeRenderer initRangeChartRenderer(Chart chart) {
+    private RangeRenderer initRangeChartRenderer(AbstractChart chart) {
         return new RangeRenderer(chart);
     }
 
     @NotNull
-    private ScatterChartRenderer initScatterChartRenderer(Chart chart) {
+    private ScatterChartRenderer initScatterChartRenderer(AbstractChart chart) {
         return new ScatterChartRenderer(chart);
     }
 
     @NotNull
-    protected CandlestickChartRenderer initCandlestickChartRenderer(Chart chart) {
+    protected CandlestickChartRenderer initCandlestickChartRenderer(AbstractChart chart) {
         return new CandlestickChartRenderer(chart);
     }
 
     @NotNull
-    protected BarChartRenderer initBarChartRenderer(Chart chart) {
+    protected BarChartRenderer initBarChartRenderer(AbstractChart chart) {
         return new BarChartRenderer(chart);
     }
 
     @NotNull
-    protected LineRenderer initLineRenderer(Chart chart) {
+    protected LineRenderer initLineRenderer(AbstractChart chart) {
         return new LineRenderer(chart);
     }
 

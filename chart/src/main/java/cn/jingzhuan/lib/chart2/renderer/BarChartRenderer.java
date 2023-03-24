@@ -6,16 +6,15 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
+
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
-import cn.jingzhuan.lib.chart.Viewport;;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.BarData;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import java.util.List;
 
@@ -28,44 +27,39 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     private BarData mBarDataSets;
     private final char[] mLabelBuffer = new char[100];
 
-    private Paint mValueTextPaint;
+    private final Paint mValueTextPaint;
 
-    public BarChartRenderer(final Chart chart) {
+    public BarChartRenderer(final AbstractChart chart) {
         super(chart);
 
         mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mValueTextPaint.setStyle(Paint.Style.FILL);
 
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
 
         final Highlight highlight = new Highlight();
-        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-            @Override
-            public void touch(float x, float y) {
-                if (chart.isHighlightDisable()) return;
+        chart.addOnTouchPointChangeListener((x, y) -> {
 
-                for (BarDataSet dataSet : getDataSet()) {
-                    if (dataSet.isHighlightedVerticalEnable()) {
-                        highlight.setTouchX(x);
-                        highlight.setTouchY(y);
-                        int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
-                        if (index < dataSet.getValues().size()) {
-                            BarValue barValue = dataSet.getEntryForIndex(index);
-                            float xPosition = barValue.getX();
-                            float yPosition = barValue.getY();
+            if (!chart.isEnableHighlight()) return;
 
-                            if (xPosition >= 0 && yPosition >= 0) {
-                                highlight.setX(xPosition);
-                                highlight.setY(yPosition);
-                                highlight.setDataIndex(index);
-                                chart.highlightValue(highlight);
-                            }
+            for (BarDataSet dataSet : getDataSet()) {
+                if (dataSet.isHighlightedVerticalEnable()) {
+                    highlight.setTouchX(x);
+                    highlight.setTouchY(y);
+                    int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
+                    if (index < dataSet.getValues().size()) {
+                        BarValue barValue = dataSet.getEntryForIndex(index);
+                        float xPosition = barValue.getX();
+                        float yPosition = barValue.getY();
+
+                        if (xPosition >= 0 && yPosition >= 0) {
+                            highlight.setX(xPosition);
+                            highlight.setY(yPosition);
+                            highlight.setDataIndex(index);
+                            chart.highlightValue(highlight);
                         }
                     }
                 }

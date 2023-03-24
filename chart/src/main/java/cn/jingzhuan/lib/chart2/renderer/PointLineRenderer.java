@@ -8,15 +8,13 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
  *  虚线加点
@@ -26,18 +24,15 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
     private PointLineData pointLineData;
     private Path mPath;
     private final Paint mPointPaint; //圆点画笔
-    public PointLineRenderer(Chart chart) {
+    public PointLineRenderer(AbstractChart chart) {
         super(chart);
 
         mPath = new Path();
         mPointPaint = new Paint();
         mPointPaint.setStyle(Paint.Style.FILL);
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
     }
 

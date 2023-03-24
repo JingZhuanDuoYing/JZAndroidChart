@@ -13,12 +13,12 @@ import android.view.ViewTreeObserver;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import cn.jingzhuan.lib.chart.R;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
  * 区间统计Renderer
@@ -30,7 +30,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 最小间隔
      */
-    final int MAX_DIFF_ENTRY = 1;
+    private final int MAX_DIFF_ENTRY = 1;
 
     /**
      * 周期内 的起点和终点的下标
@@ -40,27 +40,27 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 左、右两边icon x的坐标
      */
-    float mStartX, mEndX = 0;
+    private float mStartX, mEndX = 0;
 
     /**
      * 当前chart的左右边界
      */
-    int chartLeft, chartRight = 0;
+    private int chartLeft, chartRight = 0;
 
     /**
      * 左、右两边touch bitmap
      */
-    Bitmap leftTouchBitmap,rightTouchBitmap;
+    private Bitmap leftTouchBitmap,rightTouchBitmap;
 
     /**
      * 左、右两边 touch的矩形区域
      */
-    RectF leftTouchRect, rightTouchRect;
+    private RectF leftTouchRect, rightTouchRect;
 
     /**
      * 上一次触摸的x、y坐标
      */
-    float lastPreX, lastPreY = 0;
+    private float lastPreX, lastPreY = 0;
 
     /**
      * 左、右两边touch的矩形区域中间 线的颜色
@@ -82,30 +82,31 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 用于划线
      */
-    Paint linePaint = new Paint();
+    private final Paint linePaint = new Paint();
 
     /**
      * 用于画bitmap
      */
-    Paint btPaint = new Paint();
+    private final Paint btPaint = new Paint();
 
     /**
      * 中间阴影
      */
-    Paint shadowPaint = new Paint();
+    private final Paint shadowPaint = new Paint();
 
     /**
      * 当前chart
      */
-    Chart chart;
+    private final AbstractChart chart;
 
     private OnRangeListener mOnRangeListener;
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
     private OnRangeKLineListener mOnRangeKLineListener;
 
-    public RangeRenderer(Chart chart) {
+    public RangeRenderer(AbstractChart chart) {
         super(chart);
         this.chart = chart;
+
         initPaint();
         initMeasure();
         chart.setInternalViewportChangeListener(viewport -> {

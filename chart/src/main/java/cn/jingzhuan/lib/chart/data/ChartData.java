@@ -1,8 +1,8 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
-import android.util.Log;
 
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
@@ -187,6 +187,11 @@ public class ChartData<T extends IDataSet> {
   }
 
   public void setChart(cn.jingzhuan.lib.chart2.base.Chart chart) {
+    this.leftAxis = chart.getAxisLeft();
+    this.rightAxis = chart.getAxisRight();
+  }
+
+  public void setChart(AbstractChart chart) {
     this.leftAxis = chart.getAxisLeft();
     this.rightAxis = chart.getAxisRight();
   }

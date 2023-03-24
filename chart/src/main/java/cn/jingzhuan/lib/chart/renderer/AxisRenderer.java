@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import cn.jingzhuan.lib.chart.AxisAutoValues;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Axis;
@@ -22,9 +23,9 @@ import java.util.List;
 
 public class AxisRenderer implements Renderer {
 
-    private Viewport mCurrentViewport;
-    private Rect mContentRect;
-    private Axis mAxis;
+    private final Viewport mCurrentViewport;
+    private final Rect mContentRect;
+    private final Axis mAxis;
 
     private final char[] mLabelBuffer = new char[100];
 
@@ -32,7 +33,7 @@ public class AxisRenderer implements Renderer {
     private Paint mLabelTextPaint;
     private Paint mAxisPaint;
 
-    private static final int POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+    private static final int[] POW10 = {1, 10, 100, 1000, 10000, 100000, 1000000};
 
     public AxisRenderer(Chart chart, Axis axis) {
         this.mCurrentViewport = chart.getCurrentViewport();
@@ -47,6 +48,13 @@ public class AxisRenderer implements Renderer {
         this.mContentRect = chart.getContentRect();
         this.mAxis = axis;
 
+        initPaints();
+    }
+
+    public AxisRenderer(AbstractChart chart, Axis axis) {
+        this.mCurrentViewport = chart.getCurrentViewport();
+        this.mContentRect = chart.getContentRect();
+        this.mAxis = axis;
         initPaints();
     }
 

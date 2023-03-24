@@ -1,7 +1,6 @@
 package cn.jingzhuan.lib.chart2.renderer;
 
 import static cn.jingzhuan.lib.chart.data.ScatterTextDataSet.ALIGN_BOTTOM;
-import static cn.jingzhuan.lib.chart.data.ScatterTextDataSet.ALIGN_TOP;
 
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
@@ -9,19 +8,18 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterTextData;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextValue;
-import cn.jingzhuan.lib.chart2.base.Chart;
 
 public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet> {
     // 顶部和底部给个边距
@@ -31,7 +29,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
     private final Paint mTextPaint;
 
-    public ScatterTextRenderer(Chart chart) {
+    public ScatterTextRenderer(AbstractChart chart) {
         super(chart);
 
         chart.setInternalViewportChangeListener(viewport -> {

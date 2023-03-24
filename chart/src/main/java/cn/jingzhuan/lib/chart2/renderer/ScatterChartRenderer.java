@@ -7,10 +7,11 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
+
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -27,7 +28,7 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
   private ScatterData scatterData;
 
-  public ScatterChartRenderer(Chart chart) {
+  public ScatterChartRenderer(AbstractChart chart) {
     super(chart);
   }
 

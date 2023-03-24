@@ -2,14 +2,14 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 
 import java.util.List;
+import java.util.Objects;
 
-import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -17,8 +17,6 @@ import cn.jingzhuan.lib.chart.data.Leaf;
 import cn.jingzhuan.lib.chart.data.TreeData;
 import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart.data.TreeValue;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
  * Created by guobosheng on 22/6/24.
@@ -27,18 +25,15 @@ import cn.jingzhuan.lib.chart2.base.Chart;
 public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
 
     private TreeData mTreeDataSets;
-    private Chart mChart;
+    private final AbstractChart mChart;
 
-    public TreeChartRenderer(final Chart chart) {
+    public TreeChartRenderer(final AbstractChart chart) {
         super(chart);
         mChart = chart;
 
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
-                mViewport.set(viewport);
-                calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
 
     }
@@ -91,7 +86,7 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
         float maxLeafValue = treeValue.getMaxLeafValue();
 
         for (int i = 0; i < leafCount; i++) {
-            Leaf leaf = treeValue.getLeafs().get(i);
+            Leaf leaf = Objects.requireNonNull(treeValue.getLeafs()).get(i);
             if (Float.isNaN(leaf.getHigh())) continue;
 
             float leftValue = leaf.getLeftValue();
