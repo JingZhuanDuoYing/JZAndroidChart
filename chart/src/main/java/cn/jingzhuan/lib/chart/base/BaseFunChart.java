@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.Nullable;
@@ -14,8 +15,6 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.animation.Easing;
 import cn.jingzhuan.lib.chart.component.Highlight;
-import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
-import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.event.OnTouchHighlightChangeListener;
 import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
@@ -29,10 +28,6 @@ public class BaseFunChart extends AbstractChart {
 
     protected AbstractDataRenderer mRenderer;
 
-    private HighlightStatusChangeListener mHighlightStatusChangeListener;
-
-    private OnHighlightListener mHighlightListener;
-
     private List<AxisRenderer> mAxisRenderers;
 
     private ChartAnimator mChartAnimator;
@@ -40,6 +35,10 @@ public class BaseFunChart extends AbstractChart {
     protected Highlight[] mHighlights;
 
     private int mFocusIndex = -1;
+
+    private int mLastHighlightIndex = -1;
+
+    private float mLastHighlightX = Float.NaN;
 
     public BaseFunChart(Context context) {
         super(context);
@@ -123,19 +122,28 @@ public class BaseFunChart extends AbstractChart {
     public void highlightValue(Highlight highlight) {
         if (highlight == null) return;
 
-        final Highlight[] highlights = new Highlight[] { highlight };
-
-        if (mHighlightStatusChangeListener != null) {
-            mHighlightStatusChangeListener.onHighlightShow(highlights);
+        if(isAlwaysHighlight()){
+            highlight.setY(mAlwaysHighlightY);
         }
 
-        if (mHighlightListener != null) {
-            mHighlightListener.highlight(highlights);
-        }
+        if(mLastHighlightIndex != highlight.getDataIndex() || mLastHighlightX != highlight.getX()){
+            mLastHighlightIndex = highlight.getDataIndex();
+            mLastHighlightX = highlight.getX();
+            final Highlight[] highlights = new Highlight[] { highlight };
 
-        mHighlights = highlights;
-        mIsHighlight = true;
-        invalidate();
+            if (mHighlightStatusChangeListener != null) {
+                mHighlightStatusChangeListener.onHighlightShow(highlights);
+            }
+
+            if (mHighlightListener != null) {
+                mHighlightListener.highlight(highlights);
+            }
+
+            mHighlights = highlights;
+            mAlwaysHighlightIndex = highlight.getDataIndex();
+            mIsHighlight = true;
+            invalidate();
+        }
     }
 
     @Override
@@ -145,6 +153,10 @@ public class BaseFunChart extends AbstractChart {
             mHighlightStatusChangeListener.onHighlightHide();
 
         mFocusIndex = -1;
+        mLastHighlightIndex = -1;
+        mLastHighlightX = Float.NaN;
+        mAlwaysHighlightIndex = -1;
+        mAlwaysHighlightY = Float.NaN;
         mIsHighlight = false;
         invalidate();
     }
@@ -152,6 +164,7 @@ public class BaseFunChart extends AbstractChart {
     @Override
     public void onTouchPoint(MotionEvent e) {
         if (e.getPointerCount() == 1) {
+            Log.w("onTouchPoint", e.getX()+ "-" + e.getY());
             for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
                 touchPointChangeListener.touch(e.getX(), e.getY());
             }
@@ -173,6 +186,11 @@ public class BaseFunChart extends AbstractChart {
     }
 
     @Override
+    public float getEntryCoordinateByIndex(int index) {
+        return mRenderer.getEntryCoordinateByIndex(index);
+    }
+
+    @Override
     public ChartAnimator getChartAnimator() {
         return mChartAnimator;
     }
@@ -191,18 +209,6 @@ public class BaseFunChart extends AbstractChart {
 
     public int getHighlightColor() {
         return mRenderer.getHighlightColor();
-    }
-
-    public void setOnHighlightStatusChangeListener(HighlightStatusChangeListener mHighlightStatusChangeListener) {
-        this.mHighlightStatusChangeListener = mHighlightStatusChangeListener;
-    }
-
-    public HighlightStatusChangeListener getOnHighlightStatusChangeListener() {
-        return mHighlightStatusChangeListener;
-    }
-
-    public void setOnHighlightListener(OnHighlightListener highlightListener) {
-        this.mHighlightListener = highlightListener;
     }
 
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {

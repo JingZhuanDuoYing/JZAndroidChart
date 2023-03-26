@@ -33,6 +33,8 @@ public interface IChart {
 
     int getEntryIndexByCoordinate(float x, float y);
 
+    float getEntryCoordinateByIndex(int index);
+
     ChartAnimator getChartAnimator();
 
 }

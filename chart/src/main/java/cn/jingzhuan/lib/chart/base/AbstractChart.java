@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart.base;
 
 import static cn.jingzhuan.lib.chart.config.JZChartConfig.ZOOM_AMOUNT;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -22,6 +23,7 @@ import android.widget.OverScroller;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,9 @@ import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
+import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.event.OnScaleListener;
 import cn.jingzhuan.lib.chart.event.OnTouchHighlightChangeListener;
 import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
@@ -88,6 +93,10 @@ public abstract class AbstractChart extends BitmapCacheChart {
             Collections.synchronizedList(new ArrayList<>());
 
     protected OnViewportChangeListener mInternalViewportChangeListener;
+
+    protected HighlightStatusChangeListener mHighlightStatusChangeListener;
+
+    protected OnHighlightListener mHighlightListener;
 
     /**
      * 手指触摸缩放回调
@@ -168,6 +177,10 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     private int mFocusIndex = -1;
 
+    protected float mAlwaysHighlightY = Float.NaN;
+
+    protected int mAlwaysHighlightIndex = -1;
+
     public AbstractChart(Context context) {
         this(context, null, 0);
     }
@@ -241,6 +254,15 @@ public abstract class AbstractChart extends BitmapCacheChart {
         setWillNotDraw(false);
         mDetector = new GestureDetector(context, mGestureListener);
         mScaleDetector = new ScaleGestureDetector(context, mScaleGestureListener);
+        //设置 mMinSpan ，防止不能缩小
+        try {
+            @SuppressLint("DiscouragedPrivateApi")
+            Field field = mScaleDetector.getClass().getDeclaredField("mMinSpan");
+            field.setAccessible(true);
+            field.set(mScaleDetector, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mScroller = new OverScroller(context);
         zoomer = new Zoomer(context);
     }
@@ -400,6 +422,18 @@ public abstract class AbstractChart extends BitmapCacheChart {
         this.mInternalViewportChangeListener = mInternalViewportChangeListener;
     }
 
+    public void setOnHighlightStatusChangeListener(HighlightStatusChangeListener mHighlightStatusChangeListener) {
+        this.mHighlightStatusChangeListener = mHighlightStatusChangeListener;
+    }
+
+    public HighlightStatusChangeListener getOnHighlightStatusChangeListener() {
+        return mHighlightStatusChangeListener;
+    }
+
+    public void setOnHighlightListener(OnHighlightListener highlightListener) {
+        this.mHighlightListener = highlightListener;
+    }
+
     /**
      * 设置触摸伸缩回调监听
      */
@@ -415,7 +449,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             if (!enableScaleGesture || !enableScaleX) return false;
-            inScaling = true;
             Log.d("Chart", "onScaleBegin");
             if(mScaleListener != null)  {
                 mScaleListener.onScaleStart(mCurrentViewport);
@@ -560,6 +593,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
                         if(!alwaysHighlight && getHighlights() != null) {
                             cleanHighlight();
                         }else {
+                            mAlwaysHighlightY = e.getY();
                             onTouchPoint(e);
                         }
                     } else {
@@ -599,18 +633,19 @@ public abstract class AbstractChart extends BitmapCacheChart {
          */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//            if ((!enableDraggingToMove && mIsHighlight)
-//                    || (!enableDraggingToMove && !enableHighlight)
-//                    || (enableDraggingToMove && enableHighlight && mIsHighlight && !alwaysHighlight || mIsLongPress)
-//            ) {
-//
-//                if (isLongPress()) {
-//                    if (enableHighlight) onTouchPoint(e2); else onTouchHighlight(e2);
-//                }
-//                return true;
-//
-//            }
-            return false;
+            Log.w("Chart", "onScroll");
+            if(enableDraggingToMove) {
+
+                if(mIsLongPress) {
+                    if(enableHighlight) onTouchPoint(e2);
+                    else onTouchHighlight(e2);
+                } else {
+                    // 不是长按 滑动时如果光标正在显示 清掉光标
+                    if(mIsHighlight && !alwaysHighlight) cleanHighlight();
+                }
+            }
+
+            return true;
         }
 
         /**
@@ -619,7 +654,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if(enableDraggingToMove) {
-
+                Log.w("Chart", "onFling");
                 releaseEdgeEffects();
                 // Flings use math in pixels (as opposed to math based on the viewport).
                 computeScrollSurfaceSize(mSurfaceSizeBuffer);
@@ -642,6 +677,15 @@ public abstract class AbstractChart extends BitmapCacheChart {
             return true;
         }
     };
+
+    private void onAlwaysHighlight() {
+        if(getHighlights() == null) return;
+        float highlightX = getEntryCoordinateByIndex(mAlwaysHighlightIndex);
+        Log.w("onAlwaysHighlight", highlightX+ "-" + mAlwaysHighlightY + "-" + mAlwaysHighlightIndex);
+        for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
+            touchPointChangeListener.touch(highlightX, mAlwaysHighlightY);
+        }
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -702,39 +746,38 @@ public abstract class AbstractChart extends BitmapCacheChart {
         boolean needsInvalidate = false;
 
         if (mScroller.computeScrollOffset()) {
+            Log.w("Chart", "computeScroll");
             // The scroller isn't finished, meaning a fling or programmatic pan operation is
             // currently active.
 
-            if(!mIsTouching) {
-                computeScrollSurfaceSize(mSurfaceSizeBuffer);
-                int currX = mScroller.getCurrX();
+            computeScrollSurfaceSize(mSurfaceSizeBuffer);
+            int currX = mScroller.getCurrX();
 
-                boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
-                        || mCurrentViewport.right < Viewport.AXIS_X_MAX);
+            boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
+                    || mCurrentViewport.right < Viewport.AXIS_X_MAX);
 
-                if (canScrollX
-                        && currX < 0
-                        && mEdgeEffectLeft.isFinished()
-                        && !mEdgeEffectLeftActive) {
-                    mEdgeEffectLeft.onAbsorb((int) mScroller.getCurrVelocity());
-                    mEdgeEffectLeftActive = true;
-                    needsInvalidate = true;
-                } else if (canScrollX
-                        && currX > (mSurfaceSizeBuffer.x - mContentRect.width())
-                        && mEdgeEffectRight.isFinished()
-                        && !mEdgeEffectRightActive) {
-                    mEdgeEffectRight.onAbsorb((int) mScroller.getCurrVelocity());
-                    mEdgeEffectRightActive = true;
-                    needsInvalidate = true;
-                }
-
-                float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
-                        * currX / mSurfaceSizeBuffer.x;
-                setViewportBottomLeft(currXRange);
-            } else {
-                mScroller.forceFinished(true);
+            if (canScrollX
+                    && currX < 0
+                    && mEdgeEffectLeft.isFinished()
+                    && !mEdgeEffectLeftActive) {
+                mEdgeEffectLeft.onAbsorb((int) mScroller.getCurrVelocity());
+                mEdgeEffectLeftActive = true;
+                needsInvalidate = true;
+            } else if (canScrollX
+                    && currX > (mSurfaceSizeBuffer.x - mContentRect.width())
+                    && mEdgeEffectRight.isFinished()
+                    && !mEdgeEffectRightActive) {
+                mEdgeEffectRight.onAbsorb((int) mScroller.getCurrVelocity());
+                mEdgeEffectRightActive = true;
+                needsInvalidate = true;
             }
 
+            float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
+                    * currX / mSurfaceSizeBuffer.x;
+            setViewportBottomLeft(currXRange);
+            if(alwaysHighlight) {
+                onAlwaysHighlight();
+            }
         }
 
         if (zoomer.computeZoom()) {
@@ -835,20 +878,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
         mCurrentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom);
         mCurrentViewport.constrainViewport();
         triggerViewportChange();
-    }
-
-    private boolean inScaling = false;
-    private ScalingTimeCount scalingTimeCount;
-    class ScalingTimeCount extends CountDownTimer {
-        public ScalingTimeCount() {
-            super(350, 350);
-        }
-        @Override
-        public void onFinish() {
-            inScaling = false;
-        }
-        @Override
-        public void onTick(long millisUntilFinished) {}
     }
 
     // <editor-fold desc="generate set and get">    ----------------------------------------------------------
