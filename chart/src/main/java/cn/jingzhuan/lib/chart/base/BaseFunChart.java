@@ -36,10 +36,6 @@ public class BaseFunChart extends AbstractChart {
 
     private int mFocusIndex = -1;
 
-    private int mLastHighlightIndex = -1;
-
-    private float mLastHighlightX = Float.NaN;
-
     public BaseFunChart(Context context) {
         super(context);
     }
@@ -123,27 +119,31 @@ public class BaseFunChart extends AbstractChart {
         if (highlight == null) return;
 
         if(isAlwaysHighlight()){
-            highlight.setY(mAlwaysHighlightY);
+            highlight.setY(mHighlightY);
         }
 
-        if(mLastHighlightIndex != highlight.getDataIndex() || mLastHighlightX != highlight.getX()){
-            mLastHighlightIndex = highlight.getDataIndex();
-            mLastHighlightX = highlight.getX();
-            final Highlight[] highlights = new Highlight[] { highlight };
+        boolean highlightChange = mHighlightIndex != highlight.getDataIndex() || mHighlightX != highlight.getX() || mHighlightY != highlight.getY();
 
-            if (mHighlightStatusChangeListener != null) {
-                mHighlightStatusChangeListener.onHighlightShow(highlights);
-            }
-
-            if (mHighlightListener != null) {
-                mHighlightListener.highlight(highlights);
-            }
-
-            mHighlights = highlights;
-            mAlwaysHighlightIndex = highlight.getDataIndex();
-            mIsHighlight = true;
-            invalidate();
+        if (highlightChange) {
+            mHighlightIndex = highlight.getDataIndex();
+            mHighlightX = highlight.getX();
+            mHighlightY = highlight.getY();
         }
+
+        final Highlight[] highlights = new Highlight[] { highlight };
+
+        if (mHighlightStatusChangeListener != null && highlightChange) {
+            mHighlightStatusChangeListener.onHighlightShow(highlights);
+        }
+
+        if (mHighlightListener != null && highlightChange) {
+            mHighlightListener.highlight(highlights);
+        }
+
+        mHighlights = highlights;
+        mIsHighlight = true;
+        postInvalidate();
+
     }
 
     @Override
@@ -153,10 +153,9 @@ public class BaseFunChart extends AbstractChart {
             mHighlightStatusChangeListener.onHighlightHide();
 
         mFocusIndex = -1;
-        mLastHighlightIndex = -1;
-        mLastHighlightX = Float.NaN;
-        mAlwaysHighlightIndex = -1;
-        mAlwaysHighlightY = Float.NaN;
+        mHighlightIndex = -1;
+        mHighlightX = Float.NaN;
+        mHighlightY = Float.NaN;
         mIsHighlight = false;
         invalidate();
     }
