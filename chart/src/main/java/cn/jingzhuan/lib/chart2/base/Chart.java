@@ -791,50 +791,24 @@ public abstract class Chart extends BitmapCachedChart {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                Log.v("Chart", "ACTION_DOWN: " + event.getPointerCount());
-            }
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//                Log.d("Chart", "ACTION_MOVE: pointerCount: " + event.getPointerCount()
-//                        + ", lastPointerCount: " + lastPointerCount
-//                );
-            }
-            isTouching = true;
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//            Log.d("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
-//                    + ", lastPointerCount: " + lastPointerCount
-//            );
-            isTouching = false;
-            mIsLongPress = false;
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                isTouching = true;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                postInvalidateOnAnimation();
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mIsLongPress = false;
+                isTouching = false;
+                postInvalidateOnAnimation();
+                break;
         }
-
-        boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
-
-
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (isScaling) {
-                scalingTimeCount = new ScalingTimeCount();
-                scalingTimeCount.start();
-            }
-        }
-        if (!isScaling) {
-            retVal = mGestureDetector.onTouchEvent(event) || retVal;
-        }
-
-//        lastEvAction = event.getAction();
-//        lastPointerCount = event.getPointerCount();
-
-//        Log.d("Chart", "eventAction: " + event.getAction() + "pointerCount: " + event.getPointerCount()
-//                + ", retVal: " + retVal
-//                + ", isScaling: " + isScaling
-////                + ", lastPointerCount: " + lastPointerCount
-//        );
-        if (isScaling) {
-            return true;
-        } else {
-            return retVal || super.onTouchEvent(event);
-        }
+        mGestureDetector.onTouchEvent(event);
+        mScaleGestureDetector.onTouchEvent(event);
+        return true;
     }
 
     protected void setupEdgeEffect(Context context) {
