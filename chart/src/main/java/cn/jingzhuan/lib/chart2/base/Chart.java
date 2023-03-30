@@ -215,14 +215,7 @@ public abstract class Chart extends BitmapCachedChart {
     private void setupInteractions(Context context) {
 
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
-        //设置 mMinSpan ，防止不能缩小
-        try {
-            Field field = mScaleGestureDetector.getClass().getDeclaredField("mMinSpan");
-            field.setAccessible(true);
-            field.set(mScaleGestureDetector, 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(true);
 
