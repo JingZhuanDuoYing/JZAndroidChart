@@ -5,12 +5,15 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Color.BLACK
 import android.util.AttributeSet
+import android.util.Log
 import androidx.core.content.ContextCompat
 import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.AbstractDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
+import cn.jingzhuan.lib.chart.data.CombineData
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer
 import cn.jingzhuan.lib.chart2.widget.CombineChart
+import kotlin.math.log
 
 
 const val MIN_VISIBLE_ENTRY_COUNT = 15
@@ -20,6 +23,8 @@ const val DEFAULT_VISIBLE_ENTRY_COUNT = 40
 class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx, attrs) {
     private var viewportMin: Float = 0f
     private var viewportMax: Float = 0f
+
+    var allSize: Int = -1
 
     override fun initChart() {
         super.initChart()
@@ -78,6 +83,35 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         }
         super.addDataSet(abstractDataSet)
     }
+
+    fun setCombineData(combineData: CombineData?, isLoadMoreKLine: Boolean) {
+        val entryCount = combineData?.candlestickData?.maxOfOrNull { it.values.size } ?: 0
+
+
+
+        val shouldResizeViewport = allSize > 0 && entryCount > 0 && isLoadMoreKLine && entryCount > allSize
+
+        if(shouldResizeViewport) {
+            reCalcViewportByLoadMore(allSize, entryCount)
+        }
+
+        this.allSize = entryCount
+
+        super.setCombineData(combineData)
+    }
+
+    private fun reCalcViewportByLoadMore(originCount : Int, newCount: Int) {
+        if (originCount != newCount) {
+            Log.d("Chart","reCalcViewportByLoadMore 加载更多K线，开始计算Viewport, entryCount = $originCount -> $newCount" )
+            val viewport = currentViewport
+            val from = viewport.left * originCount + (newCount - originCount);
+            val to = viewport.right * originCount + (newCount - originCount);
+            viewport.left = from / newCount
+            viewport.right = to / newCount
+            setCurrentViewport(viewport)
+        }
+    }
+
 
 
 }

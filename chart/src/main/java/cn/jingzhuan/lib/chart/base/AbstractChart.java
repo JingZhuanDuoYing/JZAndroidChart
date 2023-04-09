@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -34,7 +33,6 @@ import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.AxisX;
 import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
@@ -183,8 +181,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
     protected float mHighlightX, mHighlightY = Float.NaN;
 
     protected int mHighlightIndex = -1;
-
-    private int mScrollX = 0;
 
     public AbstractChart(Context context) {
         this(context, null, 0);

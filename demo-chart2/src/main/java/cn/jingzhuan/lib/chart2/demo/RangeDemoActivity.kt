@@ -19,6 +19,7 @@ import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import kotlin.math.round
+import kotlin.random.Random
 
 class RangeDemoActivity : AppCompatActivity() {
 
@@ -68,6 +69,16 @@ class RangeDemoActivity : AppCompatActivity() {
         val combineData = CombineData()
         combineData.add(dataSet)
         combineChart.setCombineData(combineData)
+
+        combineChart.setOnLoadMoreKlineListener {
+            val count = addList().size
+            candlestickValues.addAll(addList().subList((0 until addList().size).random(), addList().size))
+            val dataSetMore = CandlestickDataSet(candlestickValues)
+            val combineDataMore = CombineData()
+            combineDataMore.add(dataSetMore)
+            combineChart.setCombineData(combineDataMore, true)
+            combineChart.postInvalidate()
+        }
 
 //        val dataSet2 = CandlestickDataSet(candlestickValues)
 //        dataSet.isHighlightedHorizontalEnable = true
