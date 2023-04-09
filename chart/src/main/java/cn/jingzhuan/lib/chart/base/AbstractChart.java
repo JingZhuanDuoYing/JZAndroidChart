@@ -492,7 +492,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
             // 双指距离比上次小，为缩小
             boolean zoomOut = lastSpanX > spanX;
 
-            boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
+            boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 1f;
 
             // 如果当前是放大 则能够缩小
             if (zoomIn) {
@@ -545,7 +545,13 @@ public abstract class AbstractChart extends BitmapCacheChart {
             hitTest(focusX, focusY, viewportFocus);
 
             mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+            if(mCurrentViewport.left < 0) mCurrentViewport.left = 0;
+            if(mCurrentViewport.left <= 0) {
+                mCurrentViewport.right = mCurrentViewport.left + newWidth;
+            }
             // mCurrentViewport.right = mCurrentViewport.left + newWidth;
+
+            Log.d("Chart", "onScale->" + mCurrentViewport.left + "--" + mCurrentViewport.right);
 
             mCurrentViewport.constrainViewport();
 
@@ -864,10 +870,10 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
         if (canScrollX && currX <= 0) {
             Log.w("Chart", "加载更多");
+            mScroller.forceFinished(true);
             if (mOnLoadMoreKlineListener != null) {
                 mOnLoadMoreKlineListener.onLoadMoreKline(currX);
             }
-            mScroller.forceFinished(true);
         }
 
     }

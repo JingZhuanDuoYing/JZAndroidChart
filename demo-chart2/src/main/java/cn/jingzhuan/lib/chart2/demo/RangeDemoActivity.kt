@@ -72,8 +72,12 @@ class RangeDemoActivity : AppCompatActivity() {
 
         combineChart.setOnLoadMoreKlineListener {
             val count = addList().size
-            candlestickValues.addAll(addList().subList((0 until addList().size).random(), addList().size))
+            candlestickValues.addAll(addList().subList((0 until count).random(), count))
             val dataSetMore = CandlestickDataSet(candlestickValues)
+            dataSetMore.isHighlightedHorizontalEnable = true
+            dataSetMore.isHighlightedVerticalEnable = true
+            dataSetMore.increasingPaintStyle = Paint.Style.STROKE
+            dataSetMore.strokeThickness = 2f
             val combineDataMore = CombineData()
             combineDataMore.add(dataSetMore)
             combineChart.setCombineData(combineDataMore, true)
