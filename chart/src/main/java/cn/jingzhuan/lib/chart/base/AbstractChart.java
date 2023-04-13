@@ -544,12 +544,15 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
+            // 优先向右缩进
             mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-            if(mCurrentViewport.left < 0) mCurrentViewport.left = 0;
-            if(mCurrentViewport.left <= 0) {
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                 mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             }
-            // mCurrentViewport.right = mCurrentViewport.left + newWidth;
+
+            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
 
             Log.d("Chart", "onScale->" + mCurrentViewport.left + "--" + mCurrentViewport.right);
 
