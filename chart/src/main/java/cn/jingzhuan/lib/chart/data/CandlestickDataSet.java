@@ -91,6 +91,14 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
         if (e.getHigh() > max) max = e.getHigh();
       }
     }
+
+    float range = mViewportYMax - mViewportYMin;
+    if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+    }
+    if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
+      mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+    }
   }
 
   public void setEnableGap(boolean enableGap) {

@@ -1,10 +1,7 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
-import android.graphics.Rect;
-
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +14,7 @@ import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
  * Created by Donglua on 17/8/1.
  */
 
-public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOffset {
+public class BarDataSet extends AbstractDataSet<BarValue> {
 
     private List<BarValue> mBarValues;
     private float mBarWidth = 20;
@@ -171,24 +168,6 @@ public class BarDataSet extends AbstractDataSet<BarValue> implements HasValueYOf
 
     public void setStrokeThickness(float strokeThickness) {
         this.strokeThickness = strokeThickness;
-    }
-
-    @Override public float getMaxValueOffsetPercent() {
-        return maxValueOffsetPercent;
-    }
-
-    @Override public float getMinValueOffsetPercent() {
-        return minValueOffsetPercent;
-    }
-
-    @Override
-    public void setMinValueOffsetPercent(float minValueOffsetPercent) {
-        this.minValueOffsetPercent = minValueOffsetPercent;
-    }
-
-    @Override
-    public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
-        this.maxValueOffsetPercent = maxValueOffsetPercent;
     }
 
     public void setDrawValueEnable(boolean drawValueEnable) {

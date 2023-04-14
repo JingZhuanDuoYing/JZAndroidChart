@@ -8,7 +8,6 @@ import java.util.List;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
-import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 
 
 /**
@@ -16,7 +15,7 @@ import cn.jingzhuan.lib.chart.component.HasValueYOffset;
  * Created by guobosheng on 22/6/23.
  */
 
-public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueYOffset {
+public class TreeDataSet extends AbstractDataSet<TreeValue> {
 
     private List<TreeValue> mTreeValues;
     private float strokeThickness = 2;
@@ -155,23 +154,5 @@ public class TreeDataSet extends AbstractDataSet<TreeValue> implements HasValueY
             return;
         }
         this.colorAlpha = colorAlpha;
-    }
-
-    @Override public float getMaxValueOffsetPercent() {
-        return maxValueOffsetPercent;
-    }
-
-    @Override public float getMinValueOffsetPercent() {
-        return minValueOffsetPercent;
-    }
-
-    @Override
-    public void setMinValueOffsetPercent(float minValueOffsetPercent) {
-        this.minValueOffsetPercent = minValueOffsetPercent;
-    }
-
-    @Override
-    public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
-        this.maxValueOffsetPercent = maxValueOffsetPercent;
     }
 }

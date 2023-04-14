@@ -6,7 +6,7 @@ import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
-import cn.jingzhuan.lib.chart.utils.RequestDataType;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Donglua on 17/7/20.
  */
 
-public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
+public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet, HasValueYOffset {
 
   protected float mViewportYMin = Float.MAX_VALUE;
   protected float mViewportYMax = -Float.MAX_VALUE;
@@ -214,4 +214,25 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   public void setFormatter(DataFormatter formatter) {
     this.formatter = formatter;
   }
+
+  @Override
+  public float getMaxValueOffsetPercent() {
+    return maxValueOffsetPercent;
+  }
+
+  @Override
+  public float getMinValueOffsetPercent() {
+    return minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+    this.minValueOffsetPercent = minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+    this.maxValueOffsetPercent = maxValueOffsetPercent;
+  }
+
 }
