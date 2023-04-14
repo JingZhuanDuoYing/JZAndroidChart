@@ -36,11 +36,17 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   private int minValueCount = -1;
 
+  /**
+   * 绘制顺序
+   */
   private int drawIndex = -1;
 
   private String tag;
 
-  private DataFormatter formatter; // 数据格式化器
+  /**
+   * 数据格式化器
+   */
+  private DataFormatter formatter;
 
   public AbstractDataSet() {
   }
@@ -51,6 +57,7 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   @Override
   public void calcMinMax(Viewport viewport) {}
+
   @Override
   public void calcMinMax(Viewport viewport, Rect content, float max, float mix) {
     calcMinMax(viewport);

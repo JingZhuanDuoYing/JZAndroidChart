@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.base.Chart;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.config.JZChartConfig;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
@@ -125,7 +126,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         candleWidth = mContentRect.width() / candlestickDataSet.getVisibleRange(mViewport);
       }
 
-      if (candlestick.getFillBackgroundColor() == CandlestickValue.COLOR_NONE) { // 画背景
+      if (candlestick.getFillBackgroundColor() == JZChartConfig.COLOR_NONE) { // 画背景
         mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
         canvas.drawRect(xPosition, 0, xPosition + candleWidth, canvas.getHeight(), mRenderPaint);
       }
@@ -158,7 +159,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = closeY;
 
-        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+        if (candlestick.getColor() == JZChartConfig.COLOR_NONE) {
           mRenderPaint.setColor(candlestickDataSet.getDecreasingColor());
         } else {
           mRenderPaint.setColor(candlestick.getColor());
@@ -177,7 +178,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = openY;
 
-        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+        if (candlestick.getColor() == JZChartConfig.COLOR_NONE) {
           mRenderPaint.setColor(candlestickDataSet.getIncreasingColor());
         } else {
           mRenderPaint.setColor(candlestick.getColor());
@@ -195,7 +196,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         mLowerShadowBuffers[1] = lowY;
         mLowerShadowBuffers[3] = mUpperShadowBuffers[3];
 
-        if (candlestick.getColor() == CandlestickValue.COLOR_NONE) {
+        if (candlestick.getColor() == JZChartConfig.COLOR_NONE) {
           mRenderPaint.setColor(candlestickDataSet.getNeutralColor());
         } else {
           mRenderPaint.setColor(candlestick.getColor());

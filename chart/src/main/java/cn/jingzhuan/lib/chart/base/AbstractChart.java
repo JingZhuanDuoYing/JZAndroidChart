@@ -171,7 +171,13 @@ public abstract class AbstractChart extends BitmapCacheChart {
      */
     private float scaleSensitivity = 1f;
 
+    /**
+     * 是否允许加载更多
+     */
+    private boolean enableLoadMore = true;
+
     private Zoomer zoomer;
+
     private final PointF mZoomFocalPoint = new PointF();
 
     private final Point mSurfaceSizeBuffer = new Point();
@@ -871,7 +877,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
                 * currX / mSurfaceSizeBuffer.x;
         setViewportBottomLeft(currXRange);
 
-        if (canScrollX && currX <= 0) {
+        if (enableLoadMore && currX <= 0) {
             Log.w("Chart", "加载更多");
             mScroller.forceFinished(true);
             if (mOnLoadMoreKlineListener != null) {
@@ -1085,6 +1091,14 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     public void setScaleSensitivity(float scaleSensitivity) {
         this.scaleSensitivity = scaleSensitivity;
+    }
+
+    public boolean isEnableLoadMore() {
+        return this.enableLoadMore;
+    }
+
+    public void setEnableLoadMore(boolean enableLoadMore) {
+        this.enableLoadMore = enableLoadMore;
     }
 
     public int getFocusIndex() {

@@ -1,11 +1,12 @@
 package cn.jingzhuan.lib.chart.data;
 
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 
 import java.util.Arrays;
 import java.util.Objects;
+
+import cn.jingzhuan.lib.chart.config.JZChartConfig;
 
 /**
  * Created by donglua on 8/29/17.
@@ -13,19 +14,29 @@ import java.util.Objects;
 
 public class CandlestickValue extends Value {
 
-  public final static int COLOR_NONE = Color.TRANSPARENT;
+  /**
+   * 开、高、低、收
+   */
+  private float open, high, low, close;
 
-  private float high = 0f;
-  private float low = 0f;
-  private float open = 0f;
-  private float close = 0f;
-
+  /**
+   * 对应时间戳
+   */
   private long time = -1;
+
+  /**
+   * 是否可见
+   */
   private boolean visible = true;
 
+  /**
+   * 当前点的颜色
+   */
+  private int color = JZChartConfig.COLOR_NONE;
+
   private Paint.Style mPaintStyle = null;
-  private int color = COLOR_NONE;
-  private int fillBackgroundColor = COLOR_NONE;
+
+  private int fillBackgroundColor = JZChartConfig.COLOR_NONE;
 
   public CandlestickValue(float high, float low, float open, float close) {
     this.high = high;
@@ -58,8 +69,7 @@ public class CandlestickValue extends Value {
     this.time = time;
   }
 
-  public CandlestickValue(float high, float low, float open, float close, Paint.Style mPaintStyle,
-      int color) {
+  public CandlestickValue(float high, float low, float open, float close, Paint.Style mPaintStyle, int color) {
     this.high = high;
     this.low = low;
     this.open = open;
