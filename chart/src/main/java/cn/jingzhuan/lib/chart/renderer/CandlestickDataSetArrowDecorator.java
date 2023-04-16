@@ -87,9 +87,28 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         final float highValue = candlestick.getHigh();
         final float lowValue = candlestick.getLow();
 
-        float realViewportYMax = getViewportYMax() - getViewportYMax() * getMaxValueOffsetPercent();
+        float viewportYMax = getViewportYMax();
+        float viewportYMin = getViewportYMin();
 
-        if (Float.compare(FloatUtils.keepPrecision(highValue, 2), FloatUtils.keepPrecision(realViewportYMax, 2)) == 0
+        // max + percent * (max - min) = viewportYMax => (1 + percent)max - percent * min = viewportYMax
+        // min - percent * (max - min) = viewportYMin
+
+        // max + min = viewportYMax + viewportYMin => (1 + percent)max + (1 + percent)min = (viewportYMax + viewportYMin) * (1 + percent)
+
+        // 推断 (1 + percent + percent)min = (viewportYMax + viewportYMin) * (1 + percent) - viewportYMax
+        // => min = ((viewportYMax + viewportYMin) * (1 + percent) - viewportYMax) / (1 + percent + percent)
+
+        float offsetPercent = getOffsetPercent();
+
+        float minValue = ((viewportYMax + viewportYMin) * (1 + offsetPercent) - viewportYMax) / (1 + 2 * offsetPercent);
+        float maxValue = viewportYMax + viewportYMin - minValue;
+
+        float formatMaxValue = FloatUtils.keepPrecision(maxValue, 2);
+        float formatMinValue = FloatUtils.keepPrecision(minValue, 2);
+        float formatHighValue = FloatUtils.keepPrecision(highValue, 2);
+        float formatLowValue = FloatUtils.keepPrecision(lowValue, 2);
+
+        if (Float.compare(formatHighValue, formatMaxValue) == 0
                 && currentMaxValue < 0) {
 
             currentMaxValue = highValue;
@@ -115,9 +134,7 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
         }
 
-        float realViewportYMin = getViewportYMin() + getViewportYMin() * getMinValueOffsetPercent();
-
-        if (Float.compare(FloatUtils.keepPrecision(lowValue, 2), FloatUtils.keepPrecision(realViewportYMin, 2)) == 0
+        if (Float.compare(formatLowValue, formatMinValue) == 0
                 && currentMinValue < 0) {
 
             currentMinValue = lowValue;

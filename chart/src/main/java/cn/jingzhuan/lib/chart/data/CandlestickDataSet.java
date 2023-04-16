@@ -93,11 +93,11 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     }
 
     float range = mViewportYMax - mViewportYMin;
-    if (Float.compare(getMinValueOffsetPercent(), 0f) > 0f) {
-      mViewportYMin = mViewportYMin - range * getMinValueOffsetPercent();
+    if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+      mViewportYMin = mViewportYMin - range * getOffsetPercent();
     }
-    if (Float.compare(getMaxValueOffsetPercent(), 0f) > 0f) {
-      mViewportYMax = mViewportYMax + range * getMaxValueOffsetPercent();
+    if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+      mViewportYMax = mViewportYMax + range * getOffsetPercent();
     }
   }
 

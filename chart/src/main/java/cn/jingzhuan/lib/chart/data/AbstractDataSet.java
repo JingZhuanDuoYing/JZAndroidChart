@@ -23,6 +23,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   protected float mViewportYMax = -Float.MAX_VALUE;
   protected float minValueOffsetPercent = 0F;
   protected float maxValueOffsetPercent = 0F;
+
+  protected float offsetPercent = 0F;
   protected float startXOffset = 0f;
   protected float endXOffset = 0f;
   private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
@@ -233,6 +235,16 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   @Override
   public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
     this.maxValueOffsetPercent = maxValueOffsetPercent;
+  }
+
+  @Override
+  public float getOffsetPercent() {
+    return this.offsetPercent;
+  }
+
+  @Override
+  public void setOffsetPercent(float offsetPercent) {
+    this.offsetPercent = offsetPercent;
   }
 
 }

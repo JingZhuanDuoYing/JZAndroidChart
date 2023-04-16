@@ -17,6 +17,7 @@ import cn.jingzhuan.lib.chart.data.ScatterTextDataSet
 import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
+import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import kotlin.math.round
 
 class RangeDemoActivity : AppCompatActivity() {
@@ -58,7 +59,7 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.strokeThickness = 2f
 
-        combineChart.addDataSet(dataSet)
+        combineChart.addDataSet(CandlestickDataSetArrowDecorator(dataSet))
 
 //        val dataSet2 = CandlestickDataSet(candlestickValues)
 //        dataSet.isHighlightedHorizontalEnable = true
