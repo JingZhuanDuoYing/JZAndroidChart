@@ -89,7 +89,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
         float realViewportYMax = getViewportYMax() - getViewportYMax() * getMaxValueOffsetPercent();
 
-        if (Float.compare(highValue, realViewportYMax) == 0 && currentMaxValue < 0) {
+        if (Float.compare(FloatUtils.keepPrecision(highValue, 2), FloatUtils.keepPrecision(realViewportYMax, 2)) == 0
+                && currentMaxValue < 0) {
 
             currentMaxValue = highValue;
 
@@ -116,7 +117,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
         float realViewportYMin = getViewportYMin() + getViewportYMin() * getMinValueOffsetPercent();
 
-        if (Float.compare(lowValue, realViewportYMin) == 0 && currentMinValue < 0) {
+        if (Float.compare(FloatUtils.keepPrecision(lowValue, 2), FloatUtils.keepPrecision(realViewportYMin, 2)) == 0
+                && currentMinValue < 0) {
 
             currentMinValue = lowValue;
 
