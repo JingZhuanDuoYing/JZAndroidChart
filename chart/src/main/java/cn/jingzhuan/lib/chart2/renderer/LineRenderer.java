@@ -307,6 +307,8 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
             float xPosition = startX + step * (i + offset);
             float yPosition = (max - point.getValue()) / (max - min) * mContentRect.height();
+            if(yPosition == 0) yPosition = yPosition + lineThickness;
+            if(yPosition == mContentRect.height()) yPosition = yPosition - lineThickness;
 
             point.setCoordinate(xPosition, yPosition);
 
