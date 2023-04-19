@@ -59,7 +59,7 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.strokeThickness = 2f
 
-        combineChart.addDataSet(CandlestickDataSetArrowDecorator(dataSet))
+        combineChart.addDataSet(CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.1f })
 
 //        val dataSet2 = CandlestickDataSet(candlestickValues)
 //        dataSet.isHighlightedHorizontalEnable = true
