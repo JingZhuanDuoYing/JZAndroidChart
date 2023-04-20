@@ -33,6 +33,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
+import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public abstract class Chart extends BitmapCachedChart {
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     // State objects and values related to gesture tracking.
-    private ScaleGestureDetector mScaleGestureDetector;
+    private JZScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mGestureDetector;
     private OverScroller mScroller;
     private Zoomer mZoomer;
@@ -214,7 +215,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     private void setupInteractions(Context context) {
 
-        mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
+        mScaleGestureDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
 
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(true);
@@ -247,8 +248,8 @@ public abstract class Chart extends BitmapCachedChart {
     /**
      * The scale listener, used for handling multi-finger scale gestures.
      */
-    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
-            = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+    private final JZScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
+            = new JZScaleGestureDetector.SimpleOnScaleGestureListener() {
         /**
          * This is the active focal point in terms of the viewport. Could be a local
          * variable but kept here to minimize per-frame allocations.
@@ -257,7 +258,7 @@ public abstract class Chart extends BitmapCachedChart {
 //        private float lastSpanX;
 
         @Override
-        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+        public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
             isScaling = true;
             if(mScaleListener != null)  {
@@ -268,7 +269,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
+        public void onScaleEnd(JZScaleGestureDetector detector) {
             super.onScaleEnd(detector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
@@ -277,7 +278,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override
-        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+        public boolean onScale(JZScaleGestureDetector scaleGestureDetector) {
             Log.d("Chart", "onScale");
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
