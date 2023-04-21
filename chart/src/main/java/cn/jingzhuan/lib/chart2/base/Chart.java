@@ -33,6 +33,7 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
+import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public abstract class Chart extends BitmapCachedChart {
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     // State objects and values related to gesture tracking.
-    private ScaleGestureDetector mScaleGestureDetector;
+    private JZScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mGestureDetector;
     private OverScroller mScroller;
     private Zoomer mZoomer;
@@ -214,15 +215,8 @@ public abstract class Chart extends BitmapCachedChart {
 
     private void setupInteractions(Context context) {
 
-        mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
-        //设置 mMinSpan ，防止不能缩小
-        try {
-            Field field = mScaleGestureDetector.getClass().getDeclaredField("mMinSpan");
-            field.setAccessible(true);
-            field.set(mScaleGestureDetector, 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mScaleGestureDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
+
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(true);
 
@@ -254,8 +248,8 @@ public abstract class Chart extends BitmapCachedChart {
     /**
      * The scale listener, used for handling multi-finger scale gestures.
      */
-    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
-            = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+    private final JZScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
+            = new JZScaleGestureDetector.SimpleOnScaleGestureListener() {
         /**
          * This is the active focal point in terms of the viewport. Could be a local
          * variable but kept here to minimize per-frame allocations.
@@ -264,7 +258,7 @@ public abstract class Chart extends BitmapCachedChart {
 //        private float lastSpanX;
 
         @Override
-        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+        public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
             isScaling = true;
             if(mScaleListener != null)  {
@@ -275,7 +269,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
+        public void onScaleEnd(JZScaleGestureDetector detector) {
             super.onScaleEnd(detector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
@@ -284,7 +278,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         @Override
-        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+        public boolean onScale(JZScaleGestureDetector scaleGestureDetector) {
             Log.d("Chart", "onScale");
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
@@ -646,6 +640,7 @@ public abstract class Chart extends BitmapCachedChart {
         if(mScaleListener != null) {
             mScaleListener.onScale(mCurrentViewport);
         }
+
     }
 
     /**
@@ -790,50 +785,24 @@ public abstract class Chart extends BitmapCachedChart {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                Log.v("Chart", "ACTION_DOWN: " + event.getPointerCount());
-            }
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//                Log.d("Chart", "ACTION_MOVE: pointerCount: " + event.getPointerCount()
-//                        + ", lastPointerCount: " + lastPointerCount
-//                );
-            }
-            isTouching = true;
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//            Log.d("Chart", "ACTION_UP: pointerCount: " + event.getPointerCount()
-//                    + ", lastPointerCount: " + lastPointerCount
-//            );
-            isTouching = false;
-            mIsLongPress = false;
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                isTouching = true;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                postInvalidateOnAnimation();
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mIsLongPress = false;
+                isTouching = false;
+                postInvalidateOnAnimation();
+                break;
         }
-
-        boolean retVal = event.getPointerCount() > 1 && mScaleGestureDetector.onTouchEvent(event);
-
-
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (isScaling) {
-                scalingTimeCount = new ScalingTimeCount();
-                scalingTimeCount.start();
-            }
-        }
-        if (!isScaling) {
-            retVal = mGestureDetector.onTouchEvent(event) || retVal;
-        }
-
-//        lastEvAction = event.getAction();
-//        lastPointerCount = event.getPointerCount();
-
-//        Log.d("Chart", "eventAction: " + event.getAction() + "pointerCount: " + event.getPointerCount()
-//                + ", retVal: " + retVal
-//                + ", isScaling: " + isScaling
-////                + ", lastPointerCount: " + lastPointerCount
-//        );
-        if (isScaling) {
-            return true;
-        } else {
-            return retVal || super.onTouchEvent(event);
-        }
+        mGestureDetector.onTouchEvent(event);
+        mScaleGestureDetector.onTouchEvent(event);
+        return true;
     }
 
     protected void setupEdgeEffect(Context context) {

@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.HasValueXOffset;
-import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,8 +14,7 @@ import java.util.List;
  * Created by donglua on 10/19/17.
  */
 
-public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueYOffset,
-    HasValueXOffset {
+public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements HasValueXOffset {
 
   public final static int SHAPE_ALIGN_CENTER = 1;
   public final static int SHAPE_ALIGN_TOP = 2;
@@ -269,24 +267,6 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public void setAutoExpand(boolean autoExpand) {
     this.autoExpand = autoExpand;
-  }
-
-  @Override public float getMaxValueOffsetPercent() {
-    return maxValueOffsetPercent;
-  }
-
-  @Override public float getMinValueOffsetPercent() {
-    return minValueOffsetPercent;
-  }
-
-  @Override
-  public void setMinValueOffsetPercent(float minValueOffsetPercent) {
-    this.minValueOffsetPercent = minValueOffsetPercent;
-  }
-
-  @Override
-  public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
-    this.maxValueOffsetPercent = maxValueOffsetPercent;
   }
 
   public float getStartXOffset() {
