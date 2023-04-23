@@ -1,5 +1,8 @@
 package cn.jingzhuan.lib.chart.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import cn.jingzhuan.lib.chart.AxisAutoValues;
 
 public class FloatUtils {
@@ -200,5 +203,19 @@ public class FloatUtils {
         } else {
             outValues.decimals = 0;
         }
+    }
+
+    /**
+     * 对float类型的数值保留指定位数的小数。<br>
+     * 该方法舍入模式：向“最接近的”数字舍入，如果与两个相邻数字的距离相等，则为向上舍入的舍入模式。<br>
+     * <b>注意：</b>如果精度要求比较精确请使用 keepPrecision(String number, int precision)方法
+     *
+     * @param number    要保留小数的数字
+     * @param precision 小数位数
+     * @return float 如果数值较大，则使用科学计数法表示
+     */
+    public static float keepPrecision(float number, int precision) {
+        BigDecimal bg = new BigDecimal(number);
+        return bg.setScale(precision, RoundingMode.HALF_UP).floatValue();
     }
 }

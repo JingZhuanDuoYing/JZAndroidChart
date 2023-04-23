@@ -87,6 +87,15 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         for (PointValue e : getVisiblePoints(viewport)) {
             calcViewportMinMax(e);
         }
+
+        float range = mViewportYMax - mViewportYMin;
+        if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+            mViewportYMin = mViewportYMin - range * getOffsetPercent();
+        }
+        if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+            mViewportYMax = mViewportYMax + range * getOffsetPercent();
+        }
+
         if (mViewportYMax == 0 && mViewportYMin == 0) {
             mViewportYMax = 1;
             mViewportYMin = -1;
@@ -124,7 +133,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (isDrawBand){
             if (e.getSecondValue() < e.getValue()){
                 if (e.getSecondValue() < mViewportYMin)
-                mViewportYMin = e.getSecondValue();
+                    mViewportYMin = e.getSecondValue();
             }
 
             if (e.getSecondValue() > e.getValue()){

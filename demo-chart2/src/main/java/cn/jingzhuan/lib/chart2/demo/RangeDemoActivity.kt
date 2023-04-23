@@ -18,6 +18,7 @@ import cn.jingzhuan.lib.chart.data.ScatterTextDataSet
 import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
+import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -66,9 +67,7 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.strokeThickness = 2f
 
-        val combineData = CombineData()
-        combineData.add(dataSet)
-        combineChart.setCombineData(combineData)
+        combineChart.addDataSet(CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.1f })
 
         combineChart.setOnLoadMoreKlineListener {
             val count = addList().size
@@ -78,8 +77,11 @@ class RangeDemoActivity : AppCompatActivity() {
             dataSetMore.isHighlightedVerticalEnable = true
             dataSetMore.increasingPaintStyle = Paint.Style.STROKE
             dataSetMore.strokeThickness = 2f
+            val allDataSet = CandlestickDataSetArrowDecorator(dataSetMore).apply { offsetPercent = 0.1f }
+
             val combineDataMore = CombineData()
-            combineDataMore.add(dataSetMore)
+            combineDataMore.add(allDataSet)
+
             combineChart.setCombineData(combineDataMore, true)
             combineChart.postInvalidate()
         }

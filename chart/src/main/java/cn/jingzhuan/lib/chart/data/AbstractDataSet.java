@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency;
+import cn.jingzhuan.lib.chart.component.HasValueYOffset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,14 @@ import java.util.List;
  * Created by Donglua on 17/7/20.
  */
 
-public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet {
+public abstract class AbstractDataSet<T extends Value> extends AbstractVisible implements IDataSet, HasValueYOffset {
 
   protected float mViewportYMin = Float.MAX_VALUE;
   protected float mViewportYMax = -Float.MAX_VALUE;
   protected float minValueOffsetPercent = 0F;
   protected float maxValueOffsetPercent = 0F;
+
+  protected float offsetPercent = 0F;
   protected float startXOffset = 0f;
   protected float endXOffset = 0f;
   private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
@@ -220,4 +223,35 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   public void setFormatter(DataFormatter formatter) {
     this.formatter = formatter;
   }
+
+  @Override
+  public float getMaxValueOffsetPercent() {
+    return maxValueOffsetPercent;
+  }
+
+  @Override
+  public float getMinValueOffsetPercent() {
+    return minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMinValueOffsetPercent(float minValueOffsetPercent) {
+    this.minValueOffsetPercent = minValueOffsetPercent;
+  }
+
+  @Override
+  public void setMaxValueOffsetPercent(float maxValueOffsetPercent) {
+    this.maxValueOffsetPercent = maxValueOffsetPercent;
+  }
+
+  @Override
+  public float getOffsetPercent() {
+    return this.offsetPercent;
+  }
+
+  @Override
+  public void setOffsetPercent(float offsetPercent) {
+    this.offsetPercent = offsetPercent;
+  }
+
 }

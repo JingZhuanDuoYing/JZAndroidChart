@@ -10,8 +10,12 @@ public interface HasValueYOffset {
 
   float getMinValueOffsetPercent();
 
+  float getOffsetPercent();
+
   void setMinValueOffsetPercent(float minValueOffsetPercent);
 
   void setMaxValueOffsetPercent(float maxValueOffsetPercent);
+
+  void setOffsetPercent(float offsetPercent);
 
 }
