@@ -3,8 +3,10 @@ package cn.jingzhuan.lib.chart2.widget;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -24,6 +26,7 @@ import java.util.List;
 
 /**
  * Created by Donglua on 17/8/2.
+ * 综合Chart
  */
 
 public class CombineChart extends BaseFunChart {
@@ -51,18 +54,18 @@ public class CombineChart extends BaseFunChart {
         mRenderer = new CombineChartRenderer(this);
     }
 
-    public void addDataSet(AbstractDataSet abstractDataSet) {
+    public void addDataSet(AbstractDataSet<?> abstractDataSet) {
         getRenderer().addDataSet(abstractDataSet);
     }
 
-    public void setDataSet(AbstractDataSet dataSet) {
+    public void setDataSet(AbstractDataSet<?> dataSet) {
         cleanAllDataSet();
 
         addDataSet(dataSet);
     }
 
-    public <T extends AbstractDataSet> void addAll(List<T> dataSets) {
-        for (AbstractDataSet dataSet : dataSets) {
+    public <T extends AbstractDataSet<?>> void addAll(List<T> dataSets) {
+        for (AbstractDataSet<?> dataSet : dataSets) {
             addDataSet(dataSet);
         }
     }
@@ -92,7 +95,7 @@ public class CombineChart extends BaseFunChart {
         }
     }
 
-    public <T extends AbstractDataSet> void setData(List<T> data) {
+    public <T extends AbstractDataSet<?>> void setData(List<T> data) {
         cleanAllDataSet();
 
         for (T datum : data) {
@@ -124,7 +127,8 @@ public class CombineChart extends BaseFunChart {
         return (CombineChartRenderer) mRenderer;
     }
 
-    @Override public void setTypeface(Typeface tf) {
+    @Override
+    public void setTypeface(Typeface tf) {
         mRenderer.setTypeface(tf);
         super.setTypeface(tf);
     }
@@ -140,6 +144,7 @@ public class CombineChart extends BaseFunChart {
     public void cleanCandlestickDataSet() {
         getRenderer().cleanCandlestickDataSet();
     }
+
     public void cleanScatterDataSet() {
         getRenderer().cleanScatterDataSet();
     }
@@ -148,7 +153,9 @@ public class CombineChart extends BaseFunChart {
         getRenderer().clearDataSet();
     }
 
-    public void cleanRangeData(){getRenderer().rangeRenderer.resetData();}
+    public void cleanRangeData() {
+        getRenderer().rangeRenderer.resetData();
+    }
 
     public void addLine(LineDataSet lineDataSet) {
         mRenderer.addDataSet(lineDataSet);
@@ -164,8 +171,8 @@ public class CombineChart extends BaseFunChart {
      */
     public boolean onTouchEvent(MotionEvent event) {
         CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
-        if (getRangeEnable() && renderer.rangeRenderer != null){
-            if(renderer.rangeRenderer.onTouchEvent(event)){
+        if (getRangeEnable() && renderer.rangeRenderer != null) {
+            if (renderer.rangeRenderer.onTouchEvent(event)) {
                 return true;
             }
         }

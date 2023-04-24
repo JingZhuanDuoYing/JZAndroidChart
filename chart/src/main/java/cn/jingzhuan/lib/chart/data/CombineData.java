@@ -1,8 +1,6 @@
 package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Rect;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,16 +11,15 @@ import cn.jingzhuan.lib.chart.Viewport;
 /**
  * Created by Donglua on 17/8/2.
  */
-public class CombineData extends ChartData<AbstractDataSet> {
+public class CombineData extends ChartData<AbstractDataSet<?>> {
 
-    private TreeData treeData;
-    private BarData barData;
-    private LineData lineData;
-    private CandlestickData candlestickData;
-    private ScatterData scatterData;
-
-    private PointLineData pointLineData;
-    private ScatterTextData scatterTextData;
+    private final TreeData treeData;
+    private final BarData barData;
+    private final LineData lineData;
+    private final CandlestickData candlestickData;
+    private final ScatterData scatterData;
+    private final PointLineData pointLineData;
+    private final ScatterTextData scatterTextData;
 
     public CombineData() {
         treeData = new TreeData();
@@ -57,6 +54,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public LineData getLineChartData() {
         return lineData;
     }
+
     public List<PointLineDataSet> getPointLineData() {
         return pointLineData.getDataSets();
     }
@@ -72,17 +70,21 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public ScatterData getScatterChartData() {
         return scatterData;
     }
+
     public List<ScatterTextDataSet> getScatterTextData() {
         return scatterTextData.getDataSets();
     }
 
-    public ScatterTextData getScatterTextChartData(){return  scatterTextData;}
+    public ScatterTextData getScatterTextChartData() {
+        return scatterTextData;
+    }
 
     public List<TreeDataSet> getTreeData() {
         return treeData.getDataSets();
     }
-    public TreeData getTreeChartData(){
-        return  treeData;
+
+    public TreeData getTreeChartData() {
+        return treeData;
     }
 
     public boolean addDataSet(BarDataSet dataSet) {
@@ -100,14 +102,17 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public boolean addDataSet(ScatterDataSet dataSet) {
         return scatterData.add(dataSet);
     }
-    public boolean addDataSet(PointLineDataSet dataSet){
-        return  pointLineData.add(dataSet);
+
+    public boolean addDataSet(PointLineDataSet dataSet) {
+        return pointLineData.add(dataSet);
     }
-    public boolean addDataSet(ScatterTextDataSet dataSet){
-        return  scatterTextData.add(dataSet);
+
+    public boolean addDataSet(ScatterTextDataSet dataSet) {
+        return scatterTextData.add(dataSet);
     }
-    public boolean addDataSet(TreeDataSet dataSet){
-        return  treeData.add(dataSet);
+
+    public boolean addDataSet(TreeDataSet dataSet) {
+        return treeData.add(dataSet);
     }
 
     public void setCombineData(CombineData combineData) {
@@ -157,7 +162,8 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
     }
 
-    @Override public void calcMaxMin(Viewport viewport, Rect content) {
+    @Override
+    public void calcMaxMin(Viewport viewport, Rect content) {
         leftMin = Float.MAX_VALUE;
         leftMax = -Float.MAX_VALUE;
         rightMin = Float.MAX_VALUE;
@@ -213,7 +219,9 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
 //        Log.d("CombineData", "calcMaxMin_0 leftMax:" + leftMax
 //                + ", leftMin:" + leftMin + ", rightMax:" + rightMax + ", rightMin:" + rightMin);
-        /** ScatterData的calcMaxMin放在其它Data后面调用，利用其它Data计算好的leftMax, leftMin, rightMax, rightMin，计算要扩展的数值。**/
+        /**
+         * ScatterData的calcMaxMin放在其它Data后面调用，利用其它Data计算好的leftMax, leftMin, rightMax, rightMin，计算要扩展的数值。
+         * **/
         if (!scatterData.getDataSets().isEmpty()) {
             scatterData.calcMaxMin(viewport, content, leftMax, leftMin, rightMax, rightMin);
             leftMin = Math.min(scatterData.leftMin, leftMin);
@@ -260,8 +268,8 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
     @Override
-    public boolean add(AbstractDataSet e) {
-        if (e instanceof TreeDataSet){
+    public boolean add(AbstractDataSet<?> e) {
+        if (e instanceof TreeDataSet) {
             return addDataSet((TreeDataSet) e);
         }
         if (e instanceof CandlestickDataSet) {
@@ -276,11 +284,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
         if (e instanceof ScatterDataSet) {
             return addDataSet((ScatterDataSet) e);
         }
-        if (e instanceof PointLineDataSet){
-            return  addDataSet((PointLineDataSet)e);
+        if (e instanceof PointLineDataSet) {
+            return addDataSet((PointLineDataSet) e);
         }
-        if (e instanceof ScatterTextDataSet){
-            return  addDataSet((ScatterTextDataSet) e);
+        if (e instanceof ScatterTextDataSet) {
+            return addDataSet((ScatterTextDataSet) e);
         }
         return super.add(e);
     }
@@ -298,14 +306,14 @@ public class CombineData extends ChartData<AbstractDataSet> {
     }
 
 
-    public <T extends AbstractDataSet> void addAll(List<T> dataSets) {
-        for (AbstractDataSet dataSet : dataSets) {
+    public <T extends AbstractDataSet<?>> void addAll(List<T> dataSets) {
+        for (AbstractDataSet<?> dataSet : dataSets) {
             add(dataSet);
         }
     }
 
     public List<AbstractDataSet<?>> getAllDataSet() {
-        List allDataSet = Collections.synchronizedList(new ArrayList());
+        List<AbstractDataSet<?>> allDataSet = Collections.synchronizedList(new ArrayList<>());
         // 按分类顺序添加，当drawIndex是默认值-1时，按下列顺序绘制
         allDataSet.addAll(treeData.getDataSets());
         allDataSet.addAll(barData.getDataSets());

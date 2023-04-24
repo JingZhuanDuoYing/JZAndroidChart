@@ -2,8 +2,6 @@ package cn.jingzhuan.lib.chart.base;
 
 
 import static cn.jingzhuan.lib.chart.config.JZChartConfig.ZOOM_AMOUNT;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -15,14 +13,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +36,7 @@ import cn.jingzhuan.lib.chart.event.OnTouchHighlightChangeListener;
 import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
+import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 
 /**
  * @author yilei
@@ -49,7 +45,7 @@ import cn.jingzhuan.lib.chart.utils.ForceAlign;
 public abstract class AbstractChart extends BitmapCacheChart {
 
     private GestureDetector mDetector;
-    private ScaleGestureDetector mScaleDetector;
+    private JZScaleGestureDetector mScaleDetector;
     private OverScroller mScroller;
 
     // Edge effect / overscroll tracking objects.
@@ -62,24 +58,12 @@ public abstract class AbstractChart extends BitmapCacheChart {
      */
     private final RectF mScrollerStartViewport = new RectF();
 
-    /**
-     * 矩形边界 - 左
-     */
     protected AxisY mAxisLeft = new AxisY(AxisY.LEFT_INSIDE);
 
-    /**
-     * 矩形边界 - 右
-     */
     protected AxisY mAxisRight = new AxisY(AxisY.RIGHT_INSIDE);
 
-    /**
-     * 矩形边界 - 上
-     */
     protected AxisX mAxisTop = new AxisX(AxisX.TOP);
 
-    /**
-     * 矩形边界 - 下
-     */
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
     protected List<OnTouchPointChangeListener> mTouchPointChangeListeners
@@ -260,16 +244,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
     private void setupInteractions(Context context) {
         setWillNotDraw(false);
         mDetector = new GestureDetector(context, mGestureListener);
-        mScaleDetector = new ScaleGestureDetector(context, mScaleGestureListener);
-        //设置 mMinSpan ，防止不能缩小
-        try {
-            @SuppressLint("DiscouragedPrivateApi")
-            Field field = mScaleDetector.getClass().getDeclaredField("mMinSpan");
-            field.setAccessible(true);
-            field.set(mScaleDetector, 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mScaleDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
         mScroller = new OverScroller(context);
         zoomer = new Zoomer(context);
     }
@@ -455,13 +430,13 @@ public abstract class AbstractChart extends BitmapCacheChart {
         this.mScaleListener = onScaleListener;
     }
 
-    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+    private final JZScaleGestureDetector.OnScaleGestureListener mScaleGestureListener = new JZScaleGestureDetector.SimpleOnScaleGestureListener() {
 
         /**
          * 多指触摸屏幕开始伸缩的时候回调
          */
         @Override
-        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+        public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
             if (!enableScaleGesture || !enableScaleX) return false;
             Log.d("Chart", "onScaleBegin");
             if (mScaleListener != null) {
@@ -474,7 +449,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
          * 多指触摸屏幕结束伸缩的时候回调
          */
         @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
+        public void onScaleEnd(JZScaleGestureDetector detector) {
             if (!enableScaleGesture || !enableScaleX) return;
             Log.d("Chart", "onScaleEnd");
             if (mScaleListener != null) {
@@ -486,7 +461,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
          * 多指触摸屏幕伸缩的时候回调
          */
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+        public boolean onScale(JZScaleGestureDetector detector) {
             Log.d("Chart", "onScale");
             if (!enableScaleGesture || !enableScaleX) return false;
             PointF viewportFocus = new PointF();
@@ -584,7 +559,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
-            postInvalidateOnAnimation();
             return true;
         }
 
@@ -606,7 +580,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             if (getRangeEnable()) return false;
-//            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
+//            Log.d("Chart", "单击 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 if (getHighlights() != null) cleanHighlight();
                 performClick();

@@ -146,6 +146,9 @@ public class BaseFunChart extends AbstractChart {
 
     }
 
+    /**
+     * 清掉十字光标
+     */
     @Override
     public void cleanHighlight() {
         mHighlights = null;
@@ -157,7 +160,7 @@ public class BaseFunChart extends AbstractChart {
         mHighlightX = Float.NaN;
         mHighlightY = Float.NaN;
         mIsHighlight = false;
-        invalidate();
+        postInvalidateOnAnimation();
     }
 
     @Override

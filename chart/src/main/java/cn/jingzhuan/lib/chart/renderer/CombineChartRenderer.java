@@ -166,7 +166,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    protected List<AbstractDataSet> getDataSet() {
+    protected List<AbstractDataSet<?>> getDataSet() {
         return combineData.getDataSets();
     }
 

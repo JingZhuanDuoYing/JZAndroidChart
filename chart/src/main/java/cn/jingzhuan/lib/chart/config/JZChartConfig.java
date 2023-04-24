@@ -14,4 +14,9 @@ public class JZChartConfig {
      * 无颜色
      */
     public final static int COLOR_NONE = Color.TRANSPARENT;
+
+    /**
+     * 十字光标的厚度-默认3
+     */
+    public final static int HIGHLIGHT_THICKNESS = 3;
 }
