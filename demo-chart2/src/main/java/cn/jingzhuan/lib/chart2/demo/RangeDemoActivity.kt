@@ -108,7 +108,7 @@ class RangeDemoActivity : AppCompatActivity() {
             combineChart.renderer.rangeRenderer.resetData()
             combineChart.cleanHighlight()
             combineChart.rangeEnable = true
-            combineChart.isEnableHighlight = false
+            combineChart.isHighlightDisable = true
             combineChart.postInvalidate()
             tvCloseRange.visibility = View.VISIBLE
             llRangeInfo.visibility = View.VISIBLE
@@ -128,7 +128,7 @@ class RangeDemoActivity : AppCompatActivity() {
 
         tvCloseRange.setOnClickListener {
             combineChart.rangeEnable = false
-            combineChart.isEnableHighlight = true
+            combineChart.isHighlightDisable = false
             combineChart.postInvalidate()
             llRangeInfo.visibility = View.INVISIBLE
             tvOpen.visibility = View.VISIBLE
@@ -140,7 +140,7 @@ class RangeDemoActivity : AppCompatActivity() {
             if (combineChart.rangeEnable) return@setOnClickListener
             combineChart.cleanHighlight()
             combineChart.rangeEnable = true
-            combineChart.isEnableHighlight = false
+            combineChart.isHighlightDisable = true
             combineChart.postInvalidate()
             llRangeInfo.visibility = View.VISIBLE
             tvCloseRange.visibility = View.VISIBLE

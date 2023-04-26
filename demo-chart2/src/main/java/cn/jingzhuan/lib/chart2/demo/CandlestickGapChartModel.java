@@ -96,7 +96,7 @@ public abstract class CandlestickGapChartModel extends DataBindingEpoxyModel {
     b.combineChart.setScaleXEnable(true);
     b.combineChart.setDraggingToMoveEnable(false);
     b.combineChart.setDoubleTapToZoom(true);
-    b.combineChart.setEnableHighlight(true);
+    b.combineChart.setHighlightDisable(false);
     b.combineChart.setDraggingToMoveEnable(true);
     b.combineChart.setOnHighlightStatusChangeListener(new HighlightStatusChangeListener() {
       @Override public void onHighlightShow(Highlight[] highlights) {
