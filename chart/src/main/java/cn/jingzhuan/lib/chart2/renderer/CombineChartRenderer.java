@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 
 import androidx.annotation.NonNull;
 import cn.jingzhuan.lib.chart.Viewport;
-import cn.jingzhuan.lib.chart.base.BaseFunChart;
+import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -37,12 +37,12 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public RangeRenderer rangeRenderer;
     protected PointLineRenderer pointLineRenderer;
     protected ScatterTextRenderer scatterTextRenderer;
-    private final BaseFunChart chart;
+    private final JZChart chart;
 
     private CombineData combineData;
     private int lastDataSize = 0;
 
-    public CombineChartRenderer(final BaseFunChart chart) {
+    public CombineChartRenderer(final JZChart chart) {
         super(chart);
         treeChartRenderer = new TreeChartRenderer(chart);
         lineRenderer = new LineRenderer(chart);

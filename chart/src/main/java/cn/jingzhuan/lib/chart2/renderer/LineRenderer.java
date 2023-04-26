@@ -15,9 +15,8 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.base.AbstractChart;
-import cn.jingzhuan.lib.chart.base.BaseFunChart;
+import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -25,11 +24,7 @@ import cn.jingzhuan.lib.chart.data.LineData;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PartLineData;
 import cn.jingzhuan.lib.chart.data.PointValue;
-import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.TimeUtil;
-import cn.jingzhuan.lib.chart2.base.BaseChart;
-import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.widget.LineChart;
 
 /**
@@ -453,7 +448,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
     }
 
     private void drawHorizontalLine(Canvas canvas, LineDataSet lineDataSet, Path linePath, float max, float min) {
-        if (chart instanceof BaseFunChart){
+        if (chart instanceof JZChart){
             isDrawHighLight = chart.getHighlights() != null;
         }
         mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));

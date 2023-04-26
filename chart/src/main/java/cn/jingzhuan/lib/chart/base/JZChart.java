@@ -23,8 +23,7 @@ import cn.jingzhuan.lib.chart2.renderer.AbstractDataRenderer;
 /**
  * @since 2023-03-24
  */
-@SuppressWarnings("rawtypes")
-public class BaseFunChart extends AbstractChart {
+public class JZChart extends AbstractChart {
 
     protected AbstractDataRenderer mRenderer;
 
@@ -36,19 +35,19 @@ public class BaseFunChart extends AbstractChart {
 
     private int mFocusIndex = -1;
 
-    public BaseFunChart(Context context) {
+    public JZChart(Context context) {
         super(context);
     }
 
-    public BaseFunChart(Context context, @Nullable AttributeSet attrs) {
+    public JZChart(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BaseFunChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public JZChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public BaseFunChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public JZChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

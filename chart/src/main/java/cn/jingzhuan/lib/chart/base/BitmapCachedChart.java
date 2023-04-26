@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 import cn.jingzhuan.lib.chart.Viewport;
 
+@Deprecated(since = "Use BitmapCacheChart")
 public abstract class BitmapCachedChart extends View {
 
     protected WeakReference<Bitmap> mDrawBitmap;

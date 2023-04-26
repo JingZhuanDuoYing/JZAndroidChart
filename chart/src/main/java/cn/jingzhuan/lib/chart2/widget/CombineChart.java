@@ -10,7 +10,7 @@ import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import cn.jingzhuan.lib.chart.base.BaseFunChart;
+import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -29,7 +29,7 @@ import java.util.List;
  * 综合Chart
  */
 
-public class CombineChart extends BaseFunChart {
+public class CombineChart extends JZChart {
 
     public CombineChart(Context context) {
         super(context);

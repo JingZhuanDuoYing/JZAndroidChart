@@ -32,6 +32,7 @@ import static cn.jingzhuan.lib.chart.animation.Easing.*;
  * Created by Donglua on 17/7/17.
  */
 
+@Deprecated(since = "Use JZChart")
 public class BaseChart extends Chart {
 
     protected AbstractDataRenderer mRenderer;

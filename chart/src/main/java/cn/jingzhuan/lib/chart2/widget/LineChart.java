@@ -5,7 +5,7 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
-import cn.jingzhuan.lib.chart.base.BaseFunChart;
+import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart2.renderer.LineRenderer;
 
@@ -13,7 +13,7 @@ import cn.jingzhuan.lib.chart2.renderer.LineRenderer;
  * Created by Donglua on 17/7/19.
  */
 
-public class LineChart extends BaseFunChart {
+public class LineChart extends JZChart {
     public LineChart(Context context) {
         super(context);
     }

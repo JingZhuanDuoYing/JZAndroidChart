@@ -38,6 +38,7 @@ import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
  * Created by Donglua on 17/7/17.
  */
 
+@Deprecated(since = "Use AbstractChart")
 public abstract class Chart extends BitmapCachedChart {
 
     protected AxisY mAxisLeft   = new AxisY(AxisY.LEFT_INSIDE);

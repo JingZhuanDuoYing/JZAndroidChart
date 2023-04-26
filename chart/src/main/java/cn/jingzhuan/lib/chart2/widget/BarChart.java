@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 
-import cn.jingzhuan.lib.chart.base.BaseFunChart;
+import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart2.renderer.BarChartRenderer;
 
@@ -15,7 +15,7 @@ import cn.jingzhuan.lib.chart2.renderer.BarChartRenderer;
  * Created by Donglua on 17/8/2.
  */
 
-public class BarChart extends BaseFunChart {
+public class BarChart extends JZChart {
 
     public BarChart(Context context) {
         super(context);
