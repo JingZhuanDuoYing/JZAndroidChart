@@ -325,6 +325,18 @@ public abstract class AbstractChart extends BitmapCacheChart {
         }
     }
 
+    public void addOnTouchHighlightChangeListener(OnTouchHighlightChangeListener touchHighlightChangeListener) {
+        synchronized (this) {
+            this.mTouchHighlightChangeListeners.add(touchHighlightChangeListener);
+        }
+    }
+
+    public void removeOnTouchHighlightChangeListener(OnTouchHighlightChangeListener touchHighlightChangeListener) {
+        synchronized (this) {
+            this.mTouchHighlightChangeListeners.remove(touchHighlightChangeListener);
+        }
+    }
+
     public void addOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
         synchronized (this) {
             this.mOnViewportChangeListeners.add(onViewportChangeListener);
