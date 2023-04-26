@@ -40,7 +40,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
     final Highlight highlight = new Highlight();
     chart.addOnTouchPointChangeListener((x, y) -> {
 
-      if (chart.isHighlightDisable()) return;
+      if (!chart.isEnableHighlight()) return;
 
       for (CandlestickDataSet dataSet : getDataSet()) {
         if (dataSet.isHighlightedVerticalEnable()) {

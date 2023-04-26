@@ -43,7 +43,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         final Highlight highlight = new Highlight();
         chart.addOnTouchPointChangeListener((x, y) -> {
 
-            if (chart.isHighlightDisable()) return;
+            if (!chart.isEnableHighlight()) return;
 
             for (BarDataSet dataSet : getDataSet()) {
                 if (dataSet.isHighlightedVerticalEnable()) {

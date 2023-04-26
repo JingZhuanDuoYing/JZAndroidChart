@@ -76,7 +76,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         final Highlight highlight = new Highlight();
         chart.addOnTouchPointChangeListener((x, y) -> {
 
-            if (chart.isHighlightDisable()) return;
+            if (!chart.isEnableHighlight()) return;
 
             synchronized (chart) {
                 for (LineDataSet line : getDataSet()) {

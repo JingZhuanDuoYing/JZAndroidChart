@@ -141,6 +141,11 @@ public abstract class AbstractChart extends BitmapCacheChart {
     private boolean enableDraggingToMove = true;
 
     /**
+     * 是否允许显示十字光标
+     */
+    private boolean enableHighlight = true;
+
+    /**
      * 总是显示十字光标
      */
     private boolean alwaysHighlight = false;
@@ -166,11 +171,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
     protected float mHighlightX, mHighlightY = Float.NaN;
 
     protected int mHighlightIndex = -1;
-
-    // 这个属性没用 只是为了兼容代码而已
-    private boolean mHighlightVolatile = true;
-
-    private boolean mHighlightDisable = false;
 
     public AbstractChart(Context context) {
         this(context, null, 0);
@@ -997,6 +997,14 @@ public abstract class AbstractChart extends BitmapCacheChart {
         this.mIsLongPress = isLongPress;
     }
 
+    public boolean isEnableHighlight() {
+        return this.enableHighlight;
+    }
+
+    public void setEnableHighlight(boolean enableHighlight) {
+        this.enableHighlight = enableHighlight;
+    }
+
     public boolean isAlwaysHighlight() {
         return alwaysHighlight;
     }
@@ -1091,22 +1099,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     public void setIsMainChart(boolean isMainChart) {
         this.mIsMainChart = isMainChart;
-    }
-
-    public boolean isHighlightVolatile() {
-        return mHighlightVolatile;
-    }
-
-    public void setHighlightVolatile(boolean highlightVolatile) {
-        this.mHighlightVolatile = highlightVolatile;
-    }
-
-    public boolean isHighlightDisable() {
-        return mHighlightDisable;
-    }
-
-    public void setHighlightDisable(boolean highlightDisable) {
-        this.mHighlightDisable = highlightDisable;
     }
 
     // </editor-fold desc="generate set and get">    ---------------------------------------------------------
