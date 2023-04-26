@@ -289,9 +289,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
     }
 
     private void releaseEdgeEffects() {
-        mEdgeEffectLeftActive
-                = mEdgeEffectRightActive
-                = false;
+        mEdgeEffectLeftActive = mEdgeEffectRightActive = false;
         mEdgeEffectLeft.onRelease();
         mEdgeEffectRight.onRelease();
     }

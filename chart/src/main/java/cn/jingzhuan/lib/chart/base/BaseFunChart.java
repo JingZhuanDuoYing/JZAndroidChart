@@ -84,6 +84,11 @@ public class BaseFunChart extends AbstractChart {
     }
 
     @Override
+    public void drawWatermark(Canvas canvas) {
+
+    }
+
+    @Override
     public void drawLabels(Canvas canvas) {
         for (AxisRenderer axisRenderer : mAxisRenderers) {
             axisRenderer.drawLabels(canvas);
