@@ -172,6 +172,9 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     protected int mHighlightIndex = -1;
 
+    // 这个属性没用 只是为了兼容代码而已
+    private boolean mHighlightDisable = false;
+
     public AbstractChart(Context context) {
         this(context, null, 0);
     }
@@ -1087,6 +1090,14 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     public void setIsMainChart(boolean isMainChart) {
         this.mIsMainChart = isMainChart;
+    }
+
+    public boolean isHighlightDisable() {
+        return mHighlightDisable;
+    }
+
+    public void setHighlightDisable(boolean highlightDisable) {
+        this.mHighlightDisable = highlightDisable;
     }
 
     // </editor-fold desc="generate set and get">    ---------------------------------------------------------
