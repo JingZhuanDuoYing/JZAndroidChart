@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="desc"
+            type="String" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
+
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_range"
-            android:text="区间统计Demo"
+            android:id="@+id/btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:text="@{ desc }"
+            android:layout_margin="5dp"/>
     </LinearLayout>
 
 

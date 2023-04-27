@@ -776,14 +776,10 @@ public abstract class AbstractChart extends BitmapCacheChart {
             case MotionEvent.ACTION_MOVE:
                 mIsTouching = true;
                 break;
-            case MotionEvent.ACTION_POINTER_UP:
-                postInvalidateOnAnimation();
-                break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mIsLongPress = false;
                 mIsTouching = false;
-                postInvalidateOnAnimation();
                 break;
         }
         mDetector.onTouchEvent(event);

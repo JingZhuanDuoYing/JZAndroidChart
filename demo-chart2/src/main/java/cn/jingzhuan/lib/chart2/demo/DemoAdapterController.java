@@ -1,11 +1,15 @@
 package cn.jingzhuan.lib.chart2.demo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.airbnb.epoxy.AutoModel;
 import com.airbnb.epoxy.EpoxyController;
+
+import cn.jingzhuan.lib.chart2.demo.activity.LoadMoreActivity;
+import cn.jingzhuan.lib.chart2.demo.activity.RangeDemoActivity;
 
 /**
  * Created by Donglua on 17/7/26.
@@ -22,7 +26,6 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel ViewPagerModel_ viewPagerModel_;
     @AutoModel ScatterChartModel_ scatterChartModel_;
     @AutoModel ScatterChart2Model_ scatterChart2Model_;
-    @AutoModel CombineRangeChartModel_ combineRangeChartModel_;
 
     private Context context;
 
@@ -33,8 +36,17 @@ public class DemoAdapterController extends EpoxyController {
     @Override
     protected void buildModels() {
 
-        new LayoutDescTextBindingModel_().id("CombineRange").text("CombineRange Chart").addTo(this);
-        combineRangeChartModel_.addTo(this);
+        new TextButtonModel_()
+                .id("K线区间统计")
+                .name("K线区间统计")
+                .onClick(v -> context.startActivity(new Intent(context, RangeDemoActivity.class)))
+                .addTo(this);
+
+        new TextButtonModel_()
+                .id("K线加载更多")
+                .name("K线加载更多")
+                .onClick(v -> context.startActivity(new Intent(context, LoadMoreActivity.class)))
+                .addTo(this);
 
         new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
         lineChartModel.addTo(this);
