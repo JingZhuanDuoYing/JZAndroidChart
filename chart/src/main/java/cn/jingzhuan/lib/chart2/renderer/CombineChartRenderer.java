@@ -117,11 +117,11 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 candlestickChartRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) dataSet);
                 candlestickDataSets.add(dataSet);
             }
-            if (dataSet instanceof BarDataSet) {
-                barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
-            }
             if (dataSet instanceof LineDataSet) {
                 lineRenderer.renderDataSet(canvas, combineData.getLineChartData(), (LineDataSet) dataSet);
+            }
+            if (dataSet instanceof BarDataSet) {
+                barChartRenderer.renderDataSet(canvas, combineData.getBarChartData(), (BarDataSet) dataSet);
             }
             if (dataSet instanceof ScatterDataSet) {
                 scatterChartRenderer.renderDataSet(canvas, combineData.getScatterChartData(), (ScatterDataSet) dataSet);
