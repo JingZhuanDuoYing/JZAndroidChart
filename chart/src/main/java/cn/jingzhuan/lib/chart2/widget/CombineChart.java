@@ -72,14 +72,14 @@ public class CombineChart extends BaseChart {
         for (TreeDataSet treeDataSet : combineData.getTreeData()) {
             addDataSet(treeDataSet);
         }
-        for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
-            addDataSet(candlestickDataSet);
+        for (LineDataSet lineDataSet : combineData.getLineData()) {
+            addDataSet(lineDataSet);
         }
         for (BarDataSet barDataSet : combineData.getBarData()) {
             addDataSet(barDataSet);
         }
-        for (LineDataSet lineDataSet : combineData.getLineData()) {
-            addDataSet(lineDataSet);
+        for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
+            addDataSet(candlestickDataSet);
         }
         for (ScatterDataSet scatterDataSet : combineData.getScatterData()) {
             addDataSet(scatterDataSet);
