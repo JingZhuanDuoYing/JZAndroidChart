@@ -24,8 +24,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
     private PointLineData pointLineData;
     private ScatterTextData scatterTextData;
 
-    private int maxDrawIndex = -1;
-
     public CombineData() {
         treeData = new TreeData();
         barData = new BarData();
@@ -59,7 +57,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public LineData getLineChartData() {
         return lineData;
     }
-
     public List<PointLineDataSet> getPointLineData() {
         return pointLineData.getDataSets();
     }
@@ -75,21 +72,17 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public ScatterData getScatterChartData() {
         return scatterData;
     }
-
     public List<ScatterTextDataSet> getScatterTextData() {
         return scatterTextData.getDataSets();
     }
 
-    public ScatterTextData getScatterTextChartData() {
-        return scatterTextData;
-    }
+    public ScatterTextData getScatterTextChartData(){return  scatterTextData;}
 
     public List<TreeDataSet> getTreeData() {
         return treeData.getDataSets();
     }
-
-    public TreeData getTreeChartData() {
-        return treeData;
+    public TreeData getTreeChartData(){
+        return  treeData;
     }
 
     public boolean addDataSet(BarDataSet dataSet) {
@@ -107,17 +100,14 @@ public class CombineData extends ChartData<AbstractDataSet> {
     public boolean addDataSet(ScatterDataSet dataSet) {
         return scatterData.add(dataSet);
     }
-
-    public boolean addDataSet(PointLineDataSet dataSet) {
-        return pointLineData.add(dataSet);
+    public boolean addDataSet(PointLineDataSet dataSet){
+        return  pointLineData.add(dataSet);
     }
-
-    public boolean addDataSet(ScatterTextDataSet dataSet) {
-        return scatterTextData.add(dataSet);
+    public boolean addDataSet(ScatterTextDataSet dataSet){
+        return  scatterTextData.add(dataSet);
     }
-
-    public boolean addDataSet(TreeDataSet dataSet) {
-        return treeData.add(dataSet);
+    public boolean addDataSet(TreeDataSet dataSet){
+        return  treeData.add(dataSet);
     }
 
     public void setCombineData(CombineData combineData) {
@@ -167,8 +157,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterTextData.getDataSets().addAll(combineData.getScatterTextData());
     }
 
-    @Override
-    public void calcMaxMin(Viewport viewport, Rect content) {
+    @Override public void calcMaxMin(Viewport viewport, Rect content) {
         leftMin = Float.MAX_VALUE;
         leftMax = -Float.MAX_VALUE;
         rightMin = Float.MAX_VALUE;
@@ -272,19 +261,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
     @Override
     public boolean add(AbstractDataSet e) {
-        int drawIndex = e.getDrawIndex();
-        if(drawIndex == -1 && maxDrawIndex == -1) {
-            drawIndex += 1;
-            e.setDrawIndex(drawIndex);
-        } else {
-            if(drawIndex <= maxDrawIndex) {
-                drawIndex = maxDrawIndex + 1;
-                e.setDrawIndex(drawIndex);
-            }
-        }
-        maxDrawIndex = drawIndex;
-
-        if (e instanceof TreeDataSet) {
+        if (e instanceof TreeDataSet){
             return addDataSet((TreeDataSet) e);
         }
         if (e instanceof CandlestickDataSet) {
@@ -299,11 +276,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
         if (e instanceof ScatterDataSet) {
             return addDataSet((ScatterDataSet) e);
         }
-        if (e instanceof PointLineDataSet) {
-            return addDataSet((PointLineDataSet) e);
+        if (e instanceof PointLineDataSet){
+            return  addDataSet((PointLineDataSet)e);
         }
-        if (e instanceof ScatterTextDataSet) {
-            return addDataSet((ScatterTextDataSet) e);
+        if (e instanceof ScatterTextDataSet){
+            return  addDataSet((ScatterTextDataSet) e);
         }
         return super.add(e);
     }
