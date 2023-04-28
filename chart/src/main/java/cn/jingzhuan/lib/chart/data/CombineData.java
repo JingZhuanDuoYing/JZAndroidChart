@@ -279,19 +279,17 @@ public class CombineData extends ChartData<AbstractDataSet> {
             return addDataSet((CandlestickDataSet) e);
         }
         if (e instanceof LineDataSet) {
-            if(!((LineDataSet) e).isDrawBand()) {
-                int drawIndex = e.getDrawIndex();
-                if(drawIndex == -1 && maxDrawIndex == -1) {
-                    drawIndex += 1;
+            int drawIndex = e.getDrawIndex();
+            if(drawIndex == -1 && maxDrawIndex == -1) {
+                drawIndex += 1;
+                e.setDrawIndex(drawIndex);
+            } else {
+                if(drawIndex <= maxDrawIndex) {
+                    drawIndex = maxDrawIndex + 1;
                     e.setDrawIndex(drawIndex);
-                } else {
-                    if(drawIndex <= maxDrawIndex) {
-                        drawIndex = maxDrawIndex + 1;
-                        e.setDrawIndex(drawIndex);
-                    }
                 }
-                maxDrawIndex = drawIndex;
             }
+            maxDrawIndex = drawIndex;
             return addDataSet((LineDataSet) e);
         }
         if (e instanceof BarDataSet) {
