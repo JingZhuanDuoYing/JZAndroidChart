@@ -342,7 +342,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         Collections.sort(allDataSet, new Comparator<AbstractDataSet>() {
             @Override
             public int compare(AbstractDataSet dataSet1, AbstractDataSet dataSet2) {
-                return dataSet1.getDrawIndex() - dataSet2.getDrawIndex();
+                return dataSet2.getDrawIndex() - dataSet1.getDrawIndex();
             }
         });
         return allDataSet;
