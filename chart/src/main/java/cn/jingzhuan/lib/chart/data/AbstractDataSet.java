@@ -29,6 +29,8 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
   protected float endXOffset = 0f;
   private int mAxisDependency = AxisY.DEPENDENCY_LEFT;
   private int mColor = Color.GRAY;
+
+  private boolean mColorDynamic = false;
   private int maxVisibleEntryCount = 500;
   private int minVisibleEntryCount = 15;
   private int defaultVisibleEntryCount = -1;
@@ -94,6 +96,14 @@ public abstract class AbstractDataSet<T extends Value> extends AbstractVisible i
 
   public void setColor(int barColor) {
     this.mColor = barColor;
+  }
+
+  public boolean getColorDynamic() {
+    return mColorDynamic;
+  }
+
+  public void setColorDynamic(boolean colorDynamic) {
+    this.mColorDynamic = colorDynamic;
   }
 
   public boolean isHighlightedVerticalEnable() {
