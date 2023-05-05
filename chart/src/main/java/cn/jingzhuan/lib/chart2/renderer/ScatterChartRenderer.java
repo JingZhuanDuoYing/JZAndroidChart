@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
+
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer;
@@ -15,170 +16,198 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterData;
+
 import java.util.List;
+
 
 /**
  * Scatter Chart Renderer
- *
+ * <p>
  * Created by donglua on 10/19/17.
  */
 
 public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
-  private ScatterData scatterData;
+    private ScatterData scatterData;
 
-  public ScatterChartRenderer(Chart chart) {
-    super(chart);
-  }
+    private float alignTopHeight, alignBottomHeight = 0f;
 
-  @Override protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData) {
-    for (ScatterDataSet dataSet : getDataSet()) {
-      renderDataSet(canvas, chartData, dataSet);
-    }
-  }
-
-  @Override protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData, ScatterDataSet dataSet) {
-    if (dataSet.isVisible()) {
-      drawDataSet(canvas, dataSet,
-              chartData.getLeftMax(), chartData.getLeftMin(),
-              chartData.getRightMax(), chartData.getRightMin());
-    }
-  }
-
-  private void drawDataSet(Canvas canvas, final ScatterDataSet dataSet,
-      float leftMax, float leftMin, float rightMax, float rightMin) {
-
-    mRenderPaint.setStrokeWidth(1);
-    mRenderPaint.setColor(dataSet.getColor());
-
-    int valueCount = dataSet.getEntryCount();
-
-    float min, max;
-    switch (dataSet.getAxisDependency()) {
-      case AxisY.DEPENDENCY_RIGHT:
-        min = rightMin;
-        max = rightMax;
-        break;
-      case AxisY.DEPENDENCY_BOTH:
-      case AxisY.DEPENDENCY_LEFT:
-      default:
-        min = leftMin;
-        max = leftMax;
-        break;
+    public ScatterChartRenderer(Chart chart) {
+        super(chart);
     }
 
-    final float width = (mContentRect.width() - dataSet.getStartXOffset() - dataSet.getEndXOffset())
-        / dataSet.getVisibleRange(mViewport) + 1;
-
-    float shapeWidth = dataSet.getShape().getIntrinsicWidth();
-    float shapeHeight = dataSet.getShape().getIntrinsicHeight();
-    if (dataSet.isAutoWidth()) {
-      shapeWidth = Math.max(width * 0.8f, dataSet.getShapeMinWidth());
-      if (!Float.isNaN(dataSet.getShapeMaxWidth())) {
-        shapeWidth = Math.min(shapeWidth, dataSet.getShapeMaxWidth());
-      }
-      shapeHeight = shapeWidth * shapeHeight / ((float) dataSet.getShape().getIntrinsicWidth());
-    }
-
-    float yOffset;
-    if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_CENTER) {
-      yOffset = shapeHeight * 0.5f;
-    } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
-      yOffset = shapeHeight;
-    } else {
-      yOffset = 0;
-    }
-    Drawable shape = dataSet.getShape();
-
-    for (int i = 0; i < valueCount && i < dataSet.getValues().size() && shape != null; i++) {
-      ScatterValue point = dataSet.getEntryForIndex(i);
-
-      if (!point.isVisible()) continue;
-
-      float xPosition = dataSet.getStartXOffset() + width * 0.5f
-          + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
-
-      float yPosition;
-      if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM)
-        yPosition = mContentRect.height() - shapeHeight;
-      else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP)
-        yPosition = mContentRect.top;
-      else
-        yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
-
-      shape = dataSet.getShape();
-      if (point.getShape() != null) {
-        shape = point.getShape();
-      }
-
-      point.setCoordinate(xPosition, yPosition);
-
-      int x = (int) (xPosition + dataSet.getDrawOffsetX());
-      int y = (int) (yPosition + dataSet.getDrawOffsetY());
-      if (point.getColor() != Color.TRANSPARENT) {
-        shape.setColorFilter(point.getColor(), PorterDuff.Mode.SRC_OVER);
-      }
-      shape.setBounds(x,
-                      y,
-                      (int) (x + shapeWidth),
-                      (int) (y + shapeHeight));
-      int saveId = canvas.save();
-      shape.draw(canvas);
-      canvas.restoreToCount(saveId);
-
-      if (dataSet.getTextValueRenderers() != null) {
-        for (TextValueRenderer textValueRenderer : dataSet.getTextValueRenderers()) {
-          textValueRenderer.render(canvas, i,
-              x + shapeWidth * 0.5f, y + shapeHeight * 0.5f);
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData) {
+        alignTopHeight = alignBottomHeight = 0f;
+        for (ScatterDataSet dataSet : getDataSet()) {
+            renderDataSet(canvas, chartData, dataSet);
         }
-      }
     }
-  }
 
-  @Override public int getEntryIndexByCoordinate(float x, float y) {
-    int index = -1;
-    if (scatterData.getDataSets().size() > 0) {
-      ScatterDataSet dataSet = scatterData.getDataSets().get(0);
-      RectF rect = new RectF();
-      Drawable shape = dataSet.getShape();
-      float shapeWidth = shape.getIntrinsicWidth();
-      float shapeHeight = shape.getIntrinsicHeight();
-      for (int i = 0; i < dataSet.getValues().size(); i++) {
-        final ScatterValue value = dataSet.getEntryForIndex(i);
-        float pX = value.getX();
-        float pY = value.getY();
-        rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
-        if (rect.contains(x, y)) {
-          index = i;
-          break;
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData, ScatterDataSet dataSet) {
+        alignTopHeight = alignBottomHeight = 0f;
+        for (ScatterDataSet scatterDataSet : getDataSet()) {
+            drawDataSet(canvas, scatterDataSet, chartData.getLeftMax(), chartData.getLeftMin(), chartData.getRightMax(), chartData.getRightMin());
         }
-      }
-      return index;
+//    if (dataSet.isVisible()) {
+//      drawDataSet(canvas, dataSet,
+//              chartData.getLeftMax(), chartData.getLeftMin(),
+//              chartData.getRightMax(), chartData.getRightMin());
+//    }
     }
-    return super.getEntryIndexByCoordinate(x, y);
-  }
 
-  @Override public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
-  }
+    private void drawDataSet(Canvas canvas, final ScatterDataSet dataSet, float leftMax, float leftMin, float rightMax, float rightMin) {
 
-  @Override public void removeDataSet(ScatterDataSet dataSet) {
-    getChartData().remove(dataSet);
-    calcDataSetMinMax();
-  }
+        mRenderPaint.setStrokeWidth(1);
+        mRenderPaint.setColor(dataSet.getColor());
 
-  @Override public void clearDataSet() {
-    getChartData().clear();
-  }
+        int valueCount = dataSet.getEntryCount();
 
-  @Override protected List<ScatterDataSet> getDataSet() {
-    return getChartData().getDataSets();
-  }
+        float min, max;
+        switch (dataSet.getAxisDependency()) {
+            case AxisY.DEPENDENCY_RIGHT:
+                min = rightMin;
+                max = rightMax;
+                break;
+            case AxisY.DEPENDENCY_BOTH:
+            case AxisY.DEPENDENCY_LEFT:
+            default:
+                min = leftMin;
+                max = leftMax;
+                break;
+        }
 
-  @Override public ChartData<ScatterDataSet> getChartData() {
-    if (scatterData == null) {
-      scatterData = new ScatterData();
+        final float width = (mContentRect.width() - dataSet.getStartXOffset() - dataSet.getEndXOffset())
+                / dataSet.getVisibleRange(mViewport) + 1;
+
+        float shapeWidth = dataSet.getShape().getIntrinsicWidth();
+        float shapeHeight = dataSet.getShape().getIntrinsicHeight();
+        if (dataSet.isAutoWidth()) {
+            shapeWidth = Math.max(width * 0.8f, dataSet.getShapeMinWidth());
+            if (!Float.isNaN(dataSet.getShapeMaxWidth())) {
+                shapeWidth = Math.min(shapeWidth, dataSet.getShapeMaxWidth());
+            }
+            shapeHeight = shapeWidth * shapeHeight / ((float) dataSet.getShape().getIntrinsicWidth());
+        }
+
+        float yOffset;
+        if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_CENTER) {
+            yOffset = shapeHeight * 0.5f;
+        } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
+            alignBottomHeight += shapeHeight;
+            yOffset = alignBottomHeight;
+        } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
+            yOffset = alignTopHeight;
+        } else {
+            yOffset = 0f;
+        }
+        Drawable shape = dataSet.getShape();
+
+        for (int i = 0; i < valueCount && i < dataSet.getValues().size() && shape != null; i++) {
+            ScatterValue point = dataSet.getEntryForIndex(i);
+
+            if (!point.isVisible()) continue;
+
+            float xPosition = dataSet.getStartXOffset() + width * 0.5f
+                    + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
+
+            float yPosition;
+            if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM) {
+                yPosition = mContentRect.height() - shapeHeight;
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP) {
+                yPosition = mContentRect.top;
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
+                yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
+                yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() + yOffset;
+            } else {
+                yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
+            }
+
+            shape = dataSet.getShape();
+            if (point.getShape() != null) {
+                shape = point.getShape();
+            }
+
+            point.setCoordinate(xPosition, yPosition);
+
+            int x = (int) (xPosition + dataSet.getDrawOffsetX());
+            int y = (int) (yPosition + dataSet.getDrawOffsetY());
+            if (point.getColor() != Color.TRANSPARENT) {
+                shape.setColorFilter(point.getColor(), PorterDuff.Mode.SRC_OVER);
+            }
+            shape.setBounds(x,
+                    y,
+                    (int) (x + shapeWidth),
+                    (int) (y + shapeHeight));
+            int saveId = canvas.save();
+            shape.draw(canvas);
+            canvas.restoreToCount(saveId);
+
+            if (dataSet.getTextValueRenderers() != null) {
+                for (TextValueRenderer textValueRenderer : dataSet.getTextValueRenderers()) {
+                    textValueRenderer.render(canvas, i,
+                            x + shapeWidth * 0.5f, y + shapeHeight * 0.5f);
+                }
+            }
+        }
+
+        if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
+            alignTopHeight += shapeHeight;
+        }
     }
-    return scatterData;
-  }
+
+    @Override
+    public int getEntryIndexByCoordinate(float x, float y) {
+        int index = -1;
+        if (scatterData.getDataSets().size() > 0) {
+            ScatterDataSet dataSet = scatterData.getDataSets().get(0);
+            RectF rect = new RectF();
+            Drawable shape = dataSet.getShape();
+            float shapeWidth = shape.getIntrinsicWidth();
+            float shapeHeight = shape.getIntrinsicHeight();
+            for (int i = 0; i < dataSet.getValues().size(); i++) {
+                final ScatterValue value = dataSet.getEntryForIndex(i);
+                float pX = value.getX();
+                float pY = value.getY();
+                rect.set(pX, pY, pX + shapeWidth, pY + shapeHeight);
+                if (rect.contains(x, y)) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+        return super.getEntryIndexByCoordinate(x, y);
+    }
+
+    @Override
+    public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+    }
+
+    @Override
+    public void removeDataSet(ScatterDataSet dataSet) {
+        getChartData().remove(dataSet);
+        calcDataSetMinMax();
+    }
+
+    @Override
+    public void clearDataSet() {
+        getChartData().clear();
+    }
+
+    @Override
+    protected List<ScatterDataSet> getDataSet() {
+        return getChartData().getDataSets();
+    }
+
+    @Override
+    public ChartData<ScatterDataSet> getChartData() {
+        if (scatterData == null) {
+            scatterData = new ScatterData();
+        }
+        return scatterData;
+    }
 
 }
