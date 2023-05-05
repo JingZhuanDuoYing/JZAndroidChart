@@ -16,7 +16,6 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterData;
-
 import java.util.List;
 
 /**
@@ -29,12 +28,15 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
     private ScatterData scatterData;
 
+    private float alignTopHeight, alignBottomHeight = 0f;
+
     public ScatterChartRenderer(AbstractChart chart) {
         super(chart);
     }
 
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData) {
+        alignTopHeight = alignBottomHeight = 0f;
         for (ScatterDataSet dataSet : getDataSet()) {
             renderDataSet(canvas, chartData, dataSet);
         }
@@ -42,15 +44,16 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
     @Override
     protected void renderDataSet(Canvas canvas, ChartData<ScatterDataSet> chartData, ScatterDataSet dataSet) {
-        if (dataSet.isVisible()) {
-            drawDataSet(canvas, dataSet,
-                    chartData.getLeftMax(), chartData.getLeftMin(),
-                    chartData.getRightMax(), chartData.getRightMin());
+        alignTopHeight = alignBottomHeight = 0f;
+        for (ScatterDataSet scatterDataSet : getDataSet()) {
+            drawDataSet(canvas, scatterDataSet, chartData.getLeftMax(), chartData.getLeftMin(), chartData.getRightMax(), chartData.getRightMin());
         }
+//        if (dataSet.isVisible()) {
+//            drawDataSet(canvas, dataSet, chartData.getLeftMax(), chartData.getLeftMin(), chartData.getRightMax(), chartData.getRightMin());
+//        }
     }
 
-    private void drawDataSet(Canvas canvas, final ScatterDataSet dataSet,
-                             float leftMax, float leftMin, float rightMax, float rightMin) {
+    private void drawDataSet(Canvas canvas, final ScatterDataSet dataSet, float leftMax, float leftMin, float rightMax, float rightMin) {
 
         mRenderPaint.setStrokeWidth(1);
         mRenderPaint.setColor(dataSet.getColor());
@@ -88,9 +91,12 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
         if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_CENTER) {
             yOffset = shapeHeight * 0.5f;
         } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
-            yOffset = shapeHeight;
+            alignBottomHeight += shapeHeight;
+            yOffset = alignBottomHeight;
+        } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP){
+            yOffset = alignTopHeight;
         } else {
-            yOffset = 0;
+            yOffset = 0f;
         }
         Drawable shape = dataSet.getShape();
 
@@ -103,12 +109,17 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
                     + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
 
             float yPosition;
-            if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM)
+            if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM) {
                 yPosition = mContentRect.height() - shapeHeight;
-            else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP)
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP) {
                 yPosition = mContentRect.top;
-            else
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
                 yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
+                yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() + yOffset;
+            } else {
+                yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
+            }
 
             shape = dataSet.getShape();
             if (point.getShape() != null) {
@@ -136,6 +147,10 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
                             x + shapeWidth * 0.5f, y + shapeHeight * 0.5f);
                 }
             }
+        }
+
+        if(dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
+            alignTopHeight += shapeHeight;
         }
     }
 

@@ -85,9 +85,18 @@ class LoadMoreActivity : AppCompatActivity() {
             scatterDataSet2.axisDependency = AxisY.DEPENDENCY_LEFT
             scatterDataSet2.shapeAlign = ScatterDataSet.SHAPE_ALIGN_TOP
 
+            val scatterDataSet3 = ScatterDataSet(getScatterValues())
+            val drawable3 = AppCompatResources.getDrawable(this, R.drawable.ico_roket_sbf)
+            scatterDataSet3.isAutoWidth = true
+            scatterDataSet3.shape = drawable3
+            scatterDataSet3.axisDependency = AxisY.DEPENDENCY_LEFT
+            scatterDataSet3.shapeAlign = ScatterDataSet.SHAPE_ALIGN_TOP
+
             combineData.add(scatterDataSet1)
 
             combineData.add(scatterDataSet2)
+
+            combineData.add(scatterDataSet3)
 
             combineChart.setCombineData(combineData, true)
         }
