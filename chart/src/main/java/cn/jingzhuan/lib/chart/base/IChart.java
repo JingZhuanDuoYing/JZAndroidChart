@@ -42,6 +42,8 @@ public interface IChart {
 
     void highlightValue(Highlight highlight);
 
+    void onAlwaysHighlight();
+
     void cleanHighlight();
 
     void onTouchPoint(MotionEvent e);

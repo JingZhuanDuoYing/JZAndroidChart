@@ -34,7 +34,7 @@ public class JZChart extends AbstractChart {
 
     protected Highlight[] mHighlights;
 
-    private int mFocusIndex = -1;
+    protected int mHighlightIndex = -1;
 
     public JZChart(Context context) {
         super(context);
@@ -123,13 +123,10 @@ public class JZChart extends AbstractChart {
     public void highlightValue(Highlight highlight) {
         if (highlight == null) return;
 
-        if(isAlwaysHighlight()){
-            highlight.setY(mHighlightY);
-        }
-
-        boolean highlightChange = mHighlightIndex != highlight.getDataIndex() || mHighlightX != highlight.getX() || mHighlightY != highlight.getY();
+        boolean highlightChange = mHighlightIndex != highlight.getDataIndex() || mHighlightY != highlight.getY();
 
         if (highlightChange) {
+            Log.w("highlightChange", mHighlightIndex + "==" + highlight.getDataIndex() + "---" + mHighlightX + "==" + highlight.getX()+ "---" + mHighlightY + "==" + highlight.getY());
             mHighlightIndex = highlight.getDataIndex();
             mHighlightX = highlight.getX();
             mHighlightY = highlight.getY();
@@ -147,8 +144,36 @@ public class JZChart extends AbstractChart {
 
         mHighlights = highlights;
         mIsHighlight = true;
-        postInvalidate();
+        invalidate();
 
+    }
+
+    @Override
+    public void onAlwaysHighlight() {
+        if (mHighlights == null) return;
+        Highlight highlight = mHighlights[0];
+        if(highlight == null) return;
+
+        int dataIndex = highlight.getDataIndex();
+
+        float highlightX = getEntryCoordinateByIndex(dataIndex);
+
+        float width = getContentRect().width();
+
+        if(highlightX <= 0f) {
+            dataIndex = getEntryIndexByCoordinate(0f, 0f);
+            highlight.setDataIndex(dataIndex);
+        }
+
+        if(highlightX >= width) {
+            dataIndex = getEntryIndexByCoordinate(width, 0f);
+            highlight.setDataIndex(dataIndex);
+        }
+
+        highlight.setX(highlightX);
+        highlight.setY(mHighlightY);
+        Log.w("onAlwaysHighlight", highlightX + "-" + mHighlightY + "-" + dataIndex);
+        highlightValue(highlight);
     }
 
     /**
@@ -165,7 +190,7 @@ public class JZChart extends AbstractChart {
         mHighlightX = Float.NaN;
         mHighlightY = Float.NaN;
         mIsHighlight = false;
-        postInvalidateOnAnimation();
+        invalidate();
     }
 
     @Override

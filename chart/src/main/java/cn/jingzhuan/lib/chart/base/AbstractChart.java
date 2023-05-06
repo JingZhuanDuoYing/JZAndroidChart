@@ -173,11 +173,9 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     private final Point mSurfaceSizeBuffer = new Point();
 
-    private int mFocusIndex = -1;
+    protected int mFocusIndex = -1;
 
     protected float mHighlightX, mHighlightY = Float.NaN;
-
-    protected int mHighlightIndex = -1;
 
     private boolean isScaleMin, isScaleMax = false;
 
@@ -251,7 +249,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
     }
 
     private void setupInteractions(Context context) {
-        setWillNotDraw(false);
         mDetector = new GestureDetector(context, mGestureListener);
         mScaleDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
         mScroller = new OverScroller(context);
@@ -641,24 +638,20 @@ public abstract class AbstractChart extends BitmapCacheChart {
                 if (getHighlights() != null) cleanHighlight();
                 performClick();
             } else {
-                int index = getEntryIndexByCoordinate(e.getX(), e.getY());
-//                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
-                if (index >= 0) {
+                // 如果不是一直显示光标 并且 光标数组当前不为null 清除光标
+                if (!alwaysHighlight && getHighlights() != null) {
+                    cleanHighlight();
+                } else {
+                    int index = getEntryIndexByCoordinate(e.getX(), e.getY());
+                    if(index < 0 && getHighlights() != null) {
+                        cleanHighlight();
+                        return true;
+                    }
                     if (isMainChart()) {
-                        // 如果不是一直显示光标 并且 光标数组当前不为null 清除光标
-                        if (!alwaysHighlight && getHighlights() != null) {
-                            cleanHighlight();
-                        } else {
-                            mHighlightY = e.getY();
-                            onTouchPoint(e);
-                        }
+                        mHighlightY = e.getY();
+                        onTouchPoint(e);
                     } else {
                         if (getHighlights() != null) cleanHighlight();
-                    }
-                } else {
-                    if (getHighlights() != null) cleanHighlight();
-                    if (isClickable() && hasOnClickListeners()) {
-                        performClick();
                     }
                 }
             }
@@ -779,15 +772,6 @@ public abstract class AbstractChart extends BitmapCacheChart {
             return true;
         }
     };
-
-    private void onAlwaysHighlight() {
-        if (getHighlights() == null) return;
-        float highlightX = getEntryCoordinateByIndex(mHighlightIndex);
-        Log.w("onAlwaysHighlight", highlightX + "-" + mHighlightY + "-" + mHighlightIndex);
-        for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
-            touchPointChangeListener.touch(highlightX, mHighlightY);
-        }
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

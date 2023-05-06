@@ -13,6 +13,7 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.base.AbstractChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
@@ -80,9 +81,25 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet<?>> impleme
 
             for (T dataSet : getDataSet()) {
                 if (dataSet.isHighlightedVerticalEnable()) {
-                    canvas.drawLine(highlight.getX(),
+                    float x = dataSet.getEntryForIndex(highlight.getDataIndex()).getX();
+//                    if(dataSet instanceof CandlestickDataSet) {
+//                        CandlestickDataSet candlestickDataSet = ((CandlestickDataSet) dataSet);
+//                        float candleWidth = ((CandlestickDataSet) dataSet).getCandleWidth();
+//                        if (candlestickDataSet.isAutoWidth()) {
+//                            candleWidth = mContentRect.width() / Math.max(candlestickDataSet.getVisibleRange(mViewport), candlestickDataSet.getMinValueCount());
+//                        }
+//                        float leftSide = candleWidth * 0.5f;
+//                        float rightSide = mContentRect.width() - leftSide;
+//                        if(x <= leftSide) {
+//                            x = leftSide;
+//                        }
+//                        if(x >= rightSide ) {
+//                            x = rightSide;
+//                        }
+//                    }
+                    canvas.drawLine(x,
                             mContentRect.top,
-                            highlight.getX(),
+                            x,
                             mContentRect.bottom,
                             mRenderPaint);
                 }

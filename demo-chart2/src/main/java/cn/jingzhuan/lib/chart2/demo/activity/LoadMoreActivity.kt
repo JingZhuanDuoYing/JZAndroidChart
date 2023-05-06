@@ -2,14 +2,17 @@ package cn.jingzhuan.lib.chart2.demo.activity
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatButton
 import cn.jingzhuan.lib.chart.component.AxisY
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
 import cn.jingzhuan.lib.chart.data.CombineData
 import cn.jingzhuan.lib.chart.data.ScatterDataSet
 import cn.jingzhuan.lib.chart.data.ScatterValue
+import cn.jingzhuan.lib.chart.event.OnScaleStateListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart2.demo.ChartDataConfig
 import cn.jingzhuan.lib.chart2.demo.R
@@ -21,11 +24,16 @@ class LoadMoreActivity : AppCompatActivity() {
 
     private lateinit var combineChart: TestChartKLineView
 
+    private lateinit var btnHighlightAlways: AppCompatButton
+
+    private var highlightAlwaysShow = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load_more)
         combineChart = findViewById(R.id.combine_chart)
+        btnHighlightAlways = findViewById(R.id.btn_highlight_always)
 
         candlestickValues.addAll(getData())
 
@@ -39,6 +47,31 @@ class LoadMoreActivity : AppCompatActivity() {
             val dataSetMore = transformDataSet()
             setCombineData(CandlestickDataSetArrowDecorator(dataSetMore).apply { offsetPercent = 0.1f })
         }
+
+        combineChart.setOnScaleStateListener(object : OnScaleStateListener{
+            override fun onScaleMaximum(maximum: Boolean) {
+                if(maximum) {
+                    Toast.makeText(this@LoadMoreActivity, "已放大至最大值", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onScaleMinimum(minimum: Boolean) {
+                if(minimum) {
+                    Toast.makeText(this@LoadMoreActivity, "已缩小为最小值", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        btnHighlightAlways.setOnClickListener {
+            if(highlightAlwaysShow) {
+                highlightAlwaysShow = false
+                combineChart.isAlwaysHighlight = false
+            }else {
+                highlightAlwaysShow = true
+                combineChart.isAlwaysHighlight = true
+            }
+        }
+
     }
 
     private fun transformDataSet(): CandlestickDataSet {

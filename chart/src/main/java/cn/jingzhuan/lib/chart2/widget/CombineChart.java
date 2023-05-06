@@ -51,7 +51,9 @@ public class CombineChart extends JZChart {
     @Override
     public void initChart() {
         super.initChart();
-        mRenderer = new CombineChartRenderer(this);
+        if(mRenderer == null) {
+            mRenderer = new CombineChartRenderer(this);
+        }
     }
 
     public void addDataSet(AbstractDataSet<?> abstractDataSet) {

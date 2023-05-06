@@ -380,6 +380,25 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public int getVisibleCount(Viewport viewport) {
-        return candlestickChartRenderer.getVisibleCount(viewport);
+        if (!getChartData().getCandlestickData().isEmpty()) {
+            return candlestickChartRenderer.getVisibleCount(viewport);
+        }
+        if (!getChartData().getLineData().isEmpty()) {
+            return lineRenderer.getVisibleCount(viewport);
+        }
+        if (!getChartData().getBarData().isEmpty()) {
+            return barChartRenderer.getVisibleCount(viewport);
+        }
+        if (!getChartData().getScatterData().isEmpty()) {
+            return scatterChartRenderer.getVisibleCount(viewport);
+        }
+        if (!getChartData().getPointLineData().isEmpty()) {
+            return pointLineRenderer.getVisibleCount(viewport);
+        }
+        if (!getChartData().getScatterTextData().isEmpty()) {
+            return scatterTextRenderer.getVisibleCount(viewport);
+        }
+
+        return super.getVisibleCount(viewport);
     }
 }

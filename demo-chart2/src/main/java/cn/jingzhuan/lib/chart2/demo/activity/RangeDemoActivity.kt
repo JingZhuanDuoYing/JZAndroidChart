@@ -39,10 +39,6 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnAddTag: AppCompatButton
 
-    private lateinit var btnHighlightAlways: AppCompatButton
-
-    private var highlightAlwaysShow = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -54,7 +50,6 @@ class RangeDemoActivity : AppCompatActivity() {
         combineChart = findViewById(R.id.combine_chart)
         btnRange = findViewById(R.id.btn_range)
         btnAddTag = findViewById(R.id.btn_add_tag)
-        btnHighlightAlways = findViewById(R.id.btn_highlight_always)
 
         candlestickValues.addAll(addList())
 
@@ -84,16 +79,6 @@ class RangeDemoActivity : AppCompatActivity() {
             llRangeInfo.visibility = View.VISIBLE
             tvOpen.visibility = View.GONE
             tvNumber.visibility = View.VISIBLE
-        }
-
-        btnHighlightAlways.setOnClickListener {
-            if(highlightAlwaysShow) {
-                highlightAlwaysShow = false
-                combineChart.isAlwaysHighlight = false
-            }else {
-                highlightAlwaysShow = true
-                combineChart.isAlwaysHighlight = true
-            }
         }
 
         tvCloseRange.setOnClickListener {
