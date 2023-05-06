@@ -171,9 +171,17 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet<?>> impleme
         getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
+    public int getMaxVisibleEntryCount() {
+        return getChartData().getMaxVisibleEntryCount();
+    }
+
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {
         if (minVisibleEntryCount <= 0) return;
         getChartData().setMinVisibleEntryCount(minVisibleEntryCount);
+    }
+
+    public int getMinVisibleEntryCount() {
+        return getChartData().getMinVisibleEntryCount();
     }
 
     public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
@@ -198,5 +206,11 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet<?>> impleme
     }
 
     public void setTypeface(Typeface tf) {
+    }
+
+    public int getVisibleCount(Viewport viewport) {
+        if(getChartData().getDataSets() == null || getChartData().getDataSets().isEmpty()) return 0;
+        T dataSet = getChartData().getDataSets().get(0);
+        return dataSet.getVisiblePoints(viewport).size();
     }
 }

@@ -32,6 +32,7 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
 import cn.jingzhuan.lib.chart.event.OnScaleListener;
+import cn.jingzhuan.lib.chart.event.OnScaleStateListener;
 import cn.jingzhuan.lib.chart.event.OnTouchHighlightChangeListener;
 import cn.jingzhuan.lib.chart.event.OnTouchPointChangeListener;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
@@ -89,6 +90,12 @@ public abstract class AbstractChart extends BitmapCacheChart {
     protected OnScaleListener mScaleListener;
 
     /**
+     * 手指触摸缩放状态回调
+     * 两种状态 缩放到最小、放大到最大
+     */
+    protected OnScaleStateListener mScaleStateListener;
+
+    /**
      * 是否主图
      */
     private boolean mIsMainChart = false;
@@ -136,7 +143,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
     private boolean enableScaleX = true;
 
     /**
-     * 是否允许滑动
+     * 是否允许拖动
      */
     private boolean enableDraggingToMove = true;
 
@@ -171,6 +178,8 @@ public abstract class AbstractChart extends BitmapCacheChart {
     protected float mHighlightX, mHighlightY = Float.NaN;
 
     protected int mHighlightIndex = -1;
+
+    private boolean isScaleMin, isScaleMax = false;
 
     public AbstractChart(Context context) {
         this(context, null, 0);
@@ -389,8 +398,43 @@ public abstract class AbstractChart extends BitmapCacheChart {
         if (alwaysHighlight) {
             onAlwaysHighlight();
         }
+        handleScaling();
+    }
+
+    private void handleScaling() {
         if (mScaleListener != null) {
             mScaleListener.onScale(mCurrentViewport);
+        }
+        if(mScaleStateListener != null) {
+            int visibleSize = getVisibleCount(mCurrentViewport);
+            int maxVisibleSize = getMaxVisibleEntryCount();
+            int minVisibleSize = getMinVisibleEntryCount();
+            if(visibleSize >= maxVisibleSize) {
+                // 当前可见size为最大了 不能缩小了
+                if (!isScaleMin) {
+                    isScaleMin = true;
+                    mScaleStateListener.onScaleMinimum(true);
+                    Log.i("chart", "已缩小为最小值");
+                }
+            }else if(visibleSize <= minVisibleSize) {
+                // 当前可见size为最小了 不能放大了
+                if(!isScaleMax) {
+                    isScaleMax = true;
+                    mScaleStateListener.onScaleMaximum(true);
+                    Log.i("chart", "已放大至最大值");
+                }
+            }else {
+                if(isScaleMax) {
+                    isScaleMax = false;
+                    mScaleStateListener.onScaleMaximum(false);
+                }
+
+                if (isScaleMin) {
+                    isScaleMin = false;
+                    mScaleStateListener.onScaleMaximum(false);
+                }
+            }
+
         }
     }
 
@@ -438,6 +482,10 @@ public abstract class AbstractChart extends BitmapCacheChart {
      */
     public void setOnScaleListener(OnScaleListener onScaleListener) {
         this.mScaleListener = onScaleListener;
+    }
+
+    public void setOnScaleStateListener(OnScaleStateListener onScaleStateListener) {
+        this.mScaleStateListener = onScaleStateListener;
     }
 
     private final JZScaleGestureDetector.OnScaleGestureListener mScaleGestureListener = new JZScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -553,9 +601,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
             if (alwaysHighlight) {
                 onAlwaysHighlight();
             }
-            if (mScaleListener != null) {
-                mScaleListener.onScale(mCurrentViewport);
-            }
+            handleScaling();
             return true;
         }
     };

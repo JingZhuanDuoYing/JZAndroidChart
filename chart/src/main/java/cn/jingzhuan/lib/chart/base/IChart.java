@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 
@@ -29,11 +30,13 @@ public interface IChart {
      */
     void drawWatermark(Canvas canvas);
 
+    void initChart();
+
     void render(Canvas canvas);
 
     Paint getRenderPaint();
 
-    void initChart();
+    ChartAnimator getChartAnimator();
 
     Highlight[] getHighlights();
 
@@ -55,6 +58,10 @@ public interface IChart {
      */
     float getEntryCoordinateByIndex(int index);
 
-    ChartAnimator getChartAnimator();
+    int getVisibleCount(Viewport viewport);
+
+    int getMaxVisibleEntryCount();
+
+    int getMinVisibleEntryCount();
 
 }

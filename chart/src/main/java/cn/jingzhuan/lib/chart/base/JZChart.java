@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.animation.Easing;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -273,4 +274,19 @@ public class JZChart extends AbstractChart {
         this.mFocusIndex = focusIndex;
     }
 
+
+    @Override
+    public int getVisibleCount(Viewport viewport) {
+        return mRenderer.getVisibleCount(viewport);
+    }
+
+    @Override
+    public int getMaxVisibleEntryCount() {
+        return mRenderer.getMaxVisibleEntryCount();
+    }
+
+    @Override
+    public int getMinVisibleEntryCount() {
+        return mRenderer.getMinVisibleEntryCount();
+    }
 }

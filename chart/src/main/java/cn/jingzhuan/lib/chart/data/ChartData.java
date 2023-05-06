@@ -205,6 +205,10 @@ public class ChartData<T extends IDataSet> {
     }
   }
 
+  public int getMaxVisibleEntryCount() {
+    return this.maxVisibleEntryCount;
+  }
+
   public void setMinVisibleEntryCount(int minVisibleEntryCount) {
     this.minVisibleEntryCount = minVisibleEntryCount;
     synchronized (getDataSets()) {
@@ -212,6 +216,10 @@ public class ChartData<T extends IDataSet> {
         t.setMinVisibleEntryCount(minVisibleEntryCount);
       }
     }
+  }
+
+  public int getMinVisibleEntryCount() {
+    return this.minVisibleEntryCount;
   }
 
   public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
