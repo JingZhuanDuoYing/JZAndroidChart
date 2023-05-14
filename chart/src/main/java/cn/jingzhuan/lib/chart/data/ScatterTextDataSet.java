@@ -18,6 +18,11 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     private int textSize = 11;
     private int textPadding = 10;
     private int lineDashHeight = 40;
+
+    /**
+     * 临时字段 只适合一个字的背景
+     */
+    private boolean bgCircle = false;
     private int align = ALIGN_TOP;
 
     public int getTextBgColor() {
@@ -162,5 +167,13 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
      */
     public void setLineDashLength(int dashHeight) {
         this.lineDashHeight = dashHeight;
+    }
+
+    public boolean isBgCircle() {
+        return bgCircle;
+    }
+
+    public void setBgCircle(boolean bgCircle) {
+        this.bgCircle = bgCircle;
     }
 }

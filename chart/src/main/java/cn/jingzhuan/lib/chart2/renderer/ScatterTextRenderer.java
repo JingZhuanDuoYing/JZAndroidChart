@@ -206,12 +206,16 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             roundRect.set(left, top, right, bottom);
             mRenderPaint.setPathEffect(null);
             mRenderPaint.setStyle(Paint.Style.FILL);
+            mRenderPaint.setAntiAlias(true);
             mRenderPaint.setColor(bgColor);
-            canvas.drawRoundRect(roundRect, 2f, 2f, mRenderPaint);
+
+            float radius = dataSet.isBgCircle() ? textRectWidth : 2f;
+            canvas.drawRoundRect(roundRect, radius, radius, mRenderPaint);
 
             mRenderPaint.setStyle(Paint.Style.STROKE);
+            mRenderPaint.setAntiAlias(true);
             mRenderPaint.setColor(frameColor);
-            canvas.drawRoundRect(roundRect, 2f, 2f, mRenderPaint);
+            canvas.drawRoundRect(roundRect, radius, radius, mRenderPaint);
 
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
             float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
