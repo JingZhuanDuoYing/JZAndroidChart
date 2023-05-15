@@ -23,5 +23,6 @@
         <attr name="axisColor" format="color" />
         <attr name="gridThickness" format="dimension" />
         <attr name="gridColor" format="color" />
+        <attr name="backgroundColor" format="color" />
     </declare-styleable>
 </resources>
