@@ -179,12 +179,6 @@ public abstract class Chart extends BitmapCachedChart {
         setupEdgeEffect(context);
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.drawColor(bgColor);
-        super.onDraw(canvas);
-    }
-
     public abstract void initChart();
 
     public abstract void highlightValue(Highlight highlight);
@@ -1096,6 +1090,11 @@ public abstract class Chart extends BitmapCachedChart {
         if (!mScroller.isFinished()) {
             mScroller.forceFinished(true);
         }
+    }
+
+    @Override
+    protected int getBackgroundColor() {
+        return this.bgColor;
     }
 }
 

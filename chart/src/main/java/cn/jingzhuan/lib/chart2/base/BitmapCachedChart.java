@@ -81,6 +81,7 @@ public abstract class BitmapCachedChart extends View {
         int clipRestoreCount = canvas.save();
 
         canvas.clipRect(mContentRect);
+        canvas.drawColor(getBackgroundColor());
         createBitmapCache(canvas);
 
         if (getBitmapCanvas() != null) {
@@ -151,5 +152,7 @@ public abstract class BitmapCachedChart extends View {
     protected abstract void render(Canvas canvas);
     protected abstract Paint getRenderPaint();
     protected abstract void drawLabels(Canvas canvas);
+
+    protected abstract int getBackgroundColor();
 
 }
