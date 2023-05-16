@@ -203,6 +203,22 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 //                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
             }
 
+            if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
+                // 左边界
+                top = anchor + textRectHeight * 0.5f + textPadding;
+                bottom = anchor - textRectHeight * 0.5f - textPadding;
+                right = candlestickCenterX + dashLength + textRectWidth + textPadding * 2;
+                left = right - textRectWidth - textPadding * 2;
+            }
+
+            if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
+                // 右边界
+                top = anchor + textRectHeight * 0.5f + textPadding;
+                bottom = anchor - textRectHeight * 0.5f - textPadding;
+                left = candlestickCenterX - dashLength - textRectWidth - textPadding * 2;
+                right = left + textRectWidth + textPadding * 2;
+            }
+
             roundRect.set(left, top, right, bottom);
             mRenderPaint.setPathEffect(null);
             mRenderPaint.setStyle(Paint.Style.FILL);
@@ -223,8 +239,18 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             canvas.drawText(text, roundRect.centerX(), baseline, mTextPaint);
 
             Path path = new Path();
-            path.moveTo(candlestickCenterX, anchor);
-            path.lineTo(candlestickCenterX, pathEnd);
+            if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
+                // 左边界
+                path.moveTo(candlestickCenterX, anchor);
+                path.lineTo(candlestickCenterX + dashLength, anchor);
+            } else if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
+                // 右边界
+                path.moveTo(candlestickCenterX, anchor);
+                path.lineTo(candlestickCenterX - dashLength, anchor);
+            } else {
+                path.moveTo(candlestickCenterX, anchor);
+                path.lineTo(candlestickCenterX, pathEnd);
+            }
 
             mRenderPaint.setColor(lineColor);
             mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));
