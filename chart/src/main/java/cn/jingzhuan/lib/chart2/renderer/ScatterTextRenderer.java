@@ -209,6 +209,11 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 bottom = anchor - textRectHeight * 0.5f - textPadding;
                 right = candlestickCenterX + dashLength + textRectWidth + textPadding * 2;
                 left = right - textRectWidth - textPadding * 2;
+
+                if(bottom < margin) {
+                    bottom = margin;
+                    top = bottom + textRectHeight + textPadding * 2;
+                }
             }
 
             if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
@@ -217,6 +222,11 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 bottom = anchor - textRectHeight * 0.5f - textPadding;
                 left = candlestickCenterX - dashLength - textRectWidth - textPadding * 2;
                 right = left + textRectWidth + textPadding * 2;
+
+                if(bottom < margin) {
+                    bottom = margin;
+                    top = bottom + textRectHeight + textPadding * 2;
+                }
             }
 
             roundRect.set(left, top, right, bottom);
@@ -241,12 +251,22 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             Path path = new Path();
             if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
                 // 左边界
-                path.moveTo(candlestickCenterX, anchor);
-                path.lineTo(candlestickCenterX + dashLength, anchor);
+                if(bottom == margin) {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX + dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX + dashLength, anchor);
+                }
             } else if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
                 // 右边界
-                path.moveTo(candlestickCenterX, anchor);
-                path.lineTo(candlestickCenterX - dashLength, anchor);
+                if(bottom == margin) {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor);
+                }
             } else {
                 path.moveTo(candlestickCenterX, anchor);
                 path.lineTo(candlestickCenterX, pathEnd);
