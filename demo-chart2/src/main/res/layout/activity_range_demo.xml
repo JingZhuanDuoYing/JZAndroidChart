@@ -55,6 +55,7 @@
             android:layout_height="200dp"
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
+            app:backgroundColor="#F7F7F7"
             app:axisColor="#ffe5e5e5"
             app:axisThickness="0.5dp"
             app:gridColor="#ffe5e5e5"

@@ -108,6 +108,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean canZoomIn = true;
     private boolean canZoomOut = true;
 
+    private int bgColor = Color.TRANSPARENT;
+
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -147,6 +149,7 @@ public abstract class Chart extends BitmapCachedChart {
             axisList.add(mAxisTop);
             axisList.add(mAxisBottom);
 
+            bgColor = a.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
             float labelTextSize = a.getDimension(R.styleable.Chart_labelTextSize, 28);
             float labelSeparation = a.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10);
             float gridThickness = a.getDimension(R.styleable.Chart_gridThickness, 2);
@@ -1087,6 +1090,11 @@ public abstract class Chart extends BitmapCachedChart {
         if (!mScroller.isFinished()) {
             mScroller.forceFinished(true);
         }
+    }
+
+    @Override
+    protected int getBackgroundColor() {
+        return this.bgColor;
     }
 }
 
