@@ -515,16 +515,16 @@ public abstract class Chart extends BitmapCachedChart {
                     mCurrentViewport.left + viewportOffsetX
             );
 
-            if (canScrollX && scrolledX < 0) {
-                mEdgeEffectLeft.onPull(scrolledX / (float) mContentRect.width());
-                mEdgeEffectLeftActive = true;
-                if (canLoadMore && mOnLoadMoreKlineListener != null) {
-                    mOnLoadMoreKlineListener.onLoadMoreKline(scrolledX);
-                }
-                canLoadMore = false;
-            } else {
-                canLoadMore = true;
-            }
+//            if (canScrollX && scrolledX < 0) {
+//                mEdgeEffectLeft.onPull(scrolledX / (float) mContentRect.width());
+//                mEdgeEffectLeftActive = true;
+//                if (canLoadMore && mOnLoadMoreKlineListener != null) {
+//                    mOnLoadMoreKlineListener.onLoadMoreKline(scrolledX);
+//                }
+//                canLoadMore = false;
+//            } else {
+//                canLoadMore = true;
+//            }
             if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width()) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
                         / (float) mContentRect.width());
@@ -721,6 +721,13 @@ public abstract class Chart extends BitmapCachedChart {
             float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
                     * currX / mSurfaceSizeBuffer.x;
             setViewportBottomLeft(currXRange);
+            if (canLoadMore && currX <= 0) {
+                Log.w("Chart", "加载更多");
+                mScroller.forceFinished(true);
+                if (mOnLoadMoreKlineListener != null) {
+                    mOnLoadMoreKlineListener.onLoadMoreKline(currX);
+                }
+            }
         }
 
         if (mZoomer.computeZoom()) {
