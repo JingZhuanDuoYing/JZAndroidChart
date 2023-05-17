@@ -214,11 +214,6 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                     bottom = margin;
                     top = bottom + textRectHeight + textPadding * 2;
                 }
-
-                if(bottom > mContentRect.height() - margin) {
-                    bottom = mContentRect.height() - margin;
-                    top = bottom + textRectHeight + textPadding * 2;
-                }
             }
 
             if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
@@ -230,11 +225,6 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
 
                 if(bottom < margin) {
                     bottom = margin;
-                    top = bottom + textRectHeight + textPadding * 2;
-                }
-
-                if(bottom > mContentRect.height() - margin) {
-                    bottom = mContentRect.height() - margin;
                     top = bottom + textRectHeight + textPadding * 2;
                 }
             }
@@ -261,7 +251,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             Path path = new Path();
             if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
                 // 左边界
-                if(bottom == margin || bottom == mContentRect.height() - margin) {
+                if(bottom == margin) {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX + dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
                 } else {
@@ -270,7 +260,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 }
             } else if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
                 // 右边界
-                if(bottom == margin || bottom == mContentRect.height() - margin) {
+                if(bottom == margin) {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX - dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
                 } else {
