@@ -160,19 +160,24 @@ public class JZChart extends AbstractChart {
 
         float width = getContentRect().width();
 
-        if(highlightX <= 0f) {
-            dataIndex = getEntryIndexByCoordinate(0f, 0f);
-            highlight.setDataIndex(dataIndex);
+        int visibleSize = getVisibleCount(mCurrentViewport);
+        float pointWidth = (float) mContentRect.width() / (float) visibleSize;
+        float halfPointWidth = pointWidth * 0.5f;
+
+        if(highlightX <= 0) {
+            dataIndex = getEntryIndexByCoordinate(halfPointWidth, 0f);
         }
 
-        if(highlightX >= width) {
-            dataIndex = getEntryIndexByCoordinate(width, 0f);
-            highlight.setDataIndex(dataIndex);
+        if(highlightX >= width - halfPointWidth) {
+            dataIndex = getEntryIndexByCoordinate(width - halfPointWidth, 0f);
         }
 
-        highlight.setX(highlightX);
+        float x = Math.max(halfPointWidth, Math.min(width - halfPointWidth, highlightX + halfPointWidth));
+
+        highlight.setX(x);
         highlight.setY(mHighlightY);
-        Log.w("onAlwaysHighlight", highlightX + "-" + mHighlightY + "-" + dataIndex);
+        highlight.setDataIndex(dataIndex);
+        Log.w("onAlwaysHighlight", x + "-" + mHighlightY + "-" + dataIndex);
         highlightValue(highlight);
     }
 

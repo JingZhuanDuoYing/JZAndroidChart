@@ -84,7 +84,8 @@ public abstract class BitmapCacheChart extends View implements IChart {
         int clipRestoreCount = canvas.save();
 
         canvas.clipRect(mContentRect);
-        createBitmapCache(canvas);
+        canvas.drawColor(getBackgroundColor());
+        createBitmapCache();
 
         if (getBitmapCanvas() != null) {
             drawGridLine(getBitmapCanvas());
@@ -100,7 +101,7 @@ public abstract class BitmapCacheChart extends View implements IChart {
         drawLabels(canvas); // 坐标轴刻度在最上层
     }
 
-    protected void createBitmapCache(Canvas canvas) {
+    protected void createBitmapCache() {
         int width = getContentRect().width() + getContentRect().left;
         int height = getContentRect().height();
 

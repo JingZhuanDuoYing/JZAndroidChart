@@ -179,6 +179,8 @@ public abstract class AbstractChart extends BitmapCacheChart {
 
     private boolean isScaleMin, isScaleMax = false;
 
+    private int bgColor = Color.TRANSPARENT;
+
     public AbstractChart(Context context) {
         this(context, null, 0);
     }
@@ -211,6 +213,7 @@ public abstract class AbstractChart extends BitmapCacheChart {
             axisList.add(mAxisTop);
             axisList.add(mAxisBottom);
 
+            bgColor = a.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
             float labelTextSize = a.getDimension(R.styleable.Chart_labelTextSize, 28);
             float labelSeparation = a.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10);
             float gridThickness = a.getDimension(R.styleable.Chart_gridThickness, 2);
@@ -1128,6 +1131,12 @@ public abstract class AbstractChart extends BitmapCacheChart {
     }
 
     // </editor-fold desc="generate set and get">    ---------------------------------------------------------
+
+
+    @Override
+    public int getBackgroundColor() {
+        return this.bgColor;
+    }
 
     public void finishScroll() {
         if (!mScroller.isFinished()) {

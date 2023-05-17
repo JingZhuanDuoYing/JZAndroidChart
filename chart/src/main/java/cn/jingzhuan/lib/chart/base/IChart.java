@@ -30,6 +30,11 @@ public interface IChart {
      */
     void drawWatermark(Canvas canvas);
 
+    /**
+     * 画背景颜色 底部时间区域除外
+     */
+    int getBackgroundColor();
+
     void initChart();
 
     void render(Canvas canvas);
