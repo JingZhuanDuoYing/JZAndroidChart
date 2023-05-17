@@ -4,6 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Typeface;
 
 import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
+
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.base.JZChart;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
@@ -44,23 +47,58 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     public CombineChartRenderer(final JZChart chart) {
         super(chart);
-        treeChartRenderer = new TreeChartRenderer(chart);
-        lineRenderer = new LineRenderer(chart);
-        barChartRenderer = new BarChartRenderer(chart);
-        candlestickChartRenderer = new CandlestickChartRenderer(chart);
-        scatterChartRenderer = new ScatterChartRenderer(chart);
-        rangeRenderer = new RangeRenderer(chart);
-        pointLineRenderer = new PointLineRenderer(chart);
-        scatterTextRenderer = new ScatterTextRenderer(chart);
+        treeChartRenderer = initTreeChartRenderer(chart);
+        lineRenderer = initLineRenderer(chart);
+        barChartRenderer = initBarChartRenderer(chart);
+        candlestickChartRenderer = initCandlestickChartRenderer(chart);
+        scatterChartRenderer = initScatterChartRenderer(chart);
+        rangeRenderer = initRangeChartRenderer(chart);
+        pointLineRenderer = initPointLineRenderer(chart);
+        scatterTextRenderer = initScatterTextRenderer(chart);
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport) {
+            @Override public void onViewportChange(Viewport viewport) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }
         });
+    }
+
+    private TreeChartRenderer initTreeChartRenderer(JZChart chart) {
+        return new TreeChartRenderer(chart);
+    }
+
+    private ScatterTextRenderer initScatterTextRenderer(JZChart chart) {
+        return new ScatterTextRenderer(chart);
+    }
+
+    private PointLineRenderer initPointLineRenderer(JZChart chart) {
+        return new PointLineRenderer(chart);
+    }
+
+    private RangeRenderer initRangeChartRenderer(JZChart chart) {
+        return new RangeRenderer(chart);
+    }
+
+    @NotNull
+    private ScatterChartRenderer initScatterChartRenderer(JZChart chart) {
+        return new ScatterChartRenderer(chart);
+    }
+
+    @NotNull
+    protected CandlestickChartRenderer initCandlestickChartRenderer(JZChart chart) {
+        return new CandlestickChartRenderer(chart);
+    }
+
+    @NotNull
+    protected BarChartRenderer initBarChartRenderer(JZChart chart) {
+        return new BarChartRenderer(chart);
+    }
+
+    @NotNull
+    protected LineRenderer initLineRenderer(JZChart chart) {
+        return new LineRenderer(chart);
     }
 
     @Override
