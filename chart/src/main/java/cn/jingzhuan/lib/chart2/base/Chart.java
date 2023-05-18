@@ -525,7 +525,10 @@ public abstract class Chart extends BitmapCachedChart {
 //            } else {
 //                canLoadMore = true;
 //            }
-            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width()) {
+
+            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+
+            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && isRightSide) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
                         / (float) mContentRect.width());
                 mEdgeEffectRightActive = true;
@@ -536,6 +539,8 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+            if(isRightSide) return false;
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
 
             fling((int) -velocityX);
@@ -691,6 +696,10 @@ public abstract class Chart extends BitmapCachedChart {
 
             boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
                     || mCurrentViewport.right < Viewport.AXIS_X_MAX);
+
+            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+
+            if(isRightSide) return;
 
             if (canScrollX
                     && currX < 0
