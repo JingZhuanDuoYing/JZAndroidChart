@@ -624,9 +624,6 @@ public abstract class Chart extends BitmapCachedChart {
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
-        if(mScaleListener != null) {
-            mScaleListener.onScale(mCurrentViewport);
-        }
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -649,11 +646,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        postInvalidateOnAnimation();
-        if(mScaleListener != null) {
-            mScaleListener.onScale(mCurrentViewport);
-        }
-
+        triggerViewportChange();
     }
 
     /**
@@ -681,9 +674,6 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(forceX,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
         triggerViewportChange();
-        if(mScaleListener != null) {
-            mScaleListener.onScale(mCurrentViewport);
-        }
     }
 
     @Override
@@ -744,7 +734,22 @@ public abstract class Chart extends BitmapCachedChart {
                     mZoomFocalPoint.y - newHeight * pointWithinViewportY,
                     mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
                     mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+
+            // 优先向右缩进
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+            }
+
+            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+
             mCurrentViewport.constrainViewport();
+
+            if(mScaleListener != null) {
+                mScaleListener.onScale(mCurrentViewport);
+            }
+
             needsInvalidate = true;
         }
 

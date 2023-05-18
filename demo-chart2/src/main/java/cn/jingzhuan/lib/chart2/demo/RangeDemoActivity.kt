@@ -18,6 +18,7 @@ import cn.jingzhuan.lib.chart.data.ScatterTextValue
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
+import cn.jingzhuan.lib.chart.utils.ForceAlign
 import kotlin.math.round
 
 class RangeDemoActivity : AppCompatActivity() {
@@ -40,6 +41,10 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnAddTag: AppCompatButton
 
+    private lateinit var btnScaleIn: AppCompatButton
+
+    private lateinit var btnScaleOut: AppCompatButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -51,6 +56,8 @@ class RangeDemoActivity : AppCompatActivity() {
         combineChart = findViewById(R.id.combine_chart)
         btnRange = findViewById(R.id.btn_range)
         btnAddTag = findViewById(R.id.btn_add_tag)
+        btnScaleIn = findViewById(R.id.btn_scale_in)
+        btnScaleOut = findViewById(R.id.btn_scale_out)
         initData()
 
         val dataSet = CandlestickDataSet(candlestickValues)
@@ -70,6 +77,14 @@ class RangeDemoActivity : AppCompatActivity() {
 //        dataSet.decreasingColor = 0xFF00AA3B.toInt()
 //        dataSet.increasingColor = 0xFFFD263F.toInt()
 //        combineChart.addDataSet(dataSet2)
+
+        btnScaleIn.setOnClickListener {
+            combineChart.zoomIn(ForceAlign.RIGHT)
+        }
+
+        btnScaleOut.setOnClickListener {
+            combineChart.zoomOut(ForceAlign.RIGHT)
+        }
 
         btnAddTag.setOnClickListener {
             val textDataSet = addTextData()
