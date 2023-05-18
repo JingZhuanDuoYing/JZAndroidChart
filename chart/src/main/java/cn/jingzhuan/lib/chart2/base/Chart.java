@@ -528,7 +528,7 @@ public abstract class Chart extends BitmapCachedChart {
 
             boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
 
-            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && isRightSide) {
+            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && !isRightSide) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
                         / (float) mContentRect.width());
                 mEdgeEffectRightActive = true;
