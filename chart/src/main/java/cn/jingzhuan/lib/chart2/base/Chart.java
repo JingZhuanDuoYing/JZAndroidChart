@@ -757,6 +757,7 @@ public abstract class Chart extends BitmapCachedChart {
 
             if(mScaleListener != null) {
                 mScaleListener.onScale(mCurrentViewport);
+                mScaleListener.onScaleEnd(mCurrentViewport);
             }
 
             needsInvalidate = true;
