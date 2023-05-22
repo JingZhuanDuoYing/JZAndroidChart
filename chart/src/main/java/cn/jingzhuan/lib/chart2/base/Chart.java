@@ -697,10 +697,6 @@ public abstract class Chart extends BitmapCachedChart {
             boolean canScrollX = (mCurrentViewport.left > Viewport.AXIS_X_MIN
                     || mCurrentViewport.right < Viewport.AXIS_X_MAX);
 
-            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
-
-            if(isRightSide) return;
-
             if (canScrollX
                     && currX < 0
                     && mEdgeEffectLeft.isFinished()
