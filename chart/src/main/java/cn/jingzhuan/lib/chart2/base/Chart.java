@@ -104,6 +104,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected boolean canLoadMore = true;
 
+    protected float mDistanceX = 0f;
     private float scaleSensitivity = 1f;
     private boolean canZoomIn = true;
     private boolean canZoomOut = true;
@@ -472,6 +473,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            mDistanceX = distanceX;
 //            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
             // 主图高亮时 不滚动，只触发点击
             if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
@@ -526,7 +528,9 @@ public abstract class Chart extends BitmapCachedChart {
 //                canLoadMore = true;
 //            }
 
-            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width()) {
+            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+
+            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && !isRightSide) {
                 mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
                         / (float) mContentRect.width());
                 mEdgeEffectRightActive = true;
@@ -827,11 +831,28 @@ public abstract class Chart extends BitmapCachedChart {
                 mIsLongPress = false;
                 isTouching = false;
                 postInvalidateOnAnimation();
+                handleNoComputeScrollOffsetLoadMore();
                 break;
         }
         mGestureDetector.onTouchEvent(event);
         mScaleGestureDetector.onTouchEvent(event);
         return true;
+    }
+
+    private void handleNoComputeScrollOffsetLoadMore() {
+        float viewportOffsetX = mDistanceX * mCurrentViewport.width() / mContentRect.width();
+        int scrolledX = (int) (mSurfaceSizeBuffer.x
+                * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
+                / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+        boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+
+        if(isRightSide && scrolledX < 0 && canLoadMore) {
+//            Log.w("Chart", "加载更多->handleNoComputeScrollOffsetLoadMore");
+            if (mOnLoadMoreKlineListener != null) {
+                mOnLoadMoreKlineListener.onLoadMoreKline(scrolledX);
+            }
+        }
+        mDistanceX = 0f;
     }
 
     protected void setupEdgeEffect(Context context) {
