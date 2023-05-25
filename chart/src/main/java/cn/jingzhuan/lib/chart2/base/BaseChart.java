@@ -8,16 +8,20 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
 import cn.jingzhuan.lib.chart2.renderer.AbstractDataRenderer;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +81,8 @@ public class BaseChart extends Chart {
         });
     }
 
-    @Override protected void onDetachedFromWindow() {
+    @Override
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
         if (mBitmapCanvas != null) {
@@ -91,13 +96,14 @@ public class BaseChart extends Chart {
         }
     }
 
-    @Override protected void createBitmapCache(Canvas canvas) {
+    @Override
+    protected void createBitmapCache(Canvas canvas) {
         int width = getContentRect().width() + getContentRect().left;
         int height = getContentRect().height();
 
         if (mDrawBitmap == null
-            || (mDrawBitmap.get().getWidth() != width)
-            || (mDrawBitmap.get().getHeight() != height)) {
+                || (mDrawBitmap.get().getWidth() != width)
+                || (mDrawBitmap.get().getHeight() != height)) {
 
             if (width > 0 && height > 0) {
                 mDrawBitmap = new WeakReference<>(Bitmap.createBitmap(getResources().getDisplayMetrics(), width, height, mBitmapConfig));
@@ -109,11 +115,13 @@ public class BaseChart extends Chart {
         mDrawBitmap.get().eraseColor(Color.TRANSPARENT);
     }
 
-    @Override protected Bitmap getDrawBitmap() {
+    @Override
+    protected Bitmap getDrawBitmap() {
         return mDrawBitmap.get();
     }
 
-    @Override protected Paint getRenderPaint() {
+    @Override
+    protected Paint getRenderPaint() {
         return mRenderer.getRenderPaint();
     }
 
@@ -129,7 +137,8 @@ public class BaseChart extends Chart {
         }
     }
 
-    @Override protected void drawGridLine(Canvas canvas) {
+    @Override
+    protected void drawGridLine(Canvas canvas) {
         for (AxisRenderer axisRenderer : mAxisRenderers) {
             axisRenderer.drawGridLines(canvas);
         }
@@ -142,7 +151,8 @@ public class BaseChart extends Chart {
         }
     }
 
-    @Override protected void onTouchPoint(MotionEvent e) {
+    @Override
+    protected void onTouchPoint(MotionEvent e) {
         if (e.getPointerCount() == 1) {
             for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
                 touchPointChangeListener.touch(e.getX(), e.getY());
@@ -150,7 +160,8 @@ public class BaseChart extends Chart {
         }
     }
 
-    @Override protected void onTouchHighlight(MotionEvent e) {
+    @Override
+    protected void onTouchHighlight(MotionEvent e) {
         if (e.getPointerCount() == 1) {
             for (OnTouchHighlightChangeListener touchHighlightChangeListener : mTouchHighlightChangeListeners) {
                 touchHighlightChangeListener.highlight(e.getX(), e.getY());
@@ -163,7 +174,7 @@ public class BaseChart extends Chart {
 
         if (highlight == null) return;
 
-        final Highlight[] highlights = new Highlight[] { highlight };
+        final Highlight[] highlights = new Highlight[]{highlight};
 
         if (mHighlightStatusChangeListener != null) {
             mHighlightStatusChangeListener.onHighlightShow(highlights);
@@ -186,13 +197,17 @@ public class BaseChart extends Chart {
     @Override
     public void cleanHighlight() {
         mHighlights = null;
-//        System.out.println("high light dismiss");
         if (mHighlightStatusChangeListener != null)
             mHighlightStatusChangeListener.onHighlightHide();
 
         mFocusIndex = -1;
         mIsHighlight = false;
         invalidate();
+    }
+
+    @Override
+    public boolean isFullSupport() {
+        return mRenderer.isFullSupport();
     }
 
     public void setRenderer(AbstractDataRenderer renderer) {
@@ -260,7 +275,8 @@ public class BaseChart extends Chart {
         mRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
-    @Override protected int getEntryIndexByCoordinate(float x, float y) {
+    @Override
+    protected int getEntryIndexByCoordinate(float x, float y) {
         return mRenderer.getEntryIndexByCoordinate(x, y);
     }
 
@@ -288,7 +304,7 @@ public class BaseChart extends Chart {
     }
 
     public void animateXY(int durationMillisX, int durationMillisY, EasingFunction easingX,
-        EasingFunction easingY) {
+                          EasingFunction easingY) {
         mChartAnimator.animateXY(durationMillisX, durationMillisY, easingX, easingY);
     }
 

@@ -186,6 +186,8 @@ public abstract class Chart extends BitmapCachedChart {
 
     public abstract void cleanHighlight();
 
+    public abstract boolean isFullSupport();
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 

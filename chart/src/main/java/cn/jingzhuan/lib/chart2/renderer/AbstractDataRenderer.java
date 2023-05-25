@@ -142,6 +142,10 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         getChartData().setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
+    public boolean isFullSupport() {
+        return false;
+    }
+
     public Paint getRenderPaint() {
         return mRenderPaint;
     }
