@@ -216,7 +216,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 }
 
                 if(top > mContentRect.height() - margin) {
-                    top = mContentRect.height() - margin - (textRectHeight + textPadding * 2) * 0.5f;
+                    top = mContentRect.height() - margin;
                     bottom = top - textRectHeight - textPadding * 2;
                 }
             }
@@ -234,7 +234,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 }
 
                 if(top > mContentRect.height() - margin) {
-                    top = mContentRect.height() - margin - (textRectHeight + textPadding * 2) * 0.5f;
+                    top = mContentRect.height() - margin;
                     bottom = top - textRectHeight - textPadding * 2;
                 }
             }
@@ -268,7 +268,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 } else if (top == mContentRect.height() - margin) {
                     // 下边界
                     path.moveTo(candlestickCenterX, anchor);
-                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
+                    path.lineTo(candlestickCenterX - dashLength, anchor - margin);
                 } else {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX + dashLength, anchor);
@@ -281,7 +281,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 } else if (top == mContentRect.height() - margin) {
                     // 下边界
                     path.moveTo(candlestickCenterX, anchor);
-                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
+                    path.lineTo(candlestickCenterX - dashLength, anchor - margin);
                 } else {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX - dashLength, anchor);
