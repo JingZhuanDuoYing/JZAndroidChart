@@ -216,7 +216,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 }
 
                 if(top > mContentRect.height() - margin) {
-                    top = mContentRect.height() - margin;
+                    top = mContentRect.height() - margin - (textRectHeight + textPadding * 2) * 0.5f;
                     bottom = top - textRectHeight - textPadding * 2;
                 }
             }
@@ -234,7 +234,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 }
 
                 if(top > mContentRect.height() - margin) {
-                    top = mContentRect.height() - margin;
+                    top = mContentRect.height() - margin - (textRectHeight + textPadding * 2) * 0.5f;
                     bottom = top - textRectHeight - textPadding * 2;
                 }
             }
