@@ -207,7 +207,9 @@ public class BaseChart extends Chart {
 
     @Override
     public boolean isFullSupport() {
-        return mRenderer.isFullSupport();
+        int visibleCount = mRenderer.getVisibleCount();
+        int defaultVisibleEntryCount = mRenderer.getDefaultVisibleEntryCount();
+        return visibleCount > defaultVisibleEntryCount;
     }
 
     public void setRenderer(AbstractDataRenderer renderer) {

@@ -405,4 +405,14 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setHighlightThickness(highlightThickness);
         candlestickChartRenderer.setHighlightThickness(highlightThickness);
     }
+
+    @Override
+    public int getVisibleCount() {
+        return candlestickChartRenderer.getDataSet().get(0).getRealEntryCount();
+    }
+
+    @Override
+    public int getDefaultVisibleEntryCount() {
+        return candlestickChartRenderer.getDataSet().get(0).getDefaultVisibleEntryCount();
+    }
 }
