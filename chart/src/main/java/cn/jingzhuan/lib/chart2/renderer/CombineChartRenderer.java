@@ -407,12 +407,13 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     }
 
     @Override
-    public int getVisibleCount() {
-        return candlestickChartRenderer.getDataSet().get(0).getRealEntryCount();
-    }
+    public boolean isFullSupport() {
+        CandlestickDataSet dataSet = candlestickChartRenderer.getDataSet().get(0);
+        float candleWidth = dataSet.getCandleWidth();
 
-    @Override
-    public int getDefaultVisibleEntryCount() {
-        return candlestickChartRenderer.getDataSet().get(0).getDefaultVisibleEntryCount();
+        if (dataSet.isAutoWidth()) {
+            candleWidth = mContentRect.width() / dataSet.getVisibleRange(mViewport);
+        }
+        return candleWidth * dataSet.getRealEntryCount() >= mContentRect.width();
     }
 }

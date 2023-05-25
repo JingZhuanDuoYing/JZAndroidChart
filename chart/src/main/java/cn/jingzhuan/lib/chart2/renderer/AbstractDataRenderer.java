@@ -161,11 +161,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     public void setTypeface(Typeface tf) {
     }
 
-    public int getVisibleCount() {
-        return 0;
-    }
-
-    public int getDefaultVisibleEntryCount() {
-        return 0;
+    public boolean isFullSupport() {
+        return false;
     }
 }
