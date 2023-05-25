@@ -214,6 +214,11 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                     bottom = margin;
                     top = bottom + textRectHeight + textPadding * 2;
                 }
+
+                if(top > mContentRect.height() - margin) {
+                    top = mContentRect.height() - margin;
+                    bottom = top - textRectHeight - textPadding * 2;
+                }
             }
 
             if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
@@ -226,6 +231,11 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 if(bottom < margin) {
                     bottom = margin;
                     top = bottom + textRectHeight + textPadding * 2;
+                }
+
+                if(top > mContentRect.height() - margin) {
+                    top = mContentRect.height() - margin;
+                    bottom = top - textRectHeight - textPadding * 2;
                 }
             }
 
@@ -252,8 +262,13 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
             if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
                 // 左边界
                 if(bottom == margin) {
+                    // 上边界
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX + dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else if (top == mContentRect.height() - margin) {
+                    // 下边界
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
                 } else {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX + dashLength, anchor);
@@ -263,6 +278,10 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 if(bottom == margin) {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX - dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else if (top == mContentRect.height() - margin) {
+                    // 下边界
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
                 } else {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX - dashLength, anchor);
