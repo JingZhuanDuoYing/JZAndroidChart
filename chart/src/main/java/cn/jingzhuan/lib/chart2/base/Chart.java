@@ -827,11 +827,15 @@ public abstract class Chart extends BitmapCachedChart {
                 postInvalidateOnAnimation();
                 break;
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
                 mIsLongPress = false;
                 isTouching = false;
                 postInvalidateOnAnimation();
                 handleNoComputeScrollOffsetLoadMore();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                mIsLongPress = false;
+                isTouching = false;
+                postInvalidateOnAnimation();
                 break;
         }
         mGestureDetector.onTouchEvent(event);
