@@ -25,6 +25,8 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     private boolean bgCircle = false;
     private int align = ALIGN_TOP;
 
+    private int mForceValueCount = -1;
+
     public int getTextBgColor() {
         return textBgColor;
     }
@@ -129,6 +131,7 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     @Override
     public int getEntryCount() {
         if (getValues() == null) return 0;
+        if (mForceValueCount > 0) return mForceValueCount;
         return Math.max(getDefaultVisibleEntryCount(), getValues().size());
     }
 
@@ -174,5 +177,13 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
 
     public void setBgCircle(boolean bgCircle) {
         this.bgCircle = bgCircle;
+    }
+
+    public void setForceValueCount(int mForceValueCount) {
+        this.mForceValueCount = mForceValueCount;
+    }
+
+    public int getForceValueCount() {
+        return mForceValueCount;
     }
 }

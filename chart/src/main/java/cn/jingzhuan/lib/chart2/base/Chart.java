@@ -344,12 +344,17 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-            if(isFullSupport()) {
-                // 优先向右缩进
-                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//            if(isFullSupport()) {
+//                // 优先向右缩进
+//                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//
+//            }
 
-            }
+            // 优先向右缩进
+            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+
             if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                 mCurrentViewport.right = mCurrentViewport.left + newWidth;
                 if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
@@ -712,16 +717,25 @@ public abstract class Chart extends BitmapCachedChart {
             float pointWithinViewportY = (mZoomFocalPoint.y - mScrollerStartViewport.top)
                     / mScrollerStartViewport.height();
 
-            if(isFullSupport()) {
-                // 优先向右缩进
-                mCurrentViewport.set(
-                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
-                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
-                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
-                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
-                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//            if(isFullSupport()) {
+//                // 优先向右缩进
+//                mCurrentViewport.set(
+//                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+//                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+//                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+//                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//
+//            }
 
-            }
+            // 优先向右缩进
+            mCurrentViewport.set(
+                    mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+                    mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+                    mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+                    mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+
             if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                 mCurrentViewport.right = mCurrentViewport.left + newWidth;
                 if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
