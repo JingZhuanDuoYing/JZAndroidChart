@@ -34,6 +34,10 @@ public abstract class BitmapCachedChart extends View {
      */
     protected Viewport mCurrentViewport = new Viewport();
 
+    protected float mViewportLeft = -1;
+
+    protected float mViewportRight = -1;
+
     /**
      * The current destination rectangle (in pixel coordinates) into which the lib data should
      * be drawn. Chart labels are drawn outside this area.
