@@ -13,13 +13,11 @@ import android.view.ViewTreeObserver;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import cn.jingzhuan.lib.chart.R;
-import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.CandlestickData;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickValue;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.base.Chart;
 
 /**
@@ -110,47 +108,41 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         this.chart = chart;
         initPaint();
         initMeasure();
-        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
-                mViewport.set(viewport);
-                RangeRenderer.this.calcDataSetMinMax();
-            }
+        chart.setInternalViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            calcDataSetMinMax();
         });
-        chart.addOnViewportChangeListener(new OnViewportChangeListener() {
-            @Override
-            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
-                mViewport.set(viewport);
-                RangeRenderer.this.initChartBoundary();
-                if (viewport.width() == 1.0f) return;
-                if (chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
-                    int start = RangeRenderer.this.getEntryIndexByCoordinate(mStartX, 0);
-                    int end = RangeRenderer.this.getEntryIndexByCoordinate(mEndX, 0);
-                    if (chart.isScaling()) {
-                        final CandlestickDataSet candlestickDataSet = RangeRenderer.this.dataValid();
-                        int listSize = candlestickDataSet.getValues().size();
-                        int chartLeftIndex = Math.round(mViewport.left * listSize);
-                        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
-                        if (mStartIndex < chartLeftIndex) {
-                            mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
-                            if (mEndIndex > chartRightIndex) {
-                                mEndIndex = chartRightIndex;
-                            }
-                            mStartIndex = chartLeftIndex;
-
-                        }
-                        if (mEndIndex > chartRightIndex) {
+        chart.addOnViewportChangeListener(viewport -> {
+            mViewport.set(viewport);
+            initChartBoundary();
+            if (viewport.width() == 1.0f) return;
+            if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
+                int start = getEntryIndexByCoordinate(mStartX, 0);
+                int end = getEntryIndexByCoordinate(mEndX, 0);
+                if(chart.isScaling()) {
+                    final CandlestickDataSet candlestickDataSet = dataValid();
+                    int listSize = candlestickDataSet.getValues().size();
+                    int chartLeftIndex = Math.round(mViewport.left * listSize);
+                    int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+                    if(mStartIndex < chartLeftIndex) {
+                        mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
+                        if(mEndIndex > chartRightIndex) {
                             mEndIndex = chartRightIndex;
                         }
+                        mStartIndex = chartLeftIndex;
 
-                        mStartX = RangeRenderer.this.getScaleCoordinateByIndex(mStartIndex);
-                        mEndX = RangeRenderer.this.getScaleCoordinateByIndex(mEndIndex);
                     }
-                    if ((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
-                        mStartIndex = start;
-                        mEndIndex = end;
-                        touchDirection = TouchDirection.none;
+                    if(mEndIndex > chartRightIndex) {
+                        mEndIndex = chartRightIndex;
                     }
+
+                    mStartX = getScaleCoordinateByIndex(mStartIndex);
+                    mEndX = getScaleCoordinateByIndex(mEndIndex);
+                }
+                if((start != 0 && end != 0) && (mStartIndex != start && mEndIndex != end)) {
+                    mStartIndex = start;
+                    mEndIndex = end;
+                    touchDirection = TouchDirection.none;
                 }
             }
         });

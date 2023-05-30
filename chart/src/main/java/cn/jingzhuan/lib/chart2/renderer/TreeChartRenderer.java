@@ -35,7 +35,7 @@ public class TreeChartRenderer extends AbstractDataRenderer<TreeDataSet> {
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
-            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
+            public void onViewportChange(Viewport viewport) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }

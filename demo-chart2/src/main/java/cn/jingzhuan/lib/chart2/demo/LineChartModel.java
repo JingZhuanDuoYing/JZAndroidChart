@@ -83,7 +83,7 @@ public abstract class LineChartModel extends DataBindingEpoxyModel {
         View rootView = super.buildView(parent);
 
         final LayoutLineChartBinding bd = (LayoutLineChartBinding) rootView.getTag();
-        bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX), false);
+        bd.lineChart.setCurrentViewport(new Viewport(0.5f, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX));
         bd.lineChart.setDoubleTapToZoom(true);
         bd.lineChart.addLine(line);
         bd.lineChart.addLine(line2);

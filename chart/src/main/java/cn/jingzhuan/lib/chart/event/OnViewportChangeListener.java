@@ -8,6 +8,6 @@ import cn.jingzhuan.lib.chart.Viewport;
 @FunctionalInterface
 public interface OnViewportChangeListener {
 
-    void onViewportChange(Viewport viewport, boolean isLoadMore);
+    void onViewportChange(Viewport viewport);
 
 }

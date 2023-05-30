@@ -59,7 +59,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override public void onViewportChange(Viewport viewport, boolean isLoadMore) {
+            @Override public void onViewportChange(Viewport viewport) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }
@@ -201,7 +201,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
                 mViewport.left = from / (float)dataSize;
                 mViewport.right = to / (float)dataSize;
-                chart.setCurrentViewport(mViewport, true);
+                chart.setCurrentViewport(mViewport);
                 lastDataSize = dataSize;
             }
         }
