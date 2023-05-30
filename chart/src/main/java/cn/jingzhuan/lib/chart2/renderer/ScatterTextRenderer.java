@@ -15,12 +15,14 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ScatterTextData;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextValue;
+import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart2.base.Chart;
 
 public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet> {
@@ -34,9 +36,12 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
     public ScatterTextRenderer(Chart chart) {
         super(chart);
 
-        chart.setInternalViewportChangeListener(viewport -> {
-            mViewport.set(viewport);
-            calcDataSetMinMax();
+        chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
+            @Override
+            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
+                mViewport.set(viewport);
+                ScatterTextRenderer.this.calcDataSetMinMax();
+            }
         });
         mTextPaint = new Paint();
         mTextPaint.setStyle(Paint.Style.FILL);

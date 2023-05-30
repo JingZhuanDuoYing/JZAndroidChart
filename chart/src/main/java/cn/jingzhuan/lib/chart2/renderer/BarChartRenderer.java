@@ -38,7 +38,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
-            public void onViewportChange(Viewport viewport) {
+            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }

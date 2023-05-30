@@ -262,7 +262,7 @@ public abstract class Chart extends BitmapCachedChart {
                     / mContentRect.width();
             mCurrentViewport.right = mCurrentViewport.left + newWidth;
             mCurrentViewport.constrainViewport();
-            triggerViewportChange();
+            triggerViewportChange(false);
             lastSpanX = spanX;
 
             return true;
@@ -395,16 +395,16 @@ public abstract class Chart extends BitmapCachedChart {
         }
     };
 
-    protected void triggerViewportChange() {
+    protected void triggerViewportChange(boolean isLoadMore) {
         postInvalidateOnAnimation();
 
         if (mInternalViewportChangeListener != null) {
-            mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
+            mInternalViewportChangeListener.onViewportChange(mCurrentViewport, isLoadMore);
         }
         if (mOnViewportChangeListeners != null && !mOnViewportChangeListeners.isEmpty()) {
             synchronized (this) {
                 for (OnViewportChangeListener mOnViewportChangeListener : mOnViewportChangeListeners) {
-                    mOnViewportChangeListener.onViewportChange(mCurrentViewport);
+                    mOnViewportChangeListener.onViewportChange(mCurrentViewport, isLoadMore);
                 }
             }
         }
@@ -464,7 +464,7 @@ public abstract class Chart extends BitmapCachedChart {
         mZoomFocalPoint.set(
                 (mCurrentViewport.right + mCurrentViewport.left) / 2,
                 (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        triggerViewportChange();
+        triggerViewportChange(false);
     }
 
     public void zoomOut(@XForce int forceAlignX) {
@@ -518,7 +518,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         mZoomFocalPoint.set(forceX,
             (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
-        triggerViewportChange();
+        triggerViewportChange(false);
     }
 
     @Override
@@ -577,7 +577,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         if (needsInvalidate) {
-            triggerViewportChange();
+            triggerViewportChange(false);
         }
     }
 
@@ -601,7 +601,7 @@ public abstract class Chart extends BitmapCachedChart {
         mCurrentViewport.left = x;
         mCurrentViewport.right = x + curWidth;
         mCurrentViewport.constrainViewport();
-        triggerViewportChange();
+        triggerViewportChange(false);
     }
 
     /**
@@ -612,7 +612,7 @@ public abstract class Chart extends BitmapCachedChart {
     public void setCurrentViewport(RectF viewport) {
         mCurrentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom);
         mCurrentViewport.constrainViewport();
-        triggerViewportChange();
+        triggerViewportChange(false);
     }
 
     @Override
@@ -673,7 +673,7 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         if (needsInvalidate) {
-            triggerViewportChange();
+            triggerViewportChange(false);
         }
     }
 

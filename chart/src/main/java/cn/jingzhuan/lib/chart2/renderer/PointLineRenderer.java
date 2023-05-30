@@ -34,7 +34,7 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
         mPointPaint.setStyle(Paint.Style.FILL);
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
-            public void onViewportChange(Viewport viewport) {
+            public void onViewportChange(Viewport viewport, boolean isLoadMore) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }

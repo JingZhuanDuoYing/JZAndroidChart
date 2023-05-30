@@ -38,7 +38,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterChartRenderer = new ScatterChartRenderer(chart);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override public void onViewportChange(Viewport viewport) {
+            @Override public void onViewportChange(Viewport viewport, boolean isLoadMore) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }
