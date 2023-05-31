@@ -7,10 +7,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.view.View;
+
 import cn.jingzhuan.lib.chart.Viewport;;
 import java.lang.ref.WeakReference;
 
@@ -89,11 +92,11 @@ public abstract class BitmapCachedChart extends View {
         createBitmapCache(canvas);
 
         if (getBitmapCanvas() != null) {
-          drawGridLine(getBitmapCanvas());
+            drawGridLine(getBitmapCanvas());
 
-          render(getBitmapCanvas());
+            render(getBitmapCanvas());
 
-          canvas.drawBitmap(getDrawBitmap(), 0, 0, getRenderPaint());
+            canvas.drawBitmap(getDrawBitmap(), 0, 0, getRenderPaint());
         }
 
         // Removes clipping rectangle
@@ -125,7 +128,8 @@ public abstract class BitmapCachedChart extends View {
         return mDrawBitmap.get();
     }
 
-    @Override protected void onDetachedFromWindow() {
+    @Override
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
         if (mBitmapCanvas != null) {
@@ -152,9 +156,13 @@ public abstract class BitmapCachedChart extends View {
     }
 
     protected abstract void drawAxis(Canvas canvas);
+
     protected abstract void drawGridLine(Canvas canvas);
+
     protected abstract void render(Canvas canvas);
+
     protected abstract Paint getRenderPaint();
+
     protected abstract void drawLabels(Canvas canvas);
 
     protected abstract int getBackgroundColor();
