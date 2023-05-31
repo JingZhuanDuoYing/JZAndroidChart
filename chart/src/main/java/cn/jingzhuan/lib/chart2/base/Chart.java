@@ -362,6 +362,7 @@ public abstract class Chart extends BitmapCachedChart {
             mCurrentViewport.constrainViewport();
 
             triggerViewportChange();
+            Log.d("Chart", "triggerViewportChange from= onScale");
 //            lastSpanX = spanX;
             if(mScaleListener != null)  {
                 mScaleListener.onScale(mCurrentViewport);
@@ -535,13 +536,6 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected void triggerViewportChange() {
         postInvalidateOnAnimation();
-
-        if (mViewportLeft == mCurrentViewport.left && mViewportRight == mCurrentViewport.right) {
-            return;
-        }
-
-        mViewportLeft = mCurrentViewport.left;
-        mViewportRight = mCurrentViewport.right;
 
         if (mInternalViewportChangeListener != null) {
             mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
@@ -754,6 +748,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (needsInvalidate) {
             triggerViewportChange();
+            Log.d("Chart", "triggerViewportChange from= computeScroll");
         }
     }
 
@@ -778,6 +773,8 @@ public abstract class Chart extends BitmapCachedChart {
         mCurrentViewport.right = x + curWidth;
         mCurrentViewport.constrainViewport();
         triggerViewportChange();
+
+        Log.d("Chart", "triggerViewportChange from= setViewportBottomLeft");
     }
 
     /**
@@ -791,21 +788,8 @@ public abstract class Chart extends BitmapCachedChart {
         triggerViewportChange();
     }
 
-//    private int lastEvAction = -1;
-//    private int lastPointerCount = -1;
     private boolean isScaling = false;
-    private ScalingTimeCount scalingTimeCount;
-    class ScalingTimeCount extends CountDownTimer {
-        public ScalingTimeCount() {
-            super(350, 350);
-        }
-        @Override
-        public void onFinish() {
-            isScaling = false;
-        }
-        @Override
-        public void onTick(long millisUntilFinished) {}
-    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
