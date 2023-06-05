@@ -132,7 +132,7 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
     public int getEntryCount() {
         if (getValues() == null) return 0;
         if (mForceValueCount > 0) return mForceValueCount;
-        return Math.max(getDefaultVisibleEntryCount(), getValues().size());
+        return Math.max(getMinValueCount(), getValues().size());
     }
 
     public int getTextSize() {

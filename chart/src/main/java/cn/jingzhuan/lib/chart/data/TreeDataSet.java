@@ -35,7 +35,7 @@ public class TreeDataSet extends AbstractDataSet<TreeValue> {
     @Override
     public int getEntryCount() {
         if (mTreeValues != null) {
-            return Math.max(getDefaultVisibleEntryCount(), mTreeValues.size());
+            return Math.max(getMinValueCount(), mTreeValues.size());
         }
         return 0;
     }
