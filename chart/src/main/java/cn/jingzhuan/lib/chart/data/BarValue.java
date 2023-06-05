@@ -16,6 +16,11 @@ public class BarValue extends Value {
     private boolean isEnable = true;
     private int[] gradientColors = null;
 
+    /**
+     * 这里tag比dataSet的优先级高
+     */
+    private String tag = null;
+
     public BarValue(float[] yValues) {
         this.yValues = yValues;
     }
@@ -82,6 +87,14 @@ public class BarValue extends Value {
 
     public void setColor(int color) {
         mColor = color;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return this.tag;
     }
 
     public void setPaintStyle(Paint.Style mPaintStyle) {

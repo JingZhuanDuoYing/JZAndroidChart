@@ -186,6 +186,8 @@ public abstract class Chart extends BitmapCachedChart {
 
     public abstract void cleanHighlight();
 
+    public abstract boolean isFullSupport();
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
@@ -342,48 +344,25 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-//            Log.d("Chart", "onScale"
-//                    + ", viewportFocus.x:" + viewportFocus.x
-//                    + ", newWidth:" + newWidth
-//                    + ", focusX:" + focusX
-//                    + ", focusY:" + focusY
-//                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
-//                    + ", spanX:" + spanX
-//                    + ", lastSpanX:" + lastSpanX
-//                    + ", mCurrentViewport.left:" + mCurrentViewport.left
-//                    + ", mContentRect.left:" + mContentRect.left
-//                    + ", mContentRect.width():" + mContentRect.width()
-//            );
+            if(isFullSupport()) {
+                // 优先向右缩进
+                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
 
-            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-            // mCurrentViewport.right = mCurrentViewport.left + newWidth;
-
-//            Log.w("Chart", "onScale"
-//                    + ", viewportFocus.x:" + viewportFocus.x
-//                    + ", newWidth:" + newWidth
-//                    + ", focusX:" + focusX
-//                    + ", focusY:" + focusY
-//                    + ", (spanX - lastSpanX) :" + (spanX - lastSpanX)
-//                    + ", spanX:" + spanX
-//                    + ", lastSpanX:" + lastSpanX
-//                    + ", mCurrentViewport.left:" + mCurrentViewport.left
-//                    + ", mContentRect.left:" + mContentRect.left
-//                    + ", mContentRect.width():" + mContentRect.width()
-//            );
-
-            // 优先向右缩进
-            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
-            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                }
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+            } else {
+                mCurrentViewport.left = Viewport.AXIS_X_MIN;
+                mCurrentViewport.right = Viewport.AXIS_X_MAX;
             }
-
-            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
 
             mCurrentViewport.constrainViewport();
 
             triggerViewportChange();
+            Log.d("Chart", "triggerViewportChange from= onScale");
 //            lastSpanX = spanX;
             if(mScaleListener != null)  {
                 mScaleListener.onScale(mCurrentViewport);
@@ -736,20 +715,26 @@ public abstract class Chart extends BitmapCachedChart {
                     / mScrollerStartViewport.width();
             float pointWithinViewportY = (mZoomFocalPoint.y - mScrollerStartViewport.top)
                     / mScrollerStartViewport.height();
-            mCurrentViewport.set(
-                    mZoomFocalPoint.x - newWidth * pointWithinViewportX,
-                    mZoomFocalPoint.y - newHeight * pointWithinViewportY,
-                    mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
-                    mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
 
-            // 优先向右缩进
-            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
-            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+            if(isFullSupport()) {
+                // 优先向右缩进
+                mCurrentViewport.set(
+                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+
+                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                }
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+
+            } else {
+                mCurrentViewport.left = Viewport.AXIS_X_MIN;
+                mCurrentViewport.right = Viewport.AXIS_X_MAX;
             }
-
-            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
 
             mCurrentViewport.constrainViewport();
 
@@ -763,6 +748,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (needsInvalidate) {
             triggerViewportChange();
+            Log.d("Chart", "triggerViewportChange from= computeScroll");
         }
     }
 
@@ -787,6 +773,8 @@ public abstract class Chart extends BitmapCachedChart {
         mCurrentViewport.right = x + curWidth;
         mCurrentViewport.constrainViewport();
         triggerViewportChange();
+
+        Log.d("Chart", "triggerViewportChange from= setViewportBottomLeft");
     }
 
     /**
@@ -800,21 +788,8 @@ public abstract class Chart extends BitmapCachedChart {
         triggerViewportChange();
     }
 
-//    private int lastEvAction = -1;
-//    private int lastPointerCount = -1;
     private boolean isScaling = false;
-    private ScalingTimeCount scalingTimeCount;
-    class ScalingTimeCount extends CountDownTimer {
-        public ScalingTimeCount() {
-            super(350, 350);
-        }
-        @Override
-        public void onFinish() {
-            isScaling = false;
-        }
-        @Override
-        public void onTick(long millisUntilFinished) {}
-    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 

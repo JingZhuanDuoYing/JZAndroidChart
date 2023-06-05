@@ -405,4 +405,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         lineRenderer.setHighlightThickness(highlightThickness);
         candlestickChartRenderer.setHighlightThickness(highlightThickness);
     }
+
+    @Override
+    public boolean isFullSupport() {
+        CandlestickDataSet dataSet = candlestickChartRenderer.getDataSet().get(0);
+        float candleWidth = dataSet.getCandleWidth();
+
+        if (dataSet.isAutoWidth()) {
+            candleWidth = mContentRect.width() / dataSet.getVisibleRange(mViewport);
+        }
+        return candleWidth * dataSet.getRealEntryCount() >= mContentRect.width();
+    }
 }

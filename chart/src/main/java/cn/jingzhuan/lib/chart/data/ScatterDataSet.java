@@ -43,6 +43,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   private List<TextValueRenderer> mTextValueRenderers;
 
+  private int mForceValueCount = -1;
+
   public ScatterDataSet(List<ScatterValue> scatterValues) {
     this.scatterValues = scatterValues;
   }
@@ -200,8 +202,8 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   @Override public int getEntryCount() {
     if (getValues() == null) return 0;
-    int entryCount = getValues().size();
-    return getMinValueCount() > entryCount ? getMinValueCount() : entryCount;
+    if (mForceValueCount > 0) return mForceValueCount;
+    return Math.max(getDefaultVisibleEntryCount(), getValues().size());
   }
 
   @Override public void setValues(List<ScatterValue> values) {
@@ -346,6 +348,14 @@ public class ScatterDataSet extends AbstractDataSet<ScatterValue> implements Has
 
   public void setShapeLevel(int shapeLevel) {
     this.shapeLevel = shapeLevel;
+  }
+
+  public void setForceValueCount(int mForceValueCount) {
+    this.mForceValueCount = mForceValueCount;
+  }
+
+  public int getForceValueCount() {
+    return mForceValueCount;
   }
 }
 

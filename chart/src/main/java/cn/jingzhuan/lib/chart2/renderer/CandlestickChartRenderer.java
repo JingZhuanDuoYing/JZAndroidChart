@@ -184,9 +184,9 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
 
       mBodyBuffers[0] = (float) (xPosition + (1 - widthPercent) * 0.5 * candleWidth);
-      mBodyBuffers[1] = closeY + 2;
+      mBodyBuffers[1] = closeY;
       mBodyBuffers[2] = (float) (mBodyBuffers[0] + candleWidth * widthPercent);
-      mBodyBuffers[3] = openY - 2;
+      mBodyBuffers[3] = openY;
 
       mUpperShadowBuffers[0] = (float) candlestickCenterX;
       mUpperShadowBuffers[2] = (float) candlestickCenterX;

@@ -44,11 +44,7 @@ public class BarDataSet extends AbstractDataSet<BarValue> {
         if (mForceValueCount > 0) return mForceValueCount;
 
         if (mBarValues != null) {
-            if (getMinValueCount() > mBarValues.size()) {
-                return getMinValueCount();
-            } else {
-                return mBarValues.size();
-            }
+            return Math.max(getDefaultVisibleEntryCount(), mBarValues.size());
         }
         return 0;
     }
