@@ -132,6 +132,8 @@ public abstract class Chart extends BitmapCachedChart {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
+        initListeners();
+
         mAxisTop.setGridLineEnable(false);
         mAxisTop.setLabelEnable(false);
 
@@ -166,8 +168,6 @@ public abstract class Chart extends BitmapCachedChart {
         }
 
         initChart();
-
-        initListeners();
 
         setupInteractions(context);
 
