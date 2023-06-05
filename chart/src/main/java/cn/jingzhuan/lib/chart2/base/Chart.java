@@ -12,12 +12,10 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 
@@ -35,7 +33,6 @@ import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
 import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +48,6 @@ public abstract class Chart extends BitmapCachedChart {
     protected AxisX mAxisTop = new AxisX(AxisX.TOP);
     protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
 
-    // State objects and values related to gesture tracking.
     private JZScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mGestureDetector;
     private OverScroller mScroller;
@@ -136,9 +132,7 @@ public abstract class Chart extends BitmapCachedChart {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
-        mTouchPointChangeListeners = Collections.synchronizedList(new ArrayList<OnTouchPointChangeListener>());
-        mTouchHighlightChangeListeners = Collections.synchronizedList(new ArrayList<OnTouchHighlightChangeListener>());
-        mOnViewportChangeListeners = Collections.synchronizedList(new ArrayList<OnViewportChangeListener>());
+        initListeners();
 
         mAxisTop.setGridLineEnable(false);
         mAxisTop.setLabelEnable(false);
@@ -180,17 +174,24 @@ public abstract class Chart extends BitmapCachedChart {
         setupEdgeEffect(context);
     }
 
-    public abstract void initChart();
+    private void setupInteractions(Context context) {
+        mScaleGestureDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
 
-    public abstract void highlightValue(Highlight highlight);
+        mGestureDetector = new GestureDetector(context, mGestureListener);
+        mGestureDetector.setIsLongpressEnabled(true);
 
-    public abstract void cleanHighlight();
+        mScroller = new OverScroller(context);
+        mZoomer = new Zoomer(context);
+    }
 
-    public abstract boolean isFullSupport();
+    private void initListeners() {
+        mTouchPointChangeListeners = Collections.synchronizedList(new ArrayList<>());
+        mTouchHighlightChangeListeners = Collections.synchronizedList(new ArrayList<>());
+        mOnViewportChangeListeners = Collections.synchronizedList(new ArrayList<>());
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-
         getContentRect().set(
                 getPaddingLeft() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth()),
                 getPaddingTop(),
@@ -213,21 +214,6 @@ public abstract class Chart extends BitmapCachedChart {
                                         + (mAxisBottom.isInside() ? 0 : mAxisBottom.getLabelHeight())
                                         + getPaddingBottom(),
                                 heightMeasureSpec)));
-    }
-
-    protected abstract int getEntryIndexByCoordinate(float x, float y);
-
-    //    -------- -------- --------
-
-    private void setupInteractions(Context context) {
-
-        mScaleGestureDetector = new JZScaleGestureDetector(context, mScaleGestureListener);
-
-        mGestureDetector = new GestureDetector(context, mGestureListener);
-        mGestureDetector.setIsLongpressEnabled(true);
-
-        mScroller = new OverScroller(context);
-        mZoomer = new Zoomer(context);
     }
 
     /**
@@ -260,7 +246,7 @@ public abstract class Chart extends BitmapCachedChart {
          * This is the active focal point in terms of the viewport. Could be a local
          * variable but kept here to minimize per-frame allocations.
          */
-        private PointF viewportFocus = new PointF();
+        private final PointF viewportFocus = new PointF();
 //        private float lastSpanX;
 
         @Override
@@ -344,20 +330,30 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-            if(isFullSupport()) {
-                // 优先向右缩进
-                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            // 优先向右缩进
+            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
 
-                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
-                }
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-            } else {
-                mCurrentViewport.left = Viewport.AXIS_X_MIN;
-                mCurrentViewport.right = Viewport.AXIS_X_MAX;
+            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             }
+            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+
+//            if(getIfKlineFullRect()) {
+//                // 优先向右缩进
+//                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//
+//                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+//                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
+//                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+//                }
+//                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+//            } else {
+//                mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//                mCurrentViewport.right = Viewport.AXIS_X_MAX;
+//            }
 
             mCurrentViewport.constrainViewport();
 
@@ -370,9 +366,6 @@ public abstract class Chart extends BitmapCachedChart {
             return true;
         }
     };
-
-    protected abstract void onTouchPoint(MotionEvent e);
-    protected abstract void onTouchHighlight(MotionEvent e);
 
     /**
      * The gesture listener, used for handling simple gestures such as double touches, scrolls,
@@ -716,25 +709,39 @@ public abstract class Chart extends BitmapCachedChart {
             float pointWithinViewportY = (mZoomFocalPoint.y - mScrollerStartViewport.top)
                     / mScrollerStartViewport.height();
 
-            if(isFullSupport()) {
-                // 优先向右缩进
-                mCurrentViewport.set(
-                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
-                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
-                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
-                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
-                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            // 优先向右缩进
+            mCurrentViewport.set(
+                    mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+                    mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+                    mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+                    mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
 
-                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
-                }
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-
-            } else {
-                mCurrentViewport.left = Viewport.AXIS_X_MIN;
-                mCurrentViewport.right = Viewport.AXIS_X_MAX;
+            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             }
+            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+
+//            if(getIfKlineFullRect()) {
+//                // 优先向右缩进
+//                mCurrentViewport.set(
+//                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
+//                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
+//                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
+//                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
+//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//
+//                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+//                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
+//                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+//                }
+//                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
+//
+//            } else {
+//                mCurrentViewport.left = Viewport.AXIS_X_MIN;
+//                mCurrentViewport.right = Viewport.AXIS_X_MAX;
+//            }
 
             mCurrentViewport.constrainViewport();
 
@@ -1119,7 +1126,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     @Override
-    protected int getBackgroundColor() {
+    public int getBackgroundColor() {
         return this.bgColor;
     }
 }

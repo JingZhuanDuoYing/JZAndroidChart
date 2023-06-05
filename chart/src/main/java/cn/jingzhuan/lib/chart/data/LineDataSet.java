@@ -60,7 +60,7 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
         if (mPointValues == null) return 0;
         if (mForceValueCount > 0) return mForceValueCount;
 
-        return Math.max(getDefaultVisibleEntryCount(), mPointValues.size());
+        return Math.max(getMinValueCount(), mPointValues.size());
     }
 
     @Override

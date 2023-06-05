@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 
@@ -17,7 +16,7 @@ import android.view.View;
 import cn.jingzhuan.lib.chart.Viewport;;
 import java.lang.ref.WeakReference;
 
-public abstract class BitmapCachedChart extends View {
+public abstract class BitmapCachedChart extends View implements IChart {
 
     protected WeakReference<Bitmap> mDrawBitmap;
     protected Canvas mBitmapCanvas;
@@ -127,16 +126,7 @@ public abstract class BitmapCachedChart extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
-        if (mBitmapCanvas != null) {
-            mBitmapCanvas.setBitmap(null);
-            mBitmapCanvas = null;
-        }
-        if (mDrawBitmap != null) {
-            if (mDrawBitmap.get() != null) mDrawBitmap.get().recycle();
-            mDrawBitmap.clear();
-            mDrawBitmap = null;
-        }
+        releaseBitmap();
     }
 
     public void releaseBitmap() {
@@ -150,17 +140,5 @@ public abstract class BitmapCachedChart extends View {
             mDrawBitmap = null;
         }
     }
-
-    protected abstract void drawAxis(Canvas canvas);
-
-    protected abstract void drawGridLine(Canvas canvas);
-
-    protected abstract void render(Canvas canvas);
-
-    protected abstract Paint getRenderPaint();
-
-    protected abstract void drawLabels(Canvas canvas);
-
-    protected abstract int getBackgroundColor();
 
 }
