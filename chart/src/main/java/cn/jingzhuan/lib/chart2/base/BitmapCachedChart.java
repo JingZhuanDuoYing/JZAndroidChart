@@ -80,16 +80,15 @@ public abstract class BitmapCachedChart extends View implements IChart {
         // 坐标轴刻度在最底层
         drawAxis(canvas);
 
-        // 坐标轴刻度文本在最底层
-        if (getDrawLabelsInBottom()) drawLabels(canvas);
-
-
         // Clips the next few drawing operations to the content area
         int clipRestoreCount = canvas.save();
 
         canvas.clipRect(mContentRect);
         canvas.drawColor(getBackgroundColor());
         createBitmapCache(canvas);
+
+        // 坐标轴刻度文本在最底层
+        if (getDrawLabelsInBottom()) drawLabels(canvas);
 
         if (getBitmapCanvas() != null) {
             drawGridLine(getBitmapCanvas());
