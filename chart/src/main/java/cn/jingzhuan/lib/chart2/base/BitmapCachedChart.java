@@ -77,15 +77,15 @@ public abstract class BitmapCachedChart extends View implements IChart {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawColor(getBackgroundColor());
-
-        // 坐标轴刻度在最底层
-        drawAxis(canvas);
-
         // Clips the next few drawing operations to the content area
         int clipRestoreCount = canvas.save();
 
         canvas.clipRect(mContentRect);
+
+        canvas.drawColor(getBackgroundColor());
+
+        // 坐标轴刻度在最底层
+        drawAxis(canvas);
 
         createBitmapCache(canvas);
 
