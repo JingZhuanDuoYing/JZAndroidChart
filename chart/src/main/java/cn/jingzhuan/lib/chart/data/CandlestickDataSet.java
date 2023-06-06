@@ -2,12 +2,12 @@ package cn.jingzhuan.lib.chart.data;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,290 +17,311 @@ import java.util.List;
 
 public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
 
-  private List<CandlestickValue> candlestickValues;
-  private boolean mAutoWidth = true;
-  private float mCandleWidth = -1;
+    private List<CandlestickValue> candlestickValues;
 
-  private int mIncreasingColor = 0xFFf84b4b;   // 阳线
-  private int mDecreasingColor = 0xFF1deb5b; // 阴线
-  private int mNeutralColor = Color.WHITE;    // 十字线
-  private int mLimitUpColor = Color.TRANSPARENT;
-  private int mLimitUpColor20 = Color.TRANSPARENT;
+    private boolean mAutoWidth = true;
+    private float mCandleWidth = -1;
 
-  private int mGapColor = Color.LTGRAY; // 缺口颜色
+    /**
+     * 阳线 颜色
+     */
+    private int mIncreasingColor = 0xFFf84b4b;
 
-  private Paint.Style mLimitUpPaintStyle = null;
+    /**
+     * 阴线 颜色
+     */
+    private int mDecreasingColor = 0xFF1deb5b;
 
-  private float strokeThickness = 4;
-  private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
-  private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
+    /**
+     * 十字光标线 颜色
+     */
+    private int mNeutralColor = Color.WHITE;
 
-  private boolean mEnableGap = false; // 是否显示缺口
-  private SparseArray<Pair<Float, Float>> mLowGaps;
-  private SparseArray<Pair<Float, Float>> mHighGaps;
+    private int mLimitUpColor, mLimitUpColor20 = Color.TRANSPARENT;
 
-  private float candleWidthPercent = 0.8f;
+    /**
+     * 缺口 颜色
+     */
+    private int mGapColor = Color.LTGRAY;
 
-  public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
-    this(candlestickValues, AxisY.DEPENDENCY_BOTH);
-  }
+    private Paint.Style mLimitUpPaintStyle = null;
 
-  public CandlestickDataSet(List<CandlestickValue> candlestickValues, @AxisY.AxisDependency int axisDependency) {
-    this.candlestickValues = candlestickValues;
+    private float strokeThickness = 4;
 
-    setAxisDependency(axisDependency);
-  }
+    /**
+     * 阳线、阴线样式-> 实心或空心
+     */
+    private Paint.Style mIncreasingPaintStyle, mDecreasingPaintStyle = Paint.Style.FILL;
 
-  @Override public void calcMinMax(Viewport viewport) {
+    /**
+     * 是否显示缺口
+     */
+    private boolean mEnableGap = false;
 
-    if (candlestickValues == null || candlestickValues.isEmpty())
-      return;
+    private SparseArray<Pair<Float, Float>> mLowGaps;
 
-    mViewportYMax = -Float.MAX_VALUE;
-    mViewportYMin = Float.MAX_VALUE;
+    private SparseArray<Pair<Float, Float>> mHighGaps;
 
-    List<CandlestickValue> visiblePoints = getVisiblePoints(viewport);
+    private float candleWidthPercent = 0.8f;
 
-    for (int i = 0; i < visiblePoints.size(); i++) {
-      CandlestickValue e = visiblePoints.get(i);
-      calcViewportMinMax(e);
+    public CandlestickDataSet(List<CandlestickValue> candlestickValues) {
+        this(candlestickValues, AxisY.DEPENDENCY_BOTH);
     }
 
-    if (mEnableGap) {
-      float max = -Float.MAX_VALUE;
-      float min = Float.MAX_VALUE;
+    public CandlestickDataSet(List<CandlestickValue> candlestickValues, @AxisY.AxisDependency int axisDependency) {
+        this.candlestickValues = candlestickValues;
 
-      for (int i = candlestickValues.size() - 1; i >= 0; i--) {
-        CandlestickValue e = candlestickValues.get(i);
+        setAxisDependency(axisDependency);
+    }
 
-        if (Float.isNaN(e.getLow())) continue;
-        if (Float.isNaN(e.getHigh())) continue;
+    @Override
+    public void calcMinMax(Viewport viewport) {
+        if (candlestickValues == null || candlestickValues.isEmpty()) return;
 
-        if (Float.isInfinite(e.getLow())) continue;
-        if (Float.isInfinite(e.getHigh())) continue;
+        mViewportYMax = -Float.MAX_VALUE;
+        mViewportYMin = Float.MAX_VALUE;
 
-        if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
-          if (min - e.getHigh() > 0.01f) { // 上涨缺口
-            mHighGaps.put(i, new Pair<>(e.getHigh(), min));
-          }
-          if (e.getLow() - max > 0.01f) { // 下跌缺口
-            mLowGaps.put(i, new Pair<>(e.getLow(), max));
-          }
+        List<CandlestickValue> visiblePoints = getVisiblePoints(viewport);
+
+        for (int i = 0; i < visiblePoints.size(); i++) {
+            CandlestickValue e = visiblePoints.get(i);
+            calcViewportMinMax(e);
         }
-        if (e.getLow() < min) min = e.getLow();
-        if (e.getHigh() > max) max = e.getHigh();
-      }
+
+        if (mEnableGap) {
+            float max = -Float.MAX_VALUE;
+            float min = Float.MAX_VALUE;
+
+            for (int i = candlestickValues.size() - 1; i >= 0; i--) {
+                CandlestickValue e = candlestickValues.get(i);
+
+                if (Float.isNaN(e.getLow())) continue;
+                if (Float.isNaN(e.getHigh())) continue;
+
+                if (Float.isInfinite(e.getLow())) continue;
+                if (Float.isInfinite(e.getHigh())) continue;
+
+                if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
+                    if (min - e.getHigh() > 0.01f) { // 上涨缺口
+                        mHighGaps.put(i, new Pair<>(e.getHigh(), min));
+                    }
+                    if (e.getLow() - max > 0.01f) { // 下跌缺口
+                        mLowGaps.put(i, new Pair<>(e.getLow(), max));
+                    }
+                }
+                if (e.getLow() < min) min = e.getLow();
+                if (e.getHigh() > max) max = e.getHigh();
+            }
+        }
+
+        float range = mViewportYMax - mViewportYMin;
+        if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+            mViewportYMin = mViewportYMin - range * getOffsetPercent();
+        }
+        if (Float.compare(getOffsetPercent(), 0f) > 0f) {
+            mViewportYMax = mViewportYMax + range * getOffsetPercent();
+        }
     }
 
-    float range = mViewportYMax - mViewportYMin;
-    if (Float.compare(getOffsetPercent(), 0f) > 0f) {
-      mViewportYMin = mViewportYMin - range * getOffsetPercent();
-    }
-    if (Float.compare(getOffsetPercent(), 0f) > 0f) {
-      mViewportYMax = mViewportYMax + range * getOffsetPercent();
-    }
-  }
-
-  public void setEnableGap(boolean enableGap) {
-    this.mEnableGap = enableGap;
-    if (mLowGaps == null) {
-      mLowGaps = new SparseArray<>();
-    }
-    if (mHighGaps == null) {
-      mHighGaps = new SparseArray<>();
-    }
-  }
-
-  private void calcViewportMinMax(CandlestickValue e) {
-
-    if (e == null || !e.isVisible()) return;
-
-    if (Float.isNaN(e.getLow())) return;
-    if (Float.isNaN(e.getHigh())) return;
-
-    if (Float.isInfinite(e.getLow())) return;
-    if (Float.isInfinite(e.getHigh())) return;
-
-    if (e.getLow() < mViewportYMin) {
-      mViewportYMin = e.getLow();
-//      Log.w("CandlestickDataSet", "calcViewportMinMax:"
-//              + ", e.getLow:" + e.getLow()
-//              + ", mViewportYMax:" + mViewportYMax
-//              + ", mViewportYMin:" + mViewportYMin);
+    public void setEnableGap(boolean enableGap) {
+        this.mEnableGap = enableGap;
+        if (mLowGaps == null) {
+            mLowGaps = new SparseArray<>();
+        }
+        if (mHighGaps == null) {
+            mHighGaps = new SparseArray<>();
+        }
     }
 
-    if (e.getHigh() > mViewportYMax) {
-      mViewportYMax = e.getHigh();
-//      Log.w("CandlestickDataSet", "calcViewportMinMax:"
-//              + ", e.getHigh:" + e.getHigh()
-//              + ", mViewportYMax:" + mViewportYMax
-//              + ", mViewportYMin:" + mViewportYMin);
-    }
-  }
+    private void calcViewportMinMax(CandlestickValue e) {
 
-  @Override public int getEntryCount() {
-    if (candlestickValues == null) return 0;
-    return Math.max(getMinValueCount(), candlestickValues.size());
-  }
+        if (e == null || !e.isVisible()) return;
 
-  public int getRealEntryCount() {
-    if (candlestickValues == null) return 0;
-    return candlestickValues.size();
-  }
+        if (Float.isNaN(e.getLow())) return;
+        if (Float.isNaN(e.getHigh())) return;
 
-  @Override public void setValues(List<CandlestickValue> values) {
-    this.candlestickValues = values;
-  }
+        if (Float.isInfinite(e.getLow())) return;
+        if (Float.isInfinite(e.getHigh())) return;
 
-  @Override public List<CandlestickValue> getValues() {
-    return candlestickValues;
-  }
+        if (e.getLow() < mViewportYMin) {
+            mViewportYMin = e.getLow();
+        }
 
-  @Override public boolean addEntry(CandlestickValue e) {
-    if (e == null)
-      return false;
-
-    if (candlestickValues == null) {
-      candlestickValues = new ArrayList<>();
+        if (e.getHigh() > mViewportYMax) {
+            mViewportYMax = e.getHigh();
+        }
     }
 
-    calcViewportMinMax(e);
+    @Override
+    public int getEntryCount() {
+        if (candlestickValues == null) return 0;
+        return Math.max(getMinValueCount(), candlestickValues.size());
+    }
 
-    // add the entry
-    return candlestickValues.add(e);
-  }
+    public int getRealEntryCount() {
+        if (candlestickValues == null) return 0;
+        return candlestickValues.size();
+    }
 
-  @Override public boolean removeEntry(CandlestickValue e) {
-    if (e == null) return false;
+    @Override
+    public void setValues(List<CandlestickValue> values) {
+        this.candlestickValues = values;
+    }
 
-    calcViewportMinMax(e);
+    @Override
+    public List<CandlestickValue> getValues() {
+        return candlestickValues;
+    }
 
-    return candlestickValues.remove(e);
-  }
+    @Override
+    public boolean addEntry(CandlestickValue value) {
+        if (value == null)
+            return false;
 
-  @Override public int getEntryIndex(CandlestickValue e) {
-    return candlestickValues.indexOf(e);
-  }
+        if (candlestickValues == null) {
+            candlestickValues = new ArrayList<>();
+        }
 
-  @Override public CandlestickValue getEntryForIndex(int index) {
-    return candlestickValues.get(index);
-  }
+        calcViewportMinMax(value);
 
-  public void setAutoWidth(boolean mAutoWidth) {
-    this.mAutoWidth = mAutoWidth;
-  }
+        // add the entry
+        return candlestickValues.add(value);
+    }
 
-  public boolean isAutoWidth() {
-    return mAutoWidth;
-  }
+    @Override
+    public boolean removeEntry(CandlestickValue value) {
+        if (value == null) return false;
 
-  public int getDecreasingColor() {
-    return mDecreasingColor;
-  }
+        calcViewportMinMax(value);
 
-  public void setDecreasingColor(int decreasingColor) {
-    this.mDecreasingColor = decreasingColor;
-  }
+        return candlestickValues.remove(value);
+    }
 
-  public int getIncreasingColor() {
-    return mIncreasingColor;
-  }
+    @Override
+    public int getEntryIndex(CandlestickValue e) {
+        return candlestickValues.indexOf(e);
+    }
 
-  public void setIncreasingColor(int increasingColor) {
-    this.mIncreasingColor = increasingColor;
-  }
+    @Override
+    public CandlestickValue getEntryForIndex(int index) {
+        return candlestickValues.get(index);
+    }
 
-  public float getCandleWidth() {
-    return mCandleWidth;
-  }
+    public void setAutoWidth(boolean mAutoWidth) {
+        this.mAutoWidth = mAutoWidth;
+    }
 
-  public void setCandleWidth(float mCandleWidth) {
-    this.mCandleWidth = mCandleWidth;
-  }
+    public boolean isAutoWidth() {
+        return mAutoWidth;
+    }
 
-  public int getNeutralColor() {
-    return mNeutralColor;
-  }
+    public int getDecreasingColor() {
+        return mDecreasingColor;
+    }
 
-  public void setNeutralColor(int mNeutralColor) {
-    this.mNeutralColor = mNeutralColor;
-  }
+    public void setDecreasingColor(int decreasingColor) {
+        this.mDecreasingColor = decreasingColor;
+    }
 
-  public void setLimitUpColor(int mLimitUpColor) {
-    this.mLimitUpColor = mLimitUpColor;
-  }
+    public int getIncreasingColor() {
+        return mIncreasingColor;
+    }
 
-  public int getLimitUpColor() {
-    return mLimitUpColor;
-  }
+    public void setIncreasingColor(int increasingColor) {
+        this.mIncreasingColor = increasingColor;
+    }
 
-  public void setLimitUpColor20(int mLimitUpColor) {
-    this.mLimitUpColor20 = mLimitUpColor;
-  }
+    public float getCandleWidth() {
+        return mCandleWidth;
+    }
 
-  public int getLimitUpColor20() {
-    return mLimitUpColor20;
-  }
+    public void setCandleWidth(float mCandleWidth) {
+        this.mCandleWidth = mCandleWidth;
+    }
 
-  public float getStrokeThickness() {
-    return strokeThickness;
-  }
+    public int getNeutralColor() {
+        return mNeutralColor;
+    }
 
-  public void setStrokeThickness(float strokeThickness) {
-    this.strokeThickness = strokeThickness;
-  }
+    public void setNeutralColor(int mNeutralColor) {
+        this.mNeutralColor = mNeutralColor;
+    }
 
-  public Paint.Style getIncreasingPaintStyle() {
-    return mIncreasingPaintStyle;
-  }
+    public void setLimitUpColor(int mLimitUpColor) {
+        this.mLimitUpColor = mLimitUpColor;
+    }
 
-  public void setIncreasingPaintStyle(Paint.Style increasingPaintStyle) {
-    this.mIncreasingPaintStyle = increasingPaintStyle;
-  }
+    public int getLimitUpColor() {
+        return mLimitUpColor;
+    }
 
-  public Paint.Style getDecreasingPaintStyle() {
-    return mDecreasingPaintStyle;
-  }
+    public void setLimitUpColor20(int mLimitUpColor) {
+        this.mLimitUpColor20 = mLimitUpColor;
+    }
+
+    public int getLimitUpColor20() {
+        return mLimitUpColor20;
+    }
+
+    public float getStrokeThickness() {
+        return strokeThickness;
+    }
+
+    public void setStrokeThickness(float strokeThickness) {
+        this.strokeThickness = strokeThickness;
+    }
+
+    public Paint.Style getIncreasingPaintStyle() {
+        return mIncreasingPaintStyle;
+    }
+
+    public void setIncreasingPaintStyle(Paint.Style increasingPaintStyle) {
+        this.mIncreasingPaintStyle = increasingPaintStyle;
+    }
+
+    public Paint.Style getDecreasingPaintStyle() {
+        return mDecreasingPaintStyle;
+    }
 
 
-  public void setDecreasingPaintStyle(Paint.Style decreasingPaintStyle) {
-    this.mDecreasingPaintStyle = decreasingPaintStyle;
-  }
+    public void setDecreasingPaintStyle(Paint.Style decreasingPaintStyle) {
+        this.mDecreasingPaintStyle = decreasingPaintStyle;
+    }
 
-  public Paint.Style getLimitUpPaintStyle() {
-    return mLimitUpPaintStyle;
-  }
+    public Paint.Style getLimitUpPaintStyle() {
+        return mLimitUpPaintStyle;
+    }
 
-  public void setLimitUpPaintStyle(Paint.Style limitUpPaintStyle) {
-    this.mLimitUpPaintStyle = limitUpPaintStyle;
-  }
+    public void setLimitUpPaintStyle(Paint.Style limitUpPaintStyle) {
+        this.mLimitUpPaintStyle = limitUpPaintStyle;
+    }
 
-  public SparseArray<Pair<Float, Float>> getLowGaps() {
-    return mLowGaps;
-  }
+    public SparseArray<Pair<Float, Float>> getLowGaps() {
+        return mLowGaps;
+    }
 
-  public SparseArray<Pair<Float, Float>> getHighGaps() {
-    return mHighGaps;
-  }
+    public SparseArray<Pair<Float, Float>> getHighGaps() {
+        return mHighGaps;
+    }
 
-  public boolean isEnableGap() {
-    return mEnableGap;
-  }
+    public boolean isEnableGap() {
+        return mEnableGap;
+    }
 
-  public int getGapColor() {
-    return mGapColor;
-  }
+    public int getGapColor() {
+        return mGapColor;
+    }
 
-  public void setGapColor(int mGapColor) {
-    this.mGapColor = mGapColor;
-  }
+    public void setGapColor(int mGapColor) {
+        this.mGapColor = mGapColor;
+    }
 
-  public float getCandleWidthPercent() {
-    return candleWidthPercent;
-  }
+    public float getCandleWidthPercent() {
+        return candleWidthPercent;
+    }
 
-  public void setCandleWidthPercent(float candleWidthPercent) {
-    this.candleWidthPercent = candleWidthPercent;
-  }
+    public void setCandleWidthPercent(float candleWidthPercent) {
+        this.candleWidthPercent = candleWidthPercent;
+    }
 
 }

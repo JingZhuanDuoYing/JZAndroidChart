@@ -24,5 +24,6 @@
         <attr name="gridThickness" format="dimension" />
         <attr name="gridColor" format="color" />
         <attr name="backgroundColor" format="color" />
+        <attr name="drawLabelsInBottom" format="boolean" />
     </declare-styleable>
 </resources>

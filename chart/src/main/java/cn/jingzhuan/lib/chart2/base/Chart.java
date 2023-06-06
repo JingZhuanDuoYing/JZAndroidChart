@@ -105,7 +105,15 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean canZoomIn = true;
     private boolean canZoomOut = true;
 
+    /**
+     * 背景颜色
+     */
     private int bgColor = Color.TRANSPARENT;
+
+    /**
+     * 坐标轴刻度文本 是否画在底层
+     */
+    private boolean drawLabelsInBottom = false;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -144,7 +152,8 @@ public abstract class Chart extends BitmapCachedChart {
             axisList.add(mAxisTop);
             axisList.add(mAxisBottom);
 
-            bgColor = a.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
+            this.bgColor = a.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
+            this.drawLabelsInBottom = a.getBoolean(R.styleable.Chart_drawLabelsInBottom, false);
             float labelTextSize = a.getDimension(R.styleable.Chart_labelTextSize, 28);
             float labelSeparation = a.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10);
             float gridThickness = a.getDimension(R.styleable.Chart_gridThickness, 2);
@@ -1125,9 +1134,22 @@ public abstract class Chart extends BitmapCachedChart {
         }
     }
 
+    public void setBackgroundColor(int bgColor) {
+        this.bgColor = bgColor;
+    }
+
     @Override
     public int getBackgroundColor() {
         return this.bgColor;
+    }
+
+    public void setDrawLabelsInBottom(boolean drawLabelsInBottom) {
+        this.drawLabelsInBottom = drawLabelsInBottom;
+    }
+
+    @Override
+    public boolean getDrawLabelsInBottom() {
+        return this.drawLabelsInBottom;
     }
 }
 

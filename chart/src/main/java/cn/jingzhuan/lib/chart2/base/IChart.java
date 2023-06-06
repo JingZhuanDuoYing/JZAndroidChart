@@ -66,4 +66,6 @@ public interface IChart {
     void onTouchPoint(MotionEvent e);
 
     void onTouchHighlight(MotionEvent e);
+
+    boolean getDrawLabelsInBottom();
 }
