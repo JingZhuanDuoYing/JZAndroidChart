@@ -37,7 +37,9 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
      */
     private int mNeutralColor = Color.WHITE;
 
-    private int mLimitUpColor, mLimitUpColor20 = Color.TRANSPARENT;
+    private int mLimitUpColor = Color.TRANSPARENT;
+
+    private int mLimitUpColor20 = Color.TRANSPARENT;
 
     /**
      * 缺口 颜色
@@ -51,7 +53,9 @@ public class CandlestickDataSet extends AbstractDataSet<CandlestickValue> {
     /**
      * 阳线、阴线样式-> 实心或空心
      */
-    private Paint.Style mIncreasingPaintStyle, mDecreasingPaintStyle = Paint.Style.FILL;
+    private Paint.Style mIncreasingPaintStyle = Paint.Style.FILL;
+
+    private Paint.Style mDecreasingPaintStyle = Paint.Style.FILL;
 
     /**
      * 是否显示缺口

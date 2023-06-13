@@ -261,7 +261,6 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
-            isScaling = true;
             if(mScaleListener != null)  {
                 mScaleListener.onScaleStart(mCurrentViewport);
             }
@@ -275,6 +274,7 @@ public abstract class Chart extends BitmapCachedChart {
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
             }
+            isScaling = false;
             Log.d("Chart", "onScaleEnd");
         }
 
@@ -283,6 +283,8 @@ public abstract class Chart extends BitmapCachedChart {
             Log.d("Chart", "onScale");
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
+
+            isScaling = true;
 
             float spanX = scaleGestureDetector.getCurrentSpan();
             float lastSpanX = scaleGestureDetector.getPreviousSpan();
@@ -826,6 +828,7 @@ public abstract class Chart extends BitmapCachedChart {
             case MotionEvent.ACTION_CANCEL:
                 mIsLongPress = false;
                 isTouching = false;
+                isScaling = false;
                 postInvalidateOnAnimation();
                 break;
         }

@@ -35,32 +35,44 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 周期内 的起点和终点的下标
      */
-    private int mStartIndex, mEndIndex = 0;
+    private int mStartIndex = 0;
+
+    private int mEndIndex = 0;
 
     /**
      * 左、右两边icon x的坐标
      */
-    float mStartX, mEndX = 0;
+    private float mStartX = 0;
+
+    private float mEndX = 0;
 
     /**
      * 当前chart的左右边界
      */
-    int chartLeft, chartRight = 0;
+    private int chartLeft = 0;
+
+    private int chartRight = 0;
 
     /**
      * 左、右两边touch bitmap
      */
-    Bitmap leftTouchBitmap,rightTouchBitmap;
+    private Bitmap leftTouchBitmap;
+
+    private Bitmap rightTouchBitmap;
 
     /**
      * 左、右两边 touch的矩形区域
      */
-    RectF leftTouchRect, rightTouchRect;
+    private RectF leftTouchRect;
+
+    private RectF rightTouchRect;
 
     /**
      * 上一次触摸的x、y坐标
      */
-    float lastPreX, lastPreY = 0;
+    private float lastPreX = 0;
+
+    private float lastPreY = 0;
 
     /**
      * 左、右两边touch的矩形区域中间 线的颜色
@@ -82,22 +94,22 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 用于划线
      */
-    Paint linePaint = new Paint();
+    private final Paint linePaint = new Paint();
 
     /**
      * 用于画bitmap
      */
-    Paint btPaint = new Paint();
+    private final Paint btPaint = new Paint();
 
     /**
      * 中间阴影
      */
-    Paint shadowPaint = new Paint();
+    private final Paint shadowPaint = new Paint();
 
     /**
      * 当前chart
      */
-    Chart chart;
+    private final Chart chart;
 
     private OnRangeListener mOnRangeListener;
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
