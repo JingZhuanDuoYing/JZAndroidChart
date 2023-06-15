@@ -408,6 +408,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public boolean isFullSupport() {
+        if(candlestickChartRenderer.getDataSet() == null || candlestickChartRenderer.getDataSet().isEmpty()) return true;
         CandlestickDataSet dataSet = candlestickChartRenderer.getDataSet().get(0);
         float candleWidth = dataSet.getCandleWidth();
 
