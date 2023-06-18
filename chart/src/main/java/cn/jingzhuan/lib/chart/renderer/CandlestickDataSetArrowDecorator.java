@@ -83,6 +83,11 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
     public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
                      float x, float highY, float lowY) {
+        draw(canvas, candlestick, contentRect, candleWidth, x, highY, lowY, 2);
+    }
+
+    public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
+                     float x, float highY, float lowY, int decimalDigitsNumber) {
 
         final float highValue = candlestick.getHigh();
         final float lowValue = candlestick.getLow();
@@ -103,17 +108,17 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         float minValue = ((viewportYMax + viewportYMin) * (1 + offsetPercent) - viewportYMax) / (1 + 2 * offsetPercent);
         float maxValue = viewportYMax + viewportYMin - minValue;
 
-        float formatMaxValue = FloatUtils.keepPrecision(maxValue, 2);
-        float formatMinValue = FloatUtils.keepPrecision(minValue, 2);
-        float formatHighValue = FloatUtils.keepPrecision(highValue, 2);
-        float formatLowValue = FloatUtils.keepPrecision(lowValue, 2);
+        float formatMaxValue = FloatUtils.keepPrecision(maxValue, decimalDigitsNumber);
+        float formatMinValue = FloatUtils.keepPrecision(minValue, decimalDigitsNumber);
+        float formatHighValue = FloatUtils.keepPrecision(highValue, decimalDigitsNumber);
+        float formatLowValue = FloatUtils.keepPrecision(lowValue, decimalDigitsNumber);
 
         if (Float.compare(formatHighValue, formatMaxValue) == 0
                 && currentMaxValue < 0) {
 
             currentMaxValue = highValue;
 
-            final int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, 2);
+            final int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, decimalDigitsNumber);
 
             String value = String.valueOf(mLabelBuffer, mLabelBuffer.length - length, length);
             if (x < contentRect.width() >> 1) {
@@ -139,7 +144,7 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
 
             currentMinValue = lowValue;
 
-            final int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, 2);
+            final int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, decimalDigitsNumber);
 
             String value = String.valueOf(mLabelBuffer, mLabelBuffer.length - length, length);
             if (x < contentRect.width() >> 1) {

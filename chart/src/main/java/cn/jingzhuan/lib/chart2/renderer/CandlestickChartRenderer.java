@@ -34,9 +34,11 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
     protected Paint mHighlightRenderPaint;
 
+    private final Chart chart;
+
     public CandlestickChartRenderer(final Chart chart) {
         super(chart);
-
+        this.chart = chart;
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
@@ -290,11 +292,12 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
             canvas.drawLines(mLowerShadowBuffers, mRenderPaint);
 
             if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
+                int decimalDigitsNumber = chart.getDecimalDigitsNumber();
                 ((CandlestickDataSetArrowDecorator) candlestickDataSet).draw(canvas, candlestick,
                         mContentRect,
                         (float) candleWidth,
                         (float) xPosition,
-                        highY, lowY);
+                        highY, lowY, decimalDigitsNumber);
             }
         }
 

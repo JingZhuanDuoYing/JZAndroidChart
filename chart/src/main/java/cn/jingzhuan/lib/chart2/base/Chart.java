@@ -115,6 +115,8 @@ public abstract class Chart extends BitmapCachedChart {
      */
     private boolean drawLabelsInBottom = false;
 
+    private int decimalDigitsNumber = 2;
+
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -1153,6 +1155,14 @@ public abstract class Chart extends BitmapCachedChart {
     @Override
     public boolean getDrawLabelsInBottom() {
         return this.drawLabelsInBottom;
+    }
+
+    public void setDecimalDigitsNumber(int decimalDigitsNumber) {
+        this.decimalDigitsNumber = decimalDigitsNumber;
+    }
+
+    public int getDecimalDigitsNumber() {
+        return decimalDigitsNumber;
     }
 }
 
