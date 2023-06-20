@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart2.demo
 
 import androidx.databinding.ViewDataBinding
 import android.graphics.Color
+import android.graphics.Paint
 import android.view.View
 import android.view.ViewGroup
 import cn.jingzhuan.lib.chart.data.BarDataSet
@@ -28,13 +29,22 @@ abstract class BarChartModel : DataBindingEpoxyModel() {
     barValueList.add(BarValue(11f))
     barValueList.add(BarValue(13f))
     barValueList.add(BarValue(11f))
-    barValueList.add(BarValue(12f))
-    barValueList.add(BarValue(12f))
+    barValueList.add(BarValue(12f).apply { color = Color.RED })
+    barValueList.add(BarValue(12f).apply { color = Color.RED })
     barValueList.add(BarValue(13f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
     barValueList.add(BarValue(15f).apply { setGradientColors(Color.WHITE, Color.BLACK) })
+    barValueList.add(BarValue(13f).apply {
+      color = Color.RED
+      paintStyle = Paint.Style.STROKE
+    })
+    barValueList.add(BarValue(15f).apply {
+      color = Color.GREEN
+      paintStyle = Paint.Style.STROKE
+    })
 
     barDataSet = BarDataSet(barValueList)
     barDataSet.isAutoBarWidth = true
+    barDataSet.strokeThickness = 3f
   }
 
   override fun buildView(parent: ViewGroup): View {

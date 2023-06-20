@@ -90,7 +90,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
         float lMax, float lMin, float rMax, float rMin) {
 
-        mRenderPaint.setStrokeWidth(barDataSet.getStrokeThickness());
+        float strokeThickness = barDataSet.getStrokeThickness();
+
+        mRenderPaint.setStrokeWidth(strokeThickness);
         mRenderPaint.setStyle(Paint.Style.FILL);
 
         mValueTextPaint.setColor(barDataSet.getValueColor());
@@ -111,6 +113,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 max = lMax;
                 break;
         }
+//        float strokeThicknessPercent = (max - min) * (strokeThickness / mContentRect.height());
+//        min = min - strokeThicknessPercent;
+//        max = max + strokeThicknessPercent;
 
         float width = barDataSet.getBarWidth();
         float visibleRange = barDataSet.getVisibleRange(mViewport);
@@ -146,12 +151,19 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             if (barValue.getValueCount() > 0) {
                 float value = barValue.getValues()[0] * mChartAnimator.getPhaseY();
 
-                top = calcHeight(value, max, min) ;
-                if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
+                Paint.Style style = barValue.getPaintStyle();
 
+                top = calcHeight(value, max, min) ;
+                if (top == 0 && style == Paint.Style.STROKE) {
+                    top = top + strokeThickness;
+                }
+                if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
+                if (bottom == mContentRect.height() && style == Paint.Style.STROKE) {
+                    bottom = bottom - strokeThickness;
+                }
                 barValue.setCoordinate(x + width * 0.5f, top);
 
-                mRenderPaint.setStyle(barValue.getPaintStyle());
+                mRenderPaint.setStyle(style);
 
                 float left = x + width * (1 - percent) * 0.5f;
                 float right = left + width * percent;
