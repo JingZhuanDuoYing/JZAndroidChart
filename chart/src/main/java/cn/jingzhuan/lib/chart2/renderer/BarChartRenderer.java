@@ -158,7 +158,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                     top = top + strokeThickness;
                 }
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
-                int roundBottom = (int) bottom;
+                int roundBottom = Math.round(bottom);
                 if (roundBottom == mContentRect.height() && style == Paint.Style.STROKE) {
                     bottom = mContentRect.height() - strokeThickness;
                 }
