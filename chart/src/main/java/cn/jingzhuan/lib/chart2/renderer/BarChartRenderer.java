@@ -34,7 +34,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         super(chart);
 
         mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mValueTextPaint.setStyle(Paint.Style.FILL);
+        mValueTextPaint.setStyle(Paint.Style.FILL_AND_STROKE                                       );
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
@@ -93,7 +93,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         float strokeThickness = barDataSet.getStrokeThickness();
 
         mRenderPaint.setStrokeWidth(strokeThickness);
-        mRenderPaint.setStyle(Paint.Style.FILL);
+        mRenderPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         mValueTextPaint.setColor(barDataSet.getValueColor());
         mValueTextPaint.setTextSize(barDataSet.getValueTextSize());
@@ -159,7 +159,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 }
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
                 int roundBottom = Math.round(bottom);
-                if (roundBottom == mContentRect.height() && style == Paint.Style.STROKE) {
+                if (roundBottom == mContentRect.height()) {
                     bottom = mContentRect.height() - strokeThickness;
                 }
                 barValue.setCoordinate(x + width * 0.5f, top);
@@ -209,7 +209,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
             }
             mRenderPaint.setShader(null);
         }
-        mRenderPaint.setStyle(Paint.Style.FILL);
+        mRenderPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
     private float calcHeight(float value, float max, float min) {

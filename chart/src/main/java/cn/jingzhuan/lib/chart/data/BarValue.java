@@ -11,7 +11,7 @@ public class BarValue extends Value {
 
     private int mColor = -2;
 
-    private Paint.Style mPaintStyle = Paint.Style.FILL;
+    private Paint.Style mPaintStyle = Paint.Style.FILL_AND_STROKE;
 
     private boolean isEnable = true;
     private int[] gradientColors = null;
