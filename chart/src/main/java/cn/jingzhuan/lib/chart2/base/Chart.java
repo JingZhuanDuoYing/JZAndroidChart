@@ -1139,6 +1139,10 @@ public abstract class Chart extends BitmapCachedChart {
         }
     }
 
+    public boolean isScrolling() {
+        return !mScroller.isFinished();
+    }
+
     public void setBackgroundColor(int bgColor) {
         this.bgColor = bgColor;
     }
