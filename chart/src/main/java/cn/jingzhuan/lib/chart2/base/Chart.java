@@ -209,6 +209,12 @@ public abstract class Chart extends BitmapCachedChart {
                 getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth()),
                 getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight()
         );
+        getBottomRect().set(
+                getPaddingLeft() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth()),
+                getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight(),
+                getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth()),
+                getHeight()
+        );
     }
 
     @Override

@@ -44,6 +44,8 @@ public abstract class BitmapCachedChart extends View implements IChart {
      */
     protected Rect mContentRect = new Rect();
 
+    protected Rect mBottomRect = new Rect();
+
     public BitmapCachedChart(Context context) {
         super(context);
     }
@@ -63,6 +65,10 @@ public abstract class BitmapCachedChart extends View implements IChart {
 
     public Rect getContentRect() {
         return mContentRect;
+    }
+
+    public Rect getBottomRect() {
+        return mBottomRect;
     }
 
     public Viewport getCurrentViewport() {
@@ -101,8 +107,12 @@ public abstract class BitmapCachedChart extends View implements IChart {
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount);
 
-        // 坐标轴刻度文本在最上层
-        if (!getDrawLabelsInBottom()) drawLabels(canvas);
+        if (getDrawLabelsInBottom()) {
+            canvas.clipRect(mBottomRect);
+            drawLabels(canvas);
+        } else {
+            drawLabels(canvas);
+        }
     }
 
     protected void createBitmapCache(Canvas canvas) {
