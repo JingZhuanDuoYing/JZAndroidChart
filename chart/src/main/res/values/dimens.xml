@@ -17,4 +17,5 @@
 <resources>
     <dimen name="jz_chart_padding">16dp</dimen>
     <dimen name="jz_chart_min_size">100dp</dimen>
+    <dimen name="jz_chart_water_mark_padding">4dp</dimen>
 </resources>

@@ -2,6 +2,8 @@ package cn.jingzhuan.lib.chart2.base;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -13,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
@@ -38,6 +41,8 @@ public class BaseChart extends Chart {
     private OnHighlightListener mHighlightListener;
 
     private ChartAnimator mChartAnimator;
+
+    private final Paint waterMarkPaint = new Paint();
 
     public BaseChart(Context context) {
         super(context);
@@ -102,6 +107,17 @@ public class BaseChart extends Chart {
     public void drawLabels(Canvas canvas) {
         for (AxisRenderer axisRenderer : mAxisRenderers) {
             axisRenderer.drawLabels(canvas);
+        }
+    }
+
+    @Override
+    public void drawWaterMark(Canvas canvas) {
+        if (isShowWaterMark()) {
+            int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_water_mark_padding);
+            Bitmap waterMarkBitmap = BitmapFactory.decodeResource(
+                    this.getResources(), isNightMode() ? R.drawable.ico_water_mark_night : R.drawable.ico_water_mark);
+            int left = getWidth() - padding - waterMarkBitmap.getWidth() - getPaddingRight();
+            canvas.drawBitmap(waterMarkBitmap, (float) left, (float) padding, waterMarkPaint);
         }
     }
 

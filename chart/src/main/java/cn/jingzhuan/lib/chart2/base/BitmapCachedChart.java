@@ -89,7 +89,7 @@ public abstract class BitmapCachedChart extends View implements IChart {
         canvas.clipRect(mContentRect);
 
         canvas.drawColor(getBackgroundColor());
-
+        drawWaterMark(canvas);
         // 坐标轴刻度在最底层
         drawAxis(canvas);
         drawGridLine(canvas);

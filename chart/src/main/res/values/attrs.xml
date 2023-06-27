@@ -25,5 +25,7 @@
         <attr name="gridColor" format="color" />
         <attr name="backgroundColor" format="color" />
         <attr name="drawLabelsInBottom" format="boolean" />
+        <attr name="showWaterMark" format="boolean" />
+        <attr name="isNightMode" format="boolean" />
     </declare-styleable>
 </resources>

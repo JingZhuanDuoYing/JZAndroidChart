@@ -52,8 +52,10 @@ public abstract class Chart extends BitmapCachedChart {
     private GestureDetector mGestureDetector;
     private OverScroller mScroller;
     private Zoomer mZoomer;
-    private PointF mZoomFocalPoint = new PointF();
-    private RectF mScrollerStartViewport = new RectF(); // Used only for zooms and flings.
+    private final PointF mZoomFocalPoint = new PointF();
+
+    // Used only for zooms and flings.
+    private final RectF mScrollerStartViewport = new RectF();
 
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
@@ -106,7 +108,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean canZoomOut = true;
 
     /**
-     * 背景颜色
+     * 背景颜色（不包含底部刻度文本）
      */
     private int bgColor = Color.TRANSPARENT;
 
@@ -115,7 +117,20 @@ public abstract class Chart extends BitmapCachedChart {
      */
     private boolean drawLabelsInBottom = false;
 
+    /**
+     * 坐标轴刻度文本 需要保留的小数位（当前只在蜡烛图中使用了）
+     */
     private int decimalDigitsNumber = 2;
+
+    /**
+     * 是否需要展示水印
+     */
+    private boolean showWaterMark = false;
+
+    /**
+     * 是否黑夜模式
+     */
+    private boolean isNightMode = false;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -156,6 +171,8 @@ public abstract class Chart extends BitmapCachedChart {
 
             this.bgColor = a.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
             this.drawLabelsInBottom = a.getBoolean(R.styleable.Chart_drawLabelsInBottom, false);
+            this.showWaterMark = a.getBoolean(R.styleable.Chart_showWaterMark, false);
+            this.isNightMode = a.getBoolean(R.styleable.Chart_isNightMode, false);
             float labelTextSize = a.getDimension(R.styleable.Chart_labelTextSize, 28);
             float labelSeparation = a.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10);
             float gridThickness = a.getDimension(R.styleable.Chart_gridThickness, 2);
@@ -1172,7 +1189,23 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     public int getDecimalDigitsNumber() {
-        return decimalDigitsNumber;
+        return this.decimalDigitsNumber;
+    }
+
+    public void setShowWaterMark(boolean showWaterMark) {
+        this.showWaterMark = showWaterMark;
+    }
+
+    public boolean isShowWaterMark() {
+        return this.showWaterMark;
+    }
+
+    public void setNightMode(boolean isNightMode) {
+        this.isNightMode = isNightMode;
+    }
+
+    public boolean isNightMode() {
+        return this.isNightMode;
     }
 }
 

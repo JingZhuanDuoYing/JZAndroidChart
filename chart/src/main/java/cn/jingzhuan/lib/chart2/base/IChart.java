@@ -29,6 +29,11 @@ public interface IChart {
     void drawGridLine(Canvas canvas);
 
     /**
+     * 画水印
+     */
+    void drawWaterMark(Canvas canvas);
+
+    /**
      * 渲染图表
      */
     void render(Canvas canvas);
