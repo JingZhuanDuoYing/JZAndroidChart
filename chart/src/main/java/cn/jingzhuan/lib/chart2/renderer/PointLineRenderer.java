@@ -47,7 +47,8 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
         mRenderPaint.setStrokeWidth(lineDataSet.getLineThickness());
         mRenderPaint.setColor(lineDataSet.getColor());
         float interval = lineDataSet.getInterval();
-        mRenderPaint.setPathEffect(new DashPathEffect(new float[]{interval,interval},lineDataSet.getPhase()));
+        if (interval != 0f)
+            mRenderPaint.setPathEffect(new DashPathEffect(new float[]{interval,interval},lineDataSet.getPhase()));
         mRenderPaint.setAntiAlias(true);
 
         mPointPaint.setColor(lineDataSet.getColor());
@@ -108,7 +109,9 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
                 mPath.lineTo(candlestickCenterX,yPosition);
             }
 
-            canvas.drawCircle(candlestickCenterX,yPosition,lineDataSet.getRadius(),mPointPaint);
+            if (point.isDrawCircle()) {
+                canvas.drawCircle(candlestickCenterX,yPosition,lineDataSet.getRadius(),mPointPaint);
+            }
         }//for
         if (lineDataSet.isLineVisible()) {
                 canvas.drawPath(mPath, mRenderPaint);

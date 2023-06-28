@@ -13,6 +13,11 @@ public class PointValue extends Value {
     private float secondY;//第二条数据: y轴坐标
     private int mColor = -2;
 
+    /**
+     * 是否画圆点  此属性暂时只用于PointLineDataSet
+     */
+    private boolean drawCircle = true;
+
     public PointValue(float value) {
         this.value = value;
     }
@@ -25,6 +30,11 @@ public class PointValue extends Value {
     public PointValue(float value, float secondValue) {
         this.value = value;
         this.secondValue = secondValue;
+    }
+
+    public PointValue(float value, boolean drawCircle) {
+        this.value = value;
+        this.drawCircle = drawCircle;
     }
 
     public PointValue() {
@@ -84,5 +94,13 @@ public class PointValue extends Value {
 
     public void setSecondY(float secondY) {
         this.secondY = secondY;
+    }
+
+    public void setDrawCircle(boolean drawCircle) {
+        this.drawCircle = drawCircle;
+    }
+
+    public boolean isDrawCircle() {
+        return drawCircle;
     }
 }
