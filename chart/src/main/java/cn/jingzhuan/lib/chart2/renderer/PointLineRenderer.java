@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
@@ -38,6 +39,40 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }
+        });
+
+        final Highlight highlight = new Highlight();
+        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
+            @Override
+            public void touch(float x, float y) {
+
+                if (chart.isHighlightDisable()) return;
+
+                synchronized (chart) {
+                    for (PointLineDataSet line : getDataSet()) {
+                        if (line.isHighlightedVerticalEnable() && !line.getValues().isEmpty()) {
+                            highlight.setTouchX(x);
+                            highlight.setTouchY(y);
+                            int offset = line.getStartIndexOffset();
+                            int index = getEntryIndexByCoordinate(x, y) - offset;
+                            index = Math.max(index, 0);
+                            index = Math.min(index, line.getValues().size() - 1);
+
+                            final PointValue pointValue = line.getEntryForIndex(index);
+                            float xPosition = pointValue.getX();
+                            float yPosition = pointValue.getY();
+
+                            if (xPosition >= 0 && yPosition >= 0) {
+                                highlight.setX(xPosition);
+                                highlight.setY(yPosition);
+                                highlight.setDataIndex(index);
+                                chart.highlightValue(highlight);
+                            }
+                        }
+                    }
+                }
+            }
+
         });
     }
 
