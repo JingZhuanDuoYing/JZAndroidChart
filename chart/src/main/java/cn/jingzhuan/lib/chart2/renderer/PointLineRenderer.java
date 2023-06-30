@@ -171,7 +171,32 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
 
     @Override
     public void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights) {
+        mRenderPaint.setStyle(Paint.Style.FILL);
+        mRenderPaint.setStrokeWidth(getHighlightThickness());
+        mRenderPaint.setColor(getHighlightColor());
+        for (Highlight highlight : highlights) {
+            if (highlight != null) {
+                canvas.drawLine(highlight.getX(),
+                        0,
+                        highlight.getX(),
+                        mContentRect.bottom,
+                        mRenderPaint);
 
+                // Horizontal
+                if (!Float.isNaN(highlight.getY())) {
+                    for (PointLineDataSet lineDataSet : getDataSet()) {
+                        if (lineDataSet.isHighlightedHorizontalEnable()) {
+                            canvas.drawLine(0,
+                                    highlight.getY(),
+                                    mContentRect.right,
+                                    highlight.getY(),
+                                    mRenderPaint);
+                        }
+                    }
+                }
+            }
+        }
+        mRenderPaint.setPathEffect(null);
     }
 
     @Override
