@@ -28,7 +28,12 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     private final Rect mTextBounds = new Rect();
 
     private float currentMaxValue = -1f;
+
     private float currentMinValue = -1f;
+
+    private int textColor = 0xffA1abbb;
+
+    private int textSize = 30;
 
     public CandlestickDataSetArrowDecorator(CandlestickDataSet candlestickDataSet) {
         super(candlestickDataSet.getValues(), candlestickDataSet.getAxisDependency());
@@ -64,8 +69,8 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         setTag(candlestickDataSet.getTag());
 
         mPaint = new Paint(ANTI_ALIAS_FLAG);
-        mPaint.setColor(0xffA1abbb);
-        mPaint.setTextSize(30);
+        mPaint.setColor(textColor);
+        mPaint.setTextSize(textSize);
     }
 
     public Paint getPaint() {
@@ -77,17 +82,11 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         super.calcMinMax(viewport);
     }
 
-    public void setTextSize(int textSize) {
-        mPaint.setTextSize(textSize);
-    }
-
-    public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
-                     float x, float highY, float lowY) {
+    public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth, float x, float highY, float lowY) {
         draw(canvas, candlestick, contentRect, candleWidth, x, highY, lowY, 2);
     }
 
-    public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth,
-                     float x, float highY, float lowY, int decimalDigitsNumber) {
+    public void draw(Canvas canvas, CandlestickValue candlestick, Rect contentRect, float candleWidth, float x, float highY, float lowY, int decimalDigitsNumber) {
 
         final float highValue = candlestick.getHigh();
         final float lowValue = candlestick.getLow();
@@ -113,52 +112,46 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
         float formatHighValue = FloatUtils.keepPrecision(highValue, decimalDigitsNumber);
         float formatLowValue = FloatUtils.keepPrecision(lowValue, decimalDigitsNumber);
 
-        if (Float.compare(formatHighValue, formatMaxValue) == 0
-                && currentMaxValue < 0) {
+        if (Float.compare(formatHighValue, formatMaxValue) == 0 && currentMaxValue < 0) {
 
             currentMaxValue = highValue;
 
             final int length = FloatUtils.formatFloatValue(mLabelBuffer, highValue, decimalDigitsNumber);
 
             String value = String.valueOf(mLabelBuffer, mLabelBuffer.length - length, length);
-            if (x < contentRect.width() >> 1) {
 
+            if (x < contentRect.width() >> 1) {
                 mPaint.setTextAlign(Align.LEFT);
                 String text = ARROW_LEFT + value;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.6f, highY + mTextBounds.height(), getPaint());
-
+                canvas.drawText(text, x + candleWidth * 0.5f, highY - mTextBounds.height() * 0.5f, getPaint());
             } else {
-
                 mPaint.setTextAlign(Align.RIGHT);
                 String text = value + ARROW_RIGHT;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.4f, highY + mTextBounds.height(), getPaint());
-
+                canvas.drawText(text, x + candleWidth * 0.5f, highY - mTextBounds.height() * 0.5f, getPaint());
             }
 
         }
 
-        if (Float.compare(formatLowValue, formatMinValue) == 0
-                && currentMinValue < 0) {
+        if (Float.compare(formatLowValue, formatMinValue) == 0 && currentMinValue < 0) {
 
             currentMinValue = lowValue;
 
             final int length = FloatUtils.formatFloatValue(mLabelBuffer, lowValue, decimalDigitsNumber);
 
             String value = String.valueOf(mLabelBuffer, mLabelBuffer.length - length, length);
-            if (x < contentRect.width() >> 1) {
 
+            if (x < contentRect.width() >> 1) {
                 mPaint.setTextAlign(Align.LEFT);
                 String text = ARROW_LEFT + value;
-                canvas.drawText(text, x + candleWidth * 0.6f, lowY, getPaint());
-
+                mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
+                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 1.5f, getPaint());
             } else {
-
                 mPaint.setTextAlign(Align.RIGHT);
                 String text = value + ARROW_RIGHT;
-                canvas.drawText(text, x + candleWidth * 0.4f, lowY, getPaint());
-
+                mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
+                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 1.5f, getPaint());
             }
 
         }
@@ -168,5 +161,23 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
     public void reset() {
         currentMinValue = -1f;
         currentMaxValue = -1f;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+        mPaint.setColor(textColor);
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+        mPaint.setTextSize(textSize);
+    }
+
+    public int getTextSize() {
+        return textSize;
     }
 }

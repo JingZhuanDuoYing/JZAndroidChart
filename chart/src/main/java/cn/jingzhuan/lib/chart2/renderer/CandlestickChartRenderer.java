@@ -293,11 +293,8 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
 
             if (candlestickDataSet instanceof CandlestickDataSetArrowDecorator) {
                 int decimalDigitsNumber = chart.getDecimalDigitsNumber();
-                ((CandlestickDataSetArrowDecorator) candlestickDataSet).draw(canvas, candlestick,
-                        mContentRect,
-                        (float) candleWidth,
-                        (float) xPosition,
-                        highY, lowY, decimalDigitsNumber);
+                CandlestickDataSetArrowDecorator arrowDecorator = (CandlestickDataSetArrowDecorator) candlestickDataSet;
+                arrowDecorator.draw(canvas, candlestick, mContentRect, (float) candleWidth, (float) xPosition, highY, lowY, decimalDigitsNumber);
             }
         }
 

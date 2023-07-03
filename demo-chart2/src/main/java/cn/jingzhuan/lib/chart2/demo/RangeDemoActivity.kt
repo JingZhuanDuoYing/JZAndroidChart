@@ -250,7 +250,11 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.strokeThickness = 2f
 
-        val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.1f }
+        val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply {
+            offsetPercent = 0.2f
+            textSize = 32
+            textColor = 0xff3F51B5.toInt()
+        }
 
         val data = CombineData().apply {
             add(arrowDataSet)
