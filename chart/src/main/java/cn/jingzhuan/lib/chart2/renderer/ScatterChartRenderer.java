@@ -36,6 +36,10 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
 
     private final Map<String, Float> alignBottomHeights = new HashMap<>();
 
+    private final Map<String, Float> alignParentTopHeights = new HashMap<>();
+
+    private final Map<String, Float> alignParentBottomHeights = new HashMap<>();
+
     public ScatterChartRenderer(Chart chart) {
         super(chart);
     }
@@ -112,22 +116,35 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
                     + getDrawX((i + dataSet.getStartIndexOffset()) / ((float) valueCount)) - shapeWidth * 0.5f;
 
             float yPosition;
+            String heightIndexKey = String.valueOf(i);
             if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM) {
-                yPosition = mContentRect.height() - shapeHeight;
-            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP) {
-                yPosition = mContentRect.top;
-            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
+                float offset = shapeHeight;
                 if(!Float.isNaN(point.getValue())) {
-                    float lastOffset = alignBottomHeights.get(String.valueOf(i)) == null ? 0f : alignBottomHeights.get(String.valueOf(i));
-                    alignBottomHeights.put(String.valueOf(i), lastOffset + shapeHeight);
+                    float lastOffset = alignParentBottomHeights.get(heightIndexKey) == null ? 0f : alignParentBottomHeights.get(heightIndexKey);
+                    offset = offset + lastOffset;
+                    alignParentBottomHeights.put(heightIndexKey, offset);
                 }
-                float offset = alignBottomHeights.get(String.valueOf(i)) == null ? 0f : alignBottomHeights.get(String.valueOf(i));
+                yPosition = mContentRect.height() - offset;
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_PARENT_TOP) {
+                float offset = alignParentTopHeights.get(heightIndexKey) == null ? 0f : alignParentTopHeights.get(heightIndexKey);
+                yPosition = mContentRect.top + offset;
+                if(!Float.isNaN(point.getValue())) {
+                    alignParentTopHeights.put(heightIndexKey, offset + shapeHeight);
+                }
+
+            } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_BOTTOM) {
+                float offset = shapeHeight;
+                if(!Float.isNaN(point.getValue())) {
+                    float lastOffset = alignBottomHeights.get(heightIndexKey) == null ? 0f : alignBottomHeights.get(heightIndexKey);
+                    offset = offset + lastOffset;
+                    alignBottomHeights.put(heightIndexKey, offset);
+                }
                 yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - offset;
             } else if (dataSet.getShapeAlign() == ScatterDataSet.SHAPE_ALIGN_TOP) {
-                float offset = alignTopHeights.get(String.valueOf(i)) == null ? 0f : alignTopHeights.get(String.valueOf(i));
+                float offset = alignTopHeights.get(heightIndexKey) == null ? 0f : alignTopHeights.get(heightIndexKey);
                 yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() + offset;
                 if(!Float.isNaN(point.getValue())) {
-                    alignTopHeights.put(String.valueOf(i), offset + shapeHeight);
+                    alignTopHeights.put(heightIndexKey, offset + shapeHeight);
                 }
             } else {
                 yPosition = (max - point.getValue()) / (max - min) * mContentRect.height() - yOffset;
@@ -219,6 +236,8 @@ public class ScatterChartRenderer extends AbstractDataRenderer<ScatterDataSet> {
     private void clearTemporaryData() {
         alignTopHeights.clear();
         alignBottomHeights.clear();
+        alignParentTopHeights.clear();
+        alignParentBottomHeights.clear();
     }
 
 }
