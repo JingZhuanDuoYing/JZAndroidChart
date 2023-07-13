@@ -156,7 +156,7 @@ public class BaseChart extends Chart {
 
         mHighlights = highlights;
         mIsHighlight = true;
-        postInvalidate();
+        invalidate();
     }
 
     @Override
@@ -167,7 +167,7 @@ public class BaseChart extends Chart {
 
         mFocusIndex = -1;
         mIsHighlight = false;
-        postInvalidate();
+        invalidate();
     }
 
     @Override
