@@ -212,7 +212,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         mRenderPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
-    private float calcHeight(float value, float max, float min) {
+    protected float calcHeight(float value, float max, float min) {
         if (Float.compare(max, min) == 0) return 0;
         return (max - value) / (max - min) * mContentRect.height();
     }
