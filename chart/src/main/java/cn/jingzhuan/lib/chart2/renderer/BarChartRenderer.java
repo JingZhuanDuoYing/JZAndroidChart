@@ -26,9 +26,9 @@ import java.util.List;
 public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     private BarData mBarDataSets;
-    private final char[] mLabelBuffer = new char[100];
+    protected final char[] mLabelBuffer = new char[100];
 
-    private Paint mValueTextPaint;
+    protected Paint mValueTextPaint;
 
     public BarChartRenderer(final Chart chart) {
         super(chart);
