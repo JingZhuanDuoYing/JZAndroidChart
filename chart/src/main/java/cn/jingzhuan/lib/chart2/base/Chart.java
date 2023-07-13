@@ -23,6 +23,7 @@ import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
 import cn.jingzhuan.lib.chart.event.OnScaleListener;
+import cn.jingzhuan.lib.chart.event.OnSingleEntryClickListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign.XForce;
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.Axis;
@@ -75,6 +76,8 @@ public abstract class Chart extends BitmapCachedChart {
     protected OnLoadMoreKlineListener mOnLoadMoreKlineListener;
 
     protected OnScaleListener mScaleListener;
+
+    protected OnSingleEntryClickListener onEntryClickListener;
 
     /**
      * The scaling factor for a single zoom 'step'.
@@ -448,6 +451,9 @@ public abstract class Chart extends BitmapCachedChart {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
 //                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
                 if (index >= 0) {
+                    if (onEntryClickListener != null) {
+                        onEntryClickListener.onEntryClick(Chart.this, index);
+                    }
                     if (mHighlightVolatile && (mHighlights != null || mHighlightDisable)) {
                         if (isMainChart()) cleanHighlight();
                         else onTouchPoint(e);
@@ -1154,6 +1160,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setOnScaleListener(OnScaleListener onScaleListener) {
         this.mScaleListener = onScaleListener;
+    }
+
+    public void setOnEntryClickListener(OnSingleEntryClickListener onEntryClickListener) {
+        this.onEntryClickListener = onEntryClickListener;
+    }
+
+    public OnSingleEntryClickListener getOnEntryClickListener() {
+        return onEntryClickListener;
     }
 
     public void finishScroll() {
