@@ -35,7 +35,7 @@ import static cn.jingzhuan.lib.chart.animation.Easing.EasingFunction;
 public class BaseChart extends Chart {
 
     protected AbstractDataRenderer mRenderer;
-    private List<AxisRenderer> mAxisRenderers;
+    protected List<AxisRenderer> mAxisRenderers;
 
     private HighlightStatusChangeListener mHighlightStatusChangeListener;
     private OnHighlightListener mHighlightListener;
