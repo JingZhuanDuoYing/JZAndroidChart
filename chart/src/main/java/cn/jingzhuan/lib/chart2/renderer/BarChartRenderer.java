@@ -154,13 +154,16 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 Paint.Style style = barValue.getPaintStyle();
 
                 top = calcHeight(value, max, min) ;
-                if (top == 0 && style == Paint.Style.STROKE) {
+                if (top == 0 && (style == Paint.Style.STROKE)) {
                     top = top + strokeThickness;
                 }
                 if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
                 int roundBottom = Math.round(bottom);
                 if (roundBottom == mContentRect.height()) {
                     bottom = mContentRect.height() - strokeThickness;
+                }
+                if (style == Paint.Style.FILL) {
+                    bottom = bottom + strokeThickness / 2;
                 }
                 barValue.setCoordinate(x + width * 0.5f, top);
 
