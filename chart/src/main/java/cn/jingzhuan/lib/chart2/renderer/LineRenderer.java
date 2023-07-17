@@ -468,6 +468,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         mRenderPaint.setColor(lineDataSet.getColor());
 
         PointValue value = lineDataSet.getEntryForIndex(lineDataSet.getValues().size() - 1);
+        if (value.getValue() > max || value.getValue() < min) return;
         float yPosition = (max - value.getValue()) / (max - min) * mContentRect.height();
         linePath.moveTo(0, yPosition);
         linePath.lineTo(mContentRect.width(), yPosition);
