@@ -524,7 +524,9 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
         float baseline = textRect.centerY() + distance;
 
 
-        canvas.drawText(text, textRect.centerX(), baseline, mTextPaint);
+        if (value.getValue() <= max && value.getValue() >= min) {
+            canvas.drawText(text, textRect.centerX(), baseline, mTextPaint);
+        }
     }
 
     /**
