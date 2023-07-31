@@ -34,7 +34,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         super(chart);
 
         mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mValueTextPaint.setStyle(Paint.Style.FILL                                       );
+        mValueTextPaint.setStyle(Paint.Style.FILL);
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
