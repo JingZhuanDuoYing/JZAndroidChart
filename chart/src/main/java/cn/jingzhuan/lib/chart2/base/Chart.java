@@ -421,7 +421,7 @@ public abstract class Chart extends BitmapCachedChart {
             Log.d("JZChart", "onDown");
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
-            finishScroll();
+            mScroller.forceFinished(true);
 
             postInvalidateOnAnimation();
 
@@ -431,11 +431,11 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public void onLongPress(MotionEvent e) {
             Log.d("JZChart", "onLongPress");
-//            if(getRangeEnable()) return;
+            if(getRangeEnable()) return;
             mIsLongPress = true;
-//            onTouchPoint(e);
-//            e.setAction(MotionEvent.ACTION_UP);
-//            mGestureDetector.onTouchEvent(e);
+            onTouchPoint(e);
+            e.setAction(MotionEvent.ACTION_UP);
+            mGestureDetector.onTouchEvent(e);
         }
 
         @Override
@@ -494,18 +494,24 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!isLongPress() && !isMultipleTouch()) {
+            if (!isMultipleTouch()) {
                 Log.d("JZChart", "onScroll");
                 mDistanceX = distanceX;
-                // 滑动时如果光标已经显示 清除光标
-                if (isHighlight()) cleanHighlight();
+//            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
                 // 主图高亮时 不滚动，只触发点击
                 if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                         || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
-                        || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile()) // K线主图，高亮且能关闭高亮光标时
+                        || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile() || isLongPress()) // K线主图，高亮且能关闭高亮光标时
                 ) {
 //                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
+                    if (isLongPress()) {
+                        if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
+                    }
                     return super.onScroll(e1, e2, distanceX, distanceY);
+                }
+
+                if (mScaleGestureDetector.isInProgress()) {
+                    return false;
                 }
 
                 if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) {
@@ -852,9 +858,6 @@ public abstract class Chart extends BitmapCachedChart {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 isTouching = true;
-                if (isLongPress()) {
-                    if (!getRangeEnable())  if (isMainChart()) onTouchPoint(event); else onTouchHighlight(event);
-                }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 postInvalidateOnAnimation();
