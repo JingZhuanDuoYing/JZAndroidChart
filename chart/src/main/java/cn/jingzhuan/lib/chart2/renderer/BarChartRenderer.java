@@ -164,10 +164,11 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 int roundBottom = Math.round(bottom);
                 if (roundBottom == mContentRect.height()) {
                     bottom = mContentRect.height() - strokeThickness;
+                    if (style == Paint.Style.FILL) {
+                        bottom = bottom + strokeThickness / 2;
+                    }
                 }
-                if (style == Paint.Style.FILL) {
-                    bottom = bottom + strokeThickness / 2;
-                }
+
                 barValue.setCoordinate(x + width * 0.5f, top);
 
                 mRenderPaint.setStyle(style);
