@@ -3,10 +3,13 @@ package cn.jingzhuan.lib.chart2.widget;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -124,7 +127,8 @@ public class CombineChart extends BaseChart {
         return (CombineChartRenderer) mRenderer;
     }
 
-    @Override public void setTypeface(Typeface tf) {
+    @Override
+    public void setTypeface(Typeface tf) {
         mRenderer.setTypeface(tf);
         super.setTypeface(tf);
     }
@@ -140,15 +144,18 @@ public class CombineChart extends BaseChart {
     public void cleanCandlestickDataSet() {
         getRenderer().cleanCandlestickDataSet();
     }
+
     public void cleanScatterDataSet() {
         getRenderer().cleanScatterDataSet();
+    }
+
+    public void cleanRangeDataSet() {
+        getRenderer().cleanRangeDataSet();
     }
 
     public void cleanAllDataSet() {
         getRenderer().clearDataSet();
     }
-
-    public void cleanRangeData(){getRenderer().rangeRenderer.resetData();}
 
     public void addLine(LineDataSet lineDataSet) {
         mRenderer.addDataSet(lineDataSet);
@@ -164,8 +171,8 @@ public class CombineChart extends BaseChart {
      */
     public boolean onTouchEvent(MotionEvent event) {
         CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
-        if (getRangeEnable() && renderer.rangeRenderer != null){
-            if(renderer.rangeRenderer.onTouchEvent(event)){
+        if (getRangeEnable() && renderer.rangeRenderer != null) {
+            if (renderer.rangeRenderer.onTouchEvent(event)) {
                 return true;
             }
         }

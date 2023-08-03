@@ -281,6 +281,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         cleanScatterDataSet();
         cleanPointLineDataSet();
         cleanScatterTextDataSet();
+        cleanRangeDataSet();
 
         calcDataSetMinMax();
     }
@@ -317,6 +318,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
     public void cleanTreeDataSet(){
         treeChartRenderer.clearDataSet();
         getChartData().getTreeChartData().clear();
+    }
+
+    public void cleanRangeDataSet() {
+        rangeRenderer.clearDataSet();
     }
 
     @Override
