@@ -135,6 +135,8 @@ public abstract class Chart extends BitmapCachedChart {
      */
     private boolean isNightMode = false;
 
+    private boolean mMultipleTouch = false;
+
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -288,6 +290,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
+            Log.d("JZChart", "onScaleBegin");
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleStart(mCurrentViewport);
@@ -298,17 +301,17 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public void onScaleEnd(JZScaleGestureDetector detector) {
+            Log.d("JZChart", "onScaleEnd");
             super.onScaleEnd(detector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
             }
             isScaling = false;
-            Log.d("Chart", "onScaleEnd");
         }
 
         @Override
         public boolean onScale(JZScaleGestureDetector scaleGestureDetector) {
-            Log.d("Chart", "onScale");
+            Log.d("JZChart", "onScale");
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
@@ -415,7 +418,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDown(MotionEvent e) {
-
+            Log.d("JZChart", "onDown");
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
@@ -427,6 +430,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            Log.d("JZChart", "onLongPress");
             if(getRangeEnable()) return;
             mIsLongPress = true;
             onTouchPoint(e);
@@ -436,12 +440,14 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+            Log.d("JZChart", "onSingleTapUp");
 //            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
             return super.onSingleTapUp(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.d("JZChart", "onSingleTapConfirmed");
             if(getRangeEnable()) return false;
 //            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
@@ -473,6 +479,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
+            Log.d("JZChart", "onDoubleTap");
             if(getRangeEnable()) return false;
             if (mDoubleTapToZoom) {
 
@@ -487,49 +494,51 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            mDistanceX = distanceX;
+            if (!isMultipleTouch()) {
+                Log.d("JZChart", "onScroll");
+                mDistanceX = distanceX;
 //            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
-            // 主图高亮时 不滚动，只触发点击
-            if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
-                    || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
-                    || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile() || isLongPress()) // K线主图，高亮且能关闭高亮光标时
-            ) {
+                // 主图高亮时 不滚动，只触发点击
+                if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
+                        || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
+                        || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile() || isLongPress()) // K线主图，高亮且能关闭高亮光标时
+                ) {
 //                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
-                if (isLongPress()) {
-                    if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
+                    if (isLongPress()) {
+                        if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
+                    }
+                    return super.onScroll(e1, e2, distanceX, distanceY);
                 }
-                return super.onScroll(e1, e2, distanceX, distanceY);
-            }
 
-            if (mScaleGestureDetector.isInProgress()) {
-                return false;
-            }
+                if (mScaleGestureDetector.isInProgress()) {
+                    return false;
+                }
 
-            if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) {
-                return true;
-            }
-            Log.w("Chart", "onScroll");
+                if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) {
+                    return true;
+                }
+                Log.w("Chart", "onScroll");
 
-            // Scrolling uses math based on the viewport (as opposed to math using pixels).
-            /**
-             * Pixel offset is the offset in screen pixels, while viewport offset is the
-             * offset within the current viewport. For additional information on surface sizes
-             * and pixel offsets, see the docs for {@link computeScrollSurfaceSize()}. For
-             * additional information about the viewport, see the comments for
-             * {@link mCurrentViewport}.
-             */
+                // Scrolling uses math based on the viewport (as opposed to math using pixels).
+                /**
+                 * Pixel offset is the offset in screen pixels, while viewport offset is the
+                 * offset within the current viewport. For additional information on surface sizes
+                 * and pixel offsets, see the docs for {@link computeScrollSurfaceSize()}. For
+                 * additional information about the viewport, see the comments for
+                 * {@link mCurrentViewport}.
+                 */
 
-            float viewportOffsetX = distanceX * mCurrentViewport.width() / mContentRect.width();
-            // float viewportOffsetY = -distanceY * mCurrentViewport.height() / mContentRect.height();
-            computeScrollSurfaceSize(mSurfaceSizeBuffer);
-            int scrolledX = (int) (mSurfaceSizeBuffer.x
-                    * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
-                    / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
-            boolean canScrollX = mCurrentViewport.left > Viewport.AXIS_X_MIN
-                    || mCurrentViewport.right < Viewport.AXIS_X_MAX;
-            setViewportBottomLeft(
-                    mCurrentViewport.left + viewportOffsetX
-            );
+                float viewportOffsetX = distanceX * mCurrentViewport.width() / mContentRect.width();
+                // float viewportOffsetY = -distanceY * mCurrentViewport.height() / mContentRect.height();
+                computeScrollSurfaceSize(mSurfaceSizeBuffer);
+                int scrolledX = (int) (mSurfaceSizeBuffer.x
+                        * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
+                        / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+                boolean canScrollX = mCurrentViewport.left > Viewport.AXIS_X_MIN
+                        || mCurrentViewport.right < Viewport.AXIS_X_MAX;
+                setViewportBottomLeft(
+                        mCurrentViewport.left + viewportOffsetX
+                );
 
 //            if (canScrollX && scrolledX < 0) {
 //                mEdgeEffectLeft.onPull(scrolledX / (float) mContentRect.width());
@@ -542,19 +551,22 @@ public abstract class Chart extends BitmapCachedChart {
 //                canLoadMore = true;
 //            }
 
-            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+                boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
 
-            if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && !isRightSide) {
-                mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
-                        / (float) mContentRect.width());
-                mEdgeEffectRightActive = true;
+                if (canScrollX && scrolledX > mSurfaceSizeBuffer.x - mContentRect.width() && !isRightSide) {
+                    mEdgeEffectRight.onPull((scrolledX - mSurfaceSizeBuffer.x + mContentRect.width())
+                            / (float) mContentRect.width());
+                    mEdgeEffectRightActive = true;
+                }
+
+                return true;
             }
-
-            return true;
+            return false;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d("JZChart", "onFling");
             boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
             if(isRightSide) return false;
             if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
@@ -863,8 +875,10 @@ public abstract class Chart extends BitmapCachedChart {
                 postInvalidateOnAnimation();
                 break;
         }
-        mGestureDetector.onTouchEvent(event);
+
+        mMultipleTouch = event.getPointerCount() > 1;
         mScaleGestureDetector.onTouchEvent(event);
+        mGestureDetector.onTouchEvent(event);
         return true;
     }
 
@@ -1220,6 +1234,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public boolean isNightMode() {
         return this.isNightMode;
+    }
+
+    /**
+     * 是否是多指触控
+     * @return
+     */
+    public boolean isMultipleTouch() {
+        return mMultipleTouch;
     }
 }
 

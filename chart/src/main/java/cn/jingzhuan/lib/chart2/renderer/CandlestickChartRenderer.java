@@ -48,32 +48,26 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         });
 
         final Highlight highlight = new Highlight();
-        chart.addOnTouchPointChangeListener(new Chart.OnTouchPointChangeListener() {
-            @Override
-            public void touch(float x, float y) {
-                if (chart.isHighlightDisable()) return;
+        chart.addOnTouchPointChangeListener((x, y) -> {
+            if (chart.isHighlightDisable()) return;
 
-                for (CandlestickDataSet dataSet : getDataSet()) {
-                    if (dataSet.isHighlightedVerticalEnable()) {
-                        final int valueCount = dataSet.getEntryCount();
-                        int index;
-                        float xPosition;
-                        float yPosition;
-                        highlight.setTouchX(x);
-                        highlight.setTouchY(y);
-                        if (x >= mContentRect.left) {
-                            index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
-                            if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
-                                final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-                                xPosition = candlestickValue.getX();
-                                yPosition = candlestickValue.getY();
-                                if (xPosition >= 0 && yPosition >= 0) {
-                                    highlight.setX(xPosition);
-                                    highlight.setY(yPosition);
-                                    highlight.setDataIndex(index);
-                                    chart.highlightValue(highlight);
-                                }
-                            }
+            for (CandlestickDataSet dataSet : getDataSet()) {
+                if (dataSet.isHighlightedVerticalEnable()) {
+                    final int valueCount = dataSet.getEntryCount();
+                    float xPosition;
+                    float yPosition;
+                    highlight.setTouchX(x);
+                    highlight.setTouchY(y);
+                    int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
+                    if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
+                        final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
+                        xPosition = candlestickValue.getX();
+                        yPosition = candlestickValue.getY();
+                        if (xPosition >= 0 && yPosition >= 0) {
+                            highlight.setX(xPosition);
+                            highlight.setY(yPosition);
+                            highlight.setDataIndex(index);
+                            chart.highlightValue(highlight);
                         }
                     }
                 }

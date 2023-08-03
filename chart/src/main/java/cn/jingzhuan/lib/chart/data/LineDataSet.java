@@ -92,9 +92,13 @@ public class LineDataSet extends AbstractDataSet<PointValue> {
             mViewportYMax = mViewportYMax + range * getOffsetPercent();
         }
 
+//        if (mViewportYMax == 0 && mViewportYMin == 0) {
+//            mViewportYMax = 1;
+//            mViewportYMin = -1;
+//        }
         if (mViewportYMax == 0 && mViewportYMin == 0) {
-            mViewportYMax = 1;
-            mViewportYMin = -1;
+            mViewportYMax = 0.01f;
+            mViewportYMin = -0.01f;
         }
     }
 

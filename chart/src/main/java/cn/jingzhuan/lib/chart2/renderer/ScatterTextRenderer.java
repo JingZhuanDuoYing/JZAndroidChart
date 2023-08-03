@@ -268,7 +268,7 @@ public class ScatterTextRenderer extends AbstractDataRenderer<ScatterTextDataSet
                 } else if (top == mContentRect.height() - margin) {
                     // 下边界
                     path.moveTo(candlestickCenterX, anchor);
-                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
+                    path.lineTo(candlestickCenterX + dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
                 } else {
                     path.moveTo(candlestickCenterX, anchor);
                     path.lineTo(candlestickCenterX + dashLength, anchor);
