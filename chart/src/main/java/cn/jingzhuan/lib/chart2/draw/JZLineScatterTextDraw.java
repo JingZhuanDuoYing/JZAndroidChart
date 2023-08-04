@@ -1,0 +1,302 @@
+package cn.jingzhuan.lib.chart2.draw;
+
+import static cn.jingzhuan.lib.chart.data.ScatterTextDataSet.ALIGN_BOTTOM;
+
+import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
+import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
+import cn.jingzhuan.lib.chart.data.ScatterTextValue;
+import cn.jingzhuan.lib.chart2.base.Chart;
+
+/**
+ * @author YL
+ * @since 2023-08-04
+ */
+public class JZLineScatterTextDraw extends BaseDraw<ScatterTextValue, ScatterTextDataSet> {
+
+    // 顶部和底部给个边距
+    public final static int margin = 2;
+
+    private final Paint mTextPaint;
+
+    public JZLineScatterTextDraw(Chart chart) {
+        super(chart);
+        mTextPaint = new Paint();
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setStrokeWidth(8);
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+    }
+
+    @Override
+    public void drawDataSet(Canvas canvas, ChartData<ScatterTextDataSet> chartData, ScatterTextDataSet dataSet) {
+        dataSetList = chartData.getDataSets();
+        int i = dataSetList.indexOf(dataSet);
+        if (dataSet.isVisible()) {
+            drawScatterTextDataSet(canvas, dataSet, i,
+                    chartData.getLeftMax(), chartData.getLeftMin(),
+                    chartData.getRightMax(), chartData.getRightMin());
+        }
+    }
+
+    private void drawScatterTextDataSet(Canvas canvas, ScatterTextDataSet dataSet, int index, float leftMax, float leftMin, float rightMax, float rightMin) {
+        mRenderPaint.setStrokeWidth(2);
+        mRenderPaint.setColor(dataSet.getLineColor());
+        mRenderPaint.setTextSize(dataSet.getTextSize());
+
+        mTextPaint.setColor(dataSet.getTextColor());
+        mTextPaint.setTextSize(dataSet.getTextSize());
+
+        String text = dataSet.getText();
+        int bgColor = dataSet.getTextBgColor();
+        int lineColor = dataSet.getLineColor();
+        int frameColor = dataSet.getFrameColor();
+        int axisDependency = dataSet.getAxisDependency();
+        int dashHeight = dataSet.getLineDashHeight();
+        int textPadding = dataSet.getTextPadding();
+        int dashLength;
+
+        Rect textBound = new Rect();
+        mRenderPaint.getTextBounds(text, 0, text.length(), textBound);
+
+        int textRectHeight = textBound.height();
+        int textRectWidth = textBound.width();
+
+        int valueCount = dataSet.getEntryCount();
+
+        float min, max;
+        switch (dataSet.getAxisDependency()) {
+            case AxisY.DEPENDENCY_RIGHT:
+                min = rightMin;
+                max = rightMax;
+                break;
+            case AxisY.DEPENDENCY_BOTH:
+            case AxisY.DEPENDENCY_LEFT:
+            default:
+                min = leftMin;
+                max = leftMax;
+                break;
+        }
+
+        final float scale = 1 / mViewport.width();
+        final float step = mContentRect.width() * scale / valueCount;
+        final float startX = mContentRect.left - mViewport.left * mContentRect.width() * scale;
+        final float visibleRange = dataSet.getVisibleRange(mViewport);
+        int i = 0;
+        int valuePhaseCount = (int) Math.floor(valueCount * mChartAnimator.getPhaseX());
+        double candleWidth = mContentRect.width() / Math.max(visibleRange, dataSet.getMinValueCount());
+
+        for (; i < valuePhaseCount && i < dataSet.getValues().size(); i++) {
+            ScatterTextValue value = dataSet.getEntryForIndex(i);
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow()))
+                continue;
+
+            int offset = calOffset(index, i, textPadding);
+            dashLength = dashHeight + offset;
+//            Log.d("ScatterTextRenderer", "------dashLength = BASE_DASH_LENGTH:" + BASE_DASH_LENGTH + " + offset:" + offset + " = " + dashLength);
+//            Log.v("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", textRectHeight:" + textRectHeight + ", offset:" + offset + ", dashLength:" + dashLength);
+
+            float xPosition = startX + step * (i + dataSet.getStartIndexOffset());
+            float yHighPosition = (max - value.getHigh()) / (max - min) * mContentRect.height();
+            float yLowPosition = (max - value.getLow()) / (max - min) * mContentRect.height();
+            float anchor = yHighPosition;
+
+
+            final float candlestickCenterX = (float) (xPosition + candleWidth * 0.5);
+            value.setCoordinate(candlestickCenterX, anchor);
+            float bottom = anchor - dashLength;
+            float top = bottom - textRectHeight - textPadding * 2;
+            float pathEnd = bottom;
+            // 如果此时顶部位置小于最小边距 向下
+            if(top < margin) {
+                anchor = yLowPosition;
+                bottom = anchor + dashLength + textRectHeight;
+                top = bottom - textRectHeight - textPadding * 2;
+                pathEnd = top;
+            }
+
+            RectF roundRect = new RectF();
+            float right, left;
+            switch (axisDependency) {
+                case AxisY.DEPENDENCY_LEFT:
+                    right = candlestickCenterX + textPadding;
+                    left = candlestickCenterX - textRectWidth - textPadding;
+                    break;
+                case AxisY.DEPENDENCY_RIGHT:
+                    right = candlestickCenterX + textRectWidth + textPadding;
+                    left = candlestickCenterX - textPadding;
+                    break;
+                case AxisY.DEPENDENCY_BOTH:
+                default:
+                    right = candlestickCenterX + textRectWidth * 0.5f + textPadding;
+                    left = candlestickCenterX - textRectWidth * 0.5f - textPadding;
+                    break;
+            }
+
+            if (axisDependency == AxisY.DEPENDENCY_BOTH) {
+                float maxRight = mContentRect.width() - mRenderPaint.getStrokeWidth();
+                if (right > maxRight && candlestickCenterX < mContentRect.width()) {
+                    right = maxRight;
+                    left = maxRight - textRectWidth - textPadding * 2;
+                }
+                float minLeft = mRenderPaint.getStrokeWidth();
+                if (left < minLeft && candlestickCenterX > 0) {
+                    left = minLeft;
+                    right = left + textRectWidth + textPadding * 2;
+                }
+            }
+            if (dataSet.getAlign() == ALIGN_BOTTOM) {
+                anchor = yLowPosition;
+                bottom = anchor + dashLength + textRectHeight;
+                top = bottom - textRectHeight - textPadding * 2;
+                pathEnd = top;
+                // 如果此时底部位置大于(mContentRect.height() - margin) 向上
+                if(bottom > mContentRect.height() - margin) {
+                    anchor = yHighPosition;
+                    bottom = anchor - dashLength;
+                    top = bottom - textRectHeight - textPadding * 2;
+                    pathEnd = bottom;
+                }
+//                Log.w("ScatterTextRenderer", "drawDataSet " + i + ", index_" + index + ":" + text + ", h:" + (Math.abs(top - bottom)) + "(top:" + top + ", bottom:" + bottom + "), left:" + left + ", right:" + right);
+            }
+
+            if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
+                // 左边界
+                top = anchor + textRectHeight * 0.5f + textPadding;
+                bottom = anchor - textRectHeight * 0.5f - textPadding;
+                right = candlestickCenterX + dashLength + textRectWidth + textPadding * 2;
+                left = right - textRectWidth - textPadding * 2;
+
+                if(bottom < margin) {
+                    bottom = margin;
+                    top = bottom + textRectHeight + textPadding * 2;
+                }
+
+                if(top > mContentRect.height() - margin) {
+                    top = mContentRect.height() - margin;
+                    bottom = top - textRectHeight - textPadding * 2;
+                }
+            }
+
+            if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
+                // 右边界
+                top = anchor + textRectHeight * 0.5f + textPadding;
+                bottom = anchor - textRectHeight * 0.5f - textPadding;
+                left = candlestickCenterX - dashLength - textRectWidth - textPadding * 2;
+                right = left + textRectWidth + textPadding * 2;
+
+                if(bottom < margin) {
+                    bottom = margin;
+                    top = bottom + textRectHeight + textPadding * 2;
+                }
+
+                if(top > mContentRect.height() - margin) {
+                    top = mContentRect.height() - margin;
+                    bottom = top - textRectHeight - textPadding * 2;
+                }
+            }
+
+            roundRect.set(left, top, right, bottom);
+            mRenderPaint.setPathEffect(null);
+            mRenderPaint.setStyle(Paint.Style.FILL);
+            mRenderPaint.setAntiAlias(true);
+            mRenderPaint.setColor(bgColor);
+
+            float radius = dataSet.isBgCircle() ? textRectWidth : 2f;
+            canvas.drawRoundRect(roundRect, radius, radius, mRenderPaint);
+
+            mRenderPaint.setStyle(Paint.Style.STROKE);
+            mRenderPaint.setAntiAlias(true);
+            mRenderPaint.setColor(frameColor);
+            canvas.drawRoundRect(roundRect, radius, radius, mRenderPaint);
+
+            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+            float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
+            float baseline = roundRect.centerY() + distance;
+            canvas.drawText(text, roundRect.centerX(), baseline, mTextPaint);
+
+            Path path = new Path();
+            if(candlestickCenterX < (textRectWidth * 0.5f + textPadding) && candlestickCenterX > 0 && dataSet.isBgCircle()) {
+                // 左边界
+                if(bottom == margin) {
+                    // 上边界
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX + dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else if (top == mContentRect.height() - margin) {
+                    // 下边界
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX + dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
+                } else {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX + dashLength, anchor);
+                }
+            } else if(candlestickCenterX > mContentRect.width() - (textRectWidth * 0.5f + textPadding) && candlestickCenterX < mContentRect.width() && dataSet.isBgCircle()) {
+                // 右边界
+                if(bottom == margin) {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor + (textRectHeight + textPadding * 2) * 0.5f);
+                } else if (top == mContentRect.height() - margin) {
+                    // 下边界
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor - (textRectHeight + textPadding * 2) * 0.5f);
+                } else {
+                    path.moveTo(candlestickCenterX, anchor);
+                    path.lineTo(candlestickCenterX - dashLength, anchor);
+                }
+            } else {
+                path.moveTo(candlestickCenterX, anchor);
+                path.lineTo(candlestickCenterX, pathEnd);
+            }
+
+            mRenderPaint.setColor(lineColor);
+            mRenderPaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 0));
+            canvas.drawPath(path, mRenderPaint);
+
+        }
+    }
+
+    private int calOffset(int index, int i, int textPadding) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        Rect textBound = new Rect();
+        int offset = 0;
+        int invalidTime = 0;
+        for (int j = 0; j < index; j++) {
+            ScatterTextDataSet dataSet = dataSetList.get(j);
+            if (dataSet.getAlign() != dataSetList.get(index).getAlign()) {
+                invalidTime++;
+                continue;
+            }
+
+            ScatterTextValue value = dataSet.getEntryForIndex(i);
+            if (!value.isVisible() || Float.isNaN(value.getHigh()) || Float.isNaN(value.getLow())) {
+                invalidTime++;
+                continue;
+            }
+
+            String text = dataSet.getText();
+            paint.setTextSize(dataSet.getTextSize());
+            paint.getTextBounds(text, 0, text.length(), textBound);
+
+            int textHeight = textBound.height();
+            int oldOffset = offset;
+            offset += textHeight + textPadding * 2;
+        }
+        int oldOffset = offset;
+        if (offset > 0) {
+            offset += textPadding * (index - invalidTime);
+        } else {
+
+        }
+        return offset;
+    }
+
+}
