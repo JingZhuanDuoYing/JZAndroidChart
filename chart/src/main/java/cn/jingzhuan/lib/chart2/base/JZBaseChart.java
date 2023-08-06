@@ -73,6 +73,7 @@ public class JZBaseChart extends JZChart {
         mAxisRenderers.add(new AxisRenderer(this, mAxisRight));
 
         mChartAnimator = new ChartAnimator(animation -> postInvalidate());
+        super.initChart();
     }
 
     @Override

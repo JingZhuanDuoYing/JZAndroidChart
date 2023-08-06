@@ -120,10 +120,10 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
         this.chart = chart;
         initPaint();
         initMeasure();
-        chart.setInternalViewportChangeListener(viewport -> {
-            mViewport.set(viewport);
-            calcDataSetMinMax();
-        });
+//        chart.setInternalViewportChangeListener(viewport -> {
+//            mViewport.set(viewport);
+//            calcDataSetMinMax();
+//        });
         chart.addOnViewportChangeListener(viewport -> {
             mViewport.set(viewport);
             initChartBoundary();

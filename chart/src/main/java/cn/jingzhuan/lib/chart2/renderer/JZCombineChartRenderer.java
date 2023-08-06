@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import cn.jingzhuan.lib.chart.data.ScatterTextValue;
 import cn.jingzhuan.lib.chart.data.ScatterValue;
 import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart.data.TreeValue;
-import cn.jingzhuan.lib.chart2.adapter.JZCombineChartAdapter;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart2.base.JZChart;
 import cn.jingzhuan.lib.chart2.draw.BaseDraw;
@@ -55,16 +55,14 @@ public class JZCombineChartRenderer extends AbstractChartRenderer {
 
     public RangeRenderer rangeRenderer;
 
-    private final Chart mChart;
-
-    private final JZCombineChartAdapter mAdapter;
+    private final JZChart mChart;
 
     public JZCombineChartRenderer(final Chart chart) {
         super(chart);
         initDraw(chart);
         rangeRenderer = initRangeChartRenderer(chart);
-        this.mChart = chart;
-        this.mAdapter = (JZCombineChartAdapter) ((JZChart) chart).getAdapter();
+        this.mChart = (JZChart) chart;
+        getChartData().setChart(chart);
     }
 
     private void initDraw(final Chart chart) {
@@ -139,6 +137,32 @@ public class JZCombineChartRenderer extends AbstractChartRenderer {
         if (rangeRenderer.getDataSet() != null && !rangeRenderer.getDataSet().isEmpty()) {
             rangeRenderer.renderHighlighted(canvas, highlights);
         }
+        mRenderPaint.setColor(getHighlightColor());
+        mRenderPaint.setStrokeWidth(1);
+        mRenderPaint.setStyle(Paint.Style.FILL);
+        if (mHighlightedDashPathEffect != null) {
+            mRenderPaint.setPathEffect(mHighlightedDashPathEffect);
+        }
+
+        for (Highlight highlight : highlights) {
+            if (mChart.isHighlightedVerticalEnable()) {
+                canvas.drawLine(highlight.getX(),
+                        mContentRect.top,
+                        highlight.getX(),
+                        mContentRect.bottom,
+                        mRenderPaint);
+            }
+
+            if (mChart.isHighlightedHorizontalEnable()) {
+                canvas.drawLine(mContentRect.left,
+                        highlight.getY(),
+                        mContentRect.right,
+                        highlight.getY(),
+                        mRenderPaint);
+            }
+        }
+
+        mRenderPaint.setPathEffect(null);
     }
 
     @Override
@@ -225,12 +249,12 @@ public class JZCombineChartRenderer extends AbstractChartRenderer {
 
     @Override
     protected List<AbstractDataSet> getDataSet() {
-        return mAdapter.getDataSets();
+        return mChart.getAdapter().getDataSets();
     }
 
     @Override
     public CombineData getChartData() {
-        return mAdapter.getData();
+        return (CombineData) mChart.getAdapter().getData();
     }
 
     @Override

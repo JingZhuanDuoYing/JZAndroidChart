@@ -6,6 +6,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.CombineData;
+import cn.jingzhuan.lib.chart.data.IDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
@@ -16,7 +17,7 @@ import cn.jingzhuan.lib.chart.data.TreeDataSet;
  * @author YL
  * @since 2023-08-04
  */
-public class JZCombineChartAdapter extends BaseChartAdapter {
+public class JZCombineChartAdapter extends BaseChartAdapter<AbstractDataSet> {
     private CombineData combineData = new CombineData();
 
 
@@ -32,6 +33,7 @@ public class JZCombineChartAdapter extends BaseChartAdapter {
         combineData.addAll(data.getDataSets());
     }
 
+    @Override
     public CombineData getData() {
         return this.combineData;
     }

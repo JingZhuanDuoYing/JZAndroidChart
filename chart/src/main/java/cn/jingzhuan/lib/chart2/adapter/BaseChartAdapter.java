@@ -3,12 +3,14 @@ package cn.jingzhuan.lib.chart2.adapter;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 
+import cn.jingzhuan.lib.chart.data.IDataSet;
+
 /**
  * @author YL
  * @since 2023-08-04
  * 数据适配器
  */
-public abstract class BaseChartAdapter implements IAdapter {
+public abstract class BaseChartAdapter<T extends IDataSet> implements IAdapter<T> {
 
     private final DataSetObservable mDataSetObservable = new DataSetObservable();
 

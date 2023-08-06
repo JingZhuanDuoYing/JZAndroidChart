@@ -13,19 +13,11 @@ public abstract class JZChart extends Chart{
 
     private int mItemCount;
 
-    private DataSetObserver mDataSetObserver = new DataSetObserver() {
-        @Override
-        public void onChanged() {
-            mItemCount = getAdapter().getCount();
-            notifyChanged();
-        }
+    private DataSetObserver mDataSetObserver;
 
-        @Override
-        public void onInvalidated() {
-            mItemCount = getAdapter().getCount();
-            notifyChanged();
-        }
-    };
+    private boolean isHighlightedVerticalEnable = true;
+
+    private boolean isHighlightedHorizontalEnable = true;
 
     public JZChart(Context context) {
         super(context);
@@ -41,6 +33,23 @@ public abstract class JZChart extends Chart{
 
     public JZChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override
+    public void initChart() {
+        mDataSetObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                mItemCount = getAdapter().getCount();
+                notifyChanged();
+            }
+
+            @Override
+            public void onInvalidated() {
+                mItemCount = getAdapter().getCount();
+                notifyChanged();
+            }
+        };
     }
 
     /**
@@ -78,5 +87,21 @@ public abstract class JZChart extends Chart{
 //            setScrollX(0);
         }
         postInvalidate();
+    }
+
+    public boolean isHighlightedVerticalEnable() {
+        return isHighlightedVerticalEnable;
+    }
+
+    public void setHighlightedVerticalEnable(boolean highlightedVerticalEnable) {
+        isHighlightedVerticalEnable = highlightedVerticalEnable;
+    }
+
+    public boolean isHighlightedHorizontalEnable() {
+        return isHighlightedHorizontalEnable;
+    }
+
+    public void setHighlightedHorizontalEnable(boolean highlightedHorizontalEnable) {
+        isHighlightedHorizontalEnable = highlightedHorizontalEnable;
     }
 }

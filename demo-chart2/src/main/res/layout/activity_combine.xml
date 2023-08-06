@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.CombineActivity">
+
+    <cn.jingzhuan.lib.chart2.demo.chart.KLineChart
+        android:id="@+id/main_chart"
+        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        app:backgroundColor="#F7F7F7"
+        app:axisColor="#ffe5e5e5"
+        app:axisThickness="0.5dp"
+        app:gridColor="#ffe5e5e5"
+        app:labelTextColor="#A1ABBB"
+        app:labelTextSize="12dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -323,4 +323,11 @@ public class CombineData extends ChartData<AbstractDataSet> {
         });
         return allDataSet;
     }
+
+    @Override
+    public int getEntryCount() {
+        return super.getEntryCount();
+    }
+
+
 }

@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.CombineActivity"
+            android:exported="false" />
+        <activity
             android:name=".RangeDemoActivity"
             android:exported="false">
             <meta-data

@@ -5,12 +5,14 @@ import android.database.DataSetObserver;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.IDataSet;
 
 /**
  * @author YL
  * @since 2023-08-04
  */
-public interface IAdapter {
+public interface IAdapter<T extends IDataSet> {
 
     /**
      * 获取点的数目
@@ -25,6 +27,8 @@ public interface IAdapter {
     Object getItem(int position);
 
     List<AbstractDataSet> getDataSets();
+
+    ChartData<T> getData();
 
     /**
      * 注册一个数据观察者

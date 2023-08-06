@@ -49,8 +49,6 @@ public abstract class AbstractChartRenderer<T extends AbstractDataSet> implement
             });
         }
 
-        getChartData().setChart(chart);
-
         mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRenderPaint.setStyle(Paint.Style.STROKE);
     }

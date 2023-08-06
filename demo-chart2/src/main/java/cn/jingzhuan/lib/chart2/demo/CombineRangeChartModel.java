@@ -10,6 +10,7 @@ import androidx.databinding.ViewDataBinding;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 
+import cn.jingzhuan.lib.chart2.demo.activity.CombineActivity;
 import cn.jingzhuan.lib.chart2.demo.databinding.LayoutCombineRangeChartBinding;
 
 
@@ -30,6 +31,14 @@ public abstract class CombineRangeChartModel extends DataBindingEpoxyModel {
             @Override
             public void onClick(View v) {
                 rootView.getContext().startActivity(new Intent(rootView.getContext(), RangeDemoActivity.class));
+
+            }
+        });
+
+        binding.btnKline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rootView.getContext().startActivity(new Intent(rootView.getContext(), CombineActivity.class));
 
             }
         });
