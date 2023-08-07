@@ -61,7 +61,6 @@ public class JZCombineChart extends JZBaseChart {
     public void setDataSet(AbstractDataSet dataSet) {
         cleanAllDataSet();
         addDataSet(dataSet);
-        getAdapter().notifyDataSetChanged();
     }
 
     public void setData(final CombineData combineData) {
@@ -87,7 +86,6 @@ public class JZCombineChart extends JZBaseChart {
         for (ScatterTextDataSet pointLineDataSet : combineData.getScatterTextData()) {
             addDataSet(pointLineDataSet);
         }
-        getAdapter().notifyDataSetChanged();
     }
 
     public List<LineDataSet> getLineDataSet() {

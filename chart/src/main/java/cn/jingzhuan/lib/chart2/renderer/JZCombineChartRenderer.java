@@ -138,7 +138,7 @@ public class JZCombineChartRenderer extends AbstractChartRenderer {
             rangeRenderer.renderHighlighted(canvas, highlights);
         }
         mRenderPaint.setColor(getHighlightColor());
-        mRenderPaint.setStrokeWidth(1);
+        mRenderPaint.setStrokeWidth(3);
         mRenderPaint.setStyle(Paint.Style.FILL);
         if (mHighlightedDashPathEffect != null) {
             mRenderPaint.setPathEffect(mHighlightedDashPathEffect);

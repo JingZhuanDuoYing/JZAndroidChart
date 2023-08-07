@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart.data;
 import android.graphics.Rect;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,7 +112,7 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return  treeData.add(dataSet);
     }
 
-    public void setCombineData(CombineData combineData) {
+    public void setCombineData(@NonNull CombineData combineData) {
         this.leftMin = combineData.leftMin;
         this.rightMin = combineData.rightMin;
         this.leftMax = combineData.leftMax;

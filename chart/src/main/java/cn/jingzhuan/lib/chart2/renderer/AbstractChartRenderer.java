@@ -62,22 +62,6 @@ public abstract class AbstractChartRenderer<T extends AbstractDataSet> implement
 
     public abstract void renderHighlighted(Canvas canvas, @NonNull Highlight[] highlights);
 
-    /**
-     * Computes the pixel offset for the given X lib value. This may be outside the view bounds.
-     */
-    protected float getDrawX(float x) {
-        return mContentRect.left
-                + mContentRect.width() * (x - mViewport.left) / mViewport.width();
-    }
-
-    /**
-     * Computes the pixel offset for the given Y lib value. This may be outside the view bounds.
-     */
-    protected float getDrawY(float y) {
-        return mContentRect.bottom
-                - mContentRect.height() * (y - mViewport.top) / mViewport.height();
-    }
-
     public void addDataSet(T dataSet) {
         if (dataSet == null) return;
         getChartData().add(dataSet);

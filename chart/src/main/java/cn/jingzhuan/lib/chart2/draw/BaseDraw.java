@@ -82,8 +82,19 @@ public abstract class BaseDraw<E extends Value, T extends AbstractDataSet<E>> im
         return dataSetList;
     }
 
+    /**
+     * Computes the pixel offset for the given X lib value. This may be outside the view bounds.
+     */
     protected float getDrawX(float x) {
         return mContentRect.left + mContentRect.width() * (x - mViewport.left) / mViewport.width();
+    }
+
+    /**
+     * Computes the pixel offset for the given Y lib value. This may be outside the view bounds.
+     */
+    protected float getDrawY(float y) {
+        return mContentRect.bottom
+                - mContentRect.height() * (y - mViewport.top) / mViewport.height();
     }
 
 }
