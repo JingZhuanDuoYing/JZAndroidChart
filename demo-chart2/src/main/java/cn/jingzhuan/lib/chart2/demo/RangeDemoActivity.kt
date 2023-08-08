@@ -20,7 +20,10 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart.utils.ForceAlign
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.round
+import kotlin.math.roundToInt
 
 class RangeDemoActivity : AppCompatActivity() {
 
@@ -46,19 +49,15 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnScaleOut: AppCompatButton
 
+    private lateinit var btnHighlightAlways: AppCompatButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
-        llRangeInfo = findViewById(R.id.ll_range_info)
-        tvCloseRange = findViewById(R.id.tv_close_range)
-        tvInfo = findViewById(R.id.tv_info)
-        tvOpen = findViewById(R.id.tv_open)
-        tvNumber = findViewById(R.id.tv_number)
-        combineChart = findViewById(R.id.combine_chart)
-        btnRange = findViewById(R.id.btn_range)
-        btnAddTag = findViewById(R.id.btn_add_tag)
-        btnScaleIn = findViewById(R.id.btn_scale_in)
-        btnScaleOut = findViewById(R.id.btn_scale_out)
+
+        initView()
+
+        initListener()
 
         setChartData()
 
@@ -72,6 +71,45 @@ class RangeDemoActivity : AppCompatActivity() {
 //        dataSet.increasingColor = 0xFFFD263F.toInt()
 //        combineChart.addDataSet(dataSet2)
 
+        combineChart.onHighlightStatusChangeListener =
+            object : HighlightStatusChangeListener {
+                override fun onHighlightShow(highlights: Array<out Highlight>?) {
+                    llRangeInfo.visibility = View.VISIBLE
+                    if (!highlights.isNullOrEmpty()) {
+                        val data = candlestickValues[highlights[0].dataIndex]
+                        tvInfo.text = "开：${data.open} 高：${data.high} 收：${data.close} 低：${data.low}"
+                    }
+
+                }
+
+                override fun onHighlightHide() {
+                    llRangeInfo.visibility = View.INVISIBLE
+                }
+            }
+
+        combineChart.renderer.rangeRenderer.setOnRangeListener{ startX, endX, _ ->
+            val startIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(startX, 0f)
+            val endIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(endX, 0f)
+            tvNumber.text = "周期数：${endIndex - startIndex}"
+            updateCloseRangeButton(startX, endX)
+        }
+    }
+
+    private fun initView() {
+        llRangeInfo = findViewById(R.id.ll_range_info)
+        tvCloseRange = findViewById(R.id.tv_close_range)
+        tvInfo = findViewById(R.id.tv_info)
+        tvOpen = findViewById(R.id.tv_open)
+        tvNumber = findViewById(R.id.tv_number)
+        combineChart = findViewById(R.id.combine_chart)
+        btnRange = findViewById(R.id.btn_range)
+        btnAddTag = findViewById(R.id.btn_add_tag)
+        btnScaleIn = findViewById(R.id.btn_scale_in)
+        btnScaleOut = findViewById(R.id.btn_scale_out)
+        btnHighlightAlways = findViewById(R.id.btn_highlight_always)
+    }
+
+    private fun initListener() {
         btnScaleIn.setOnClickListener {
             combineChart.zoomIn(ForceAlign.RIGHT)
         }
@@ -99,6 +137,10 @@ class RangeDemoActivity : AppCompatActivity() {
             llRangeInfo.visibility = View.VISIBLE
             tvOpen.visibility = View.GONE
             tvNumber.visibility = View.VISIBLE
+        }
+
+        btnHighlightAlways.setOnClickListener {
+            combineChart.isHighlightVolatile = false
         }
 
         tvCloseRange.setOnClickListener {
@@ -146,31 +188,41 @@ class RangeDemoActivity : AppCompatActivity() {
             loadMoreChartData()
         }
 
-        combineChart.addOnViewportChangeListener {
-            Log.d("JZChart", "left= ${it.left} +++ right= ${it.right}")
-        }
+        combineChart.addOnViewportChangeListener {viewPort ->
+            if (!combineChart.isHighlightVolatile) {
+                val renderer = combineChart.renderer
+                val dataSet = combineChart.candlestickDataSet
+                val chartWidth = combineChart.contentRect.width()
+                val visibleSize = dataSet.firstOrNull()?.getVisibleRange(viewPort)?.roundToInt() ?: 0
+                val highlight = combineChart.highlights?.firstOrNull()
+                val highLightIndex = highlight?.dataIndex ?: -1
+                val highLightX = getEntryCoordinateByIndex(highLightIndex, viewPort)
+                val candleWidth = if (dataSet.firstOrNull()?.isAutoWidth == true) {
+                    (chartWidth / visibleSize).toFloat()
+                } else {
+                    dataSet.firstOrNull()?.candleWidth
+                } ?: 0f
+                val halfCandleWidth = candleWidth.times(0.5f)
 
-        combineChart.onHighlightStatusChangeListener =
-            object : HighlightStatusChangeListener {
-                override fun onHighlightShow(highlights: Array<out Highlight>?) {
-                    llRangeInfo.visibility = View.VISIBLE
-                    if (!highlights.isNullOrEmpty()) {
-                        val data = candlestickValues[highlights[0].dataIndex]
-                        tvInfo.text = "开：${data.open} 高：${data.high} 收：${data.close} 低：${data.low}"
+                val leftBorder = 0f
+                val rightBorder = chartWidth.toFloat() - halfCandleWidth
+                val dataIndex = when {
+                    highLightX <= leftBorder -> {
+                        getEntryIndexByCoordinate(halfCandleWidth, viewPort)
                     }
-
+                    highLightX >= rightBorder -> {
+                        getEntryIndexByCoordinate(rightBorder, viewPort)
+                    }
+                    else -> highLightIndex
                 }
 
-                override fun onHighlightHide() {
-                    llRangeInfo.visibility = View.INVISIBLE
-                }
+                val x = max(halfCandleWidth, min(rightBorder, highLightX + halfCandleWidth))
+                val y = highlight?.y ?: Float.NaN
+                Log.d("JZChart", "OnViewportChangeListener visibleSize:$visibleSize, highLightIndex:$highLightIndex, highLightX:$highLightX, contentRect.width:${candleWidth}, x:$x, y:$y, dataIndex:$dataIndex")
+                combineChart.highlightValue(Highlight(x, y, dataIndex))
+
             }
-
-        combineChart.renderer.rangeRenderer.setOnRangeListener{ startX, endX, _ ->
-            val startIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(startX, 0f)
-            val endIndex = combineChart.renderer.rangeRenderer.getEntryIndexByCoordinate(endX, 0f)
-            tvNumber.text = "周期数：${endIndex - startIndex}"
-            updateCloseRangeButton(startX, endX)
+//            Log.d("JZChart", "left= ${viewPort.left} +++ right= ${viewPort.right}")
         }
     }
 
@@ -236,8 +288,36 @@ class RangeDemoActivity : AppCompatActivity() {
             val to = viewport.right * originCount + (newCount - originCount);
             viewport.left = from / newCount
             viewport.right = to / newCount
+
+            if (!combineChart.isHighlightVolatile) {
+                val highlight = combineChart.highlights?.firstOrNull()
+                val x = highlight?.x ?: 0f
+                val y = highlight?.y ?: 0f
+                val dataIndex = getEntryIndexByCoordinate(x, viewport)
+                Log.d("JZChart", "reCalcViewportByLoadMore $dataIndex, x=$x")
+                combineChart.highlightValue(Highlight(x, y, dataIndex))
+            }
             combineChart.setCurrentViewport(viewport)
         }
+    }
+
+    private fun getEntryIndexByCoordinate(x: Float, viewport: Viewport): Int {
+        val contentRect = combineChart.contentRect
+        val valueCount = candlestickValues.size
+        var index: Int =
+            (((x - contentRect.left) * viewport.width() / contentRect.width() + viewport.left) * valueCount.toFloat()).toInt()
+        if (index >= valueCount) index = valueCount - 1
+        if (index < 0) index = 0
+        return index
+    }
+
+    private fun getEntryCoordinateByIndex(index: Int, viewport: Viewport): Float {
+        val contentRect = combineChart.contentRect
+        val valueCount = candlestickValues.size
+        var x: Float = contentRect.left + (index / valueCount.toFloat() - viewport.left) / viewport.width() * contentRect.width()
+        if (x > contentRect.right) x = contentRect.right.toFloat()
+        if (x < contentRect.left) x = contentRect.left.toFloat()
+        return x
     }
 
     private fun setChartData() {

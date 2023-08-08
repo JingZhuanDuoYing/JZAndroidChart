@@ -123,7 +123,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         return mHighlightColor;
     }
 
-    public void enableHighlightDashPathEffect(float intervals[], float phase) {
+    public void enableHighlightDashPathEffect(float[] intervals, float phase) {
         mHighlightedDashPathEffect = new DashPathEffect(intervals, phase);
     }
 

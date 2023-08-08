@@ -601,10 +601,15 @@ public abstract class Chart extends BitmapCachedChart {
     };
 
     protected void triggerViewportChange() {
-        postInvalidateOnAnimation();
 
         if (mInternalViewportChangeListener != null) {
-            mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
+            synchronized (this) {
+                try {
+                    mInternalViewportChangeListener.onViewportChange(mCurrentViewport);
+                } catch (Exception e) {
+                    Log.d("JZChart", "onInternalViewportChange", e);
+                }
+            }
         }
         if (mOnViewportChangeListeners != null && !mOnViewportChangeListeners.isEmpty()) {
             synchronized (this) {
@@ -612,11 +617,12 @@ public abstract class Chart extends BitmapCachedChart {
                     try {
                         mOnViewportChangeListener.onViewportChange(mCurrentViewport);
                     } catch (Exception e) {
-                        Log.d("Chart", "onViewportChange", e);
+                        Log.d("JZChart", "onViewportChange", e);
                     }
                 }
             }
         }
+        postInvalidateOnAnimation();
     }
 
     /**
@@ -807,7 +813,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (needsInvalidate) {
             triggerViewportChange();
-            Log.d("Chart", "triggerViewportChange from= computeScroll");
+            Log.d("JZChart", "triggerViewportChange from= computeScroll");
         }
     }
 

@@ -2,13 +2,9 @@ package cn.jingzhuan.lib.chart2.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Typeface;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import org.jetbrains.annotations.NotNull;
-
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -23,7 +19,6 @@ import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +29,26 @@ import java.util.List;
 public class CombineChartRenderer extends AbstractDataRenderer {
 
     protected TreeChartRenderer treeChartRenderer;
+
     protected BarChartRenderer barChartRenderer;
+
     protected LineRenderer lineRenderer;
+
     protected CandlestickChartRenderer candlestickChartRenderer;
+
     protected ScatterChartRenderer scatterChartRenderer;
-    public RangeRenderer rangeRenderer;//K线区域选择的renderer
+
+    //K线区域选择的renderer
+    public RangeRenderer rangeRenderer;
+
     protected PointLineRenderer pointLineRenderer;
+
     protected ScatterTextRenderer scatterTextRenderer;
+
     private final Chart chart;
 
     private CombineData combineData;
+
     private int lastDataSize = 0;
 
     public CombineChartRenderer(final Chart chart) {
@@ -59,7 +64,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
-            @Override public void onViewportChange(Viewport viewport) {
+            @Override
+            public void onViewportChange(Viewport viewport) {
                 mViewport.set(viewport);
                 calcDataSetMinMax();
             }
@@ -134,19 +140,21 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             }
         }
         // k线叠加时 区间统计只画一次
-        if(chart.getRangeEnable()) {
-            if(!candlestickDataSets.isEmpty()){
+        if (chart.getRangeEnable()) {
+            if (!candlestickDataSets.isEmpty()) {
                 rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) candlestickDataSets.get(0));
             }
         }
 
     }
 
-    @Override protected void renderDataSet(Canvas canvas, ChartData chartData) {
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData chartData) {
         // ignore
     }
 
-    @Override protected void renderDataSet(Canvas canvas, ChartData chartData, AbstractDataSet dataSet) {
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData chartData, AbstractDataSet dataSet) {
         // ignore
     }
 
@@ -194,19 +202,19 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         if (dataSet == null) return;
         getChartData().add(dataSet);
         int dataSize = dataSet.getValues().size();
-        if (lastDataSize== 0) lastDataSize = dataSize;
-        if (RequestDataType.DATA_TYPE == RequestDataType.DATA_TYPE_RANGE){
-            if (lastDataSize != dataSize){
-                int from = Math.round(mViewport.left * lastDataSize ) + (dataSize - lastDataSize);
-                int to = Math.round(mViewport.right * lastDataSize )+ (dataSize - lastDataSize);
-                mViewport.left = from / (float)dataSize;
-                mViewport.right = to / (float)dataSize;
+        if (lastDataSize == 0) lastDataSize = dataSize;
+        if (RequestDataType.DATA_TYPE == RequestDataType.DATA_TYPE_RANGE) {
+            if (lastDataSize != dataSize) {
+                int from = Math.round(mViewport.left * lastDataSize) + (dataSize - lastDataSize);
+                int to = Math.round(mViewport.right * lastDataSize) + (dataSize - lastDataSize);
+                mViewport.left = from / (float) dataSize;
+                mViewport.right = to / (float) dataSize;
                 chart.setCurrentViewport(mViewport);
                 lastDataSize = dataSize;
             }
         }
 
-        if (dataSet instanceof TreeDataSet){
+        if (dataSet instanceof TreeDataSet) {
             treeChartRenderer.addDataSet((TreeDataSet) dataSet);
         } else if (dataSet instanceof LineDataSet) {
             lineRenderer.addDataSet((LineDataSet) dataSet);
@@ -217,16 +225,17 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             rangeRenderer.addDataSet((CandlestickDataSet) dataSet);
         } else if (dataSet instanceof ScatterDataSet) {
             scatterChartRenderer.addDataSet((ScatterDataSet) dataSet);
-        } else if (dataSet instanceof PointLineDataSet){
-            pointLineRenderer.addDataSet((PointLineDataSet)dataSet);
-        }else  if (dataSet instanceof ScatterTextDataSet){
+        } else if (dataSet instanceof PointLineDataSet) {
+            pointLineRenderer.addDataSet((PointLineDataSet) dataSet);
+        } else if (dataSet instanceof ScatterTextDataSet) {
             scatterTextRenderer.addDataSet((ScatterTextDataSet) dataSet);
         }
 
         calcDataSetMinMax();
     }
 
-    @Override public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+    @Override
+    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
         if (defaultVisibleEntryCount <= 0) return;
 
         treeChartRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
@@ -239,7 +248,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterTextRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 
-    @Override public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+    @Override
+    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
         if (maxVisibleEntryCount <= 0) return;
 
         treeChartRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
@@ -252,7 +262,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterTextRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
-    @Override public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+    @Override
+    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
         if (minVisibleEntryCount <= 0) return;
 
         treeChartRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
@@ -265,13 +276,15 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         scatterTextRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
-    @Override public void removeDataSet(AbstractDataSet dataSet) {
+    @Override
+    public void removeDataSet(AbstractDataSet dataSet) {
 
         getChartData().remove(dataSet);
         calcDataSetMinMax();
     }
 
-    @Override public void clearDataSet() {
+    @Override
+    public void clearDataSet() {
         getChartData().clear();
 
         cleanTreeDataSet();
@@ -300,22 +313,23 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.clearDataSet();
         getChartData().getCandlestickChartData().clear();
     }
+
     public void cleanScatterDataSet() {
         scatterChartRenderer.clearDataSet();
         getChartData().getScatterChartData().clear();
     }
 
-    public void cleanPointLineDataSet(){
+    public void cleanPointLineDataSet() {
         pointLineRenderer.clearDataSet();
         getChartData().getPointLineChartData().clear();
     }
 
-    public void cleanScatterTextDataSet(){
+    public void cleanScatterTextDataSet() {
         scatterTextRenderer.clearDataSet();
         getChartData().getScatterTextChartData().clear();
     }
 
-    public void cleanTreeDataSet(){
+    public void cleanTreeDataSet() {
         treeChartRenderer.clearDataSet();
         getChartData().getTreeChartData().clear();
     }
@@ -329,12 +343,14 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return combineData.getDataSets();
     }
 
-    @Override public CombineData getChartData() {
+    @Override
+    public CombineData getChartData() {
         if (combineData == null) combineData = new CombineData();
         return combineData;
     }
 
-    @Override public void enableHighlightDashPathEffect(float[] intervals, float phase) {
+    @Override
+    public void enableHighlightDashPathEffect(float[] intervals, float phase) {
         super.enableHighlightDashPathEffect(intervals, phase);
         this.treeChartRenderer.enableHighlightDashPathEffect(intervals, phase);
         this.lineRenderer.enableHighlightDashPathEffect(intervals, phase);
@@ -346,7 +362,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.scatterTextRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
-    @Override public void setTypeface(Typeface tf) {
+    @Override
+    public void setTypeface(Typeface tf) {
         this.treeChartRenderer.setTypeface(tf);
         this.lineRenderer.setTypeface(tf);
         this.barChartRenderer.setTypeface(tf);
@@ -357,7 +374,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         this.scatterTextRenderer.setTypeface(tf);
     }
 
-    @Override public int getEntryIndexByCoordinate(float x, float y) {
+    @Override
+    public int getEntryIndexByCoordinate(float x, float y) {
         if (!getChartData().getCandlestickData().isEmpty()) {
             return candlestickChartRenderer.getEntryIndexByCoordinate(x, y);
         }
@@ -380,7 +398,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return super.getEntryIndexByCoordinate(x, y);
     }
 
-    @Override public float getEntryCoordinateByIndex(int index) {
+    @Override
+    public float getEntryCoordinateByIndex(int index) {
         if (!getChartData().getCandlestickData().isEmpty()) {
             return candlestickChartRenderer.getEntryCoordinateByIndex(index);
         }
@@ -413,7 +432,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     @Override
     public boolean isFullSupport() {
-        if(candlestickChartRenderer.getDataSet() == null || candlestickChartRenderer.getDataSet().isEmpty()) return true;
+        if (candlestickChartRenderer.getDataSet() == null || candlestickChartRenderer.getDataSet().isEmpty())
+            return true;
         CandlestickDataSet dataSet = candlestickChartRenderer.getDataSet().get(0);
         float candleWidth = dataSet.getCandleWidth();
 
