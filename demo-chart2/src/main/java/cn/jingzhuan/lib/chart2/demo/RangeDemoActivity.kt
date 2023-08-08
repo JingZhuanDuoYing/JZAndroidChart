@@ -147,7 +147,7 @@ class RangeDemoActivity : AppCompatActivity() {
         }
 
         combineChart.addOnViewportChangeListener {
-            Log.d("Chart", "left= ${it.left} +++ right= ${it.right}")
+            Log.d("JZChart", "left= ${it.left} +++ right= ${it.right}")
         }
 
         combineChart.onHighlightStatusChangeListener =

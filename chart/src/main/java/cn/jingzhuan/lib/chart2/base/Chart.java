@@ -423,7 +423,7 @@ public abstract class Chart extends BitmapCachedChart {
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
 
-            postInvalidateOnAnimation();
+//            postInvalidateOnAnimation();
 
             return true;
         }
@@ -566,15 +566,34 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d("JZChart", "onFling");
-            boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
-            if(isRightSide) return false;
-            if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
+            if (!isTouching()) {
+                Log.d("JZChart", "onFling");
+                boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
+                if(isRightSide) return false;
+                if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
 
-            fling((int) -velocityX);
+                releaseEdgeEffects();
+                // Flings use math in pixels (as opposed to math based on the viewport).
+                computeScrollSurfaceSize(mSurfaceSizeBuffer);
+                mScrollerStartViewport.set(mCurrentViewport);
+                int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN) / (
+                        Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
+                mScroller.forceFinished(true);
+                mScroller.fling(
+                        startX,
+                        0,
+                        (int) -velocityX,
+                        0,
+                        0, mSurfaceSizeBuffer.x - mContentRect.width(),
+                        0, mSurfaceSizeBuffer.y - mContentRect.height(),
+                        mContentRect.width() / 2,
+                        0);
+                postInvalidateOnAnimation();
 
-            if (!isDraggingToMoveEnable()) {
-                onTouchPoint(e2);
+                if (!isDraggingToMoveEnable()) {
+                    Log.d("JZChart", "onFling-onTouchPoint1");
+                    onTouchPoint(e2);
+                }
             }
 
             return true;
@@ -598,28 +617,6 @@ public abstract class Chart extends BitmapCachedChart {
                 }
             }
         }
-    }
-
-    private void fling(int velocityX) {
-        if (!canLoadMore) return;
-
-        releaseEdgeEffects();
-        // Flings use math in pixels (as opposed to math based on the viewport).
-        computeScrollSurfaceSize(mSurfaceSizeBuffer);
-        mScrollerStartViewport.set(mCurrentViewport);
-        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - Viewport.AXIS_X_MIN) / (
-                Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN));
-        mScroller.forceFinished(true);
-        mScroller.fling(
-                startX,
-                0,
-                velocityX,
-                0,
-                0, mSurfaceSizeBuffer.x - mContentRect.width(),
-                0, mSurfaceSizeBuffer.y - mContentRect.height(),
-                mContentRect.width() / 2,
-                0);
-        postInvalidateOnAnimation();
     }
 
     /**
@@ -745,9 +742,10 @@ public abstract class Chart extends BitmapCachedChart {
                     * currX / mSurfaceSizeBuffer.x;
             setViewportBottomLeft(currXRange);
             if (canLoadMore && currX <= 0) {
-                Log.w("Chart", "加载更多");
+                Log.w("JZChart", "加载更多");
                 mScroller.forceFinished(true);
                 if (mOnLoadMoreKlineListener != null) {
+                    needsInvalidate = false;
                     mOnLoadMoreKlineListener.onLoadMoreKline(currX);
                 }
             }
@@ -853,22 +851,30 @@ public abstract class Chart extends BitmapCachedChart {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (event.getPointerCount() > 1) {
+            mIsLongPress = false;
+        }
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
                 isTouching = true;
                 break;
+            case MotionEvent.ACTION_MOVE:
+
+                break;
             case MotionEvent.ACTION_POINTER_UP:
+                Log.d("JZChart", "onTouchEvent->ACTION_POINTER_UP");
                 postInvalidateOnAnimation();
                 break;
             case MotionEvent.ACTION_UP:
+                Log.d("JZChart", "onTouchEvent->ACTION_UP");
                 mIsLongPress = false;
                 isTouching = false;
                 postInvalidateOnAnimation();
                 handleNoComputeScrollOffsetLoadMore();
                 break;
             case MotionEvent.ACTION_CANCEL:
+                Log.d("JZChart", "onTouchEvent->ACTION_CANCEL");
                 mIsLongPress = false;
                 isTouching = false;
                 isScaling = false;
