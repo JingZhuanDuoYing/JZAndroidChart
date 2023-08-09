@@ -103,7 +103,7 @@ public class CombineChart extends BaseChart {
         }
         setEntryCount(entryCount);
 
-        if (!mCurrentViewport.initialized()) {
+        if (!mCurrentViewport.initialized() && entryCount > 0) {
             // 移动到最新的K线
             Viewport newViewport = mCurrentViewport.moveToEnd();
             int visibleSize = getCurrentVisibleEntryCount();
