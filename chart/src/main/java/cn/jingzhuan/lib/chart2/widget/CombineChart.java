@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -21,7 +22,6 @@ import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
-import cn.jingzhuan.lib.chart2.renderer.LineRenderer;
 
 import java.util.List;
 
@@ -72,26 +72,53 @@ public class CombineChart extends BaseChart {
 
     public void setCombineData(final CombineData combineData) {
         cleanAllDataSet();
+        int entryCount = 0;
         for (TreeDataSet treeDataSet : combineData.getTreeData()) {
             addDataSet(treeDataSet);
+            entryCount = Math.max(entryCount, treeDataSet.getValues().size());
         }
         for (LineDataSet lineDataSet : combineData.getLineData()) {
             addDataSet(lineDataSet);
+            entryCount = Math.max(entryCount, lineDataSet.getValues().size());
         }
         for (BarDataSet barDataSet : combineData.getBarData()) {
             addDataSet(barDataSet);
+            entryCount = Math.max(entryCount, barDataSet.getValues().size());
         }
         for (CandlestickDataSet candlestickDataSet : combineData.getCandlestickData()) {
             addDataSet(candlestickDataSet);
+            entryCount = Math.max(entryCount, candlestickDataSet.getValues().size());
         }
         for (ScatterDataSet scatterDataSet : combineData.getScatterData()) {
             addDataSet(scatterDataSet);
+            entryCount = Math.max(entryCount, scatterDataSet.getValues().size());
         }
         for (PointLineDataSet pointLineDataSet : combineData.getPointLineData()) {
             addDataSet(pointLineDataSet);
+            entryCount = Math.max(entryCount, pointLineDataSet.getValues().size());
         }
-        for (ScatterTextDataSet pointLineDataSet : combineData.getScatterTextData()) {
-            addDataSet(pointLineDataSet);
+        for (ScatterTextDataSet scatterTextDataSet : combineData.getScatterTextData()) {
+            addDataSet(scatterTextDataSet);
+            entryCount = Math.max(entryCount, scatterTextDataSet.getValues().size());
+        }
+        setEntryCount(entryCount);
+
+        if (!mCurrentViewport.initialized()) {
+            // 移动到最新的K线
+            Viewport newViewport = mCurrentViewport.moveToEnd();
+            int visibleSize = getCurrentVisibleEntryCount();
+
+
+            if (visibleSize > 0) {
+                float viewportWidth = (float) visibleSize / entryCount;
+                if (entryCount >= visibleSize) {
+                    newViewport.left = newViewport.right - viewportWidth;
+                } else {
+                    newViewport.left = 0f;
+                    newViewport.right = viewportWidth;
+                }
+            }
+            setCurrentViewport(newViewport);
         }
     }
 

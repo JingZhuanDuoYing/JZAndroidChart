@@ -170,11 +170,6 @@ public class BaseChart extends Chart {
         invalidate();
     }
 
-    @Override
-    public boolean getIfKlineFullRect() {
-        boolean isFullSupport = mRenderer.isFullSupport();
-        return mRenderer.isFullSupport();
-    }
 
     public void setRenderer(AbstractDataRenderer renderer) {
         this.mRenderer = renderer;
@@ -228,15 +223,21 @@ public class BaseChart extends Chart {
         this.mRenderer.enableHighlightDashPathEffect(intervals, phase);
     }
 
+    @Override
     public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        super.setMinVisibleEntryCount(minVisibleEntryCount);
         mRenderer.setMinVisibleEntryCount(minVisibleEntryCount);
     }
 
+    @Override
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        super.setMaxVisibleEntryCount(maxVisibleEntryCount);
         mRenderer.setMaxVisibleEntryCount(maxVisibleEntryCount);
     }
 
+    @Override
     public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        super.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
         mRenderer.setDefaultVisibleEntryCount(defaultVisibleEntryCount);
     }
 

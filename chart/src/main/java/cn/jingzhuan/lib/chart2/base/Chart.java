@@ -137,6 +137,16 @@ public abstract class Chart extends BitmapCachedChart {
 
     private boolean mMultipleTouch = false;
 
+    private int maxVisibleEntryCount = 250;
+
+    private int minVisibleEntryCount = 15;
+
+    private int defaultVisibleEntryCount = -1;
+
+    private int currentVisibleEntryCount = -1;
+
+    private int entryCount = 0;
+
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -319,8 +329,10 @@ public abstract class Chart extends BitmapCachedChart {
 
             float spanX = scaleGestureDetector.getCurrentSpan();
             float lastSpanX = scaleGestureDetector.getPreviousSpan();
-            boolean zoomIn = spanX > lastSpanX; // 双指距离比上次大，为放大
-            boolean zoomOut = lastSpanX > spanX; // 双指距离比上次小，为缩小
+            // 双指距离比上次大，为放大
+            boolean zoomIn = spanX > lastSpanX;
+            // 双指距离比上次小，为缩小
+            boolean zoomOut = lastSpanX > spanX;
 
             boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
 
@@ -372,30 +384,29 @@ public abstract class Chart extends BitmapCachedChart {
 
             hitTest(focusX, focusY, viewportFocus);
 
-            // 优先向右缩进
-            mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            float ratio = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
+            if (!canScroll()) {
+                mCurrentViewport.left = Viewport.AXIS_X_MIN;
+                mCurrentViewport.right = mCurrentViewport.right - ratio;
+                if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+            } else {
+                // 不足一屏 并且缩放到一屏时 能继续缩小
+                if (getEntryCount() < getDefaultVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                    mCurrentViewport.left = Viewport.AXIS_X_MIN;
+                    mCurrentViewport.right = mCurrentViewport.right - ratio;
+                } else {
+                    // 优先向右缩进
+                    mCurrentViewport.left = ratio;
+                    if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
 
-            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                    if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                        mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                        if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                    }
+                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                }
             }
-            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-
-//            if(getIfKlineFullRect()) {
-//                // 优先向右缩进
-//                mCurrentViewport.left = viewportFocus.x - newWidth * (focusX - mContentRect.left) / mContentRect.width();
-//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
-//
-//                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-//                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
-//                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
-//                }
-//                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-//            } else {
-//                mCurrentViewport.left = Viewport.AXIS_X_MIN;
-//                mCurrentViewport.right = Viewport.AXIS_X_MAX;
-//            }
+            currentVisibleEntryCount = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
 
             mCurrentViewport.constrainViewport();
 
@@ -747,7 +758,7 @@ public abstract class Chart extends BitmapCachedChart {
             float currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
                     * currX / mSurfaceSizeBuffer.x;
             setViewportBottomLeft(currXRange);
-            if (canLoadMore && currX <= 0) {
+            if (canLoadMore && currX <= 0 && canScroll()) {
                 Log.w("JZChart", "加载更多");
                 mScroller.forceFinished(true);
                 if (mOnLoadMoreKlineListener != null) {
@@ -760,46 +771,56 @@ public abstract class Chart extends BitmapCachedChart {
         if (mZoomer.computeZoom()) {
             // Performs the zoom since a zoom is in progress (either programmatically or via
             // double-touch).
+
             float newWidth = (1f - mZoomer.getCurrZoom()) * mScrollerStartViewport.width();
             float newHeight = (1f - mZoomer.getCurrZoom()) * mScrollerStartViewport.height();
-            float pointWithinViewportX = (mZoomFocalPoint.x - mScrollerStartViewport.left)
-                    / mScrollerStartViewport.width();
             float pointWithinViewportY = (mZoomFocalPoint.y - mScrollerStartViewport.top)
                     / mScrollerStartViewport.height();
 
-            // 优先向右缩进
-            mCurrentViewport.set(
-                    mZoomFocalPoint.x - newWidth * pointWithinViewportX,
-                    mZoomFocalPoint.y - newHeight * pointWithinViewportY,
-                    mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
-                    mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
-            if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+            float viewportTopY = mZoomFocalPoint.y - newHeight * pointWithinViewportY;
+            float viewportBottomY = mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY);
+            if (!canScroll()) {
+                // 向左缩进
+                mZoomFocalPoint.set(mCurrentViewport.left, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
 
-            if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-                mCurrentViewport.right = mCurrentViewport.left + newWidth;
-                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                float pointWithinViewportX = (mZoomFocalPoint.x - mScrollerStartViewport.left) / mScrollerStartViewport.width();
+
+                float viewportRightX = mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX);
+
+                mCurrentViewport.set(Viewport.AXIS_X_MIN, viewportTopY, viewportRightX, viewportBottomY);
+
+                if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+
+                Log.d("JZChart", "viewportRightX: "+viewportRightX + "mCurrentViewport.right="+mCurrentViewport.right);
+            } else {
+                // 不足一屏 并且缩放到一屏时 能继续缩小
+                if (getEntryCount() < getDefaultVisibleEntryCount() && mZoomer.getCurrZoom() < 0f && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                    // 向左缩进
+                    mZoomFocalPoint.set(mCurrentViewport.left, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+
+                    float pointWithinViewportX = (mZoomFocalPoint.x - mScrollerStartViewport.left) / mScrollerStartViewport.width();
+
+                    float viewportRightX = mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX);
+
+                    mCurrentViewport.set(Viewport.AXIS_X_MIN, viewportTopY, viewportRightX, viewportBottomY);
+                } else {
+                    // 优先向右缩进
+                    mZoomFocalPoint.set(mCurrentViewport.right, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
+                    float pointWithinViewportX = (mZoomFocalPoint.x - mScrollerStartViewport.left) / mScrollerStartViewport.width();
+                    float viewportLeftX = mZoomFocalPoint.x - newWidth * pointWithinViewportX;
+                    float viewportRightX = mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX);
+                    mCurrentViewport.set(viewportLeftX, viewportTopY, viewportRightX, viewportBottomY);
+                    if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
+
+                    if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                        mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                        if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                    }
+                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+                    Log.d("JZChart", "mCurrentViewport.left="+mCurrentViewport.left + "mCurrentViewport.right="+mCurrentViewport.right);
+                }
             }
-            if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-
-//            if(getIfKlineFullRect()) {
-//                // 优先向右缩进
-//                mCurrentViewport.set(
-//                        mZoomFocalPoint.x - newWidth * pointWithinViewportX,
-//                        mZoomFocalPoint.y - newHeight * pointWithinViewportY,
-//                        mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX),
-//                        mZoomFocalPoint.y + newHeight * (1 - pointWithinViewportY));
-//                if(mCurrentViewport.left < Viewport.AXIS_X_MIN) mCurrentViewport.left = Viewport.AXIS_X_MIN;
-//
-//                if(mCurrentViewport.left == Viewport.AXIS_X_MIN) {
-//                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
-//                    if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
-//                }
-//                if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.left = Viewport.AXIS_X_MAX;
-//
-//            } else {
-//                mCurrentViewport.left = Viewport.AXIS_X_MIN;
-//                mCurrentViewport.right = Viewport.AXIS_X_MAX;
-//            }
+            currentVisibleEntryCount = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
 
             mCurrentViewport.constrainViewport();
 
@@ -857,9 +878,9 @@ public abstract class Chart extends BitmapCachedChart {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getPointerCount() > 1) {
-            mIsLongPress = false;
-        }
+//        if (event.getPointerCount() > 1) {
+//            mIsLongPress = false;
+//        }
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
@@ -895,6 +916,7 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     private void handleNoComputeScrollOffsetLoadMore() {
+        if (!canScroll()) return;
         float viewportOffsetX = mDistanceX * mCurrentViewport.width() / mContentRect.width();
         int scrolledX = (int) (mSurfaceSizeBuffer.x
                 * (mCurrentViewport.left + viewportOffsetX - Viewport.AXIS_X_MIN)
@@ -1254,6 +1276,51 @@ public abstract class Chart extends BitmapCachedChart {
      */
     public boolean isMultipleTouch() {
         return mMultipleTouch;
+    }
+
+    public int getMaxVisibleEntryCount() {
+        return maxVisibleEntryCount;
+    }
+
+    public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
+        this.maxVisibleEntryCount = maxVisibleEntryCount;
+    }
+
+    public int getMinVisibleEntryCount() {
+        return minVisibleEntryCount;
+    }
+
+    public void setMinVisibleEntryCount(int minVisibleEntryCount) {
+        this.minVisibleEntryCount = minVisibleEntryCount;
+    }
+
+    public int getDefaultVisibleEntryCount() {
+        return defaultVisibleEntryCount;
+    }
+
+    public void setDefaultVisibleEntryCount(int defaultVisibleEntryCount) {
+        this.defaultVisibleEntryCount = defaultVisibleEntryCount;
+        setCurrentVisibleEntryCount(defaultVisibleEntryCount);
+    }
+
+    public int getCurrentVisibleEntryCount() {
+        return currentVisibleEntryCount;
+    }
+
+    public void setCurrentVisibleEntryCount(int currentVisibleEntryCount) {
+        this.currentVisibleEntryCount = currentVisibleEntryCount;
+    }
+
+    public int getEntryCount() {
+        return entryCount;
+    }
+
+    public void setEntryCount(int entryCount) {
+        this.entryCount = entryCount;
+    }
+
+    protected boolean canScroll() {
+        return getEntryCount() >= getCurrentVisibleEntryCount();
     }
 }
 

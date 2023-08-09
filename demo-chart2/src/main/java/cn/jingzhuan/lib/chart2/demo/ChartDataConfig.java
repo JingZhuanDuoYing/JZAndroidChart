@@ -42,105 +42,105 @@ public class ChartDataConfig {
         list.add(new CandlestickValue(3140.77f, 3098.94f, 3101.76f, 3140.32f));
         list.add(new CandlestickValue(3153.26f, 3132.82f, 3136.46f, 3150.33f));
 
-        list.add(new CandlestickValue(3165.91f, 3146.10f, 3147.45f, 3158.39f));
-        list.add(new CandlestickValue(3164.94f, 3135.31f, 3149.53f, 3139.87f));
-        list.add(new CandlestickValue(3155.98f, 3131.04f, 3134.01f, 3153.73f));
-        list.add(new CandlestickValue(3149.16f, 3125.35f, 3146.75f, 3130.66f));
-        list.add(new CandlestickValue(3137.59f, 3117.08f, 3125.59f, 3132.48f));
-        list.add(new CandlestickValue(3134.25f, 3117.85f, 3126.37f, 3123.16f));
-        list.add(new CandlestickValue(3146.77f, 3121.77f, 3122.15f, 3144.37f));
-        list.add(new CandlestickValue(3150.45f, 3134.61f, 3148.02f, 3140.01f));
-        list.add(new CandlestickValue(3157.03f, 3132.62f, 3148.98f, 3156.20f));
-        list.add(new CandlestickValue(3186.97f, 3146.63f, 3152.23f, 3147.44f));
-
-        list.add(new CandlestickValue(3158.05f, 3118.09f, 3138.43f, 3157.87f));
-        list.add(new CandlestickValue(3187.88f, 3156.97f, 3157.00f, 3185.43f));
-        list.add(new CandlestickValue(3193.45f, 3172.45f, 3183.41f, 3191.19f));
-        list.add(new CandlestickValue(3193.43f, 3170.78f, 3183.63f, 3173.20f));
-        list.add(new CandlestickValue(3188.77f, 3174.28f, 3174.97f, 3188.06f));
-        list.add(new CandlestickValue(3193.23f, 3171.57f, 3176.94f, 3192.42f));
-        list.add(new CandlestickValue(3196.29f, 3177.02f, 3192.00f, 3195.90f));
-        list.add(new CandlestickValue(3193.06f, 3174.31f, 3192.88f, 3182.80f));
-        list.add(new CandlestickValue(3207.31f, 3174.70f, 3179.21f, 3207.12f));
-        list.add(new CandlestickValue(3215.94f, 3188.77f, 3203.86f, 3212.43f));
-
-        list.add(new CandlestickValue(3219.52f, 3195.29f, 3203.82f, 3217.95f));
-        list.add(new CandlestickValue(3223.34f, 3203.20f, 3208.45f, 3212.62f));
-        list.add(new CandlestickValue(3226.90f, 3199.21f, 3201.52f, 3203.04f));
-        list.add(new CandlestickValue(3215.19f, 3177.92f, 3201.92f, 3197.54f));
-        list.add(new CandlestickValue(3219.27f, 3190.34f, 3192.36f, 3218.15f));
-        list.add(new CandlestickValue(3222.97f, 3204.85f, 3212.03f, 3222.41f));
-        list.add(new CandlestickValue(3230.35f, 3139.50f, 3219.79f, 3176.45f));
-        list.add(new CandlestickValue(3187.66f, 3150.12f, 3159.72f, 3187.57f));
-        list.add(new CandlestickValue(3232.93f, 3179.72f, 3181.39f, 3230.97f));
-        list.add(new CandlestickValue(3246.23f, 3225.42f, 3227.51f, 3244.86f));
-
-        list.add(new CandlestickValue(3247.70f, 3231.95f, 3236.59f, 3237.97f));
-        list.add(new CandlestickValue(3261.10f, 3230.07f, 3230.89f, 3250.60f));
-        list.add(new CandlestickValue(3261.64f, 3233.13f, 3249.13f, 3243.68f));
-        list.add(new CandlestickValue(3264.85f, 3228.04f, 3244.45f, 3247.66f));
-        list.add(new CandlestickValue(3251.92f, 3220.63f, 3243.76f, 3249.78f));
-        list.add(new CandlestickValue(3256.37f, 3232.95f, 3240.16f, 3253.23f));
-        list.add(new CandlestickValue(3276.94f, 3251.18f, 3252.75f, 3273.03f));
-        list.add(new CandlestickValue(3292.63f, 3273.50f, 3274.37f, 3292.63f));
-        list.add(new CandlestickValue(3305.42f, 3282.04f, 3288.52f, 3285.06f));
-        list.add(new CandlestickValue(3293.37f, 3262.15f, 3279.98f, 3272.92f));
-
-        list.add(new CandlestickValue(3287.18f, 3261.31f, 3269.32f, 3262.08f));
-        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
-        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
-        list.add(new CandlestickValue(3277.93f, 3263.85f, 3277.81f, 3275.57f));
-        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
-        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
-        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
-        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
-        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
-        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
-
-        list.add(new CandlestickValue(3275.08f, 3248.08f, 3253.23f, 3268.71f));
-        list.add(new CandlestickValue(3287.52f, 3270.47f, 3274.58f, 3286.90f));
-        list.add(new CandlestickValue(3293.47f, 3274.93f, 3287.61f, 3290.22f));
-        list.add(new CandlestickValue(3299.45f, 3274.43f, 3283.80f, 3287.69f));
-        list.add(new CandlestickValue(3297.98f, 3266.36f, 3287.95f, 3271.51f));
-        list.add(new CandlestickValue(3331.90f, 3271.45f, 3271.45f, 3331.52f));
-        list.add(new CandlestickValue(3375.03f, 3336.12f, 3336.12f, 3362.64f));
-        list.add(new CandlestickValue(3374.59f, 3354.45f, 3362.06f, 3365.22f));
-        list.add(new CandlestickValue(3376.64f, 3357.08f, 3361.82f, 3363.62f));
-        list.add(new CandlestickValue(3367.36f, 3341.14f, 3361.45f, 3349.57f));
-
-        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
-        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
-        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
-        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
-        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
-        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
-        list.add(new CandlestickValue(3275.08f, 3248.08f, 3253.23f, 3268.71f));
-        list.add(new CandlestickValue(3287.52f, 3270.47f, 3274.58f, 3286.90f));
-        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
-        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
-
-        list.add(new CandlestickValue(3277.93f, 3263.85f, 3277.81f, 3275.57f));
-        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
-        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
-        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
-        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
-        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
-        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
-        list.add(new CandlestickValue(3261.10f, 3230.07f, 3230.89f, 3250.60f));
-        list.add(new CandlestickValue(3261.64f, 3233.13f, 3249.13f, 3243.68f));
-        list.add(new CandlestickValue(3264.85f, 3228.04f, 3244.45f, 3247.66f));
-
-        list.add(new CandlestickValue(3251.92f, 3220.63f, 3243.76f, 3249.78f));
-        list.add(new CandlestickValue(3256.37f, 3232.95f, 3240.16f, 3253.23f));
-        list.add(new CandlestickValue(3276.94f, 3251.18f, 3252.75f, 3273.03f));
-        list.add(new CandlestickValue(3292.63f, 3273.50f, 3274.37f, 3292.63f));
-        list.add(new CandlestickValue(3305.42f, 3282.04f, 3288.52f, 3285.06f));
-        list.add(new CandlestickValue(3293.37f, 3262.15f, 3279.98f, 3272.92f));
-        list.add(new CandlestickValue(3287.18f, 3261.31f, 3269.32f, 3262.08f));
-        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
-        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
-        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
-        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
+//        list.add(new CandlestickValue(3165.91f, 3146.10f, 3147.45f, 3158.39f));
+//        list.add(new CandlestickValue(3164.94f, 3135.31f, 3149.53f, 3139.87f));
+//        list.add(new CandlestickValue(3155.98f, 3131.04f, 3134.01f, 3153.73f));
+//        list.add(new CandlestickValue(3149.16f, 3125.35f, 3146.75f, 3130.66f));
+//        list.add(new CandlestickValue(3137.59f, 3117.08f, 3125.59f, 3132.48f));
+//        list.add(new CandlestickValue(3134.25f, 3117.85f, 3126.37f, 3123.16f));
+//        list.add(new CandlestickValue(3146.77f, 3121.77f, 3122.15f, 3144.37f));
+//        list.add(new CandlestickValue(3150.45f, 3134.61f, 3148.02f, 3140.01f));
+//        list.add(new CandlestickValue(3157.03f, 3132.62f, 3148.98f, 3156.20f));
+//        list.add(new CandlestickValue(3186.97f, 3146.63f, 3152.23f, 3147.44f));
+//
+//        list.add(new CandlestickValue(3158.05f, 3118.09f, 3138.43f, 3157.87f));
+//        list.add(new CandlestickValue(3187.88f, 3156.97f, 3157.00f, 3185.43f));
+//        list.add(new CandlestickValue(3193.45f, 3172.45f, 3183.41f, 3191.19f));
+//        list.add(new CandlestickValue(3193.43f, 3170.78f, 3183.63f, 3173.20f));
+//        list.add(new CandlestickValue(3188.77f, 3174.28f, 3174.97f, 3188.06f));
+//        list.add(new CandlestickValue(3193.23f, 3171.57f, 3176.94f, 3192.42f));
+//        list.add(new CandlestickValue(3196.29f, 3177.02f, 3192.00f, 3195.90f));
+//        list.add(new CandlestickValue(3193.06f, 3174.31f, 3192.88f, 3182.80f));
+//        list.add(new CandlestickValue(3207.31f, 3174.70f, 3179.21f, 3207.12f));
+//        list.add(new CandlestickValue(3215.94f, 3188.77f, 3203.86f, 3212.43f));
+//
+//        list.add(new CandlestickValue(3219.52f, 3195.29f, 3203.82f, 3217.95f));
+//        list.add(new CandlestickValue(3223.34f, 3203.20f, 3208.45f, 3212.62f));
+//        list.add(new CandlestickValue(3226.90f, 3199.21f, 3201.52f, 3203.04f));
+//        list.add(new CandlestickValue(3215.19f, 3177.92f, 3201.92f, 3197.54f));
+//        list.add(new CandlestickValue(3219.27f, 3190.34f, 3192.36f, 3218.15f));
+//        list.add(new CandlestickValue(3222.97f, 3204.85f, 3212.03f, 3222.41f));
+//        list.add(new CandlestickValue(3230.35f, 3139.50f, 3219.79f, 3176.45f));
+//        list.add(new CandlestickValue(3187.66f, 3150.12f, 3159.72f, 3187.57f));
+//        list.add(new CandlestickValue(3232.93f, 3179.72f, 3181.39f, 3230.97f));
+//        list.add(new CandlestickValue(3246.23f, 3225.42f, 3227.51f, 3244.86f));
+//
+//        list.add(new CandlestickValue(3247.70f, 3231.95f, 3236.59f, 3237.97f));
+//        list.add(new CandlestickValue(3261.10f, 3230.07f, 3230.89f, 3250.60f));
+//        list.add(new CandlestickValue(3261.64f, 3233.13f, 3249.13f, 3243.68f));
+//        list.add(new CandlestickValue(3264.85f, 3228.04f, 3244.45f, 3247.66f));
+//        list.add(new CandlestickValue(3251.92f, 3220.63f, 3243.76f, 3249.78f));
+//        list.add(new CandlestickValue(3256.37f, 3232.95f, 3240.16f, 3253.23f));
+//        list.add(new CandlestickValue(3276.94f, 3251.18f, 3252.75f, 3273.03f));
+//        list.add(new CandlestickValue(3292.63f, 3273.50f, 3274.37f, 3292.63f));
+//        list.add(new CandlestickValue(3305.42f, 3282.04f, 3288.52f, 3285.06f));
+//        list.add(new CandlestickValue(3293.37f, 3262.15f, 3279.98f, 3272.92f));
+//
+//        list.add(new CandlestickValue(3287.18f, 3261.31f, 3269.32f, 3262.08f));
+//        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
+//        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
+//        list.add(new CandlestickValue(3277.93f, 3263.85f, 3277.81f, 3275.57f));
+//        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
+//        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
+//        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
+//        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
+//        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
+//        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
+//
+//        list.add(new CandlestickValue(3275.08f, 3248.08f, 3253.23f, 3268.71f));
+//        list.add(new CandlestickValue(3287.52f, 3270.47f, 3274.58f, 3286.90f));
+//        list.add(new CandlestickValue(3293.47f, 3274.93f, 3287.61f, 3290.22f));
+//        list.add(new CandlestickValue(3299.45f, 3274.43f, 3283.80f, 3287.69f));
+//        list.add(new CandlestickValue(3297.98f, 3266.36f, 3287.95f, 3271.51f));
+//        list.add(new CandlestickValue(3331.90f, 3271.45f, 3271.45f, 3331.52f));
+//        list.add(new CandlestickValue(3375.03f, 3336.12f, 3336.12f, 3362.64f));
+//        list.add(new CandlestickValue(3374.59f, 3354.45f, 3362.06f, 3365.22f));
+//        list.add(new CandlestickValue(3376.64f, 3357.08f, 3361.82f, 3363.62f));
+//        list.add(new CandlestickValue(3367.36f, 3341.14f, 3361.45f, 3349.57f));
+//
+//        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
+//        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
+//        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
+//        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
+//        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
+//        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
+//        list.add(new CandlestickValue(3275.08f, 3248.08f, 3253.23f, 3268.71f));
+//        list.add(new CandlestickValue(3287.52f, 3270.47f, 3274.58f, 3286.90f));
+//        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
+//        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
+//
+//        list.add(new CandlestickValue(3277.93f, 3263.85f, 3277.81f, 3275.57f));
+//        list.add(new CandlestickValue(3282.52f, 3236.17f, 3269.72f, 3261.75f));
+//        list.add(new CandlestickValue(3245.12f, 3200.75f, 3237.91f, 3208.54f));
+//        list.add(new CandlestickValue(3240.05f, 3206.04f, 3206.04f, 3237.36f));
+//        list.add(new CandlestickValue(3263.59f, 3235.10f, 3235.22f, 3251.26f));
+//        list.add(new CandlestickValue(3248.78f, 3228.87f, 3247.85f, 3246.44f));
+//        list.add(new CandlestickValue(3269.13f, 3251.45f, 3253.85f, 3268.42f));
+//        list.add(new CandlestickValue(3261.10f, 3230.07f, 3230.89f, 3250.60f));
+//        list.add(new CandlestickValue(3261.64f, 3233.13f, 3249.13f, 3243.68f));
+//        list.add(new CandlestickValue(3264.85f, 3228.04f, 3244.45f, 3247.66f));
+//
+//        list.add(new CandlestickValue(3251.92f, 3220.63f, 3243.76f, 3249.78f));
+//        list.add(new CandlestickValue(3256.37f, 3232.95f, 3240.16f, 3253.23f));
+//        list.add(new CandlestickValue(3276.94f, 3251.18f, 3252.75f, 3273.03f));
+//        list.add(new CandlestickValue(3292.63f, 3273.50f, 3274.37f, 3292.63f));
+//        list.add(new CandlestickValue(3305.42f, 3282.04f, 3288.52f, 3285.06f));
+//        list.add(new CandlestickValue(3293.37f, 3262.15f, 3279.98f, 3272.92f));
+//        list.add(new CandlestickValue(3287.18f, 3261.31f, 3269.32f, 3262.08f));
+//        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
+//        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
+//        list.add(new CandlestickValue(3280.10f, 3243.71f, 3257.66f, 3279.45f));
+//        list.add(new CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f));
 
         return list;
     }

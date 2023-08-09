@@ -160,8 +160,4 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public void setTypeface(Typeface tf) {
     }
-
-    public boolean isFullSupport() {
-        return false;
-    }
 }

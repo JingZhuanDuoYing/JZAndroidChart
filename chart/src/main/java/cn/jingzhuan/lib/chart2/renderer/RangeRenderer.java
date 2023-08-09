@@ -30,7 +30,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     /**
      * 最小间隔
      */
-    final int MAX_DIFF_ENTRY = 1;
+    private final int MAX_DIFF_ENTRY = 1;
 
     /**
      * 周期内 的起点和终点的下标
@@ -72,7 +72,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
      */
     private float lastPreX = 0;
 
-    private float lastPreY = 0;
+//    private float lastPreY = 0;
 
     /**
      * 左、右两边touch的矩形区域中间 线的颜色
@@ -112,7 +112,9 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
     private final Chart chart;
 
     private OnRangeListener mOnRangeListener;
+
     private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
+
     private OnRangeKLineListener mOnRangeKLineListener;
 
     public RangeRenderer(Chart chart) {
@@ -131,11 +133,11 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             if(chart.getRangeEnable() && (mStartX != 0 && mEndX != 0)) {
                 int start = getEntryIndexByCoordinate(mStartX, 0);
                 int end = getEntryIndexByCoordinate(mEndX, 0);
-                if(chart.isScaling()) {
+                if(chart.isScaling() || chart.getZoomer().computeZoom()) {
                     final CandlestickDataSet candlestickDataSet = dataValid();
                     int listSize = candlestickDataSet.getValues().size();
                     int chartLeftIndex = Math.round(mViewport.left * listSize);
-                    int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+                    int chartRightIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
                     if(mStartIndex < chartLeftIndex) {
                         mEndIndex = chartLeftIndex + mEndIndex - mStartIndex;
                         if(mEndIndex > chartRightIndex) {
@@ -211,7 +213,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             mStartIndex = getEntryIndexByCoordinate(mStartX, 0);
 
             int listSize = candlestickDataSet.getValues().size();
-            mEndIndex = Math.round(mViewport.right * listSize - 1);
+            mEndIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
 
             mEndX = getScaleCoordinateByIndex(mEndIndex);
             touchDirection = TouchDirection.none;
@@ -227,7 +229,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
             int listSize = candlestickDataSet.getValues().size();
 
             mStartIndex = Math.round(mViewport.left * listSize);
-            mEndIndex = Math.round(mViewport.right * listSize - 1);
+            mEndIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
             int chartSize = candlestickDataSet.getValues().size();
             if(mEndIndex > chartSize - 1) mEndIndex = chartSize - 1;
 
@@ -307,7 +309,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
         int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
-        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+        int chartRightIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
 
         int chartSize = candlestickDataSet.getValues().size();
         if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
@@ -340,7 +342,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
         int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
-        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+        int chartRightIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
 
         int chartSize = candlestickDataSet.getValues().size();
         if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
@@ -375,7 +377,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
         int listSize = candlestickDataSet.getValues().size();
         int chartLeftIndex = Math.round(mViewport.left * listSize);
-        int chartRightIndex = Math.round(mViewport.right * listSize - 1);
+        int chartRightIndex = Math.min(listSize - 1, Math.round(mViewport.right * listSize - 1));
 
         int chartSize = candlestickDataSet.getValues().size();
         if(chartRightIndex > chartSize - 1) chartRightIndex = chartSize - 1;
@@ -505,7 +507,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 float currentX = event.getX();
                 float currentY = event.getY();
                 lastPreX = currentX;
-                lastPreY = currentY;
+//                lastPreY = currentY;
                 if((currentX > leftTouchRect.right && currentX < rightTouchRect.left)) {
                     // 在左右touch之内 认为是同时滑动
                     touchDirection = TouchDirection.both;
@@ -536,7 +538,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                     }
                 } finally {
                     lastPreX = currentX;
-                    lastPreY = currentY;
+//                    lastPreY = currentY;
                 }
 
                 return true;

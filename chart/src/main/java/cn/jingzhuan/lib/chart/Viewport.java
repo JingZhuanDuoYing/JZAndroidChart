@@ -36,7 +36,23 @@ public class Viewport extends RectF {
      */
     public void constrainViewport() {
         left = Math.max(AXIS_X_MIN, left);
-        right = Math.max(Math.nextUp(left), Math.min(AXIS_X_MAX, right));
+        right = Math.max(Math.nextUp(left), right);
+    }
+
+    public boolean initialized() {
+        if (left == 0f && right == 1f && top == -1f && bottom == 1f) {
+            return false;
+        }
+        return true;
+    }
+
+    public Viewport moveToEnd() {
+        Viewport vp = new Viewport(this);
+        float width = this.width();
+        vp.right = 1f;
+        vp.left = right - width;
+        return vp;
+
     }
 
 }

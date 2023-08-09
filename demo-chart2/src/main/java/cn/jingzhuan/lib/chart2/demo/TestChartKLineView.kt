@@ -13,7 +13,7 @@ import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer
 import cn.jingzhuan.lib.chart2.widget.CombineChart
 
 
-const val MIN_VISIBLE_ENTRY_COUNT = 15
+const val MIN_VISIBLE_ENTRY_COUNT = 10
 const val MAX_VISIBLE_ENTRY_COUNT = 250
 const val DEFAULT_VISIBLE_ENTRY_COUNT = 40
 

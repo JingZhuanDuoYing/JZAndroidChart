@@ -59,11 +59,6 @@ public interface IChart {
     void cleanHighlight();
 
     /**
-     * 当前K线是否占满绘制区域
-     */
-    boolean getIfKlineFullRect();
-
-    /**
      * 根据当前点获取下标
      */
     int getEntryIndexByCoordinate(float x, float y);
