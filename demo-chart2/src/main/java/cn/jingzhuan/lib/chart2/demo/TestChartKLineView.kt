@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Color.BLACK
 import android.util.AttributeSet
+import android.util.Log
 import androidx.core.content.ContextCompat
 import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.AbstractDataSet
@@ -66,9 +67,9 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         axisLeft.enableGridDashPathEffect(floatArrayOf(10f, 10f), 8f)
         axisBottom.enableGridDashPathEffect(floatArrayOf(10f, 10f), 8f)
 
-        setMinVisibleEntryCount(MIN_VISIBLE_ENTRY_COUNT)
-        setMaxVisibleEntryCount(MAX_VISIBLE_ENTRY_COUNT)
-        setDefaultVisibleEntryCount(DEFAULT_VISIBLE_ENTRY_COUNT)
+        minVisibleEntryCount = MIN_VISIBLE_ENTRY_COUNT
+        maxVisibleEntryCount = MAX_VISIBLE_ENTRY_COUNT
+        defaultVisibleEntryCount = DEFAULT_VISIBLE_ENTRY_COUNT
     }
 
     override fun addDataSet(abstractDataSet: AbstractDataSet<*>?) {
@@ -77,6 +78,14 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
                 abstractDataSet.neutralColor = Color.GRAY
         }
         super.addDataSet(abstractDataSet)
+    }
+
+    override fun isCanZoomIn(): Boolean {
+        return currentVisibleEntryCount >= MIN_VISIBLE_ENTRY_COUNT && super.isCanZoomIn()
+    }
+
+    override fun isCanZoomOut(): Boolean {
+        return currentVisibleEntryCount <= MAX_VISIBLE_ENTRY_COUNT && super.isCanZoomOut()
     }
 
 

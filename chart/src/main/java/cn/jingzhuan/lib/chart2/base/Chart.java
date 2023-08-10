@@ -316,7 +316,7 @@ public abstract class Chart extends BitmapCachedChart {
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
             }
-            isScaling = false;
+//            isScaling = false;
         }
 
         @Override
@@ -391,7 +391,7 @@ public abstract class Chart extends BitmapCachedChart {
                 if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             } else {
                 // 不足一屏 并且缩放到一屏时 能继续缩小
-                if (getEntryCount() < getDefaultVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                if (getEntryCount() <= getDefaultVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                     mCurrentViewport.left = Viewport.AXIS_X_MIN;
                     mCurrentViewport.right = mCurrentViewport.right - ratio;
                 } else {
@@ -794,7 +794,7 @@ public abstract class Chart extends BitmapCachedChart {
                 Log.d("JZChart", "viewportRightX: "+viewportRightX + "mCurrentViewport.right="+mCurrentViewport.right);
             } else {
                 // 不足一屏 并且缩放到一屏时 能继续缩小
-                if (getEntryCount() < getDefaultVisibleEntryCount() && mZoomer.getCurrZoom() < 0f && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                if (getEntryCount() <= getDefaultVisibleEntryCount() && mZoomer.getCurrZoom() < 0f && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                     // 向左缩进
                     mZoomFocalPoint.set(mCurrentViewport.left, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
 
@@ -878,10 +878,6 @@ public abstract class Chart extends BitmapCachedChart {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        if (event.getPointerCount() > 1) {
-//            mIsLongPress = false;
-//        }
-
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 isTouching = true;
@@ -897,8 +893,11 @@ public abstract class Chart extends BitmapCachedChart {
                 Log.d("JZChart", "onTouchEvent->ACTION_UP");
                 mIsLongPress = false;
                 isTouching = false;
-                postInvalidateOnAnimation();
-                handleNoComputeScrollOffsetLoadMore();
+                if (!isScaling) {
+                    handleNoComputeScrollOffsetLoadMore();
+                    postInvalidateOnAnimation();
+                }
+                isScaling = false;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 Log.d("JZChart", "onTouchEvent->ACTION_CANCEL");
