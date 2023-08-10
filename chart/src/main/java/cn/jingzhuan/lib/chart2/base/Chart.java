@@ -390,10 +390,14 @@ public abstract class Chart extends BitmapCachedChart {
             if (!canScroll()) {
                 mCurrentViewport.left = Viewport.AXIS_X_MIN;
                 mCurrentViewport.right = mCurrentViewport.right - ratio;
+                float count = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
+                if (count > getMaxVisibleEntryCount()) {
+                    mCurrentViewport.right = getMaxVisibleEntryCount() / (float)getEntryCount() + mCurrentViewport.left;
+                }
                 if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             } else {
                 // 不足一屏 并且缩放到一屏时 能继续缩小
-                if (getEntryCount() <= getDefaultVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                if (getEntryCount() <= getMaxVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                     mCurrentViewport.left = Viewport.AXIS_X_MIN;
                     mCurrentViewport.right = mCurrentViewport.right - ratio;
                 } else {
@@ -406,14 +410,20 @@ public abstract class Chart extends BitmapCachedChart {
                         if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
                     }
                     if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
+
+                    float count = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
+                    if (count > getMaxVisibleEntryCount()) {
+                        mCurrentViewport.left = mCurrentViewport.right - getMaxVisibleEntryCount() / (float)getEntryCount();
+                    }
+                    if (count < getMinVisibleEntryCount()) {
+                        mCurrentViewport.left = mCurrentViewport.right - getMinVisibleEntryCount() / (float)getEntryCount();
+                    }
                 }
             }
-            currentVisibleEntryCount = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
-
+            currentVisibleEntryCount = Math.round((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
             mCurrentViewport.constrainViewport();
 
             triggerViewportChange();
-            Log.d("Chart", "triggerViewportChange from= onScale");
 //            lastSpanX = spanX;
             if(mScaleListener != null)  {
                 mScaleListener.onScale(mCurrentViewport);
@@ -790,13 +800,16 @@ public abstract class Chart extends BitmapCachedChart {
                 float viewportRightX = mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX);
 
                 mCurrentViewport.set(Viewport.AXIS_X_MIN, viewportTopY, viewportRightX, viewportBottomY);
+                float count = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
+                if (count > getMaxVisibleEntryCount()) {
+                    mCurrentViewport.right = getMaxVisibleEntryCount() / (float)getEntryCount() + mCurrentViewport.left;
+                }
 
                 if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
 
-                Log.d("JZChart", "viewportRightX: "+viewportRightX + "mCurrentViewport.right="+mCurrentViewport.right);
             } else {
                 // 不足一屏 并且缩放到一屏时 能继续缩小
-                if (getEntryCount() <= getDefaultVisibleEntryCount() && mZoomer.getCurrZoom() < 0f && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                if (getEntryCount() < getMaxVisibleEntryCount() && mZoomer.getCurrZoom() < 0f && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                     // 向左缩进
                     mZoomFocalPoint.set(mCurrentViewport.left, (mCurrentViewport.bottom + mCurrentViewport.top) / 2);
 
@@ -819,10 +832,18 @@ public abstract class Chart extends BitmapCachedChart {
                         if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
                     }
                     if(mCurrentViewport.right > Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
-                    Log.d("JZChart", "mCurrentViewport.left="+mCurrentViewport.left + "mCurrentViewport.right="+mCurrentViewport.right);
+
+                    float count = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
+                    if (count > getMaxVisibleEntryCount()) {
+                        mCurrentViewport.left = mCurrentViewport.right - getMaxVisibleEntryCount() / (float)getEntryCount();
+                    }
+                    if (count < getMinVisibleEntryCount()) {
+                        mCurrentViewport.left = mCurrentViewport.right - getMinVisibleEntryCount() / (float)getEntryCount();
+                    }
                 }
             }
-            currentVisibleEntryCount = (int) ((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
+
+            currentVisibleEntryCount = Math.round((mCurrentViewport.right - mCurrentViewport.left) * getEntryCount());
 
             mCurrentViewport.constrainViewport();
 

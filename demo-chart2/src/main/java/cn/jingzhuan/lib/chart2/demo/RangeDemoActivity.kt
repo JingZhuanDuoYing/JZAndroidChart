@@ -113,6 +113,7 @@ class RangeDemoActivity : AppCompatActivity() {
         btnHighlightAlways = findViewById(R.id.btn_highlight_always)
         btnMoveLeft = findViewById(R.id.btn_move_left)
         btnMoveRight = findViewById(R.id.btn_move_right)
+        combineChart.scaleSensitivity = 1.1f
     }
 
     private fun initListener() {
@@ -286,7 +287,7 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.strokeThickness = 2f
 
-        val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.1f }
+        val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.05f }
 
         val data = CombineData().apply {
             add(arrowDataSet)
@@ -346,7 +347,7 @@ class RangeDemoActivity : AppCompatActivity() {
         dataSet.strokeThickness = 2f
 
         val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply {
-            offsetPercent = 0.2f
+            offsetPercent = 0.05f
             textSize = 32
             textColor = 0xff3F51B5.toInt()
         }

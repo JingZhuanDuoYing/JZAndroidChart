@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 
 
 const val MIN_VISIBLE_ENTRY_COUNT = 10
-const val MAX_VISIBLE_ENTRY_COUNT = 250
+const val MAX_VISIBLE_ENTRY_COUNT = 60
 const val DEFAULT_VISIBLE_ENTRY_COUNT = 40
 
 class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx, attrs) {
