@@ -124,12 +124,12 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
                 mPaint.setTextAlign(Align.LEFT);
                 String text = ARROW_LEFT + value;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.5f, highY - mTextBounds.height() * 0.5f, getPaint());
+                canvas.drawText(text, x + candleWidth * 0.5f, highY + mTextBounds.height() * 0.5f, getPaint());
             } else {
                 mPaint.setTextAlign(Align.RIGHT);
                 String text = value + ARROW_RIGHT;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.5f, highY - mTextBounds.height() * 0.5f, getPaint());
+                canvas.drawText(text, x + candleWidth * 0.5f, highY + mTextBounds.height() * 0.5f, getPaint());
             }
 
         }
@@ -146,12 +146,12 @@ public class CandlestickDataSetArrowDecorator extends CandlestickDataSet {
                 mPaint.setTextAlign(Align.LEFT);
                 String text = ARROW_LEFT + value;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 1.5f, getPaint());
+                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 0.5f, getPaint());
             } else {
                 mPaint.setTextAlign(Align.RIGHT);
                 String text = value + ARROW_RIGHT;
                 mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 1.5f, getPaint());
+                canvas.drawText(text, x + candleWidth * 0.5f, lowY + mTextBounds.height() * 0.5f, getPaint());
             }
 
         }
