@@ -51,6 +51,10 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnHighlightAlways: AppCompatButton
 
+    private lateinit var btnMoveLeft: AppCompatButton
+
+    private lateinit var btnMoveRight: AppCompatButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -107,6 +111,8 @@ class RangeDemoActivity : AppCompatActivity() {
         btnScaleIn = findViewById(R.id.btn_scale_in)
         btnScaleOut = findViewById(R.id.btn_scale_out)
         btnHighlightAlways = findViewById(R.id.btn_highlight_always)
+        btnMoveLeft = findViewById(R.id.btn_move_left)
+        btnMoveRight = findViewById(R.id.btn_move_right)
     }
 
     private fun initListener() {
@@ -142,6 +148,15 @@ class RangeDemoActivity : AppCompatActivity() {
         btnHighlightAlways.setOnClickListener {
             combineChart.isHighlightVolatile = false
         }
+
+        btnMoveLeft.setOnClickListener {
+            combineChart.stepMoveLeft()
+        }
+
+        btnHighlightAlways.setOnClickListener {
+            combineChart.stepMoveRight()
+        }
+
 
         tvCloseRange.setOnClickListener {
             combineChart.rangeEnable = false

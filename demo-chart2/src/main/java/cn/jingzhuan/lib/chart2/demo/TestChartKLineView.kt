@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer
 import cn.jingzhuan.lib.chart2.widget.CombineChart
+import kotlin.math.roundToInt
 
 
 const val MIN_VISIBLE_ENTRY_COUNT = 10
@@ -86,6 +87,30 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
 
     override fun isCanZoomOut(): Boolean {
         return currentVisibleEntryCount <= MAX_VISIBLE_ENTRY_COUNT && super.isCanZoomOut()
+    }
+
+    override fun zoomIn(forceAlignX: Int) {
+        if (currentVisibleEntryCount <= MIN_VISIBLE_ENTRY_COUNT) return
+        super.zoomIn(forceAlignX)
+    }
+
+    override fun zoomOut(forceAlignX: Int) {
+        if (currentVisibleEntryCount >= MAX_VISIBLE_ENTRY_COUNT) return
+        super.zoomOut(forceAlignX)
+    }
+
+    fun stepMoveLeft() {
+        val visibleSize = candlestickDataSet.firstOrNull()?.getVisibleRange(currentViewport)?.roundToInt() ?: 0
+        val width = contentRect.width().toFloat()
+        val percent = (width / visibleSize) / width
+        moveLeft(percent)
+    }
+
+    fun stepMoveRight() {
+        val visibleSize = candlestickDataSet.firstOrNull()?.getVisibleRange(currentViewport)?.roundToInt() ?: 0
+        val width = contentRect.width().toFloat()
+        val percent = (width / visibleSize) / width
+        moveRight(percent)
     }
 
 

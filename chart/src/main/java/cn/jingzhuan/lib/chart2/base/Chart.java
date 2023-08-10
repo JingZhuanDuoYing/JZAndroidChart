@@ -85,7 +85,7 @@ public abstract class Chart extends BitmapCachedChart {
      * @see #zoomIn()
      * @see #zoomOut()
      */
-    private static final float ZOOM_AMOUNT = 0.2f;
+    private static final float ZOOM_AMOUNT = 0.15f;
 
     private final Point mSurfaceSizeBuffer = new Point();
 
@@ -335,6 +335,8 @@ public abstract class Chart extends BitmapCachedChart {
             boolean zoomOut = lastSpanX > spanX;
 
             boolean canZoom = Math.abs(Math.abs(lastSpanX) - Math.abs(spanX)) >= 5f;
+
+            if (!canZoom) return false;
 
             if (zoomIn) {
                 setCanZoomOut(true);
@@ -883,11 +885,6 @@ public abstract class Chart extends BitmapCachedChart {
                 isTouching = true;
                 break;
             case MotionEvent.ACTION_MOVE:
-
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                Log.d("JZChart", "onTouchEvent->ACTION_POINTER_UP");
-                postInvalidateOnAnimation();
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d("JZChart", "onTouchEvent->ACTION_UP");
