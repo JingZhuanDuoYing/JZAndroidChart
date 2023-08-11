@@ -397,7 +397,7 @@ public abstract class Chart extends BitmapCachedChart {
                 if(mCurrentViewport.right < Viewport.AXIS_X_MAX) mCurrentViewport.right = Viewport.AXIS_X_MAX;
             } else {
                 // 不足一屏 并且缩放到一屏时 能继续缩小
-                if (getEntryCount() <= getMaxVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
+                if (getEntryCount() < getMaxVisibleEntryCount() && !zoomIn && zoomOut && mCurrentViewport.left == Viewport.AXIS_X_MIN) {
                     mCurrentViewport.left = Viewport.AXIS_X_MIN;
                     mCurrentViewport.right = mCurrentViewport.right - ratio;
                 } else {

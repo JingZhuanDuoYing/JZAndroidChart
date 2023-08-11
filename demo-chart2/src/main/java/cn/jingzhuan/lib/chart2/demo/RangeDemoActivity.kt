@@ -154,7 +154,7 @@ class RangeDemoActivity : AppCompatActivity() {
             combineChart.stepMoveLeft()
         }
 
-        btnHighlightAlways.setOnClickListener {
+        btnMoveRight.setOnClickListener {
             combineChart.stepMoveRight()
         }
 
