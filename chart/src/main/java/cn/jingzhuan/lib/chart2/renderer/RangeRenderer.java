@@ -113,8 +113,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
 
     private OnRangeListener mOnRangeListener;
 
-    private OnRangeKLineVisibleListener mOnRangeKLineVisibleListener;
-
     private OnRangeKLineListener mOnRangeKLineListener;
 
     public RangeRenderer(Chart chart) {
@@ -287,16 +285,7 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
                 mEndX + bitmapSpanX * 3f,
                 chart.getContentRect().bottom);
 
-        /*
-         * 缩放限制
-         * 当K线被缩放到屏幕外(不可见)的情况下 关闭缩放
-         */
-        if (mOnRangeKLineVisibleListener != null) {
-            mOnRangeKLineVisibleListener.onRangeKLineVisible((mStartX > (mContentRect.left + leftTouchBitmap.getWidth()) && mEndX < (mContentRect.width() - leftTouchBitmap.getWidth())));
-        }
-
-        if (mOnRangeKLineListener!=null)
-            mOnRangeKLineListener.onRangeKLine(mStartIndex,mEndIndex);
+        if (mOnRangeKLineListener!=null) mOnRangeKLineListener.onRangeKLine(mStartIndex,mEndIndex);
     }
 
     private boolean touchToLeft(float currentX) {
@@ -740,15 +729,6 @@ public class RangeRenderer extends AbstractDataRenderer<CandlestickDataSet> {
          * @param visible true为可见
          */
         void onRangeKLineVisible(boolean visible);
-    }
-
-    /**
-     * 设置区间统计可见KLine监听器
-     *
-     * @param listener 监听器
-     */
-    public void setOnRangeKLineVisibleListener(OnRangeKLineVisibleListener listener) {
-        this.mOnRangeKLineVisibleListener = listener;
     }
 
     /**

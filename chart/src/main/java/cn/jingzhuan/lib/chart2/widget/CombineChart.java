@@ -119,6 +119,8 @@ public class CombineChart extends BaseChart {
                 }
             }
             setCurrentViewport(newViewport);
+        } else {
+            setCurrentViewport(mCurrentViewport);
         }
     }
 
