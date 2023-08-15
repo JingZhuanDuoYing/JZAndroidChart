@@ -7,6 +7,61 @@
     android:orientation="vertical"
     tools:context=".RangeDemoActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_range"
+            android:text="区间统计"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_add_tag"
+            android:text="添加文本标记"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_scale_in"
+            android:text="放大"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_scale_out"
+            android:text="缩小"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_highlight_always"
+        android:text="光标常驻"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_move_left"
+        android:text="左移"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_move_right"
+        android:text="右移"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,60 +137,5 @@
             app:layout_constraintBottom_toBottomOf="@id/combine_chart"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_range"
-            android:text="区间统计"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_add_tag"
-            android:text="添加文本标记"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_scale_in"
-            android:text="放大"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_scale_out"
-            android:text="缩小"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-    </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_highlight_always"
-        android:text="光标常驻"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_move_left"
-        android:text="左移"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_move_right"
-        android:text="右移"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
 
 </LinearLayout>

@@ -123,7 +123,17 @@ public class ScatterTextDataSet extends AbstractDataSet<ScatterTextValue>{
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
-        for (ScatterTextValue e : getVisiblePoints(viewport)) {
+        List<ScatterTextValue> list = getVisiblePoints(viewport);
+
+        if (list.size() == 1) {
+            mViewportYMin = list.get(0).getLow();
+            mViewportYMax = list.get(0).getHigh();
+            float range = mViewportYMax - mViewportYMin;
+            mViewportYMin = mViewportYMin - range * 0.2f;
+            return;
+        }
+
+        for (ScatterTextValue e : list) {
             calcViewportMinMax(e);
         }
     }
