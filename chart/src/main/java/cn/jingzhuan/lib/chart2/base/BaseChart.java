@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
 
@@ -13,11 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
@@ -44,6 +47,10 @@ public class BaseChart extends Chart {
 
     private final Paint waterMarkPaint = new Paint();
 
+    protected Paint mHighlightTextPaint;
+
+    protected Paint mHighlightBgPaint;
+
     public BaseChart(Context context) {
         super(context);
     }
@@ -63,7 +70,7 @@ public class BaseChart extends Chart {
 
     @Override
     public void initChart() {
-
+        initHighlightPaint();
         mAxisRenderers = new ArrayList<>(4);
 
         mAxisRenderers.add(new AxisRenderer(this, mAxisTop));
@@ -77,6 +84,19 @@ public class BaseChart extends Chart {
                 postInvalidate();
             }
         });
+    }
+
+    protected void initHighlightPaint() {
+
+        mHighlightTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mHighlightTextPaint.setStyle(Paint.Style.FILL);
+        mHighlightTextPaint.setTextSize(getHighlightTextSize());
+        mHighlightTextPaint.setColor(getHighlightTextColor());
+        mHighlightTextPaint.setTextAlign(Paint.Align.CENTER);
+
+        mHighlightBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mHighlightBgPaint.setStyle(Paint.Style.FILL);
+        mHighlightBgPaint.setColor(getHighlightTextBgColor());
     }
 
     @Override
@@ -188,6 +208,41 @@ public class BaseChart extends Chart {
         if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
         }
+    }
+
+    @Override
+    public void drawHighlightLeft(Canvas canvas) {
+        if (isEnableHorizontalHighlight() && isEnableHighlightLeftText()) {
+            if (getHighlights() == null) return;
+            Highlight highlight = getHighlights()[0];
+            int textHeight = getHighlightTextBgHeight();
+            int top = (int) (highlight.getY() + textHeight * 0.5f);
+            Rect contentRect = getContentRect();
+            top = Math.min(Math.max(top, contentRect.top + textHeight), contentRect.bottom);
+            int bottom = (int) (highlight.getY() - textHeight * 0.5f);
+            bottom = Math.min(bottom, contentRect.bottom - textHeight);
+
+            Rect bgRect = new Rect(0, top, 80, bottom);
+            canvas.drawRect(bgRect, mHighlightBgPaint);
+
+            ChartData chartData = mRenderer.getChartData();
+
+            float price = getTouchPriceByY(highlight.getY(), chartData.getLeftMax(), chartData.getLeftMin());
+
+            Log.d("drawHighlightLeft", "price=" + price + "leftMax: "+chartData.getLeftMax()  + "leftMin: "+chartData.getLeftMin() );
+
+        }
+    }
+
+    private float getTouchPriceByY(float touchY, float viewportMax, float viewportMin) {
+        if (viewportMax > viewportMin && viewportMax > 0) {
+            Rect contentRect = getContentRect();
+            var price = viewportMin + (viewportMax - viewportMin) / contentRect.height() * (contentRect.height() - touchY);
+            if (price > viewportMax) price = viewportMax;
+            if (price < viewportMin) price = viewportMin;
+            return price;
+        }
+        return -1f;
     }
 
     public void setHighlightColor(int color) {

@@ -121,7 +121,7 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean drawLabelsInBottom = false;
 
     /**
-     * 坐标轴刻度文本 需要保留的小数位（当前只在蜡烛图中使用了）
+     * 坐标轴刻度文本 需要保留的小数位
      */
     private int decimalDigitsNumber = 2;
 
@@ -146,6 +146,24 @@ public abstract class Chart extends BitmapCachedChart {
     private int currentVisibleEntryCount = -1;
 
     private int entryCount = 0;
+
+    // 是否需要展示水平交叉线
+    private boolean enableHorizontalHighlight = false;
+
+    // 是否需要展示水平交叉线左边文本
+    private boolean enableHighlightLeftText = false;
+
+    // 水平交叉线文本 textSize
+    private float mHighlightTextSize;
+
+    // 水平交叉线文本 textColor
+    private int mHighlightTextColor = Color.TRANSPARENT;
+
+    // 水平交叉线文本背景
+    private int mHighlightTextBgColor = Color.TRANSPARENT;
+
+    // 水平交叉线文本背景高度
+    private int mHighlightTextBgHeight;
 
     public Chart(Context context) {
         this(context, null, 0);
@@ -1334,6 +1352,56 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setEntryCount(int entryCount) {
         this.entryCount = entryCount;
+    }
+
+    @Override
+    public boolean isEnableHorizontalHighlight() {
+        return enableHorizontalHighlight;
+    }
+
+    public void setEnableHorizontalHighlight(boolean enableHorizontalHighlight) {
+        this.enableHorizontalHighlight = enableHorizontalHighlight;
+    }
+
+    @Override
+    public boolean isEnableHighlightLeftText() {
+        return enableHighlightLeftText;
+    }
+
+    public void setEnableHighlightLeftText(boolean enableHighlightLeftText) {
+        this.enableHighlightLeftText = enableHighlightLeftText;
+    }
+
+    public void setHighlightTextSize(float textSize) {
+        this.mHighlightTextSize = textSize;
+    }
+
+    public float getHighlightTextSize() {
+        return this.mHighlightTextSize;
+    }
+
+    public int getHighlightTextColor() {
+        return mHighlightTextColor;
+    }
+
+    public void setHighlightTextColor(int mHighlightTextColor) {
+        this.mHighlightTextColor = mHighlightTextColor;
+    }
+
+    public int getHighlightTextBgColor() {
+        return mHighlightTextBgColor;
+    }
+
+    public void setHighlightTextBgColor(int mHighlightTextBgColor) {
+        this.mHighlightTextBgColor = mHighlightTextBgColor;
+    }
+
+    public int getHighlightTextBgHeight() {
+        return mHighlightTextBgHeight;
+    }
+
+    public void setHighlightTextBgHeight(int mHighlightTextBgHeight) {
+        this.mHighlightTextBgHeight = mHighlightTextBgHeight;
     }
 
     protected boolean canScroll() {

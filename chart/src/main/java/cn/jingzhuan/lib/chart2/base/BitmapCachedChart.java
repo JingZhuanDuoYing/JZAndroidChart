@@ -113,6 +113,7 @@ public abstract class BitmapCachedChart extends View implements IChart {
         } else {
             drawLabels(canvas);
         }
+        drawHighlightLeft(canvas);
     }
 
     protected void createBitmapCache(Canvas canvas) {

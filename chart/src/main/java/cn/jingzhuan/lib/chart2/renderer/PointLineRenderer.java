@@ -12,7 +12,6 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
-import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineData;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
@@ -26,13 +25,20 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
 
     private PointLineData pointLineData;
     private Path mPath;
-    private final Paint mPointPaint; //圆点画笔
+
+    //圆点画笔
+    private final Paint mPointPaint;
+
+    private final Chart chart;
+
     public PointLineRenderer(Chart chart) {
         super(chart);
+        this.chart = chart;
 
         mPath = new Path();
         mPointPaint = new Paint();
         mPointPaint.setStyle(Paint.Style.FILL);
+
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
             @Override
             public void onViewportChange(Viewport viewport) {
@@ -185,7 +191,7 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
                 // Horizontal
                 if (!Float.isNaN(highlight.getY())) {
                     for (PointLineDataSet lineDataSet : getDataSet()) {
-                        if (lineDataSet.isHighlightedHorizontalEnable()) {
+                        if (lineDataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
                             canvas.drawLine(0,
                                     highlight.getY(),
                                     mContentRect.right,

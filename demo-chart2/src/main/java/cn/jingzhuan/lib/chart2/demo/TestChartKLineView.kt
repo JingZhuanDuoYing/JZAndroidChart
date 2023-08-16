@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Color.BLACK
+import android.graphics.Color.WHITE
 import android.util.AttributeSet
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -24,6 +25,12 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
     private var viewportMax: Float = 0f
 
     override fun initChart() {
+        isEnableHorizontalHighlight = true
+        isEnableHighlightLeftText = true
+        highlightTextBgHeight = 50
+        highlightTextBgColor = BLACK
+        highlightTextColor = WHITE
+        highlightTextSize = 28f
         super.initChart()
         setRenderer(object : CombineChartRenderer(this) {
             init {
@@ -71,6 +78,7 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         minVisibleEntryCount = MIN_VISIBLE_ENTRY_COUNT
         maxVisibleEntryCount = MAX_VISIBLE_ENTRY_COUNT
         defaultVisibleEntryCount = DEFAULT_VISIBLE_ENTRY_COUNT
+
     }
 
     override fun addDataSet(abstractDataSet: AbstractDataSet<*>?) {

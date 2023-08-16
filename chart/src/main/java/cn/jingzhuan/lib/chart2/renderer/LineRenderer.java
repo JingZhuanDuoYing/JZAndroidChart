@@ -38,16 +38,16 @@ import cn.jingzhuan.lib.chart2.widget.LineChart;
 public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
 
     private LineData lineData;
-    private List<Path> shaderPaths;
-    private List<Shader> shaderPathColors;
-    private List<Path> linePaths;
+    private final List<Path> shaderPaths;
+    private final List<Shader> shaderPathColors;
+    private final List<Path> linePaths;
     private Path shaderPath;
-    private List<PartLineData> partLineDatas;
+    private final List<PartLineData> partLineDatas;
 
     private boolean onlyLines = false;
     private boolean isDrawHighLight = false;
     private Paint mTextPaint;
-    private Chart chart;
+    private final Chart chart;
 
     public LineRenderer(final Chart chart) {
         super(chart);
@@ -139,7 +139,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                 // Horizontal
               if (!Float.isNaN(highlight.getY())) {
                 for (LineDataSet lineDataSet : getDataSet()) {
-                    if (lineDataSet.isHighlightedHorizontalEnable()) {
+                    if (lineDataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
                         canvas.drawLine(0,
                                 highlight.getY(),
                                 mContentRect.right,

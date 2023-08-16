@@ -5,10 +5,12 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+
 import androidx.annotation.NonNull;
+
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.BarValue;
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart2.base.Chart;
 import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
@@ -17,6 +19,7 @@ import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.FloatUtils;
+
 import java.util.List;
 
 /**
@@ -30,8 +33,11 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
     protected Paint mValueTextPaint;
 
+    private final Chart chart;
+
     public BarChartRenderer(final Chart chart) {
         super(chart);
+        this.chart = chart;
 
         mValueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mValueTextPaint.setStyle(Paint.Style.FILL);
@@ -73,13 +79,15 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         });
     }
 
-    @Override protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData) {
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData) {
         for (BarDataSet dataSet : chartData.getDataSets()) {
             renderDataSet(canvas, chartData, dataSet);
         }
     }
 
-    @Override protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData, BarDataSet dataSet) {
+    @Override
+    protected void renderDataSet(Canvas canvas, ChartData<BarDataSet> chartData, BarDataSet dataSet) {
         if (dataSet.isVisible()) {
             drawBarDataSet(canvas, dataSet,
                     chartData.getLeftMax(), chartData.getLeftMin(),
@@ -88,7 +96,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
     }
 
     private void drawBarDataSet(Canvas canvas, BarDataSet barDataSet,
-        float lMax, float lMin, float rMax, float rMin) {
+                                float lMax, float lMin, float rMax, float rMin) {
 
         float strokeThickness = barDataSet.getStrokeThickness();
 
@@ -153,14 +161,15 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
                 Paint.Style style = barValue.getPaintStyle();
 
-                top = calcHeight(value, max, min) ;
+                top = calcHeight(value, max, min);
                 if (top == 0 && (style == Paint.Style.STROKE)) {
                     top = top + strokeThickness;
                 }
                 if (width < strokeThickness * 2 && (style == Paint.Style.STROKE)) {
                     style = Paint.Style.FILL;
                 }
-                if (barValue.getValueCount() > 1) bottom = calcHeight(barValue.getValues()[1], max, min);
+                if (barValue.getValueCount() > 1)
+                    bottom = calcHeight(barValue.getValues()[1], max, min);
                 int roundBottom = Math.round(bottom);
                 if (roundBottom == mContentRect.height()) {
                     bottom = mContentRect.height() - strokeThickness;
@@ -182,9 +191,9 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                     if (barValue.getGradientColors() != null && barValue.getGradientColors().length > 1) {
                         float centerX = (left + right) * 0.5f;
                         mRenderPaint.setShader(
-                            new LinearGradient(centerX, top, centerX, bottom,
-                                barValue.getGradientColors()[0],
-                                barValue.getGradientColors()[1], Shader.TileMode.MIRROR));
+                                new LinearGradient(centerX, top, centerX, bottom,
+                                        barValue.getGradientColors()[0],
+                                        barValue.getGradientColors()[1], Shader.TileMode.MIRROR));
                     }
                     canvas.drawRect(left, top, right, bottom, mRenderPaint);
                 }
@@ -200,18 +209,18 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                         char[] labelCharArray = valueFormatter.format(barValue.getValues()[0], i).toCharArray();
                         labelLength = labelCharArray.length;
                         System.arraycopy(labelCharArray,
-                            0,
-                            mLabelBuffer,
-                            mLabelBuffer.length - labelLength,
-                            labelLength);
+                                0,
+                                mLabelBuffer,
+                                mLabelBuffer.length - labelLength,
+                                labelLength);
                     }
                     labelOffset = mLabelBuffer.length - labelLength;
 
                     mValueTextPaint.setTextAlign(Paint.Align.CENTER);
 
                     canvas.drawText(mLabelBuffer, labelOffset, labelLength,
-                        x + width * 0.5f,
-                        top - 10, mValueTextPaint);
+                            x + width * 0.5f,
+                            top - 10, mValueTextPaint);
                 }
             }
             mRenderPaint.setShader(null);
@@ -235,26 +244,41 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         }
 
         for (Highlight highlight : highlights) {
+            if (highlight != null) {
+                canvas.drawLine(highlight.getX(),
+                        0,
+                        highlight.getX(),
+                        mContentRect.bottom,
+                        mRenderPaint);
 
-            canvas.drawLine(
-                    highlight.getX(),
-                    0,
-                    highlight.getX(),
-                    mContentRect.bottom,
-                    mRenderPaint);
+                // Horizontal
+                if (!Float.isNaN(highlight.getY())) {
+                    for (BarDataSet barDataSet : getDataSet()) {
+                        if (barDataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
+                            canvas.drawLine(0,
+                                    highlight.getY(),
+                                    mContentRect.right,
+                                    highlight.getY(),
+                                    mRenderPaint);
+                        }
+                    }
+                }
+            }
         }
 
         mRenderPaint.setPathEffect(null);
     }
 
-    @Override public void removeDataSet(BarDataSet dataSet) {
+    @Override
+    public void removeDataSet(BarDataSet dataSet) {
         if (dataSet == null) return;
         mBarDataSets.remove(dataSet);
         calcDataSetMinMax();
 
     }
 
-    @Override public void clearDataSet() {
+    @Override
+    public void clearDataSet() {
         mBarDataSets.clear();
         calcDataSetMinMax();
     }
@@ -264,12 +288,14 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
         return mBarDataSets.getDataSets();
     }
 
-    @Override public BarData getChartData() {
+    @Override
+    public BarData getChartData() {
         if (mBarDataSets == null) mBarDataSets = new BarData();
         return mBarDataSets;
     }
 
-    @Override public void setTypeface(Typeface tf) {
+    @Override
+    public void setTypeface(Typeface tf) {
         mValueTextPaint.setTypeface(tf);
     }
 }
