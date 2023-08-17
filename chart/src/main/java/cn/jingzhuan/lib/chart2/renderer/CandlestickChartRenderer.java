@@ -317,11 +317,19 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                             mContentRect.bottom,
                             mHighlightRenderPaint);
                 }
-                if (dataSet.isHighlightedHorizontalEnable()) {
+                if (dataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
+                    float y = highlight.getY();
+                    if (y < mContentRect.top + getHighlightThickness() * 0.5f) {
+                        y = mContentRect.top + getHighlightThickness() * 0.5f;
+                    }
+
+                    if (y > mContentRect.bottom - getHighlightThickness() * 0.5f){
+                        y = mContentRect.bottom - getHighlightThickness() * 0.5f;
+                    }
                     canvas.drawLine(mContentRect.left,
-                            highlight.getY(),
+                            y,
                             mContentRect.right,
-                            highlight.getY(),
+                            y,
                             mHighlightRenderPaint);
                 }
             }

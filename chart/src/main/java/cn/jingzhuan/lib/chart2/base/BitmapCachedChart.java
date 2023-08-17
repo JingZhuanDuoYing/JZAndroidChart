@@ -108,12 +108,13 @@ public abstract class BitmapCachedChart extends View implements IChart {
         canvas.restoreToCount(clipRestoreCount);
 
         if (getDrawLabelsInBottom()) {
+            drawHighlightLeft(canvas);
             canvas.clipRect(mBottomRect);
             drawLabels(canvas);
         } else {
             drawLabels(canvas);
+            drawHighlightLeft(canvas);
         }
-        drawHighlightLeft(canvas);
     }
 
     protected void createBitmapCache(Canvas canvas) {

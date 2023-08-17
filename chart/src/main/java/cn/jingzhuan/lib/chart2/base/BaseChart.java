@@ -221,9 +221,9 @@ public class BaseChart extends Chart {
             Highlight highlight = getHighlights()[0];
             Rect contentRect = getContentRect();
             float y = highlight.getY();
-            if (y > contentRect.bottom || y < contentRect.top) {
-                return;
-            }
+//            if (y > contentRect.bottom || y < contentRect.top) {
+//                return;
+//            }
             int textHeight = getHighlightTextBgHeight();
             float top = y - textHeight * 0.5f;
             float bottom = y + textHeight * 0.5f;
@@ -279,7 +279,9 @@ public class BaseChart extends Chart {
      */
     private int calculateWidth(String maxText, String minText) {
         String text = maxText;
-        if (minText.contains("-")) text = minText;
+        if (maxText.length() < minText.length()) {
+            text = minText;
+        }
         Rect rect = new Rect();
         int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_highlight_text_padding);
         mHighlightTextPaint.getTextBounds(text, 0, text.length(), rect);
