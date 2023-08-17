@@ -317,7 +317,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                             mContentRect.bottom,
                             mHighlightRenderPaint);
                 }
-                if (dataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
+                if (dataSet.isHighlightedHorizontalEnable() && !chart.isEnableHorizontalHighlight()) {
                     float y = highlight.getY();
                     if (y < mContentRect.top + getHighlightThickness() * 0.5f) {
                         y = mContentRect.top + getHighlightThickness() * 0.5f;

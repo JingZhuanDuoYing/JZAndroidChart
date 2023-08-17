@@ -129,6 +129,10 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
         mHighlightedDashPathEffect = new DashPathEffect(intervals, phase);
     }
 
+    public DashPathEffect getHighlightDashPathEffect() {
+        return this.mHighlightedDashPathEffect;
+    }
+
     public void setMaxVisibleEntryCount(int maxVisibleEntryCount) {
         if (maxVisibleEntryCount <= 0) return;
         getChartData().setMaxVisibleEntryCount(maxVisibleEntryCount);

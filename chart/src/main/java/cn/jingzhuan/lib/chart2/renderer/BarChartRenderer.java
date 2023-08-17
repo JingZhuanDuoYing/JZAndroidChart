@@ -254,7 +254,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                 // Horizontal
                 if (!Float.isNaN(highlight.getY())) {
                     for (BarDataSet barDataSet : getDataSet()) {
-                        if (barDataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
+                        if (barDataSet.isHighlightedHorizontalEnable() && !chart.isEnableHorizontalHighlight()) {
                             float y = highlight.getY();
                             if (y < mContentRect.top + getHighlightThickness() * 0.5f) {
                                 y = mContentRect.top + getHighlightThickness() * 0.5f;

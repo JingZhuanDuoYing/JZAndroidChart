@@ -191,7 +191,7 @@ public class PointLineRenderer extends AbstractDataRenderer<PointLineDataSet> {
                 // Horizontal
                 if (!Float.isNaN(highlight.getY())) {
                     for (PointLineDataSet lineDataSet : getDataSet()) {
-                        if (lineDataSet.isHighlightedHorizontalEnable() || chart.isEnableHorizontalHighlight()) {
+                        if (lineDataSet.isHighlightedHorizontalEnable() && !chart.isEnableHorizontalHighlight()) {
                             float y = highlight.getY();
                             if (y < mContentRect.top + getHighlightThickness() * 0.5f) {
                                 y = mContentRect.top + getHighlightThickness() * 0.5f;

@@ -211,9 +211,50 @@ public class BaseChart extends Chart {
     public void renderHighlighted(Canvas canvas) {
         if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
+            if (isEnableHorizontalHighlight()) {
+                drawHighlightHorizontal(canvas);
+            }
         }
     }
 
+    /**
+     * 画十字光标水平线
+     * @param canvas
+     */
+    private void drawHighlightHorizontal(Canvas canvas) {
+        if (getHighlights() == null) return;
+        Highlight highlight = getHighlights()[0];
+        float y = highlight.getY();
+        if (Float.isNaN(y)) return;
+
+        float thickness = mRenderer.getHighlightThickness();
+
+        Paint mRenderPaint = mRenderer.getRenderPaint();
+
+        mRenderPaint.setColor(mRenderer.getHighlightColor());
+        mRenderPaint.setStrokeWidth(thickness);
+        mRenderPaint.setStyle(Paint.Style.STROKE);
+        if (mRenderer.getHighlightDashPathEffect() != null) {
+            mRenderPaint.setPathEffect(mRenderer.getHighlightDashPathEffect());
+        }
+        if (y < mContentRect.top + thickness * 0.5f) {
+            y = mContentRect.top + thickness * 0.5f;
+        }
+
+        if (y > mContentRect.bottom - thickness * 0.5f){
+            y = mContentRect.bottom - thickness * 0.5f;
+        }
+        canvas.drawLine(0,
+                y,
+                mContentRect.right,
+                y,
+                mRenderPaint);
+    }
+
+    /**
+     * 画十字光标左侧文本
+     * @param canvas
+     */
     @Override
     public void drawHighlightLeft(Canvas canvas) {
         if (isEnableHorizontalHighlight() && isEnableHighlightLeftText()) {
@@ -221,6 +262,7 @@ public class BaseChart extends Chart {
             Highlight highlight = getHighlights()[0];
             Rect contentRect = getContentRect();
             float y = highlight.getY();
+            if (Float.isNaN(y)) return;
 //            if (y > contentRect.bottom || y < contentRect.top) {
 //                return;
 //            }
@@ -256,6 +298,8 @@ public class BaseChart extends Chart {
                 maxText = valueFormatter.format(leftMax, 0);
                 minText = valueFormatter.format(leftMin, 0);
             }
+
+            if (text.isEmpty()) return;
 
             int width = calculateWidth(maxText, minText);
 
