@@ -21,9 +21,11 @@ import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.ValueFormatter;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
+import cn.jingzhuan.lib.chart.utils.FloatUtils;
 import cn.jingzhuan.lib.chart2.renderer.AbstractDataRenderer;
 
 import java.util.ArrayList;
@@ -50,6 +52,8 @@ public class BaseChart extends Chart {
     protected Paint mHighlightTextPaint;
 
     protected Paint mHighlightBgPaint;
+
+    private final char[] mHighlightLabelBuffer = new char[100];
 
     public BaseChart(Context context) {
         super(context);
@@ -215,23 +219,64 @@ public class BaseChart extends Chart {
         if (isEnableHorizontalHighlight() && isEnableHighlightLeftText()) {
             if (getHighlights() == null) return;
             Highlight highlight = getHighlights()[0];
-            int textHeight = getHighlightTextBgHeight();
-            int top = (int) (highlight.getY() + textHeight * 0.5f);
             Rect contentRect = getContentRect();
-            top = Math.min(Math.max(top, contentRect.top + textHeight), contentRect.bottom);
-            int bottom = (int) (highlight.getY() - textHeight * 0.5f);
-            bottom = Math.min(bottom, contentRect.bottom - textHeight);
+            float y = highlight.getY();
+            if (y > contentRect.bottom || y < contentRect.top) {
+                return;
+            }
+            int textHeight = getHighlightTextBgHeight();
+            float top = y - textHeight * 0.5f;
+            float bottom = y + textHeight * 0.5f;
+            if (y < textHeight * 0.5f) {
+                top = contentRect.top;
+                bottom = top + textHeight;
+            }
 
-            Rect bgRect = new Rect(0, top, 80, bottom);
-            canvas.drawRect(bgRect, mHighlightBgPaint);
+            if (y > contentRect.bottom - textHeight * 0.5f){
+                bottom = contentRect.bottom;
+                top = bottom - textHeight;
+            }
+
+//            Log.d("drawHighlightLeft", "y="+ y + "top=" + top + "bottom: "+bottom);
 
             ChartData chartData = mRenderer.getChartData();
+            float price = getTouchPriceByY(y, chartData.getLeftMax(), chartData.getLeftMin());
+            ValueFormatter valueFormatter = getAxisLeft().getLabelValueFormatter();
+            String text;
+            String maxText;
+            if (valueFormatter == null) {
+                text = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
+                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
+            } else {
+                text = valueFormatter.format(price, 0);
+                maxText = valueFormatter.format(chartData.getLeftMax(), 0);
+            }
 
-            float price = getTouchPriceByY(highlight.getY(), chartData.getLeftMax(), chartData.getLeftMin());
+            int width = calculateWidth(maxText);
 
-            Log.d("drawHighlightLeft", "price=" + price + "leftMax: "+chartData.getLeftMax()  + "leftMin: "+chartData.getLeftMin() );
+            // 画背景
+            Rect bgRect = new Rect(0, (int) top, width, (int) bottom);
+            canvas.drawRect(bgRect, mHighlightBgPaint);
 
+            // 画文本
+            Paint.FontMetrics fontMetrics = mHighlightTextPaint.getFontMetrics();
+            float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
+            float baseline = bgRect.centerY() + distance;
+
+            canvas.drawText(text, bgRect.centerX(), baseline, mHighlightTextPaint);
         }
+    }
+
+    /**
+     * 计算文本长度
+     *
+     * @return
+     */
+    private int calculateWidth(String text) {
+        Rect rect = new Rect();
+        int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_highlight_text_padding);
+        mHighlightTextPaint.getTextBounds(text, 0, text.length(), rect);
+        return rect.width() + padding * 2;
     }
 
     private float getTouchPriceByY(float touchY, float viewportMax, float viewportMin) {
