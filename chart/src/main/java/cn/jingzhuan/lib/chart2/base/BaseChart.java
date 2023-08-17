@@ -211,7 +211,7 @@ public class BaseChart extends Chart {
     public void renderHighlighted(Canvas canvas) {
         if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
-            if (isEnableHorizontalHighlight()) {
+            if (isEnableHorizontalHighlight() && !isHideHorizontalHighlight()) {
                 drawHighlightHorizontal(canvas);
             }
         }
@@ -257,7 +257,7 @@ public class BaseChart extends Chart {
      */
     @Override
     public void drawHighlightLeft(Canvas canvas) {
-        if (isEnableHorizontalHighlight() && isEnableHighlightLeftText()) {
+        if (isEnableHorizontalHighlight() && isEnableHighlightLeftText() && !isHideHorizontalHighlight()) {
             if (getHighlights() == null) return;
             Highlight highlight = getHighlights()[0];
             Rect contentRect = getContentRect();

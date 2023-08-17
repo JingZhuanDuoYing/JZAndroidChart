@@ -147,6 +147,9 @@ public abstract class Chart extends BitmapCachedChart {
 
     private int entryCount = 0;
 
+    // 隐藏水平交叉线 便于控制
+    private boolean hideHorizontalHighlight = false;
+
     // 是否需要展示水平交叉线
     private boolean enableHorizontalHighlight = false;
 
@@ -1352,6 +1355,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setEntryCount(int entryCount) {
         this.entryCount = entryCount;
+    }
+
+    public boolean isHideHorizontalHighlight() {
+        return hideHorizontalHighlight;
+    }
+
+    public void setHideHorizontalHighlight(boolean hideHorizontalHighlight) {
+        this.hideHorizontalHighlight = hideHorizontalHighlight;
     }
 
     @Override
