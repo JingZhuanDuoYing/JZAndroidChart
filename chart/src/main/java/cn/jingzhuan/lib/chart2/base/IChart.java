@@ -35,6 +35,8 @@ public interface IChart {
 
     void drawHighlightLeft(Canvas canvas);
 
+    void drawHighlightRight(Canvas canvas);
+
     /**
      * 渲染图表
      */

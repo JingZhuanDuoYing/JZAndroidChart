@@ -282,10 +282,10 @@ public class BaseChart extends Chart {
 //            Log.d("drawHighlightLeft", "y="+ y + "top=" + top + "bottom: "+bottom);
 
             ChartData chartData = mRenderer.getChartData();
-            float price = getTouchPriceByY(y, chartData.getLeftMax(), chartData.getLeftMin());
-            ValueFormatter valueFormatter = getAxisLeft().getLabelValueFormatter();
             float leftMax = chartData.getLeftMax();
             float leftMin = chartData.getLeftMin();
+            float price = getTouchPriceByY(y, leftMax, leftMin);
+            ValueFormatter valueFormatter = getAxisLeft().getLabelValueFormatter();
             String text;
             String maxText;
             String minText;
@@ -305,6 +305,71 @@ public class BaseChart extends Chart {
 
             // 画背景
             Rect bgRect = new Rect(0, (int) top, width, (int) bottom);
+            canvas.drawRect(bgRect, mHighlightBgPaint);
+
+            // 画文本
+            Paint.FontMetrics fontMetrics = mHighlightTextPaint.getFontMetrics();
+            float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
+            float baseline = bgRect.centerY() + distance;
+
+            canvas.drawText(text, bgRect.centerX(), baseline, mHighlightTextPaint);
+        }
+    }
+
+    /**
+     * 画十字光标左侧文本
+     * @param canvas
+     */
+    @Override
+    public void drawHighlightRight(Canvas canvas) {
+        if (isEnableHorizontalHighlight() && isEnableHighlightRightText() && !isHideHorizontalHighlight()) {
+            if (getHighlights() == null) return;
+            Highlight highlight = getHighlights()[0];
+            Rect contentRect = getContentRect();
+            float y = highlight.getY();
+            if (Float.isNaN(y)) return;
+//            if (y > contentRect.bottom || y < contentRect.top) {
+//                return;
+//            }
+            int textHeight = getHighlightTextBgHeight();
+            float top = y - textHeight * 0.5f;
+            float bottom = y + textHeight * 0.5f;
+            if (y < textHeight * 0.5f) {
+                top = contentRect.top;
+                bottom = top + textHeight;
+            }
+
+            if (y > contentRect.bottom - textHeight * 0.5f){
+                bottom = contentRect.bottom;
+                top = bottom - textHeight;
+            }
+
+//            Log.d("drawHighlightRight", "y="+ y + "top=" + top + "bottom: "+bottom);
+
+            ChartData chartData = mRenderer.getChartData();
+            float rightMax = chartData.getRightMax();
+            float rightMin = chartData.getRightMin();
+            float price = getTouchPriceByY(y, rightMax, rightMin);
+            ValueFormatter valueFormatter = getAxisRight().getLabelValueFormatter();
+            String text;
+            String maxText;
+            String minText;
+            if (valueFormatter == null) {
+                text = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
+                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(rightMax, 2));
+                minText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(rightMin, 2));
+            } else {
+                text = valueFormatter.format(price, -1);
+                maxText = valueFormatter.format(rightMax, 0);
+                minText = valueFormatter.format(rightMin, 0);
+            }
+
+            if (text.isEmpty()) return;
+
+            int width = calculateWidth(maxText, minText);
+
+            // 画背景
+            Rect bgRect = new Rect(mContentRect.right - width, (int) top, mContentRect.right, (int) bottom);
             canvas.drawRect(bgRect, mHighlightBgPaint);
 
             // 画文本

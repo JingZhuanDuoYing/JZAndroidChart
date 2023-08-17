@@ -55,6 +55,8 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnMoveRight: AppCompatButton
 
+    private val lastClose = 3388.98f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -114,6 +116,23 @@ class RangeDemoActivity : AppCompatActivity() {
         btnMoveLeft = findViewById(R.id.btn_move_left)
         btnMoveRight = findViewById(R.id.btn_move_right)
         combineChart.scaleSensitivity = 1.1f
+
+        combineChart.axisRight.setLabelValueFormatter { value, index ->
+            if (index == 1 || value.isNaN() || value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE)
+                return@setLabelValueFormatter ""
+            val v = when (index) {
+                0 -> combineChart.axisLeft.yMin
+                2 -> combineChart.axisLeft.yMax
+                else -> value
+            }
+            if (v.isNaN() || v >= Int.MAX_VALUE || v <= -Int.MAX_VALUE)
+                return@setLabelValueFormatter ""
+            return@setLabelValueFormatter if (lastClose > 0.0) {
+                val result =
+                    (v - lastClose) / lastClose
+                String.format("%.2f%%", result / 0.01)
+            } else ""
+        }
     }
 
     private fun initListener() {

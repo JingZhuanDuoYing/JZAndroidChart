@@ -156,6 +156,9 @@ public abstract class Chart extends BitmapCachedChart {
     // 是否需要展示水平交叉线左边文本
     private boolean enableHighlightLeftText = false;
 
+    // 是否需要展示水平交叉线右边文本
+    private boolean enableHighlightRightText = false;
+
     // 水平交叉线文本 textSize
     private float mHighlightTextSize;
 
@@ -1381,6 +1384,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setEnableHighlightLeftText(boolean enableHighlightLeftText) {
         this.enableHighlightLeftText = enableHighlightLeftText;
+    }
+
+    public boolean isEnableHighlightRightText() {
+        return enableHighlightRightText;
+    }
+
+    public void setEnableHighlightRightText(boolean enableHighlightRightText) {
+        this.enableHighlightRightText = enableHighlightRightText;
     }
 
     public void setHighlightTextSize(float textSize) {

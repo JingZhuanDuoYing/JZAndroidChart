@@ -27,6 +27,7 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
     override fun initChart() {
         isEnableHorizontalHighlight = true
         isEnableHighlightLeftText = true
+        isEnableHighlightRightText = true
         highlightTextBgHeight = 50
         highlightTextBgColor = BLACK
         highlightTextColor = WHITE
