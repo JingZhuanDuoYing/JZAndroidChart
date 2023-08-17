@@ -242,17 +242,22 @@ public class BaseChart extends Chart {
             ChartData chartData = mRenderer.getChartData();
             float price = getTouchPriceByY(y, chartData.getLeftMax(), chartData.getLeftMin());
             ValueFormatter valueFormatter = getAxisLeft().getLabelValueFormatter();
+            float leftMax = chartData.getLeftMax();
+            float leftMin = chartData.getLeftMin();
             String text;
             String maxText;
+            String minText;
             if (valueFormatter == null) {
                 text = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
-                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
+                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(leftMax, 2));
+                minText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(leftMin, 2));
             } else {
                 text = valueFormatter.format(price, 0);
-                maxText = valueFormatter.format(chartData.getLeftMax(), 0);
+                maxText = valueFormatter.format(leftMax, 0);
+                minText = valueFormatter.format(leftMin, 0);
             }
 
-            int width = calculateWidth(maxText);
+            int width = calculateWidth(maxText, minText);
 
             // 画背景
             Rect bgRect = new Rect(0, (int) top, width, (int) bottom);
@@ -272,7 +277,9 @@ public class BaseChart extends Chart {
      *
      * @return
      */
-    private int calculateWidth(String text) {
+    private int calculateWidth(String maxText, String minText) {
+        String text = maxText;
+        if (minText.contains("-")) text = minText;
         Rect rect = new Rect();
         int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_highlight_text_padding);
         mHighlightTextPaint.getTextBounds(text, 0, text.length(), rect);
@@ -286,6 +293,8 @@ public class BaseChart extends Chart {
             if (price > viewportMax) price = viewportMax;
             if (price < viewportMin) price = viewportMin;
             return price;
+        } else if (viewportMax == viewportMin) {
+            return viewportMax;
         }
         return -1f;
     }
