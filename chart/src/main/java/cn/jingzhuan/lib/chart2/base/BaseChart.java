@@ -391,12 +391,9 @@ public class BaseChart extends Chart {
             if (Float.isNaN(x)) return;
 
             ValueIndexFormatter formatter = getAxisBottom().getValueIndexFormatter();
-
-            int index = getEntryIndexByCoordinate(x, highlight.getY());
-
             String text = "";
             if (formatter != null) {
-                text = formatter.format(index);
+                text = formatter.format( highlight.getDataIndex());
             }
 
             if (text.isEmpty()) return;
