@@ -245,11 +245,13 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
 
         for (Highlight highlight : highlights) {
             if (highlight != null) {
-                canvas.drawLine(highlight.getX(),
-                        0,
-                        highlight.getX(),
-                        mContentRect.bottom,
-                        mRenderPaint);
+                if (!chart.isEnableVerticalHighlight()) {
+                    canvas.drawLine(highlight.getX(),
+                            0,
+                            highlight.getX(),
+                            mContentRect.bottom,
+                            mRenderPaint);
+                }
 
                 // Horizontal
                 if (!Float.isNaN(highlight.getY())) {

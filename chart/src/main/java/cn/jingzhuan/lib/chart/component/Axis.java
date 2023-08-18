@@ -7,6 +7,8 @@ import cn.jingzhuan.lib.chart.AxisAutoValues;
 import cn.jingzhuan.lib.chart.data.GirdLineColorSetter;
 import cn.jingzhuan.lib.chart.data.LabelColorSetter;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
+import cn.jingzhuan.lib.chart.data.ValueIndexFormatter;
+
 import java.util.List;
 
 /**
@@ -35,6 +37,8 @@ public class Axis extends AbstractComponent {
     private AxisAutoValues axisAutoValues = new AxisAutoValues();
 
     private ValueFormatter mLabelValueFormatter;
+
+    private ValueIndexFormatter mValueIndexFormatter;
 
     public float[] mLabelEntries = new float[]{};
     private boolean gridLineEnable = true;
@@ -187,6 +191,14 @@ public class Axis extends AbstractComponent {
 
     public void setLabelValueFormatter(ValueFormatter mValueFormatter) {
         this.mLabelValueFormatter = mValueFormatter;
+    }
+
+    public ValueIndexFormatter getValueIndexFormatter() {
+        return mValueIndexFormatter;
+    }
+
+    public void setValueIndexFormatter(ValueIndexFormatter mValueIndexFormatter) {
+        this.mValueIndexFormatter = mValueIndexFormatter;
     }
 
     public float getDashedGridPhase() {

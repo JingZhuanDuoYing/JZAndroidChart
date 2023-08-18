@@ -22,6 +22,7 @@ import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
+import cn.jingzhuan.lib.chart.data.ValueIndexFormatter;
 import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener;
 import cn.jingzhuan.lib.chart.event.OnHighlightListener;
 import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
@@ -52,8 +53,6 @@ public class BaseChart extends Chart {
     protected Paint mHighlightTextPaint;
 
     protected Paint mHighlightBgPaint;
-
-    private final char[] mHighlightLabelBuffer = new char[100];
 
     public BaseChart(Context context) {
         super(context);
@@ -211,10 +210,36 @@ public class BaseChart extends Chart {
     public void renderHighlighted(Canvas canvas) {
         if (mRenderer != null && getHighlights() != null) {
             mRenderer.renderHighlighted(canvas, getHighlights());
+            if (isEnableVerticalHighlight() && !isHideVerticalHighlight()) {
+                drawHighlightVertical(canvas);
+            }
             if (isEnableHorizontalHighlight() && !isHideHorizontalHighlight()) {
                 drawHighlightHorizontal(canvas);
             }
         }
+    }
+
+    /**
+     * 画十字光标垂直线
+     * @param canvas
+     */
+    private void drawHighlightVertical(Canvas canvas) {
+        if (getHighlights() == null) return;
+        Highlight highlight = getHighlights()[0];
+        float x = highlight.getX();
+        if (Float.isNaN(x)) return;
+
+        float thickness = mRenderer.getHighlightThickness();
+
+        if (x < mContentRect.left + thickness * 0.5f) {
+            x = mContentRect.left + thickness * 0.5f;
+        }
+
+        if (x > mContentRect.right - thickness * 0.5f){
+            x = mContentRect.right - thickness * 0.5f;
+        }
+
+        canvas.drawLine(x, mContentRect.top, x, mContentRect.bottom, mRenderer.getHighlightLinePaint());
     }
 
     /**
@@ -229,14 +254,6 @@ public class BaseChart extends Chart {
 
         float thickness = mRenderer.getHighlightThickness();
 
-        Paint mRenderPaint = mRenderer.getRenderPaint();
-
-        mRenderPaint.setColor(mRenderer.getHighlightColor());
-        mRenderPaint.setStrokeWidth(thickness);
-        mRenderPaint.setStyle(Paint.Style.STROKE);
-        if (mRenderer.getHighlightDashPathEffect() != null) {
-            mRenderPaint.setPathEffect(mRenderer.getHighlightDashPathEffect());
-        }
         if (y < mContentRect.top + thickness * 0.5f) {
             y = mContentRect.top + thickness * 0.5f;
         }
@@ -244,11 +261,7 @@ public class BaseChart extends Chart {
         if (y > mContentRect.bottom - thickness * 0.5f){
             y = mContentRect.bottom - thickness * 0.5f;
         }
-        canvas.drawLine(0,
-                y,
-                mContentRect.right,
-                y,
-                mRenderPaint);
+        canvas.drawLine(0, y, mContentRect.right, y, mRenderer.getHighlightLinePaint());
     }
 
     /**
@@ -287,21 +300,15 @@ public class BaseChart extends Chart {
             float price = getTouchPriceByY(y, leftMax, leftMin);
             ValueFormatter valueFormatter = getAxisLeft().getLabelValueFormatter();
             String text;
-            String maxText;
-            String minText;
             if (valueFormatter == null) {
                 text = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
-                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(leftMax, 2));
-                minText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(leftMin, 2));
             } else {
                 text = valueFormatter.format(price, 0);
-                maxText = valueFormatter.format(leftMax, 0);
-                minText = valueFormatter.format(leftMin, 0);
             }
 
             if (text.isEmpty()) return;
 
-            int width = calculateWidth(maxText, minText);
+            int width = calculateWidth(text);
 
             // 画背景
             Rect bgRect = new Rect(0, (int) top, width, (int) bottom);
@@ -352,24 +359,64 @@ public class BaseChart extends Chart {
             float price = getTouchPriceByY(y, rightMax, rightMin);
             ValueFormatter valueFormatter = getAxisRight().getLabelValueFormatter();
             String text;
-            String maxText;
-            String minText;
             if (valueFormatter == null) {
                 text = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(price, 2));
-                maxText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(rightMax, 2));
-                minText = price == -1 ? "--" : String.valueOf(FloatUtils.keepPrecision(rightMin, 2));
             } else {
                 text = valueFormatter.format(price, -1);
-                maxText = valueFormatter.format(rightMax, 0);
-                minText = valueFormatter.format(rightMin, 0);
             }
 
             if (text.isEmpty()) return;
 
-            int width = calculateWidth(maxText, minText);
+            int width = calculateWidth(text);
 
             // 画背景
             Rect bgRect = new Rect(mContentRect.right - width, (int) top, mContentRect.right, (int) bottom);
+            canvas.drawRect(bgRect, mHighlightBgPaint);
+
+            // 画文本
+            Paint.FontMetrics fontMetrics = mHighlightTextPaint.getFontMetrics();
+            float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
+            float baseline = bgRect.centerY() + distance;
+
+            canvas.drawText(text, bgRect.centerX(), baseline, mHighlightTextPaint);
+        }
+    }
+
+    @Override
+    public void drawHighlightBottom(Canvas canvas) {
+        if (isEnableVerticalHighlight() && !isHideVerticalHighlight() && isEnableHighlightBottomText()) {
+            if (getHighlights() == null) return;
+            Highlight highlight = getHighlights()[0];
+            float x = highlight.getX();
+            if (Float.isNaN(x)) return;
+
+            ValueIndexFormatter formatter = getAxisBottom().getValueIndexFormatter();
+
+            int index = getEntryIndexByCoordinate(x, highlight.getY());
+
+            String text = "";
+            if (formatter != null) {
+                text = formatter.format(index);
+            }
+
+            if (text.isEmpty()) return;
+
+            int width = calculateWidth(text);
+
+            float left = x - width * 0.5f;
+            float right = x + width * 0.5f;
+            if (x < width * 0.5f) {
+                left = mBottomRect.left;
+                right = left + width;
+            }
+
+            if (x > mBottomRect.right - width * 0.5f){
+                right = mBottomRect.right;
+                left = right - width;
+            }
+
+            // 画背景
+            Rect bgRect = new Rect((int) left, mBottomRect.top, (int) right, mBottomRect.bottom);
             canvas.drawRect(bgRect, mHighlightBgPaint);
 
             // 画文本
@@ -386,11 +433,7 @@ public class BaseChart extends Chart {
      *
      * @return
      */
-    private int calculateWidth(String maxText, String minText) {
-        String text = maxText;
-        if (maxText.length() < minText.length()) {
-            text = minText;
-        }
+    private int calculateWidth(String text) {
         Rect rect = new Rect();
         int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_highlight_text_padding);
         mHighlightTextPaint.getTextBounds(text, 0, text.length(), rect);

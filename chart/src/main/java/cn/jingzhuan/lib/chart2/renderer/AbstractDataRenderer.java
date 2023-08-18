@@ -35,6 +35,8 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
     protected ChartAnimator mChartAnimator;
     private float mHighlightThickness = 3;
 
+    protected Paint mHighlightLinePaint;
+
     public AbstractDataRenderer(Chart chart) {
         this.mViewport = chart.getCurrentViewport();
         this.mContentRect = chart.getContentRect();
@@ -47,6 +49,10 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
         mRenderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRenderPaint.setStyle(Paint.Style.STROKE);
+
+        mHighlightLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mHighlightLinePaint.setStyle(Paint.Style.FILL);
+        mHighlightLinePaint.setStrokeWidth(mHighlightThickness);
     }
 
     @Override
@@ -119,6 +125,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public void setHighlightColor(int highlightColor) {
         this.mHighlightColor = highlightColor;
+        mHighlightLinePaint.setColor(mHighlightColor);
     }
 
     public int getHighlightColor() {
@@ -127,6 +134,7 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public void enableHighlightDashPathEffect(float[] intervals, float phase) {
         mHighlightedDashPathEffect = new DashPathEffect(intervals, phase);
+        mHighlightLinePaint.setPathEffect(mHighlightedDashPathEffect);
     }
 
     public DashPathEffect getHighlightDashPathEffect() {
@@ -162,6 +170,11 @@ public abstract class AbstractDataRenderer<T extends AbstractDataSet> implements
 
     public void setHighlightThickness(float highlightThickness) {
         this.mHighlightThickness = highlightThickness;
+        mHighlightLinePaint.setStrokeWidth(mHighlightThickness);
+    }
+
+    public Paint getHighlightLinePaint() {
+        return mHighlightLinePaint;
     }
 
     public void setTypeface(Typeface tf) {

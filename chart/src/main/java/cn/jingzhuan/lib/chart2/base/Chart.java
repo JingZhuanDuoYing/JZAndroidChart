@@ -153,19 +153,28 @@ public abstract class Chart extends BitmapCachedChart {
     // 是否需要展示水平交叉线
     private boolean enableHorizontalHighlight = false;
 
+    // 隐藏垂直交叉线 便于控制
+    private boolean hideVerticalHighlight = false;
+
+    // 是否需要展示垂直交叉线
+    private boolean enableVerticalHighlight = false;
+
     // 是否需要展示水平交叉线左边文本
     private boolean enableHighlightLeftText = false;
 
     // 是否需要展示水平交叉线右边文本
     private boolean enableHighlightRightText = false;
 
-    // 水平交叉线文本 textSize
+    // 是否需要展示垂直交叉线底部文本
+    private boolean enableHighlightBottomText = false;
+
+    // 水平交叉线文本大小
     private float mHighlightTextSize;
 
-    // 水平交叉线文本 textColor
+    // 平交叉线文本颜色
     private int mHighlightTextColor = Color.TRANSPARENT;
 
-    // 水平交叉线文本背景
+    // 交叉线文本背景
     private int mHighlightTextBgColor = Color.TRANSPARENT;
 
     // 水平交叉线文本背景高度
@@ -1368,7 +1377,6 @@ public abstract class Chart extends BitmapCachedChart {
         this.hideHorizontalHighlight = hideHorizontalHighlight;
     }
 
-    @Override
     public boolean isEnableHorizontalHighlight() {
         return enableHorizontalHighlight;
     }
@@ -1377,7 +1385,22 @@ public abstract class Chart extends BitmapCachedChart {
         this.enableHorizontalHighlight = enableHorizontalHighlight;
     }
 
-    @Override
+    public boolean isHideVerticalHighlight() {
+        return hideVerticalHighlight;
+    }
+
+    public void setHideVerticalHighlight(boolean hideVerticalHighlight) {
+        this.hideVerticalHighlight = hideVerticalHighlight;
+    }
+
+    public boolean isEnableVerticalHighlight() {
+        return enableVerticalHighlight;
+    }
+
+    public void setEnableVerticalHighlight(boolean enableVerticalHighlight) {
+        this.enableVerticalHighlight = enableVerticalHighlight;
+    }
+
     public boolean isEnableHighlightLeftText() {
         return enableHighlightLeftText;
     }
@@ -1392,6 +1415,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setEnableHighlightRightText(boolean enableHighlightRightText) {
         this.enableHighlightRightText = enableHighlightRightText;
+    }
+
+    public boolean isEnableHighlightBottomText() {
+        return enableHighlightBottomText;
+    }
+
+    public void setEnableHighlightBottomText(boolean enableHighlightBottomText) {
+        this.enableHighlightBottomText = enableHighlightBottomText;
     }
 
     public void setHighlightTextSize(float textSize) {

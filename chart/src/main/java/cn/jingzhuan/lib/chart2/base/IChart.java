@@ -37,6 +37,8 @@ public interface IChart {
 
     void drawHighlightRight(Canvas canvas);
 
+    void drawHighlightBottom(Canvas canvas);
+
     /**
      * 渲染图表
      */
@@ -72,8 +74,4 @@ public interface IChart {
     void onTouchHighlight(MotionEvent e);
 
     boolean getDrawLabelsInBottom();
-
-    boolean isEnableHorizontalHighlight();
-
-    boolean isEnableHighlightLeftText();
 }

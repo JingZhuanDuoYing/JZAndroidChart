@@ -25,9 +25,11 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
     private var viewportMax: Float = 0f
 
     override fun initChart() {
+        isEnableVerticalHighlight = true
         isEnableHorizontalHighlight = true
         isEnableHighlightLeftText = true
         isEnableHighlightRightText = true
+        isEnableHighlightBottomText = true
         highlightTextBgHeight = 50
         highlightTextBgColor = BLACK
         highlightTextColor = WHITE
@@ -53,7 +55,7 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         })
 
         axisBottom.isLabelEnable = true
-        axisBottom.labelHeight = 30
+        axisBottom.labelHeight = 50
         axisBottom.labelTextSize = 28f
         axisBottom.labelTextColor = BLACK
         setIsMainChart(true)

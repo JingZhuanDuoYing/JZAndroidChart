@@ -20,6 +20,8 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart.utils.ForceAlign
+import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter
+import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter.formatTime
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -133,6 +135,30 @@ class RangeDemoActivity : AppCompatActivity() {
                 String.format("%.2f%%", result / 0.01)
             } else ""
         }
+        combineChart.axisBottom.setLabelValueFormatter { value, index ->
+            val time = candlestickValues.getOrNull(index)?.time
+            when (index) {
+                0 -> {
+                    if (time != null) {
+                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
+                    } else ""
+                }
+                4 -> {
+                    if (time != null) {
+                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
+                    } else ""
+                }
+                else -> ""
+            }
+        }
+
+        combineChart.axisBottom.setValueIndexFormatter { index ->
+            val time = candlestickValues.getOrNull(index)?.time
+            if (time != null) {
+                JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
+            } else ""
+        }
+
     }
 
     private fun initListener() {

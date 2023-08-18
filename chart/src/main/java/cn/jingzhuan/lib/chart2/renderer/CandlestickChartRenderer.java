@@ -310,7 +310,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
         for (Highlight highlight : highlights) {
 
             for (CandlestickDataSet dataSet : getDataSet()) {
-                if (dataSet.isHighlightedVerticalEnable()) {
+                if (dataSet.isHighlightedVerticalEnable() && !chart.isEnableVerticalHighlight()) {
                     canvas.drawLine(highlight.getX(),
                             mContentRect.top,
                             highlight.getX(),
