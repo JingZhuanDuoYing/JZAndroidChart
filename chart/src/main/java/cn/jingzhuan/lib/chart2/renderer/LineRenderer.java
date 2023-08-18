@@ -91,7 +91,7 @@ public class LineRenderer extends AbstractDataRenderer<LineDataSet> {
                             index = Math.min(index, line.getValues().size() - 1);
 
                             final PointValue pointValue = line.getEntryForIndex(index);
-                            float xPosition = pointValue.getX();
+                            float xPosition = Math.max(mContentRect.left, pointValue.getX());
                             float yPosition = pointValue.getY();
 
                             if (xPosition >= 0 && yPosition >= 0) {

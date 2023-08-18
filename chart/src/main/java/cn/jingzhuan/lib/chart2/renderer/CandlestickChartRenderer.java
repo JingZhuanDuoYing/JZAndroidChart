@@ -61,7 +61,7 @@ public class CandlestickChartRenderer extends AbstractDataRenderer<CandlestickDa
                     int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
                     if (index < valueCount && index >= 0 && index < dataSet.getValues().size()) {
                         final CandlestickValue candlestickValue = dataSet.getEntryForIndex(index);
-                        xPosition = candlestickValue.getX();
+                        xPosition = Math.max(mContentRect.left, candlestickValue.getX());
                         yPosition = candlestickValue.getY();
                         if (xPosition >= 0 && yPosition >= 0) {
                             highlight.setX(xPosition);

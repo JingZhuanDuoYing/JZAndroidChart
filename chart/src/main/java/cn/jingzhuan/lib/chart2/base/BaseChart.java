@@ -351,7 +351,7 @@ public class BaseChart extends Chart {
                 top = bottom - textHeight;
             }
 
-//            Log.d("drawHighlightRight", "y="+ y + "top=" + top + "bottom: "+bottom);
+            Log.d("drawHighlightRight", "y="+ y + "top=" + top + "bottom: "+bottom);
 
             ChartData chartData = mRenderer.getChartData();
             float rightMax = chartData.getRightMax();

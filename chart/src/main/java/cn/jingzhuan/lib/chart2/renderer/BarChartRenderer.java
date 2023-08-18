@@ -63,7 +63,7 @@ public class BarChartRenderer extends AbstractDataRenderer<BarDataSet> {
                         int index = getEntryIndexByCoordinate(x, y) - dataSet.getStartIndexOffset();
                         if (index < dataSet.getValues().size()) {
                             BarValue barValue = dataSet.getEntryForIndex(index);
-                            float xPosition = barValue.getX();
+                            float xPosition = Math.max(mContentRect.left, barValue.getX());
                             float yPosition = barValue.getY();
 
                             if (xPosition >= 0 && yPosition >= 0) {
