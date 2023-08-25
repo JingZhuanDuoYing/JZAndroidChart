@@ -324,7 +324,7 @@ public class BaseChart extends Chart {
     }
 
     /**
-     * 画十字光标左侧文本
+     * 画十字光标右侧文本
      * @param canvas
      */
     @Override
@@ -382,6 +382,10 @@ public class BaseChart extends Chart {
         }
     }
 
+    /**
+     * 画十字光标底部文本
+     * @param canvas
+     */
     @Override
     public void drawHighlightBottom(Canvas canvas) {
         if (isEnableVerticalHighlight() && !isHideVerticalHighlight() && isEnableHighlightBottomText()) {
@@ -412,8 +416,18 @@ public class BaseChart extends Chart {
                 left = right - width;
             }
 
+            int top = mBottomRect.top;
+            int bottom = mBottomRect.bottom;
+
+            if (mBottomRect.height() == 0) {
+                int textHeight = getHighlightTextBgHeight();
+                Rect contentRect = getContentRect();
+                top = contentRect.bottom - textHeight;
+                bottom = contentRect.bottom;
+            }
+
             // 画背景
-            Rect bgRect = new Rect((int) left, mBottomRect.top, (int) right, mBottomRect.bottom);
+            Rect bgRect = new Rect((int) left, top, (int) right, bottom);
             canvas.drawRect(bgRect, mHighlightBgPaint);
 
             // 画文本
