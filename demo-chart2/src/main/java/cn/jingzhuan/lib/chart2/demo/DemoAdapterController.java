@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.demo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,7 +23,11 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel ViewPagerModel_ viewPagerModel_;
     @AutoModel ScatterChartModel_ scatterChartModel_;
     @AutoModel ScatterChart2Model_ scatterChart2Model_;
-    @AutoModel CombineRangeChartModel_ combineRangeChartModel_;
+    @AutoModel
+    CommonButtonModel_ rangeChartModel_;
+
+    @AutoModel
+    CommonButtonModel_ lineDrawingModel_;
 
     private Context context;
 
@@ -33,8 +38,17 @@ public class DemoAdapterController extends EpoxyController {
     @Override
     protected void buildModels() {
 
-        new LayoutDescTextBindingModel_().id("CombineRange").text("CombineRange Chart").addTo(this);
-        combineRangeChartModel_.addTo(this);
+        rangeChartModel_.onClickListener(v ->
+                v.getContext().startActivity(new Intent(v.getContext(), RangeDemoActivity.class))
+        );
+        rangeChartModel_.buttonText("区间统计");
+        rangeChartModel_.addTo(this);
+
+        lineDrawingModel_.onClickListener(v ->
+                v.getContext().startActivity(new Intent(v.getContext(), LineDrawingToolActivity.class))
+        );
+        lineDrawingModel_.buttonText("画线工具");
+        lineDrawingModel_.addTo(this);
 
         new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
         lineChartModel.addTo(this);

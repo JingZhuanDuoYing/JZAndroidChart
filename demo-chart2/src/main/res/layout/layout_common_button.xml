@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_range"
-            android:text="区间统计Demo"
+            android:id="@+id/btn_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            tools:text="区间统计" />
     </LinearLayout>
 
 
