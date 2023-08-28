@@ -2,14 +2,9 @@ package cn.jingzhuan.lib.chart2.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
-
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
@@ -22,7 +17,6 @@ import cn.jingzhuan.lib.chart.data.TreeDataSet;
 import cn.jingzhuan.lib.chart2.base.BaseChart;
 import cn.jingzhuan.lib.chart.data.CombineData;
 import cn.jingzhuan.lib.chart2.renderer.CombineChartRenderer;
-
 import java.util.List;
 
 /**
@@ -43,7 +37,6 @@ public class CombineChart extends BaseChart {
         super(context, attrs, defStyleAttr);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public CombineChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -197,9 +190,13 @@ public class CombineChart extends BaseChart {
      * 把触摸事件传到RangeRenderer 用于处理拖动区间统计范围
      */
     public boolean onTouchEvent(MotionEvent event) {
-        CombineChartRenderer renderer = (CombineChartRenderer) this.mRenderer;
-        if (getRangeEnable() && renderer.rangeRenderer != null) {
-            if (renderer.rangeRenderer.onTouchEvent(event)) {
+        if (getRangeEnable() && getRenderer().rangeRenderer != null) {
+            if (getRenderer().rangeRenderer.onTouchEvent(event)) {
+                return true;
+            }
+        }
+        if (isShowLineTool() && getRenderer().getLineDrawingToolRenderer() != null) {
+            if (getRenderer().getLineDrawingToolRenderer().onTouchEvent(event)) {
                 return true;
             }
         }

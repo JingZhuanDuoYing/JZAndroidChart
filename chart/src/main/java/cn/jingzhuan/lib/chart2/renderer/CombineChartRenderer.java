@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
+import cn.jingzhuan.lib.chart.data.LineToolDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
@@ -45,6 +46,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     protected ScatterTextRenderer scatterTextRenderer;
 
+    protected LineDrawingToolRenderer lineDrawingToolRenderer;
+
     private final Chart chart;
 
     private CombineData combineData;
@@ -61,6 +64,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         rangeRenderer = initRangeChartRenderer(chart);
         pointLineRenderer = initPointLineRenderer(chart);
         scatterTextRenderer = initScatterTextRenderer(chart);
+        lineDrawingToolRenderer = initLineDrawingToolRenderer(chart);
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
@@ -108,6 +112,10 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return new LineRenderer(chart);
     }
 
+    private LineDrawingToolRenderer initLineDrawingToolRenderer(Chart chart) {
+        return new LineDrawingToolRenderer(chart);
+    }
+
     @Override
     protected void renderDataSet(Canvas canvas) {
         CombineData combineData = getChartData();
@@ -139,10 +147,19 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 scatterTextRenderer.renderDataSet(canvas, combineData.getScatterTextChartData(), (ScatterTextDataSet) dataSet);
             }
         }
-        // k线叠加时 区间统计只画一次
-        if (chart.getRangeEnable()) {
-            if (!candlestickDataSets.isEmpty()) {
-                rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), (CandlestickDataSet) candlestickDataSets.get(0));
+
+        if (!candlestickDataSets.isEmpty()) {
+            // k线叠加时 区间统计只画一次
+            CandlestickDataSet candlestickDataSet = (CandlestickDataSet) candlestickDataSets.get(0);
+            if (chart.getRangeEnable()) {
+                rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), candlestickDataSet);
+            }
+
+            // 画线工具操作
+            if (chart.isShowLineTool()) {
+                for (LineToolDataSet dataSet : combineData.getLineToolChartData().getDataSets()) {
+                    lineDrawingToolRenderer.renderDataSet(canvas, combineData.getLineToolChartData(), dataSet);
+                }
             }
         }
 
@@ -229,6 +246,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             pointLineRenderer.addDataSet((PointLineDataSet) dataSet);
         } else if (dataSet instanceof ScatterTextDataSet) {
             scatterTextRenderer.addDataSet((ScatterTextDataSet) dataSet);
+        } else if (dataSet instanceof LineToolDataSet) {
+            lineDrawingToolRenderer.addDataSet((LineToolDataSet) dataSet);
         }
 
         calcDataSetMinMax();
@@ -428,5 +447,9 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer.setHighlightThickness(highlightThickness);
         lineRenderer.setHighlightThickness(highlightThickness);
         candlestickChartRenderer.setHighlightThickness(highlightThickness);
+    }
+
+    public LineDrawingToolRenderer getLineDrawingToolRenderer() {
+        return this.lineDrawingToolRenderer;
     }
 }

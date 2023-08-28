@@ -100,6 +100,8 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean isTouching = false;
     private boolean isShowRange = false;
 
+    private boolean isShowLineTool = false;
+
     protected Highlight[] mHighlights;
     int mFocusIndex = -1;
 
@@ -1250,6 +1252,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setRangeEnable(boolean showRange) {
         isShowRange = showRange;
+    }
+
+    public boolean isShowLineTool() {
+        return isShowLineTool;
+    }
+
+    public void setShowLineTool(boolean showLineTool) {
+        isShowLineTool = showLineTool;
     }
 
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
