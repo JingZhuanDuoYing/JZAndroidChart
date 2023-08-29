@@ -9,6 +9,7 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
+import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
@@ -93,6 +94,9 @@ public class CombineChart extends BaseChart {
         for (ScatterTextDataSet scatterTextDataSet : combineData.getScatterTextData()) {
             addDataSet(scatterTextDataSet);
             entryCount = Math.max(entryCount, scatterTextDataSet.getValues().size());
+        }
+        for (DrawLineDataSet drawLineDataSet : combineData.getDrawLineData()){
+            addDataSet(drawLineDataSet);
         }
         setEntryCount(entryCount);
 
@@ -187,7 +191,7 @@ public class CombineChart extends BaseChart {
     }
 
     /**
-     * 把触摸事件传到RangeRenderer 用于处理拖动区间统计范围
+     * 把触摸事件传到Renderer
      */
     public boolean onTouchEvent(MotionEvent event) {
         if (getRangeEnable() && getRenderer().rangeRenderer != null) {
@@ -195,11 +199,12 @@ public class CombineChart extends BaseChart {
                 return true;
             }
         }
-        if (isShowLineTool() && getRenderer().getLineDrawingToolRenderer() != null) {
-            if (getRenderer().getLineDrawingToolRenderer().onTouchEvent(event)) {
-                return true;
-            }
-        }
+//        // 开启了画线模式
+//        if (isOpenDrawLine() && getRenderer().getDrawLineRenderer() != null) {
+//            if (getRenderer().getDrawLineRenderer().onTouchEvent(event)) {
+//                return true;
+//            }
+//        }
         return super.onTouchEvent(event);
     }
 

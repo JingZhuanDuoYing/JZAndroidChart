@@ -6,22 +6,26 @@ import java.util.Objects;
  * @since 2023-08-28
  */
 
-public class LineToolValue extends Value {
+public class DrawLineValue extends Value {
 
     private float value;
 
     private long time;
 
+    private int index;
+
     private boolean visible = true;
 
-    public LineToolValue(float value, long time) {
+    public DrawLineValue(float value, long time, int index) {
         this.value = value;
         this.time = time;
+        this.index = index;
     }
 
-    public LineToolValue(float value, long time, boolean visible) {
+    public DrawLineValue(float value, long time, int index, boolean visible) {
         this.value = value;
         this.time = time;
+        this.index = index;
         this.visible = visible;
     }
 
@@ -41,6 +45,14 @@ public class LineToolValue extends Value {
         return this.time;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public boolean isVisible() {
         return this.visible;
     }
@@ -53,13 +65,13 @@ public class LineToolValue extends Value {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LineToolValue that = (LineToolValue) o;
-        return Float.compare(that.value, value) == 0 && time == that.time;
+        DrawLineValue that = (DrawLineValue) o;
+        return Float.compare(that.value, value) == 0 && time == that.time && index == that.index;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, time, getX(), getY());
+        return Objects.hash(value, time, index, getX(), getY());
     }
 
 }

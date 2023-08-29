@@ -9,7 +9,7 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
-import cn.jingzhuan.lib.chart.data.LineToolDataSet;
+import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
@@ -46,7 +46,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     protected ScatterTextRenderer scatterTextRenderer;
 
-    protected LineDrawingToolRenderer lineDrawingToolRenderer;
+    protected DrawLineRenderer drawLineRenderer;
 
     private final Chart chart;
 
@@ -64,7 +64,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         rangeRenderer = initRangeChartRenderer(chart);
         pointLineRenderer = initPointLineRenderer(chart);
         scatterTextRenderer = initScatterTextRenderer(chart);
-        lineDrawingToolRenderer = initLineDrawingToolRenderer(chart);
+        drawLineRenderer = initLineDrawingToolRenderer(chart);
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
@@ -112,8 +112,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return new LineRenderer(chart);
     }
 
-    private LineDrawingToolRenderer initLineDrawingToolRenderer(Chart chart) {
-        return new LineDrawingToolRenderer(chart);
+    private DrawLineRenderer initLineDrawingToolRenderer(Chart chart) {
+        return new DrawLineRenderer(chart);
     }
 
     @Override
@@ -155,12 +155,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
                 rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), candlestickDataSet);
             }
 
-            // 画线工具操作
-            if (chart.isShowLineTool()) {
-                for (LineToolDataSet dataSet : combineData.getLineToolChartData().getDataSets()) {
-                    lineDrawingToolRenderer.renderDataSet(canvas, combineData.getLineToolChartData(), dataSet);
-                }
-            }
+            drawLineRenderer.setCandlestickChartData(combineData.getCandlestickChartData());
+            drawLineRenderer.renderDataSet(canvas, combineData.getDrawLineChartData());
         }
 
     }
@@ -246,8 +242,8 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             pointLineRenderer.addDataSet((PointLineDataSet) dataSet);
         } else if (dataSet instanceof ScatterTextDataSet) {
             scatterTextRenderer.addDataSet((ScatterTextDataSet) dataSet);
-        } else if (dataSet instanceof LineToolDataSet) {
-            lineDrawingToolRenderer.addDataSet((LineToolDataSet) dataSet);
+        } else if (dataSet instanceof DrawLineDataSet) {
+            drawLineRenderer.addDataSet((DrawLineDataSet) dataSet);
         }
 
         calcDataSetMinMax();
@@ -449,7 +445,7 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         candlestickChartRenderer.setHighlightThickness(highlightThickness);
     }
 
-    public LineDrawingToolRenderer getLineDrawingToolRenderer() {
-        return this.lineDrawingToolRenderer;
+    public DrawLineRenderer getDrawLineRenderer() {
+        return this.drawLineRenderer;
     }
 }

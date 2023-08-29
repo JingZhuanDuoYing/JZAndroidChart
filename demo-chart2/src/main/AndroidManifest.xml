@@ -19,7 +19,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".LineDrawingToolActivity"
+            android:name=".DrawLineActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

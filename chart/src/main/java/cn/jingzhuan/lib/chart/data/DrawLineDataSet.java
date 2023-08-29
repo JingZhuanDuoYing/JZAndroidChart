@@ -10,9 +10,9 @@ import cn.jingzhuan.lib.chart.component.AxisY;
  * @since 2023-08-28
  */
 
-public class LineToolDataSet extends AbstractDataSet<LineToolValue> {
+public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
 
-    private List<LineToolValue> lineToolValues;
+    private List<DrawLineValue> drawLineValues;
 
     /**
      * 自绘线类型
@@ -55,26 +55,26 @@ public class LineToolDataSet extends AbstractDataSet<LineToolValue> {
     private String bcap;
 
 
-    public LineToolDataSet(List<LineToolValue> lineToolValues) {
-        this(lineToolValues, AxisY.DEPENDENCY_BOTH);
+    public DrawLineDataSet(List<DrawLineValue> drawLineValues) {
+        this(drawLineValues, AxisY.DEPENDENCY_BOTH);
     }
 
-    public LineToolDataSet(List<LineToolValue> lineToolValues, @AxisY.AxisDependency int axisDependency) {
-        this.lineToolValues = lineToolValues;
+    public DrawLineDataSet(List<DrawLineValue> drawLineValues, @AxisY.AxisDependency int axisDependency) {
+        this.drawLineValues = drawLineValues;
         setAxisDependency(axisDependency);
     }
 
     @Override
     public void calcMinMax(Viewport viewport) {
-        if (lineToolValues == null || lineToolValues.isEmpty()) return;
+        if (drawLineValues == null || drawLineValues.isEmpty()) return;
 
         mViewportYMax = -Float.MAX_VALUE;
         mViewportYMin = Float.MAX_VALUE;
 
-        List<LineToolValue> visiblePoints = getVisiblePoints(viewport);
+        List<DrawLineValue> visiblePoints = getVisiblePoints(viewport);
 
         for (int i = 0; i < visiblePoints.size(); i++) {
-            LineToolValue e = visiblePoints.get(i);
+            DrawLineValue e = visiblePoints.get(i);
             calcViewportMinMax(e);
         }
 
@@ -88,7 +88,7 @@ public class LineToolDataSet extends AbstractDataSet<LineToolValue> {
     }
 
 
-    private void calcViewportMinMax(LineToolValue e) {
+    private void calcViewportMinMax(DrawLineValue e) {
         if (e == null || !e.isVisible()) return;
 
         if (Float.isNaN(e.getValue())) return;
@@ -106,51 +106,51 @@ public class LineToolDataSet extends AbstractDataSet<LineToolValue> {
 
     @Override
     public int getEntryCount() {
-        if (lineToolValues == null) return 0;
-        return Math.max(getMinValueCount(), lineToolValues.size());
+        if (drawLineValues == null) return 0;
+        return Math.max(getMinValueCount(), drawLineValues.size());
     }
 
     @Override
-    public void setValues(List<LineToolValue> values) {
-        this.lineToolValues = values;
+    public void setValues(List<DrawLineValue> values) {
+        this.drawLineValues = values;
     }
 
     @Override
-    public List<LineToolValue> getValues() {
-        return this.lineToolValues;
+    public List<DrawLineValue> getValues() {
+        return this.drawLineValues;
     }
 
     @Override
-    public boolean addEntry(LineToolValue value) {
+    public boolean addEntry(DrawLineValue value) {
         if (value == null)
             return false;
 
-        if (lineToolValues == null) {
-            lineToolValues = new ArrayList<>();
+        if (drawLineValues == null) {
+            drawLineValues = new ArrayList<>();
         }
 
         calcViewportMinMax(value);
 
-        return lineToolValues.add(value);
+        return drawLineValues.add(value);
     }
 
     @Override
-    public boolean removeEntry(LineToolValue value) {
+    public boolean removeEntry(DrawLineValue value) {
         if (value == null) return false;
 
         calcViewportMinMax(value);
 
-        return lineToolValues.remove(value);
+        return drawLineValues.remove(value);
     }
 
     @Override
-    public int getEntryIndex(LineToolValue e) {
-        return lineToolValues.indexOf(e);
+    public int getEntryIndex(DrawLineValue e) {
+        return drawLineValues.indexOf(e);
     }
 
     @Override
-    public LineToolValue getEntryForIndex(int index) {
-        return lineToolValues.get(index);
+    public DrawLineValue getEntryForIndex(int index) {
+        return drawLineValues.get(index);
     }
 
     public int getLineType() {

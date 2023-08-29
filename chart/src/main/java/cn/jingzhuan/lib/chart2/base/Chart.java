@@ -100,7 +100,20 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean isTouching = false;
     private boolean isShowRange = false;
 
-    private boolean isShowLineTool = false;
+    /**
+     * 是否开启画线
+     */
+    private boolean openDrawLine = false;
+
+    /**
+     * 画线起点
+     */
+    private PointF drawLineStartPoint;
+
+    /**
+     * 画线终点
+     */
+    private PointF drawLineEndPoint;
 
     protected Highlight[] mHighlights;
     int mFocusIndex = -1;
@@ -507,6 +520,17 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d("JZChart", "onSingleTapConfirmed");
             if(getRangeEnable()) return false;
+            if (isOpenDrawLine()) {
+                if (drawLineStartPoint == null) {
+                    drawLineStartPoint = new PointF();
+                    drawLineStartPoint.set(e.getX(), e.getY());
+                }
+                if (drawLineStartPoint != null && drawLineEndPoint == null) {
+                    drawLineEndPoint = new PointF();
+                    drawLineEndPoint.set(e.getX(), e.getY());
+                }
+                return true;
+            }
 //            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
@@ -1254,12 +1278,28 @@ public abstract class Chart extends BitmapCachedChart {
         isShowRange = showRange;
     }
 
-    public boolean isShowLineTool() {
-        return isShowLineTool;
+    public boolean isOpenDrawLine() {
+        return openDrawLine;
     }
 
-    public void setShowLineTool(boolean showLineTool) {
-        isShowLineTool = showLineTool;
+    public void setOpenDrawLine(boolean openDrawLine) {
+        this.openDrawLine = openDrawLine;
+    }
+
+    public PointF getDrawLineStartPoint() {
+        return drawLineStartPoint;
+    }
+
+    public void setDrawLineStartPoint(PointF drawLineStartPoint) {
+        this.drawLineStartPoint = drawLineStartPoint;
+    }
+
+    public PointF getDrawLineEndPoint() {
+        return drawLineEndPoint;
+    }
+
+    public void setDrawLineEndPoint(PointF drawLineEndPoint) {
+        this.drawLineEndPoint = drawLineEndPoint;
     }
 
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {

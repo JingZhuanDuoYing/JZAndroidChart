@@ -1,32 +1,43 @@
 package cn.jingzhuan.lib.chart2.demo
 
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import cn.jingzhuan.lib.chart.Viewport
 import cn.jingzhuan.lib.chart.component.Highlight
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.data.CandlestickValue
 import cn.jingzhuan.lib.chart.data.CombineData
+import cn.jingzhuan.lib.chart.data.DrawLineDataSet
+import cn.jingzhuan.lib.chart.data.DrawLineValue
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter
 import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter.formatTime
+import cn.jingzhuan.lib.chart2.drawline.DrawLineType
 import kotlin.math.round
 
 /**
  * 画线工具demo
  */
-class LineDrawingToolActivity : AppCompatActivity() {
+class DrawLineActivity : AppCompatActivity() {
 
     private var candlestickValues: MutableList<CandlestickValue> = ArrayList()
 
 
     private lateinit var combineChart: TestChartKLineView
 
+    private lateinit var btnDrawLine: AppCompatButton
+
     private val lastClose = 3388.98f
+
+    private var leftTime = ""
+
+    private var rightTime = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +53,7 @@ class LineDrawingToolActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        btnDrawLine = findViewById(R.id.btn_draw_line)
         combineChart = findViewById(R.id.combine_chart)
         combineChart.scaleSensitivity = 1.1f
 
@@ -61,19 +73,10 @@ class LineDrawingToolActivity : AppCompatActivity() {
                 String.format("%.2f%%", result / 0.01)
             } else ""
         }
-        combineChart.axisBottom.setLabelValueFormatter { value, index ->
-            val time = candlestickValues.getOrNull(index)?.time
+        combineChart.axisBottom.setLabelValueFormatter { _, index ->
             when (index) {
-                0 -> {
-                    if (time != null) {
-                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
-                    } else ""
-                }
-                4 -> {
-                    if (time != null) {
-                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
-                    } else ""
-                }
+                0 -> leftTime
+                4 -> rightTime
                 else -> ""
             }
         }
@@ -87,7 +90,27 @@ class LineDrawingToolActivity : AppCompatActivity() {
 
     }
 
+    private fun setLeftRightTime(
+        viewport: Viewport
+    ) {
+        val candlestickDataSet = combineChart.candlestickDataSet
+        if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
+            val values = candlestickDataSet.first().getVisiblePoints(viewport)
+            if (values.isNotEmpty()) {
+                leftTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
+                rightTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
+            }
+        }
+    }
+
     private fun initListener() {
+        btnDrawLine.setOnClickListener {
+            combineChart.isOpenDrawLine = true
+            combineChart.postInvalidate()
+        }
+        combineChart.addOnViewportChangeListener { viewPort ->
+            setLeftRightTime(viewPort)
+        }
 
         combineChart.setOnScaleListener(object : OnScaleListener{
             override fun onScaleStart(viewport: Viewport) {
@@ -172,7 +195,7 @@ class LineDrawingToolActivity : AppCompatActivity() {
     }
 
     private fun setChartData() {
-        candlestickValues.clear();
+        candlestickValues.clear()
         candlestickValues.addAll(ChartDataConfig.getDefaultKlineList())
 
         val dataSet = CandlestickDataSet(candlestickValues)
@@ -187,11 +210,27 @@ class LineDrawingToolActivity : AppCompatActivity() {
             textColor = 0xff3F51B5.toInt()
         }
 
+        val drawLineValues = ArrayList<DrawLineValue>()
+        val startIndex = 100
+        val startCandlestickValue = candlestickValues[startIndex]
+        drawLineValues.add(DrawLineValue(startCandlestickValue.open + 50, startCandlestickValue.time, startIndex))
+        val endIndex = 110
+        val endCandlestickValue = candlestickValues[endIndex]
+        drawLineValues.add(DrawLineValue(endCandlestickValue.open + 50, endCandlestickValue.time, endIndex))
+
+        val drawLineDataSet = DrawLineDataSet(drawLineValues).apply {
+            lineType = DrawLineType.ltSegment.ordinal
+            lineColor = Color.RED
+            lineSize = 5f
+        }
+
         val data = CombineData().apply {
             add(arrowDataSet)
+            add(drawLineDataSet)
         }
 
         combineChart.setCombineData(data)
+        setLeftRightTime(combineChart.currentViewport)
 
     }
 

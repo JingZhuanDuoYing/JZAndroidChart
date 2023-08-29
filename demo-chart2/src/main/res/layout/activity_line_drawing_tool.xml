@@ -20,9 +20,17 @@
         android:layout_height="match_parent"
         android:padding="15dp">
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_draw_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="开启画线"/>
+
         <cn.jingzhuan.lib.chart2.demo.TestChartKLineView
             android:id="@+id/combine_chart"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             app:backgroundColor="#F7F7F7"
@@ -33,6 +41,7 @@
             app:labelTextSize="11dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_draw_line"
             app:layout_constraintBottom_toBottomOf="parent"
             />
 

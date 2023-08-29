@@ -45,7 +45,7 @@ public class DemoAdapterController extends EpoxyController {
         rangeChartModel_.addTo(this);
 
         lineDrawingModel_.onClickListener(v ->
-                v.getContext().startActivity(new Intent(v.getContext(), LineDrawingToolActivity.class))
+                v.getContext().startActivity(new Intent(v.getContext(), DrawLineActivity.class))
         );
         lineDrawingModel_.buttonText("画线工具");
         lineDrawingModel_.addTo(this);

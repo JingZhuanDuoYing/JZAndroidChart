@@ -59,6 +59,10 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private val lastClose = 3388.98f
 
+    private var leftTime = ""
+
+    private var rightTime = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_range_demo)
@@ -135,19 +139,10 @@ class RangeDemoActivity : AppCompatActivity() {
                 String.format("%.2f%%", result / 0.01)
             } else ""
         }
-        combineChart.axisBottom.setLabelValueFormatter { value, index ->
-            val time = candlestickValues.getOrNull(index)?.time
+        combineChart.axisBottom.setLabelValueFormatter { _, index ->
             when (index) {
-                0 -> {
-                    if (time != null) {
-                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
-                    } else ""
-                }
-                4 -> {
-                    if (time != null) {
-                        JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
-                    } else ""
-                }
+                0 -> leftTime
+                4 -> rightTime
                 else -> ""
             }
         }
@@ -159,6 +154,19 @@ class RangeDemoActivity : AppCompatActivity() {
             } else ""
         }
 
+    }
+
+    private fun setLeftRightTime(
+        viewport: Viewport
+    ) {
+        val candlestickDataSet = combineChart.candlestickDataSet
+        if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
+            val values = candlestickDataSet.first().getVisiblePoints(viewport)
+            if (values.isNotEmpty()) {
+                leftTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
+                rightTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
+            }
+        }
     }
 
     private fun initListener() {
@@ -250,6 +258,7 @@ class RangeDemoActivity : AppCompatActivity() {
         }
 
         combineChart.addOnViewportChangeListener {viewPort ->
+            setLeftRightTime(viewPort)
             if (!combineChart.isHighlightVolatile) {
                 val renderer = combineChart.renderer
                 val dataSet = combineChart.candlestickDataSet
@@ -400,9 +409,8 @@ class RangeDemoActivity : AppCompatActivity() {
         val data = CombineData().apply {
             add(arrowDataSet)
         }
-
         combineChart.setCombineData(data)
-
+        setLeftRightTime(combineChart.currentViewport)
     }
 
 }
