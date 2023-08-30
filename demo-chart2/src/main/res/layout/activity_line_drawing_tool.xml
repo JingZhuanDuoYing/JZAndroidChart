@@ -28,6 +28,14 @@
             app:layout_constraintTop_toTopOf="parent"
             android:text="开启画线"/>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_draw_segment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/btn_draw_line"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="画线段"/>
+
         <cn.jingzhuan.lib.chart2.demo.TestChartKLineView
             android:id="@+id/combine_chart"
             android:layout_height="0dp"

@@ -520,6 +520,11 @@ public class BaseChart extends Chart {
         return mRenderer.getEntryIndexByCoordinate(x, y);
     }
 
+    @Override
+    public float getEntryCoordinateByIndex(int index) {
+        return mRenderer.getEntryCoordinateByIndex(index);
+    }
+
     public void setTypeface(Typeface tf) {
         for (AxisRenderer mAxisRenderer : mAxisRenderers) {
             mAxisRenderer.setTypeface(tf);

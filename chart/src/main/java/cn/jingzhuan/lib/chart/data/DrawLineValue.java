@@ -12,20 +12,16 @@ public class DrawLineValue extends Value {
 
     private long time;
 
-    private int index;
-
     private boolean visible = true;
 
-    public DrawLineValue(float value, long time, int index) {
+    public DrawLineValue(float value, long time) {
         this.value = value;
         this.time = time;
-        this.index = index;
     }
 
-    public DrawLineValue(float value, long time, int index, boolean visible) {
+    public DrawLineValue(float value, long time, boolean visible) {
         this.value = value;
         this.time = time;
-        this.index = index;
         this.visible = visible;
     }
 
@@ -45,14 +41,6 @@ public class DrawLineValue extends Value {
         return this.time;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public boolean isVisible() {
         return this.visible;
     }
@@ -66,12 +54,12 @@ public class DrawLineValue extends Value {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DrawLineValue that = (DrawLineValue) o;
-        return Float.compare(that.value, value) == 0 && time == that.time && index == that.index;
+        return Float.compare(that.value, value) == 0 && time == that.time;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, time, index, getX(), getY());
+        return Objects.hash(value, time, getX(), getY());
     }
 
 }

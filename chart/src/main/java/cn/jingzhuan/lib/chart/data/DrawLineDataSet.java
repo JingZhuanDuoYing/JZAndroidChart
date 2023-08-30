@@ -1,10 +1,13 @@
 package cn.jingzhuan.lib.chart.data;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.component.AxisY;
+import cn.jingzhuan.lib.chart2.drawline.DrawLineType;
 
 /**
  * @since 2023-08-28
@@ -15,6 +18,11 @@ public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
     private List<DrawLineValue> drawLineValues;
 
     /**
+     * 自绘线标记
+     */
+    private String lineKey;
+
+    /**
      * 自绘线类型
      */
     private int lineType = 0;
@@ -22,7 +30,7 @@ public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
     /**
      * 自绘线颜色
      */
-    private int lineColor;
+    private int lineColor = Color.RED;
 
     /**
      * 自绘线宽度
@@ -54,6 +62,12 @@ public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
      */
     private String bcap;
 
+    public DrawLineDataSet() {
+    }
+
+    public DrawLineDataSet(DrawLineType lineType) {
+        this.lineType = lineType.ordinal();
+    }
 
     public DrawLineDataSet(List<DrawLineValue> drawLineValues) {
         this(drawLineValues, AxisY.DEPENDENCY_BOTH);
@@ -153,6 +167,14 @@ public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
         return drawLineValues.get(index);
     }
 
+    public List<DrawLineValue> getDrawLineValues() {
+        return drawLineValues;
+    }
+
+    public void setDrawLineValues(List<DrawLineValue> drawLineValues) {
+        this.drawLineValues = drawLineValues;
+    }
+
     public int getLineType() {
         return lineType;
     }
@@ -215,5 +237,13 @@ public class DrawLineDataSet extends AbstractDataSet<DrawLineValue> {
 
     public void setBcap(String bcap) {
         this.bcap = bcap;
+    }
+
+    public String getLineKey() {
+        return lineKey;
+    }
+
+    public void setLineKey(String lineKey) {
+        this.lineKey = lineKey;
     }
 }

@@ -19,4 +19,6 @@
     <dimen name="jz_chart_min_size">100dp</dimen>
     <dimen name="jz_chart_water_mark_padding">4dp</dimen>
     <dimen name="jz_chart_highlight_text_padding">2dp</dimen>
+    <dimen name="jz_draw_line_point_in">4dp</dimen>
+    <dimen name="jz_draw_line_point_out">8dp</dimen>
 </resources>

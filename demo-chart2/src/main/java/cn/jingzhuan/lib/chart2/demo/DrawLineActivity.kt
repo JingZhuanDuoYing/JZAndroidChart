@@ -33,6 +33,8 @@ class DrawLineActivity : AppCompatActivity() {
 
     private lateinit var btnDrawLine: AppCompatButton
 
+    private lateinit var btnDrawSegment: AppCompatButton
+
     private val lastClose = 3388.98f
 
     private var leftTime = ""
@@ -54,6 +56,7 @@ class DrawLineActivity : AppCompatActivity() {
 
     private fun initView() {
         btnDrawLine = findViewById(R.id.btn_draw_line)
+        btnDrawSegment = findViewById(R.id.btn_draw_segment)
         combineChart = findViewById(R.id.combine_chart)
         combineChart.scaleSensitivity = 1.1f
 
@@ -108,28 +111,53 @@ class DrawLineActivity : AppCompatActivity() {
             combineChart.isOpenDrawLine = true
             combineChart.postInvalidate()
         }
+
+        btnDrawSegment.setOnClickListener {
+            combineChart.preDrawLineDataSet.apply {
+                lineType = DrawLineType.ltSegment.ordinal
+            }
+            combineChart.postInvalidate()
+        }
+
         combineChart.addOnViewportChangeListener { viewPort ->
             setLeftRightTime(viewPort)
         }
 
-        combineChart.setOnScaleListener(object : OnScaleListener{
-            override fun onScaleStart(viewport: Viewport) {
-
-            }
-
-            override fun onScale(viewport: Viewport) {
-            }
-
-            override fun onScaleEnd(viewport: Viewport) {
-                val from = round(candlestickValues.size * viewport.left)
-                val to = round(candlestickValues.size * viewport.right)
-                Log.d("Chart", "onScaleEnd->size=${to - from}")
-            }
-
-        })
-
         combineChart.setOnLoadMoreKlineListener {
             loadMoreChartData()
+        }
+
+        combineChart.setOnDrawLineCompleteListener { point1, point2, type ->
+            val candlestickDataSet = combineChart.candlestickDataSet.getOrNull(0)
+            val candlestickValues = candlestickDataSet?.values
+            if (!candlestickValues.isNullOrEmpty()) {
+                // 当前数据存入dateSet
+                val viewportMax = candlestickDataSet.viewportYMax
+                val viewportMin = candlestickDataSet.viewportYMin
+
+                Log.d("JZChart", "viewportMax=$viewportMax, viewportMin=$viewportMin")
+
+                val startValue = combineChart.getScaleValue(point1.y, viewportMax, viewportMin)
+                val endValue = combineChart.getScaleValue(point2.y, viewportMax, viewportMin)
+
+                val drawLineValues = ArrayList<DrawLineValue>()
+                val startIndex = combineChart.getEntryIndexByCoordinate(point1.x, point1.y)
+                val startTime = candlestickValues.getOrNull(startIndex)?.time ?: 0L
+                drawLineValues.add(DrawLineValue(startValue, startTime))
+
+                val endIndex = combineChart.getEntryIndexByCoordinate(point2.x, point2.y)
+                val endTime = candlestickValues.getOrNull(endIndex)?.time ?: 0L
+                drawLineValues.add(DrawLineValue(endValue, endTime))
+                val dataSet = combineChart.preDrawLineDataSet.apply {
+                    values = drawLineValues
+                    lineColor = Color.RED
+                    lineSize = 5f
+                }
+                val data = combineChart.currentCombineData.apply {
+                    addDataSet(dataSet)
+                }
+                combineChart.setCombineData(data)
+            }
         }
     }
 
@@ -147,11 +175,7 @@ class DrawLineActivity : AppCompatActivity() {
 
         val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.05f }
 
-        val data = CombineData().apply {
-            add(arrowDataSet)
-        }
-
-        combineChart.setCombineData(data)
+        combineChart.currentCombineData.addDataSet(arrowDataSet)
 
     }
 
@@ -213,10 +237,10 @@ class DrawLineActivity : AppCompatActivity() {
         val drawLineValues = ArrayList<DrawLineValue>()
         val startIndex = 100
         val startCandlestickValue = candlestickValues[startIndex]
-        drawLineValues.add(DrawLineValue(startCandlestickValue.open + 50, startCandlestickValue.time, startIndex))
+        drawLineValues.add(DrawLineValue(startCandlestickValue.open + 50, startCandlestickValue.time))
         val endIndex = 110
         val endCandlestickValue = candlestickValues[endIndex]
-        drawLineValues.add(DrawLineValue(endCandlestickValue.open + 50, endCandlestickValue.time, endIndex))
+        drawLineValues.add(DrawLineValue(endCandlestickValue.open + 50, endCandlestickValue.time))
 
         val drawLineDataSet = DrawLineDataSet(drawLineValues).apply {
             lineType = DrawLineType.ltSegment.ordinal

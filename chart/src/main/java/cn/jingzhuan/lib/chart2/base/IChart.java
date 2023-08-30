@@ -69,6 +69,8 @@ public interface IChart {
      */
     int getEntryIndexByCoordinate(float x, float y);
 
+    float getEntryCoordinateByIndex(int index);
+
     void onTouchPoint(MotionEvent e);
 
     void onTouchHighlight(MotionEvent e);

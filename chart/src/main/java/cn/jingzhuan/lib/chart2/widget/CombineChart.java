@@ -26,6 +26,8 @@ import java.util.List;
 
 public class CombineChart extends BaseChart {
 
+    private CombineData curentCombineData = new CombineData();
+
     public CombineChart(Context context) {
         super(context);
     }
@@ -52,6 +54,10 @@ public class CombineChart extends BaseChart {
         getRenderer().addDataSet(abstractDataSet);
     }
 
+    public void removeDataSet(AbstractDataSet abstractDataSet) {
+        getRenderer().removeDataSet(abstractDataSet);
+    }
+
     public void setDataSet(AbstractDataSet dataSet) {
         cleanAllDataSet();
 
@@ -65,6 +71,7 @@ public class CombineChart extends BaseChart {
     }
 
     public void setCombineData(final CombineData combineData) {
+        this.curentCombineData = combineData;
         cleanAllDataSet();
         int entryCount = 0;
         for (TreeDataSet treeDataSet : combineData.getTreeData()) {
@@ -117,6 +124,10 @@ public class CombineChart extends BaseChart {
             }
             setCurrentViewport(newViewport);
         }
+    }
+
+    public CombineData getCurrentCombineData() {
+        return this.curentCombineData;
     }
 
     public <T extends AbstractDataSet> void setData(List<T> data) {
@@ -206,6 +217,14 @@ public class CombineChart extends BaseChart {
 //            }
 //        }
         return super.onTouchEvent(event);
+    }
+
+
+    public float getScaleValue(float y, float viewportMax, float viewportMin) {
+        if (viewportMax > viewportMin && viewportMax > 0) {
+            return viewportMax - y / mContentRect.height() * (viewportMax - viewportMin);
+        }
+        return -1f;
     }
 
 

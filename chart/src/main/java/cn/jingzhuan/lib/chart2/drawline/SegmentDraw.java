@@ -1,9 +1,9 @@
 package cn.jingzhuan.lib.chart2.drawline;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
-
 import java.util.List;
 
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
@@ -17,8 +17,10 @@ import cn.jingzhuan.lib.chart2.base.Chart;
  * 画线段
  */
 public class SegmentDraw extends BaseDraw {
-    float width = 0f;
-    float height = 0f;
+    private float width = 0f;
+
+    private float height = 0f;
+
     public SegmentDraw(final Chart chart) {
         super(chart);
     }
@@ -36,17 +38,17 @@ public class SegmentDraw extends BaseDraw {
 
         float startX = -1;
         float endX = -1;
-        for (CandlestickValue candlestickValue: visibleValues) {
+        for (CandlestickValue candlestickValue : visibleValues) {
             if (candlestickValue.getTime() == startValue.getTime()) {
-               startX = candlestickValue.getX();
+                startX = candlestickValue.getX();
             }
             if (candlestickValue.getTime() == endValue.getTime()) {
-               endX = candlestickValue.getX();
+                endX = candlestickValue.getX();
             }
         }
 
-        float startY = getScaleY(startValue.getValue(), lMax, lMin);
-        float endY = getScaleY(endValue.getValue(), lMax, lMin);
+        float startY = getScaleY(startValue.getValue());
+        float endY = getScaleY(endValue.getValue());
 
         if (startX != -1f && endX != -1f) {
             width = Math.abs(endX - startX);
@@ -56,7 +58,7 @@ public class SegmentDraw extends BaseDraw {
         if (startX == -1f && endX == -1f) return;
 
         if (endX == -1f) {
-            for (CandlestickValue candlestickValue: candlestickDataSet.getValues()) {
+            for (CandlestickValue candlestickValue : candlestickDataSet.getValues()) {
                 if (candlestickValue.getTime() == endValue.getTime()) {
                     endX = candlestickValue.getX();
                     break;
@@ -64,7 +66,7 @@ public class SegmentDraw extends BaseDraw {
             }
             // 根据平行截割定理 得(rightY - startY) / (endY - startY) = (rightX - startX) / (endX - startX)
             float rightX = mContentRect.right;
-            Log.d("onDraw", "startX="+ startX + "rightX=" + rightX + "endX="+endX + "endY="+endY + "startY="+startY);
+            Log.d("onDraw", "startX=" + startX + "rightX=" + rightX + "endX=" + endX + "endY=" + endY + "startY=" + startY);
             float rightY = (rightX - startX) / width * height + startY;
             linePath.moveTo(startX, startY);
             linePath.lineTo(rightX, rightY);
@@ -72,19 +74,17 @@ public class SegmentDraw extends BaseDraw {
             linePath.moveTo(startX, startY);
             linePath.lineTo(endX, endY);
         }
-
+        linePaint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(linePath, linePaint);
+    }
 
-        if (chart.getDrawLineStartPoint() != null) {
-            // 画起点
-            canvas.drawCircle(chart.getDrawLineStartPoint().x, chart.getDrawLineStartPoint().y, radiusIn, linePaint);
-            canvas.drawCircle(chart.getDrawLineStartPoint().x, chart.getDrawLineStartPoint().y, radiusOut, bgPaint);
-        }
-
-        if (chart.getDrawLineEndPoint() != null) {
-            // 画起点
-            canvas.drawCircle(chart.getDrawLineEndPoint().x, chart.getDrawLineEndPoint().y, radiusIn, linePaint);
-            canvas.drawCircle(chart.getDrawLineEndPoint().x, chart.getDrawLineEndPoint().y, radiusOut, bgPaint);
-        }
+    @Override
+    public void drawTypeShape(Canvas canvas) {
+        // 当前形状是线段 先画线段 再画背景
+        linePaint.setStyle(Paint.Style.STROKE);
+        Path linePath = new Path();
+        linePath.moveTo(touchPointStart.x, touchPointStart.y);
+        linePath.lineTo(touchPointEnd.x, touchPointEnd.y);
+        canvas.drawPath(linePath, linePaint);
     }
 }

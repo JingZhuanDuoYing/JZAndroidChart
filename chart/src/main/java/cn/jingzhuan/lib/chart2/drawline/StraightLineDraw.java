@@ -20,4 +20,10 @@ public class StraightLineDraw extends BaseDraw {
     public void onDraw(Canvas canvas, DrawLineDataSet dataSet, CandlestickDataSet candlestickDataSet, float lMax, float lMin) {
         super.onDraw(canvas, dataSet, candlestickDataSet, lMax, lMin);
     }
+
+    @Override
+    public void drawTypeShape(Canvas canvas) {
+
+    }
+
 }

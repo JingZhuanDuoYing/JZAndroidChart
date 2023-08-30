@@ -7,20 +7,17 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Build;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.EdgeEffect;
 import android.widget.OverScroller;
-
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
+import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
 import cn.jingzhuan.lib.chart.event.OnScaleListener;
 import cn.jingzhuan.lib.chart.event.OnSingleEntryClickListener;
@@ -32,8 +29,11 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
+import cn.jingzhuan.lib.chart2.drawline.DrawLineTouchState;
+import cn.jingzhuan.lib.chart2.drawline.DrawLineType;
+import cn.jingzhuan.lib.chart2.drawline.OnDrawLineCompleteListener;
+import cn.jingzhuan.lib.chart2.drawline.OnDrawLineTouchListener;
 import cn.jingzhuan.lib.source.JZScaleGestureDetector;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -100,21 +100,6 @@ public abstract class Chart extends BitmapCachedChart {
     private boolean isTouching = false;
     private boolean isShowRange = false;
 
-    /**
-     * 是否开启画线
-     */
-    private boolean openDrawLine = false;
-
-    /**
-     * 画线起点
-     */
-    private PointF drawLineStartPoint;
-
-    /**
-     * 画线终点
-     */
-    private PointF drawLineEndPoint;
-
     protected Highlight[] mHighlights;
     int mFocusIndex = -1;
 
@@ -152,49 +137,6 @@ public abstract class Chart extends BitmapCachedChart {
 
     private boolean mMultipleTouch = false;
 
-    private int maxVisibleEntryCount = 250;
-
-    private int minVisibleEntryCount = 15;
-
-    private int defaultVisibleEntryCount = -1;
-
-    private int currentVisibleEntryCount = -1;
-
-    private int entryCount = 0;
-
-    // 隐藏水平交叉线 便于控制
-    private boolean hideHorizontalHighlight = false;
-
-    // 是否需要展示水平交叉线
-    private boolean enableHorizontalHighlight = false;
-
-    // 隐藏垂直交叉线 便于控制
-    private boolean hideVerticalHighlight = false;
-
-    // 是否需要展示垂直交叉线
-    private boolean enableVerticalHighlight = false;
-
-    // 是否需要展示水平交叉线左边文本
-    private boolean enableHighlightLeftText = false;
-
-    // 是否需要展示水平交叉线右边文本
-    private boolean enableHighlightRightText = false;
-
-    // 是否需要展示垂直交叉线底部文本
-    private boolean enableHighlightBottomText = false;
-
-    // 水平交叉线文本大小
-    private float mHighlightTextSize;
-
-    // 平交叉线文本颜色
-    private int mHighlightTextColor = Color.TRANSPARENT;
-
-    // 交叉线文本背景
-    private int mHighlightTextBgColor = Color.TRANSPARENT;
-
-    // 水平交叉线文本背景高度
-    private int mHighlightTextBgHeight;
-
     public Chart(Context context) {
         this(context, null, 0);
     }
@@ -208,17 +150,14 @@ public abstract class Chart extends BitmapCachedChart {
         init(context, attrs, defStyleAttr);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public Chart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr);
     }
 
-
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
 
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
 
         initListeners();
 
@@ -344,7 +283,6 @@ public abstract class Chart extends BitmapCachedChart {
          * variable but kept here to minimize per-frame allocations.
          */
         private final PointF viewportFocus = new PointF();
-//        private float lastSpanX;
 
         @Override
         public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
@@ -353,7 +291,6 @@ public abstract class Chart extends BitmapCachedChart {
             if(mScaleListener != null)  {
                 mScaleListener.onScaleStart(mCurrentViewport);
             }
-//            lastSpanX = scaleGestureDetector.getCurrentSpanX();
             return true;
         }
 
@@ -472,7 +409,6 @@ public abstract class Chart extends BitmapCachedChart {
             mCurrentViewport.constrainViewport();
 
             triggerViewportChange();
-//            lastSpanX = spanX;
             if(mScaleListener != null)  {
                 mScaleListener.onScale(mCurrentViewport);
             }
@@ -493,9 +429,25 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
-
+            if (isOpenDrawLine() && getDrawLineTouchListener() != null) {
+                PointF point = new PointF(e.getX(), e.getY());
+                DrawLineTouchState state = getDrawLineTouchState();
+                int type = getPreDrawLineDataSet().getLineType();
+                if (state == DrawLineTouchState.none) {
+                    setDrawLineTouchState(DrawLineTouchState.first);
+                    getDrawLineTouchListener().onTouch(DrawLineTouchState.first, point, type);
+                } else if (state == DrawLineTouchState.first) {
+                    setDrawLineTouchState(DrawLineTouchState.second);
+                    getDrawLineTouchListener().onTouch(DrawLineTouchState.second, point, type);
+                }else if (state == DrawLineTouchState.second) {
+                    setDrawLineTouchState(DrawLineTouchState.complete);
+                    getDrawLineTouchListener().onTouch(DrawLineTouchState.complete, point, type);
+                }else if (state == DrawLineTouchState.complete) {
+                    setDrawLineTouchState(DrawLineTouchState.drag);
+                    getDrawLineTouchListener().onTouch(DrawLineTouchState.drag, point, type);
+                }
+            }
 //            postInvalidateOnAnimation();
-
             return true;
         }
 
@@ -503,6 +455,7 @@ public abstract class Chart extends BitmapCachedChart {
         public void onLongPress(MotionEvent e) {
             Log.d("JZChart", "onLongPress");
             if(getRangeEnable()) return;
+            if (isDrawingLine()) return;
             mIsLongPress = true;
             onTouchPoint(e);
             e.setAction(MotionEvent.ACTION_UP);
@@ -512,25 +465,14 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d("JZChart", "onSingleTapUp");
-//            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
             return super.onSingleTapUp(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d("JZChart", "onSingleTapConfirmed");
-            if(getRangeEnable()) return false;
-            if (isOpenDrawLine()) {
-                if (drawLineStartPoint == null) {
-                    drawLineStartPoint = new PointF();
-                    drawLineStartPoint.set(e.getX(), e.getY());
-                }
-                if (drawLineStartPoint != null && drawLineEndPoint == null) {
-                    drawLineEndPoint = new PointF();
-                    drawLineEndPoint.set(e.getX(), e.getY());
-                }
-                return true;
-            }
+            if (getRangeEnable()) return false;
+            if (isDrawingLine()) return false;
 //            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
@@ -576,6 +518,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (isDrawingLine()) return false;
             if (!isMultipleTouch()) {
                 Log.d("JZChart", "onScroll");
                 mDistanceX = distanceX;
@@ -1278,30 +1221,6 @@ public abstract class Chart extends BitmapCachedChart {
         isShowRange = showRange;
     }
 
-    public boolean isOpenDrawLine() {
-        return openDrawLine;
-    }
-
-    public void setOpenDrawLine(boolean openDrawLine) {
-        this.openDrawLine = openDrawLine;
-    }
-
-    public PointF getDrawLineStartPoint() {
-        return drawLineStartPoint;
-    }
-
-    public void setDrawLineStartPoint(PointF drawLineStartPoint) {
-        this.drawLineStartPoint = drawLineStartPoint;
-    }
-
-    public PointF getDrawLineEndPoint() {
-        return drawLineEndPoint;
-    }
-
-    public void setDrawLineEndPoint(PointF drawLineEndPoint) {
-        this.drawLineEndPoint = drawLineEndPoint;
-    }
-
     public void setOnLoadMoreKlineListener(OnLoadMoreKlineListener onLoadMoreKlineListener) {
         this.mOnLoadMoreKlineListener = onLoadMoreKlineListener;
     }
@@ -1378,6 +1297,17 @@ public abstract class Chart extends BitmapCachedChart {
         return mMultipleTouch;
     }
 
+    // <editor-fold desc="EntryCount 控制">    ----------------------------------------------------------
+    private int maxVisibleEntryCount = 250;
+
+    private int minVisibleEntryCount = 15;
+
+    private int defaultVisibleEntryCount = -1;
+
+    private int currentVisibleEntryCount = -1;
+
+    private int entryCount = 0;
+
     public int getMaxVisibleEntryCount() {
         return maxVisibleEntryCount;
     }
@@ -1418,6 +1348,43 @@ public abstract class Chart extends BitmapCachedChart {
     public void setEntryCount(int entryCount) {
         this.entryCount = entryCount;
     }
+
+    // </editor-fold desc="EntryCount 控制">    ----------------------------------------------------------
+
+    // <editor-fold desc="十字光标 配置">    ----------------------------------------------------------
+
+    // 隐藏水平交叉线 便于控制
+    private boolean hideHorizontalHighlight = false;
+
+    // 是否需要展示水平交叉线
+    private boolean enableHorizontalHighlight = false;
+
+    // 隐藏垂直交叉线 便于控制
+    private boolean hideVerticalHighlight = false;
+
+    // 是否需要展示垂直交叉线
+    private boolean enableVerticalHighlight = false;
+
+    // 是否需要展示水平交叉线左边文本
+    private boolean enableHighlightLeftText = false;
+
+    // 是否需要展示水平交叉线右边文本
+    private boolean enableHighlightRightText = false;
+
+    // 是否需要展示垂直交叉线底部文本
+    private boolean enableHighlightBottomText = false;
+
+    // 交叉线文本大小
+    private float mHighlightTextSize;
+
+    // 交叉线文本颜色
+    private int mHighlightTextColor = Color.TRANSPARENT;
+
+    // 交叉线文本背景
+    private int mHighlightTextBgColor = Color.TRANSPARENT;
+
+    // 交叉线文本背景高度
+    private int mHighlightTextBgHeight;
 
     public boolean isHideHorizontalHighlight() {
         return hideHorizontalHighlight;
@@ -1506,6 +1473,79 @@ public abstract class Chart extends BitmapCachedChart {
     public void setHighlightTextBgHeight(int mHighlightTextBgHeight) {
         this.mHighlightTextBgHeight = mHighlightTextBgHeight;
     }
+
+    // </editor-fold desc="十字光标 配置">    ----------------------------------------------------------
+
+    // <editor-fold desc="画线工具">    ----------------------------------------------------------
+    /**
+     * 是否开启画线
+     */
+    private boolean openDrawLine = false;
+
+    /**
+     * 画线状态
+     */
+    private DrawLineTouchState drawLineTouchState = DrawLineTouchState.none;
+
+    private DrawLineDataSet preDrawLineDataSet = new DrawLineDataSet(DrawLineType.ltNone);
+
+    private OnDrawLineTouchListener onDrawLineTouchListener;
+
+    private OnDrawLineCompleteListener onDrawLineCompleteListener;
+
+    public boolean isOpenDrawLine() {
+        return openDrawLine;
+    }
+
+    public void setOpenDrawLine(boolean openDrawLine) {
+        this.openDrawLine = openDrawLine;
+    }
+
+    public DrawLineTouchState getDrawLineTouchState() {
+        if (!isOpenDrawLine()) return DrawLineTouchState.none;
+        return drawLineTouchState;
+    }
+
+    public void setDrawLineTouchState(DrawLineTouchState drawLineTouchState) {
+        if (!isOpenDrawLine()) return;
+        this.drawLineTouchState = drawLineTouchState;
+    }
+
+    public boolean isDrawingLine() {
+        return isOpenDrawLine() && (getDrawLineTouchState() == DrawLineTouchState.first || getDrawLineTouchState() == DrawLineTouchState.second);
+    }
+
+    public DrawLineDataSet getPreDrawLineDataSet() {
+        return this.preDrawLineDataSet;
+    }
+
+    public void setPreDrawLineDataSet(DrawLineDataSet dataSet) {
+        this.preDrawLineDataSet = dataSet;
+    }
+
+    public void setDrawLineComplete(PointF point1, PointF point2) {
+        if (getOnDrawLineCompleteListener() != null) {
+            getOnDrawLineCompleteListener().onComplete(point1, point2, preDrawLineDataSet.getLineType());
+        }
+    }
+
+    public OnDrawLineTouchListener getDrawLineTouchListener() {
+        return this.onDrawLineTouchListener;
+    }
+
+    public void setOnDrawLineTouchListener(OnDrawLineTouchListener mOnDrawLineTouchListener) {
+        this.onDrawLineTouchListener = mOnDrawLineTouchListener;
+    }
+
+    public OnDrawLineCompleteListener getOnDrawLineCompleteListener() {
+        return onDrawLineCompleteListener;
+    }
+
+    public void setOnDrawLineCompleteListener(OnDrawLineCompleteListener onDrawLineCompleteListener) {
+        this.onDrawLineCompleteListener = onDrawLineCompleteListener;
+    }
+
+    // </editor-fold desc="画线工具">    ----------------------------------------------------------
 
     protected boolean canScroll() {
         return getEntryCount() >= getCurrentVisibleEntryCount();
