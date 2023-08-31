@@ -429,24 +429,8 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
-            if (isOpenDrawLine() && getDrawLineTouchListener() != null) {
-                PointF point = new PointF(e.getX(), e.getY());
-                DrawLineTouchState state = getDrawLineTouchState();
-                int type = getPreDrawLineDataSet().getLineType();
-                if (state == DrawLineTouchState.none) {
-                    setDrawLineTouchState(DrawLineTouchState.first);
-                    getDrawLineTouchListener().onTouch(DrawLineTouchState.first, point, type);
-                } else if (state == DrawLineTouchState.first) {
-                    setDrawLineTouchState(DrawLineTouchState.second);
-                    getDrawLineTouchListener().onTouch(DrawLineTouchState.second, point, type);
-                }else if (state == DrawLineTouchState.second) {
-                    setDrawLineTouchState(DrawLineTouchState.complete);
-                    getDrawLineTouchListener().onTouch(DrawLineTouchState.complete, point, type);
-                }else if (state == DrawLineTouchState.complete) {
-                    setDrawLineTouchState(DrawLineTouchState.drag);
-                    getDrawLineTouchListener().onTouch(DrawLineTouchState.drag, point, type);
-                }
-            }
+
+            onPressDrawLine(e);
 //            postInvalidateOnAnimation();
             return true;
         }
@@ -1543,6 +1527,32 @@ public abstract class Chart extends BitmapCachedChart {
 
     public void setOnDrawLineCompleteListener(OnDrawLineCompleteListener onDrawLineCompleteListener) {
         this.onDrawLineCompleteListener = onDrawLineCompleteListener;
+    }
+
+    private void onPressDrawLine(MotionEvent e) {
+        // 当前 画线类型
+        int type = getPreDrawLineDataSet().getLineType();
+        // 没有设置类型/没有设置监听 不进行状态更新
+        if (isOpenDrawLine() && type != 0 && getDrawLineTouchListener() != null) {
+            PointF point = new PointF(e.getX(), e.getY());
+            DrawLineTouchState state = getDrawLineTouchState();
+            if (state == DrawLineTouchState.none) {
+                // 第一步
+                setDrawLineTouchState(DrawLineTouchState.first);
+                getDrawLineTouchListener().onTouch(DrawLineTouchState.first, point, type);
+            } else if (state == DrawLineTouchState.first) {
+                // 第二步
+                setDrawLineTouchState(DrawLineTouchState.second);
+                getDrawLineTouchListener().onTouch(DrawLineTouchState.second, point, type);
+            }else if (state == DrawLineTouchState.second) {
+                // 完成
+                setDrawLineTouchState(DrawLineTouchState.complete);
+                getDrawLineTouchListener().onTouch(DrawLineTouchState.complete, point, type);
+            }else if (state == DrawLineTouchState.complete) {
+                setDrawLineTouchState(DrawLineTouchState.drag);
+                getDrawLineTouchListener().onTouch(DrawLineTouchState.drag, point, type);
+            }
+        }
     }
 
     // </editor-fold desc="画线工具">    ----------------------------------------------------------

@@ -179,7 +179,7 @@ public class BaseChart extends Chart {
 
         mHighlights = highlights;
         mIsHighlight = true;
-        invalidate();
+        postInvalidate();
     }
 
     @Override
