@@ -140,7 +140,7 @@ public abstract class BaseDraw implements IDraw {
      * 画终点
      */
     private void drawEndPoint(Canvas canvas) {
-        int index = ((BaseChart) chart).getEntryIndexByCoordinate(touchPointEnd.x, touchPointEnd.y);
+        int index = chart.getEntryIndexByCoordinate(touchPointEnd.x, touchPointEnd.y);
         float cx = candlestickValues.get(index).getX();
         touchPointEnd.x = cx;
         bgPaint.setAlpha(30);

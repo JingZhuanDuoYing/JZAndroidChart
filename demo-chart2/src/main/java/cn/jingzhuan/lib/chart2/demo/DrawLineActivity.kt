@@ -109,23 +109,21 @@ class DrawLineActivity : AppCompatActivity() {
     private fun initListener() {
         btnDrawLine.setOnClickListener {
             combineChart.isOpenDrawLine = true
-            combineChart.postInvalidate()
         }
 
         btnDrawSegment.setOnClickListener {
             combineChart.preDrawLineDataSet.apply {
                 lineType = DrawLineType.ltSegment.ordinal
             }
-            combineChart.postInvalidate()
         }
 
         combineChart.addOnViewportChangeListener { viewPort ->
             setLeftRightTime(viewPort)
         }
 
-        combineChart.setOnLoadMoreKlineListener {
-            loadMoreChartData()
-        }
+//        combineChart.setOnLoadMoreKlineListener {
+//            loadMoreChartData()
+//        }
 
         combineChart.setOnDrawLineCompleteListener { point1, point2, type ->
             val candlestickDataSet = combineChart.candlestickDataSet.getOrNull(0)
@@ -149,6 +147,7 @@ class DrawLineActivity : AppCompatActivity() {
                 val endTime = candlestickValues.getOrNull(endIndex)?.time ?: 0L
                 drawLineValues.add(DrawLineValue(endValue, endTime))
                 val dataSet = combineChart.preDrawLineDataSet.apply {
+                    lineKey = "ltSegment2"
                     values = drawLineValues
                     lineColor = Color.RED
                     lineSize = 5f
@@ -175,7 +174,11 @@ class DrawLineActivity : AppCompatActivity() {
 
         val arrowDataSet = CandlestickDataSetArrowDecorator(dataSet).apply { offsetPercent = 0.05f }
 
-        combineChart.currentCombineData.addDataSet(arrowDataSet)
+        val data = combineChart.currentCombineData.apply {
+            addDataSet(arrowDataSet)
+        }
+
+        combineChart.setCombineData(data)
 
     }
 
@@ -243,6 +246,7 @@ class DrawLineActivity : AppCompatActivity() {
         drawLineValues.add(DrawLineValue(endCandlestickValue.open + 50, endCandlestickValue.time))
 
         val drawLineDataSet = DrawLineDataSet(drawLineValues).apply {
+            lineKey = "ltSegment1"
             lineType = DrawLineType.ltSegment.ordinal
             lineColor = Color.RED
             lineSize = 5f
