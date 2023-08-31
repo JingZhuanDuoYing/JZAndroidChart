@@ -57,7 +57,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     // Used only for zooms and flings.
     private final RectF mScrollerStartViewport = new RectF();
-
+    private boolean mTouchPointEnable = true;
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
     private boolean mIsMainChart = false;
@@ -1448,6 +1448,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected boolean canScroll() {
         return getEntryCount() >= getCurrentVisibleEntryCount();
+    }
+
+    public boolean isTouchPointEnable() {
+        return mTouchPointEnable;
+    }
+
+    public void setTouchPointEnable(boolean mTouchPointEnable) {
+        this.mTouchPointEnable = mTouchPointEnable;
     }
 }
 

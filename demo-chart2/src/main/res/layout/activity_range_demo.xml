@@ -62,6 +62,13 @@
         android:layout_height="wrap_content"
         />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_touch_point"
+        android:text="touchPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
