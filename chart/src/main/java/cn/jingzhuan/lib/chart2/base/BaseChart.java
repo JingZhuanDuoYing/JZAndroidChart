@@ -146,7 +146,7 @@ public class BaseChart extends Chart {
 
     @Override
     public void onTouchPoint(MotionEvent e) {
-        if (e.getPointerCount() == 1) {
+        if (e.getPointerCount() == 1 && isTouchPointEnable()) {
             for (OnTouchPointChangeListener touchPointChangeListener : mTouchPointChangeListeners) {
                 touchPointChangeListener.touch(e.getX(), e.getY());
             }

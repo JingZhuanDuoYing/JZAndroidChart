@@ -57,6 +57,8 @@ class RangeDemoActivity : AppCompatActivity() {
 
     private lateinit var btnMoveRight: AppCompatButton
 
+    private lateinit var btnTouchPoint: AppCompatButton
+
     private val lastClose = 3388.98f
 
     private var leftTime = ""
@@ -121,6 +123,7 @@ class RangeDemoActivity : AppCompatActivity() {
         btnHighlightAlways = findViewById(R.id.btn_highlight_always)
         btnMoveLeft = findViewById(R.id.btn_move_left)
         btnMoveRight = findViewById(R.id.btn_move_right)
+        btnTouchPoint = findViewById(R.id.btn_touch_point)
         combineChart.scaleSensitivity = 1.1f
 
         combineChart.axisRight.setLabelValueFormatter { value, index ->
@@ -211,6 +214,9 @@ class RangeDemoActivity : AppCompatActivity() {
             combineChart.stepMoveRight()
         }
 
+        btnTouchPoint.setOnClickListener {
+            combineChart.isTouchPointEnable = !combineChart.isTouchPointEnable
+        }
 
         tvCloseRange.setOnClickListener {
             combineChart.rangeEnable = false

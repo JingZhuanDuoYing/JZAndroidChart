@@ -57,7 +57,7 @@ public abstract class Chart extends BitmapCachedChart {
 
     // Used only for zooms and flings.
     private final RectF mScrollerStartViewport = new RectF();
-
+    private boolean mTouchPointEnable = true;
     private boolean mScaleXEnable = true;
     private boolean mDraggingToMoveEnable = true;
     private boolean mIsMainChart = false;
@@ -286,7 +286,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScaleBegin(JZScaleGestureDetector scaleGestureDetector) {
-            Log.d("JZChart", "onScaleBegin");
+//            Log.d("JZChart", "onScaleBegin");
             if (!isScaleGestureEnable()) return super.onScaleBegin(scaleGestureDetector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleStart(mCurrentViewport);
@@ -296,7 +296,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public void onScaleEnd(JZScaleGestureDetector detector) {
-            Log.d("JZChart", "onScaleEnd");
+//            Log.d("JZChart", "onScaleEnd");
             super.onScaleEnd(detector);
             if(mScaleListener != null)  {
                 mScaleListener.onScaleEnd(mCurrentViewport);
@@ -306,7 +306,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScale(JZScaleGestureDetector scaleGestureDetector) {
-            Log.d("JZChart", "onScale");
+//            Log.d("JZChart", "onScale");
             if (!isScaleXEnable()) return false;
             if (!isScaleGestureEnable()) return super.onScale(scaleGestureDetector);
 
@@ -425,7 +425,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDown(MotionEvent e) {
-            Log.d("JZChart", "onDown");
+//            Log.d("JZChart", "onDown");
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
@@ -457,13 +457,11 @@ public abstract class Chart extends BitmapCachedChart {
             Log.d("JZChart", "onSingleTapConfirmed");
             if (getRangeEnable()) return false;
             if (isDrawingLine()) return false;
-//            Log.d("Chart", "滑动 onSingleTapConfirmed isClickable:" + isClickable()+ ", hasOnClickListeners:" + hasOnClickListeners() + "; isHighlight:" + isHighlight());
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
                 performClick();
             } else {
                 int index = getEntryIndexByCoordinate(e.getX(), e.getY());
-//                Log.v("Chart", "滑动 onSingleTapConfirmed index:" + index + ", mHighlightVolatile:" + mHighlightVolatile + ", mHighlights != null:" + (mHighlights != null) + ", mHighlightDisable:" + mHighlightDisable);
                 if (index >= 0) {
                     if (onEntryClickListener != null) {
                         onEntryClickListener.onEntryClick(Chart.this, index);
@@ -487,7 +485,7 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            Log.d("JZChart", "onDoubleTap");
+//            Log.d("JZChart", "onDoubleTap");
             if(getRangeEnable()) return false;
             if (mDoubleTapToZoom) {
 
@@ -504,15 +502,13 @@ public abstract class Chart extends BitmapCachedChart {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isDrawingLine()) return false;
             if (!isMultipleTouch()) {
-                Log.d("JZChart", "onScroll");
+//                Log.d("JZChart", "onScroll");
                 mDistanceX = distanceX;
-//            Log.d("Chart", "滑动 onScroll(" + e2.getX() + ", " + e2.getY() + "), isDraggingToMoveEnable:" + isDraggingToMoveEnable() + ", isMainChart:" + isMainChart() + ", inHighlight:" + isHighlight());
                 // 主图高亮时 不滚动，只触发点击
                 if ((!isDraggingToMoveEnable() && isHighlight()) // 分时主图，高亮时
                         || (!isDraggingToMoveEnable() && !isMainChart()) // K线副图
                         || (isDraggingToMoveEnable() && isMainChart() && isHighlight() && isHighlightVolatile() || isLongPress()) // K线主图，高亮且能关闭高亮光标时
                 ) {
-//                Log.d("Chart", "滑动 onTouchPoint(" + e2.getX() + ", " + e2.getY() + ") isTouching:" + isTouching + ", isLongPress:" + isLongPress());
                     if (isLongPress()) {
                         if (isMainChart()) onTouchPoint(e2); else onTouchHighlight(e2); // if (isTouching) {  }
                     }
@@ -526,7 +522,6 @@ public abstract class Chart extends BitmapCachedChart {
                 if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) {
                     return true;
                 }
-                Log.w("Chart", "onScroll");
 
                 // Scrolling uses math based on the viewport (as opposed to math using pixels).
                 /**
@@ -576,7 +571,7 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (!isTouching()) {
-                Log.d("JZChart", "onFling");
+//                Log.d("JZChart", "onFling");
                 boolean isRightSide = mCurrentViewport.right == Viewport.AXIS_X_MAX;
                 if(isRightSide) return false;
                 if (!isDraggingToMoveEnable()) return super.onFling(e1, e2, velocityX, velocityY);
@@ -600,7 +595,6 @@ public abstract class Chart extends BitmapCachedChart {
                 postInvalidateOnAnimation();
 
                 if (!isDraggingToMoveEnable()) {
-                    Log.d("JZChart", "onFling-onTouchPoint1");
                     onTouchPoint(e2);
                 }
             }
@@ -843,7 +837,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         if (needsInvalidate) {
             triggerViewportChange();
-            Log.d("JZChart", "triggerViewportChange from= computeScroll");
         }
     }
 
@@ -868,8 +861,6 @@ public abstract class Chart extends BitmapCachedChart {
         mCurrentViewport.right = x + curWidth;
         mCurrentViewport.constrainViewport();
         triggerViewportChange();
-
-        Log.d("Chart", "triggerViewportChange from= setViewportBottomLeft");
     }
 
     /**
@@ -894,7 +885,6 @@ public abstract class Chart extends BitmapCachedChart {
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d("JZChart", "onTouchEvent->ACTION_UP");
                 mIsLongPress = false;
                 isTouching = false;
                 if (!isScaling) {
@@ -904,7 +894,6 @@ public abstract class Chart extends BitmapCachedChart {
                 isScaling = false;
                 break;
             case MotionEvent.ACTION_CANCEL:
-                Log.d("JZChart", "onTouchEvent->ACTION_CANCEL");
                 mIsLongPress = false;
                 isTouching = false;
                 isScaling = false;
@@ -1559,6 +1548,14 @@ public abstract class Chart extends BitmapCachedChart {
 
     protected boolean canScroll() {
         return getEntryCount() >= getCurrentVisibleEntryCount();
+    }
+
+    public boolean isTouchPointEnable() {
+        return mTouchPointEnable;
+    }
+
+    public void setTouchPointEnable(boolean mTouchPointEnable) {
+        this.mTouchPointEnable = mTouchPointEnable;
     }
 }
 
