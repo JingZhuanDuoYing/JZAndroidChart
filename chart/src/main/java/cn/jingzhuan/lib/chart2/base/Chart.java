@@ -497,13 +497,7 @@ public abstract class Chart extends BitmapCachedChart {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d("JZChart", "onSingleTapUp");
-//            Log.d("Chart", "滑动 onSingleTapUp(" + e.getX() + ", " + e.getY() + "); isHighlight:" + isHighlight());
-            return super.onSingleTapUp(e);
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            Log.d("JZChart", "onSingleTapConfirmed");
+            if (mDoubleTapToZoom) return false;
             if(getRangeEnable()) return false;
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
