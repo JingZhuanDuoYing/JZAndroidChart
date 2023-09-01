@@ -60,7 +60,6 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
         axisBottom.labelTextColor = BLACK
         setIsMainChart(true)
 
-        setDoubleTapToZoom(true)
         isScaleGestureEnable = true
         isScaleXEnable = true
 
