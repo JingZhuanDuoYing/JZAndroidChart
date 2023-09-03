@@ -27,5 +27,7 @@
         <attr name="drawLabelsInBottom" format="boolean" />
         <attr name="showWaterMark" format="boolean" />
         <attr name="isNightMode" format="boolean" />
+        <attr name="minChartWidth" format="dimension"/>
+        <attr name="minChartHeight" format="dimension"/>
     </declare-styleable>
 </resources>

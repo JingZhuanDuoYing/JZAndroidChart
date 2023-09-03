@@ -35,6 +35,11 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     private boolean mIsTouching = false;
 
     /**
+     * 双击放大
+     */
+    private boolean mDoubleTapToZoom = false;
+
+    /**
      * 是否长按
      */
     protected boolean mIsLongPress = false;
@@ -71,25 +76,25 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
 
     public ScrollAndScaleView(Context context) {
         super(context);
-        init();
+        init(null, 0);
     }
 
     public ScrollAndScaleView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs, 0);
     }
 
     public ScrollAndScaleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs, defStyleAttr);
     }
 
     public ScrollAndScaleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(attrs, defStyleAttr);
     }
 
-    private void init() {
+    protected void init(AttributeSet attrs, int defStyleAttr) {
         setWillNotDraw(false);
         mDetector = new GestureDetectorCompat(getContext(), this);
         mScaleDetector = new JZScaleGestureDetector(getContext(), this);
@@ -118,7 +123,7 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         Log.i(TAG, "onScroll");
-        if (!mIsTouching && !isMultipleTouch()) {
+        if (!mIsLongPress && !isMultipleTouch()) {
             scrollBy(Math.round(distanceX), 0);
             return true;
         }
@@ -130,6 +135,28 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
         Log.i(TAG, "onLongPress");
         mIsLongPress = true;
         onTouchPoint(e);
+    }
+
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+    }
+
+    @Override
+    public void scrollBy(int x, int y) {
+        scrollTo(mScrollX - Math.round(x), 0);
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        if (!isScrollEnable()) {
+            mScroller.forceFinished(true);
+            return;
+        }
+        int oldX = mScrollX;
+        mScrollX = x;
+        onScrollChanged(mScrollX, 0, oldX, 0);
+        invalidate();
     }
 
     @Override
@@ -157,8 +184,6 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
         Log.i(TAG, "onScaleEnd");
     }
 
-    private float touchX;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.i(TAG, "onTouchEvent");
@@ -167,7 +192,6 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mIsTouching = true;
-                touchX = event.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
                 //长按之后移动
@@ -177,10 +201,12 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                if (touchX == event.getX()) {
-                    if (mIsLongPress) mIsLongPress = false;
-                }
                 mIsTouching = false;
+                if (mIsLongPress) {
+                    mIsLongPress = false;
+                    // 之前是长按 抬起时直接return 不回调 onSingleTapUp
+                    return false;
+                }
                 invalidate();
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -242,6 +268,18 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     public boolean isIsOpenRange() {
         return mIsOpenRange;
     }
+
+    /**
+     * 设置是否能双击放大
+     */
+    public void setDoubleTapToZoom(boolean mDoubleTapToZoom) {
+        this.mDoubleTapToZoom = mDoubleTapToZoom;
+    }
+
+    public boolean isDoubleTapToZoom() {
+        return mDoubleTapToZoom;
+    }
+
 
     /**
      * 设置是否可以滑动

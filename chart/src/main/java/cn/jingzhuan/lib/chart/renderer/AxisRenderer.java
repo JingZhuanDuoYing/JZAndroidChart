@@ -513,6 +513,10 @@ public class AxisRenderer implements Renderer {
         }
     }
 
+    public Axis getAxis() {
+        return this.mAxis;
+    }
+
     public void setTypeface(Typeface tf) {
         mLabelTextPaint.setTypeface(tf);
     }
