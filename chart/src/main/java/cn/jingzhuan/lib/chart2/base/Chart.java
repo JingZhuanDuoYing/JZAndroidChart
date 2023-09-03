@@ -880,13 +880,16 @@ public abstract class Chart extends BitmapCachedChart {
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                mIsLongPress = false;
                 isTouching = false;
                 if (!isScaling) {
                     handleNoComputeScrollOffsetLoadMore();
                     postInvalidateOnAnimation();
                 }
                 isScaling = false;
+                if (mIsLongPress) {
+                    mIsLongPress = false;
+                    return false;
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 mIsLongPress = false;
