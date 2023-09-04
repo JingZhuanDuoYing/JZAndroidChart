@@ -1,66 +1,29 @@
 package cn.jingzhuan.lib.chart3.base;
 
 import android.content.Context;
-import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.annotation.Nullable;
 
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.component.Axis;
-import cn.jingzhuan.lib.chart.component.AxisX;
-import cn.jingzhuan.lib.chart.component.AxisY;
-import cn.jingzhuan.lib.chart.renderer.AxisRenderer;
+import cn.jingzhuan.lib.chart.component.Highlight;
+import cn.jingzhuan.lib.chart.data.AbstractDataSet;
+import cn.jingzhuan.lib.chart.data.ChartData;
+import cn.jingzhuan.lib.chart.data.Value;
+import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer;
+import cn.jingzhuan.lib.chart3.state.HighlightState;
 
-/**
- * @since 2023-09-01
- * created by lei
- */
-public abstract class BaseChartView extends ScrollAndScaleView implements IChartView{
+public class BaseChartView<V extends Value, T extends AbstractDataSet<V>> extends AbstractChartView<V, T> {
 
-    protected List<AxisRenderer> mAxisRenderers;
+    private AbstractRenderer<V, T> chartRenderer;
 
-    protected AxisY mAxisLeft = new AxisY(AxisY.LEFT_INSIDE);
-
-    protected AxisY mAxisRight = new AxisY(AxisY.RIGHT_INSIDE);
-
-    protected AxisX mAxisTop = new AxisX(AxisX.TOP);
-
-    protected AxisX mAxisBottom = new AxisX(AxisX.BOTTOM);
-
-    protected Rect mContentRect = new Rect();
-
-    protected Rect mBottomRect = new Rect();
-
-    private int minChartWidth;
-
-    private int minChartHeight;
-
-    /**
-     * 背景颜色
-     */
-    private int backgroundColor;
-
-    /**
-     * 坐标轴刻度文本 是否画在底层
-     */
-    private boolean drawLabelsInBottom;
-
-    /**
-     * 是否需要展示水印
-     */
-    private boolean showWaterMark;
-
-    /**
-     * 是否黑夜模式
-     */
-    private boolean isNightMode;
+    private final Paint waterMarkPaint = new Paint();
 
     public BaseChartView(Context context) {
         super(context);
@@ -78,111 +41,120 @@ public abstract class BaseChartView extends ScrollAndScaleView implements IChart
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+
     @Override
-    protected void init(AttributeSet attrs, int defStyleAttr) {
-        super.init(attrs, defStyleAttr);
-        TypedArray ta = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.Chart, defStyleAttr, defStyleAttr);
-
-        try {
-            int minChartWidth = ta.getDimensionPixelSize(R.styleable.Chart_minChartWidth, 0);
-            setMinChartWidth(minChartWidth);
-
-            int minChartHeight = ta.getDimensionPixelSize(R.styleable.Chart_minChartHeight, 0);
-            setMinChartHeight(minChartHeight);
-
-            int backgroundColor = ta.getColor(R.styleable.Chart_backgroundColor, Color.TRANSPARENT);
-            setBackgroundColor(backgroundColor);
-
-            boolean drawLabelsInBottom = ta.getBoolean(R.styleable.Chart_drawLabelsInBottom, false);
-            setDrawLabelsInBottom(drawLabelsInBottom);
-
-            boolean showWaterMark = ta.getBoolean(R.styleable.Chart_showWaterMark, false);
-            setShowWaterMark(showWaterMark);
-
-            boolean isNightMode = ta.getBoolean(R.styleable.Chart_isNightMode, false);
-            setNightMode(isNightMode);
-
-            List<Axis> axisList = new ArrayList<>(4);
-            axisList.add(mAxisLeft);
-            axisList.add(mAxisRight);
-            axisList.add(mAxisTop);
-            axisList.add(mAxisBottom);
-
-            float labelTextSize = ta.getDimension(R.styleable.Chart_labelTextSize, 28);
-
-            float labelSeparation = ta.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10);
-
-            float gridThickness = ta.getDimension(R.styleable.Chart_gridThickness, 2);
-
-            float axisThickness = ta.getDimension(R.styleable.Chart_axisThickness, 2);
-
-            int gridColor = ta.getColor(R.styleable.Chart_gridColor, Color.GRAY);
-
-            int axisColor = ta.getColor(R.styleable.Chart_axisColor, Color.GRAY);
-
-            int labelTextColor = ta.getColor(R.styleable.Chart_labelTextColor, Color.GRAY);
-
-            for (Axis axis : axisList) {
-                axis.setLabelTextSize(labelTextSize);
-                axis.setLabelTextColor(labelTextColor);
-                axis.setLabelSeparation(labelSeparation);
-                axis.setGridColor(gridColor);
-                axis.setGridThickness(gridThickness);
-                axis.setAxisColor(axisColor);
-                axis.setAxisThickness(axisThickness);
-            }
-
-        } catch (Exception e) {
-            ta.recycle();
-        }
+    public void initChart() {
 
     }
 
+    public void setChartRenderer(AbstractRenderer<V, T> chartRenderer) {
+        this.chartRenderer = chartRenderer;
+    }
+
+    /**
+     * 画内容
+     */
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        // Clips the next few drawing operations to the content area
-        int clipRestoreCount = canvas.save();
+    public void drawChart(Canvas canvas) {
+        chartRenderer.renderer(canvas);
+    }
 
-        // 剪切ContentRect区域
-        canvas.clipRect(mContentRect);
+    /**
+     * 画水印
+     */
+    @Override
+    public void drawWaterMark(Canvas canvas) {
+        int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_water_mark_padding);
+        Bitmap waterMarkBitmap = BitmapFactory.decodeResource(
+                this.getResources(), isNightMode() ? R.drawable.ico_water_mark_night : R.drawable.ico_water_mark);
+        int left = getWidth() - padding - waterMarkBitmap.getWidth() - getPaddingRight();
+        canvas.drawBitmap(waterMarkBitmap, (float) left, (float) padding, waterMarkPaint);
+    }
 
-        // 画背景
-        if (getBackgroundColor() != Color.TRANSPARENT){
-            canvas.drawColor(getBackgroundColor());
+    /**
+     * 画坐标轴
+     */
+    @Override
+    public void drawAxis(Canvas canvas) {
+        mAxisLeftRenderer.renderer(canvas);
+        mAxisRightRenderer.renderer(canvas);
+        mAxisTopRenderer.renderer(canvas);
+        mAxisBottomRenderer.renderer(canvas);
+    }
+
+    /**
+     * 画坐标轴文本 (左、右、上 如果配置了)
+     */
+    @Override
+    public void drawAxisLabels(Canvas canvas) {
+        mAxisLeftRenderer.drawAxisLabels(canvas);
+        mAxisRightRenderer.drawAxisLabels(canvas);
+        mAxisTopRenderer.drawAxisLabels(canvas);
+    }
+
+    /**
+     * 画坐标轴底部文本
+     */
+    @Override
+    public void drawBottomLabels(Canvas canvas) {
+        mAxisBottomRenderer.drawAxisLabels(canvas);
+    }
+
+    /**
+     * 画网格线
+     */
+    @Override
+    public void drawGridLine(Canvas canvas) {
+        // 左右 只画一次
+        Axis axisLeft = mAxisLeftRenderer.getAxis();
+        boolean drawLeft = axisLeft.isEnable() && axisLeft.isGridLineEnable() && axisLeft.getGridCount() > 0;
+
+        Axis axisRight = mAxisRightRenderer.getAxis();
+        boolean drawRight = axisRight.isEnable() && axisRight.isGridLineEnable() && axisRight.getGridCount() > 0;
+
+        if (drawLeft && drawRight) {
+            mAxisLeftRenderer.drawGridLines(canvas);
+        } else if (drawLeft) {
+            mAxisLeftRenderer.drawGridLines(canvas);
+        } else if (drawRight) {
+            mAxisRightRenderer.drawGridLines(canvas);
         }
 
-        // 画水印
-        if (isShowWaterMark()) {
-            drawWaterMark(canvas);
+        // 上下 只画一次
+        Axis axisTop = mAxisTopRenderer.getAxis();
+        boolean drawTop = axisTop.isEnable() && axisTop.isGridLineEnable() && axisTop.getGridCount() > 0;
+
+        Axis axisBottom = mAxisBottomRenderer.getAxis();
+        boolean drawBottom = axisBottom.isEnable() && axisBottom.isGridLineEnable() && axisBottom.getGridCount() > 0;
+
+        if (drawTop && drawBottom) {
+            mAxisTopRenderer.drawGridLines(canvas);
+        } else if (drawTop) {
+            mAxisTopRenderer.drawGridLines(canvas);
+        } else if (drawBottom) {
+            mAxisBottomRenderer.drawGridLines(canvas);
         }
+    }
 
-        // 画网格线
-        drawGridLine(canvas);
-
-        // Removes clipping rectangle
-        canvas.restoreToCount(clipRestoreCount);
+    /**
+     * 画十字交叉线
+     */
+    @Override
+    public void drawHighlight(Canvas canvas) {
+        mHighlightRenderer.renderer(canvas);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldWidth, int oldHeight) {
-        int chartLeft = getPaddingLeft() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth());
-        int chartRight = getWidth() - getPaddingRight() - (mAxisRight.isInside() ? 0 : mAxisRight.getLabelWidth());
-        int contentBottom = getHeight() - getPaddingBottom() - mAxisBottom.getLabelHeight();
-
-        mContentRect.set(chartLeft, getPaddingTop(), chartRight,contentBottom);
-
-        mBottomRect.set(chartLeft, contentBottom, chartRight, getHeight());
+    void highlightValue(Highlight highlight) {
+        mHighlightRenderer.highlightValue(highlight);
+        invalidate();
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = getMinChartWidth() + getPaddingLeft() + (mAxisLeft.isInside() ? 0 : mAxisLeft.getLabelWidth()) + getPaddingRight();
-        int height = getMinChartHeight() + (mAxisBottom.isInside() ? 0 : mAxisBottom.getLabelHeight()) + getPaddingBottom();
-        setMeasuredDimension(
-                Math.max(getSuggestedMinimumWidth(), resolveSize(width, widthMeasureSpec)),
-                Math.max(getSuggestedMinimumHeight(), resolveSize(height, heightMeasureSpec))
-        );
+    void cleanHighlight() {
+        setHighlightState(HighlightState.initial);
+        mHighlightRenderer.cleanHighlight();
+        invalidate();
     }
 
     @Override
@@ -190,56 +162,15 @@ public abstract class BaseChartView extends ScrollAndScaleView implements IChart
 
     }
 
+    @Nullable
     @Override
-    public void drawCrossWire() {
-
+    Paint getRenderPaint() {
+        if (chartRenderer == null) return null;
+        return chartRenderer.getRenderPaint();
     }
 
-    public int getMinChartWidth() {
-        return minChartWidth;
-    }
-
-    public void setMinChartWidth(int minChartWidth) {
-        this.minChartWidth = minChartWidth;
-    }
-
-    public int getMinChartHeight() {
-        return minChartHeight;
-    }
-
-    public void setMinChartHeight(int minChartHeight) {
-        this.minChartHeight = minChartHeight;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public boolean isDrawLabelsInBottom() {
-        return drawLabelsInBottom;
-    }
-
-    public void setDrawLabelsInBottom(boolean drawLabelsInBottom) {
-        this.drawLabelsInBottom = drawLabelsInBottom;
-    }
-
-    public boolean isShowWaterMark() {
-        return showWaterMark;
-    }
-
-    public void setShowWaterMark(boolean showWaterMark) {
-        this.showWaterMark = showWaterMark;
-    }
-
-    public boolean isNightMode() {
-        return isNightMode;
-    }
-
-    public void setNightMode(boolean nightMode) {
-        isNightMode = nightMode;
+    @Override
+    public ChartData<T> getChartData() {
+        return chartRenderer.getChartData();
     }
 }

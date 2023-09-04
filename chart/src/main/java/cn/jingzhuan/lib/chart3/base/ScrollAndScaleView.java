@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.base;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -11,7 +12,8 @@ import android.widget.OverScroller;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 
-import cn.jingzhuan.lib.chart3.state.CrossWireState;
+import cn.jingzhuan.lib.chart.Viewport;
+import cn.jingzhuan.lib.chart3.state.HighlightState;
 import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 
 /**
@@ -31,6 +33,13 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     protected GestureDetectorCompat mDetector;
 
     protected JZScaleGestureDetector mScaleDetector;
+
+    protected Viewport mCurrentViewport = new Viewport();
+
+
+    protected Rect mContentRect = new Rect();
+
+    protected Rect mBottomRect = new Rect();
 
     private boolean mIsTouching = false;
 
@@ -72,7 +81,7 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     /**
      * 十字光标状态
      */
-    private CrossWireState mCrossWireState = CrossWireState.initial;
+    private HighlightState mHighlightState = HighlightState.initial;
 
     public ScrollAndScaleView(Context context) {
         super(context);
@@ -116,7 +125,7 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         Log.i(TAG, "onSingleTapUp");
-        onCrossWireStateChange(e);
+        onHighlightStateChange(e);
         return true;
     }
 
@@ -227,14 +236,14 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
      * 手指按下时 十字光标状态的更新
      * press、move、forever 都需要绘制十字光标
      */
-    private void onCrossWireStateChange(MotionEvent event) {
-        if (mCrossWireState == CrossWireState.initial) {
+    private void onHighlightStateChange(MotionEvent event) {
+        if (mHighlightState == HighlightState.initial) {
             // 按下前为initial 按下后设置为Press
-            setCrossWireState(CrossWireState.press);
+            setHighlightState(HighlightState.press);
             onTouchPoint(event);
-        } else if (mCrossWireState == CrossWireState.press || mCrossWireState == CrossWireState.move) {
+        } else if (mHighlightState == HighlightState.press || mHighlightState == HighlightState.move) {
             // 按下前为press || move 按下后设置为initial
-            setCrossWireState(CrossWireState.initial);
+            setHighlightState(HighlightState.initial);
         } else {
             onTouchPoint(event);
         }
@@ -243,12 +252,12 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
     /**
      * 设置十字光标状态
      */
-    public void setCrossWireState(CrossWireState crossWireState) {
-        mCrossWireState = crossWireState;
+    public void setHighlightState(HighlightState highlightState) {
+        mHighlightState = highlightState;
     }
 
-    public CrossWireState getCrossWireState() {
-        return mCrossWireState;
+    public HighlightState getHighlightState() {
+        return mHighlightState;
     }
 
     /**
@@ -335,5 +344,20 @@ public abstract class ScrollAndScaleView extends View implements GestureDetector
      * 按下位置的更新
      */
     abstract void onTouchPoint(MotionEvent event);
+
+    /**
+     * 当前Viewport
+     */
+    public Viewport getCurrentViewport() {
+        return mCurrentViewport;
+    }
+
+    public Rect getContentRect() {
+        return mContentRect;
+    }
+
+    public Rect getBottomRect() {
+        return mBottomRect;
+    }
 
 }

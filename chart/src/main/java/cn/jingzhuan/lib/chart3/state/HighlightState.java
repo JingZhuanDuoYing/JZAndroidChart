@@ -5,7 +5,7 @@ package cn.jingzhuan.lib.chart3.state;
  * created by lei
  * 十字光标状态
  */
-public enum CrossWireState {
+public enum HighlightState {
     /**
      * 初始状态
      */
