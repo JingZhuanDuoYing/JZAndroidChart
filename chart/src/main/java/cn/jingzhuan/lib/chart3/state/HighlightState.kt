@@ -1,30 +1,28 @@
-package cn.jingzhuan.lib.chart3.state;
+package cn.jingzhuan.lib.chart3.state
 
 /**
- * @since 2023-09-01
+ * @since 2023-09-05
  * created by lei
  * 十字光标状态
  */
-public enum HighlightState {
+enum class HighlightState {
     /**
      * 初始状态
      */
-    initial,
+    Initial,
 
     /**
      * 按下
      */
-    press,
+    Press,
 
     /**
      * 移动
      */
-    move,
+    Move,
 
     /**
      * 长存
      */
-    forever
-
-
+    Forever
 }
