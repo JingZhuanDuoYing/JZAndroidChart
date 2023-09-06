@@ -1,9 +1,9 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Shader
-import cn.jingzhuan.lib.chart.Viewport
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency
+import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
@@ -12,11 +12,10 @@ import java.lang.Float.isNaN
  * @since 2023-09-05
  * created by lei
  */
-class LineDataSet @JvmOverloads constructor(
+open class LineDataSet @JvmOverloads constructor(
     lineValues: List<LineValue>,
     @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
-) :
-    AbstractDataSet<LineValue>(lineValues, axisDependency) {
+) : AbstractDataSet<LineValue>(lineValues, axisDependency) {
 
     var lineThickness = 2
 
@@ -72,12 +71,18 @@ class LineDataSet @JvmOverloads constructor(
     private fun calcViewportY(viewport: Viewport) {
         viewportYMax = -Float.MAX_VALUE
         viewportYMin = Float.MAX_VALUE
+
         if (headPoint != null) {
             calcViewportMinMax(headPoint)
         }
-        for (value in getVisiblePoints(viewport)!!) {
+
+        val visiblePoints = getVisiblePoints(viewport)
+        if (visiblePoints.isNullOrEmpty()) return
+
+        for (value in visiblePoints) {
             calcViewportMinMax(value)
         }
+
         val range = viewportYMax - viewportYMin
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
             viewportYMin -= range * minValueOffsetPercent

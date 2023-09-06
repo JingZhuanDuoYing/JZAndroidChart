@@ -2,7 +2,7 @@ package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import cn.jingzhuan.lib.chart.Viewport
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart.renderer.TextValueRenderer
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_BOTTOM
@@ -19,7 +19,7 @@ import kotlin.math.min
  * @since 2023-09-05
  * created by lei
  */
-class ScatterDataSet(scatterValues: List<ScatterValue>) :
+open class ScatterDataSet(scatterValues: List<ScatterValue>) :
     AbstractDataSet<ScatterValue>(scatterValues) {
 
     var shape: Drawable? = null
@@ -43,8 +43,6 @@ class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private var ORIGINAL_VIEWPORT_Y_MAX = -Float.MAX_VALUE
 
-    private var contentRect: Rect? = null
-
     var isAutoWidth = true
 
     var isAutoExpand = true
@@ -54,22 +52,24 @@ class ScatterDataSet(scatterValues: List<ScatterValue>) :
     var forceValueCount = -1
 
     override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, mix: Float) {
-        contentRect = content
         viewportYMax = max
         viewportYMin = mix
+
         val visiblePoints = getVisiblePoints(viewport)
-        for (i in visiblePoints!!.indices) {
-            val value = visiblePoints[i]
+        if (visiblePoints.isNullOrEmpty()) return
+
+        for (value in visiblePoints) {
             calcViewportMinMax(value)
         }
+
         ORIGINAL_VIEWPORT_Y_MAX = viewportYMax
         ORIGINAL_VIEWPORT_Y_MIN = viewportYMin
         if (isAutoExpand) {
-            for (i in visiblePoints.indices) {
-                val e = visiblePoints[i]
-                calcViewportMinMaxExpansion(i, e, viewport, content)
+            for (value in visiblePoints) {
+                calcViewportMinMaxExpansion(value, viewport, content)
             }
         }
+
         val range: Float = viewportYMax - viewportYMin
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
             viewportYMin -= range * minValueOffsetPercent
@@ -81,7 +81,7 @@ class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private fun calcViewportMinMax(value: ScatterValue?) {
         if (value == null || !value.isVisible) return
-        if (java.lang.Float.isNaN(value.value)) return
+        if (isNaN(value.value)) return
         if (value.value < viewportYMin) {
             viewportYMin = value.value
         }
@@ -90,20 +90,15 @@ class ScatterDataSet(scatterValues: List<ScatterValue>) :
         }
     }
 
-    private fun calcViewportMinMaxExpansion(
-        i: Int,
-        e: ScatterValue?,
-        viewport: Viewport,
-        content: Rect?
-    ) {
-        if (e == null || !e.isVisible) return
-        if (isNaN(e.value)) return
-        if (content == null) return
+    private fun calcViewportMinMaxExpansion(value: ScatterValue?, viewport: Viewport, content: Rect) {
+        if (value == null || !value.isVisible) return
+        if (isNaN(value.value)) return
         if (shape == null) return
+
         val range: Float = viewportYMax - viewportYMin
         if (range <= 0f) return
-        val width =
-            (contentRect!!.width() - startXOffset - endXOffset) / getVisibleRange(viewport) + 1
+
+        val width = (content.width() - startXOffset - endXOffset) / getVisibleRange(viewport) + 1
         var shapeHeight = shape!!.intrinsicHeight.toFloat()
         if (isAutoWidth) {
             var shapeWidth = max(width * 0.8f, shapeMinWidth)
@@ -121,7 +116,7 @@ class ScatterDataSet(scatterValues: List<ScatterValue>) :
         } else if (shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
             ORIGINAL_VIEWPORT_Y_MIN
         } else {
-            e.value
+            value.value
         }
         val newValue: Float
         if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {

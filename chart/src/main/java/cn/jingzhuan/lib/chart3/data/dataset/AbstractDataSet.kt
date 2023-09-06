@@ -2,9 +2,9 @@ package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
 import android.graphics.Rect
-import cn.jingzhuan.lib.chart.Viewport
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency
+import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
 import kotlin.math.roundToInt
@@ -22,7 +22,7 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var isVisible = true
 
-    var dataSetEnable = true
+    var enable = true
 
     var viewportYMin = Float.MAX_VALUE
 
@@ -89,11 +89,6 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     fun getEntryForIndex(index: Int): T? {
         return values.getOrNull(index)
-    }
-
-    fun setEnable(enable: Boolean) {
-        this.dataSetEnable = enable
-        isVisible = enable
     }
 
     fun getVisiblePoints(viewport: Viewport): List<T>? {

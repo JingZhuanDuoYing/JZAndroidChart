@@ -4,15 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import cn.jingzhuan.lib.chart.R
-import cn.jingzhuan.lib.chart.component.Highlight
-import cn.jingzhuan.lib.chart.utils.FloatUtils
+import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.value.AbstractValue
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 
-class HighlightRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
-    private val chart: AbstractChartView<V, T>
-) : AbstractRenderer<V, T>(chart) {
+class HighlightRenderer<T : AbstractDataSet<*>>(
+    private val chart: AbstractChartView<T>
+) : AbstractRenderer<T>(chart) {
 
     var highlight: Highlight? = null
 
@@ -113,12 +112,10 @@ class HighlightRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
         val leftMin = chartData.leftMin
         val price = getTouchPriceByY(y, leftMax, leftMin)
         val valueFormatter = chart.axisLeftRenderer.axis.labelValueFormatter
-        val text: String = if (valueFormatter == null) {
-            if (price == -1f) "--" else FloatUtils.keepPrecision(price, 2).toString()
-        } else {
-            valueFormatter.format(price, 0)
-        }
+        val text: String = valueFormatter?.format(price, 0)
+            ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price, 2).toString()
         if (text.isEmpty()) return
+
         val width = calculateWidth(text)
 
         // 画背景
@@ -156,12 +153,10 @@ class HighlightRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
         val rightMin = chartData.rightMin
         val price = getTouchPriceByY(y, rightMax, rightMin)
         val valueFormatter = chart.axisRightRenderer.axis.labelValueFormatter
-        val text: String = if (valueFormatter == null) {
-            if (price == -1f) "--" else FloatUtils.keepPrecision(price, 2).toString()
-        } else {
-            valueFormatter.format(price, -1)
-        }
+        val text: String = valueFormatter?.format(price, -1)
+            ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price, 2).toString()
         if (text.isEmpty()) return
+
         val width = calculateWidth(text)
 
         // 画背景

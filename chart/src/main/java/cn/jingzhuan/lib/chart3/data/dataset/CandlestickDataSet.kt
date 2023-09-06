@@ -4,16 +4,18 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.Pair
 import android.util.SparseArray
-import cn.jingzhuan.lib.chart.Viewport
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency
+import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
+import java.lang.Float.isInfinite
+import java.lang.Float.isNaN
 
 /**
  * @since 2023-09-05
  * created by lei
  */
-class CandlestickDataSet @JvmOverloads constructor(
+open class CandlestickDataSet @JvmOverloads constructor(
     candlestickValues: List<CandlestickValue>,
     @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
 ) : AbstractDataSet<CandlestickValue>(candlestickValues, axisDependency) {
@@ -62,9 +64,9 @@ class CandlestickDataSet @JvmOverloads constructor(
      */
     var enableGap = false
 
-    var lowGaps: SparseArray<Pair<Float, Float>>? = null
+    var lowGaps: SparseArray<Pair<Float, Float>> = SparseArray()
 
-    var highGaps: SparseArray<Pair<Float, Float>>? = null
+    var highGaps: SparseArray<Pair<Float, Float>> = SparseArray()
 
     var candleWidthPercent = 0.8f
 
@@ -72,28 +74,31 @@ class CandlestickDataSet @JvmOverloads constructor(
         if (values.isEmpty()) return
         viewportYMax = -Float.MAX_VALUE
         viewportYMin = Float.MAX_VALUE
+
         val visiblePoints = getVisiblePoints(viewport)
-        for (i in visiblePoints!!.indices) {
-            val value = visiblePoints[i]
+        if (visiblePoints.isNullOrEmpty()) return
+
+        for (value in visiblePoints) {
             calcViewportMinMax(value)
         }
+
         if (enableGap) {
             var max = -Float.MAX_VALUE
             var min = Float.MAX_VALUE
             for (i in values.indices.reversed()) {
                 val e = values[i]
-                if (java.lang.Float.isNaN(e.low)) continue
-                if (java.lang.Float.isNaN(e.high)) continue
-                if (java.lang.Float.isInfinite(e.low)) continue
-                if (java.lang.Float.isInfinite(e.high)) continue
+                if (isNaN(e.low)) continue
+                if (isNaN(e.high)) continue
+                if (isInfinite(e.low)) continue
+                if (isInfinite(e.high)) continue
                 if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
                     if (min - e.high > 0.01f) {
                         // 上涨缺口
-                        highGaps!!.put(i, Pair(e.high, min))
+                        highGaps.put(i, Pair(e.high, min))
                     }
                     if (e.low - max > 0.01f) {
                         // 下跌缺口
-                        lowGaps!!.put(i, Pair(e.low, max))
+                        lowGaps.put(i, Pair(e.low, max))
                     }
                 }
                 if (e.low < min) min = e.low
@@ -111,10 +116,10 @@ class CandlestickDataSet @JvmOverloads constructor(
 
     private fun calcViewportMinMax(value: CandlestickValue?) {
         if (value == null || !value.isVisible) return
-        if (java.lang.Float.isNaN(value.low)) return
-        if (java.lang.Float.isNaN(value.high)) return
-        if (java.lang.Float.isInfinite(value.low)) return
-        if (java.lang.Float.isInfinite(value.high)) return
+        if (isNaN(value.low)) return
+        if (isNaN(value.high)) return
+        if (isInfinite(value.low)) return
+        if (isInfinite(value.high)) return
         if (value.low < viewportYMin) {
             viewportYMin = value.low
         }
@@ -140,16 +145,4 @@ class CandlestickDataSet @JvmOverloads constructor(
         calcViewportMinMax(value)
         return values.remove(value)
     }
-
-    var isEnableGap: Boolean
-        get() = enableGap
-        set(enableGap) {
-            this.enableGap = enableGap
-            if (lowGaps == null) {
-                lowGaps = SparseArray()
-            }
-            if (highGaps == null) {
-                highGaps = SparseArray()
-            }
-        }
 }

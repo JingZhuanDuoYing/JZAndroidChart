@@ -7,10 +7,11 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
-import cn.jingzhuan.lib.chart.component.Highlight
+import cn.jingzhuan.lib.chart.animation.ChartAnimator
+import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
+import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
 import cn.jingzhuan.lib.chart3.state.HighlightState
 
@@ -18,32 +19,27 @@ import cn.jingzhuan.lib.chart3.state.HighlightState
  * @since 2023-09-05
  * created by lei
  */
-class BaseChartView<V : AbstractValue, T : AbstractDataSet<V>> : AbstractChartView<V, T> {
+open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
-    private var chartRenderer: AbstractRenderer<V, T>? = null
+    protected var chartRenderer: AbstractRenderer<T>? = null
 
     private val waterMarkPaint = Paint()
+
+    private lateinit var chartAnimator: ChartAnimator
 
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    override fun initChart() {}
+    override fun initChart() {
+        chartAnimator = ChartAnimator { postInvalidate() }
+    }
 
-    fun setChartRenderer(chartRenderer: AbstractRenderer<V, T>?) {
+    fun setRenderer(chartRenderer: AbstractRenderer<T>?) {
         this.chartRenderer = chartRenderer
     }
 
@@ -160,6 +156,37 @@ class BaseChartView<V : AbstractValue, T : AbstractDataSet<V>> : AbstractChartVi
     override val renderPaint: Paint?
         get() = chartRenderer?.renderPaint
 
-    override val chartData: ChartData<V, T>
+    override val chartData: ChartData<T>
         get() = chartRenderer?.chartData ?: ChartData()
+
+    fun animateX(durationMillis: Int) {
+        chartAnimator.animateX(durationMillis)
+    }
+
+    fun animateX(durationMillis: Int, easing: EasingFunction?) {
+        chartAnimator.animateX(durationMillis, easing)
+    }
+
+    fun animateY(durationMillis: Int) {
+        chartAnimator.animateY(durationMillis)
+    }
+
+    fun animateY(durationMillis: Int, easing: EasingFunction?) {
+        chartAnimator.animateY(durationMillis, easing)
+    }
+
+    fun animateXY(durationMillisX: Int, durationMillisY: Int) {
+        chartAnimator.animateXY(durationMillisX, durationMillisY)
+    }
+
+    fun animateXY(durationMillisX: Int, durationMillisY: Int, easing: EasingFunction?) {
+        chartAnimator.animateXY(durationMillisX, durationMillisY, easing)
+    }
+
+    fun animateXY(
+        durationMillisX: Int, durationMillisY: Int, easingX: EasingFunction?,
+        easingY: EasingFunction?
+    ) {
+        chartAnimator.animateXY(durationMillisX, durationMillisY, easingX, easingY)
+    }
 }

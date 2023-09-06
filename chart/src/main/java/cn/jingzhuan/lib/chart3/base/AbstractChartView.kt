@@ -9,9 +9,9 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
 import cn.jingzhuan.lib.chart.R
-import cn.jingzhuan.lib.chart.component.AxisX
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.Highlight
+import cn.jingzhuan.lib.chart3.axis.AxisX
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.value.AbstractValue
@@ -25,7 +25,7 @@ import kotlin.math.max
  * @since 2023-09-05
  * created by lei
  */
-abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : ScrollAndScaleView, IChartView {
+abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, IChartView {
 
     private var mDrawBitmap: WeakReference<Bitmap>? = null
 
@@ -33,15 +33,15 @@ abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : Sc
 
     private var bitmapCanvas: Canvas? = null
 
-    lateinit var axisLeftRenderer: AxisRenderer<V, T>
+    lateinit var axisLeftRenderer: AxisRenderer<T>
 
-    lateinit var axisRightRenderer: AxisRenderer<V, T>
+    lateinit var axisRightRenderer: AxisRenderer<T>
 
-    lateinit var axisTopRenderer: AxisRenderer<V, T>
+    lateinit var axisTopRenderer: AxisRenderer<T>
 
-    lateinit var axisBottomRenderer: AxisRenderer<V, T>
+    lateinit var axisBottomRenderer: AxisRenderer<T>
 
-    protected lateinit var highlightRenderer: HighlightRenderer<V, T>
+    protected lateinit var highlightRenderer: HighlightRenderer<T>
 
     var minChartWidth = 0
 
@@ -128,20 +128,11 @@ abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : Sc
         init(attrs, 0)
     }
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs, defStyleAttr)
     }
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
         init(attrs, defStyleAttr)
     }
 
@@ -189,7 +180,7 @@ abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : Sc
         val axisBottom = AxisX(AxisX.BOTTOM)
         axisBottomRenderer = AxisRenderer(this, axisBottom)
 
-        val mAxisRenderers: MutableList<AxisRenderer<V, T>> = ArrayList(4)
+        val mAxisRenderers: MutableList<AxisRenderer<T>> = ArrayList(4)
         mAxisRenderers.add(axisLeftRenderer)
         mAxisRenderers.add(axisRightRenderer)
         mAxisRenderers.add(axisTopRenderer)
@@ -206,7 +197,7 @@ abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : Sc
             val axis = axisRenderer.axis
             axis.labelTextSize = labelTextSize
             axis.labelTextColor = labelTextColor
-            axis.setLabelSeparation(labelSeparation)
+            axis.labelSeparation = labelSeparation
             axis.gridColor = gridColor
             axis.gridThickness = gridThickness
             axis.axisColor = axisColor
@@ -333,7 +324,7 @@ abstract class AbstractChartView<V : AbstractValue, T : AbstractDataSet<V>> : Sc
         releaseBitmap()
     }
 
-    abstract val chartData: ChartData<V, T>?
+    abstract val chartData: ChartData<T>?
 
     abstract val renderPaint: Paint?
 

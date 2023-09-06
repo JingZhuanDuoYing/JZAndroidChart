@@ -1,9 +1,9 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
-import cn.jingzhuan.lib.chart.Viewport
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency
+import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.TreeValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
@@ -14,10 +14,11 @@ import kotlin.math.min
  * @since 2023-09-05
  * created by lei
  */
-open class TreeDataSet @JvmOverloads constructor(
-    treeValues: List<TreeValue>,
-    @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
-) : AbstractDataSet<TreeValue>(treeValues, axisDependency) {
+open class TreeDataSet : AbstractDataSet<TreeValue> {
+
+    constructor(treeValues: List<TreeValue>) : this(treeValues, AxisY.DEPENDENCY_BOTH)
+
+    constructor(treeValues: List<TreeValue>, @AxisDependency axisDependency: Int) : super(treeValues, axisDependency)
 
     var strokeThickness = 2f
 

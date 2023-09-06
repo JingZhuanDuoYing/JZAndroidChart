@@ -12,5 +12,5 @@ interface IValueIndexFormatter {
      * @param index 传入index
      * @return 返回字符串
      */
-    fun format(index: Int): String?
+    fun format(index: Int): String
 }

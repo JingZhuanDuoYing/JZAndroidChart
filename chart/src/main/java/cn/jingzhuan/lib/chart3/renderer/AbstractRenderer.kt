@@ -4,17 +4,16 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
-import cn.jingzhuan.lib.chart.Viewport
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 
 /**
  * @since 2023-09-05
- * created by lei
+ * @author lei
  */
-abstract class AbstractRenderer<V : AbstractValue, T : AbstractDataSet<V>>(chart: AbstractChartView<V, T>) {
+abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) {
     protected var viewport: Viewport
 
     protected var contentRect: Rect
@@ -48,11 +47,29 @@ abstract class AbstractRenderer<V : AbstractValue, T : AbstractDataSet<V>>(chart
         return contentRect.bottom - contentRect.height() * (y - viewport.top) / viewport.height()
     }
 
-    fun setTypeface(tf: Typeface?) {
+    open fun setTypeface(tf: Typeface?) {
         labelTextPaint.typeface = tf
     }
 
-    val chartData: ChartData<V, T>
+    open fun addDataSet(dataSet: T?) {
+        chartData.add(dataSet)
+    }
+
+    /**
+     * 清掉chartData
+     */
+    open fun clearDataSet(){
+        chartData.clear()
+    }
+
+    /**
+     * 重新计算viewport
+     */
+    protected open fun calcDataSetMinMax() {
+        chartData.calcMaxMin(viewport, contentRect)
+    }
+
+    open val chartData: ChartData<T>
         get() = ChartData()
 
     abstract fun renderer(canvas: Canvas)

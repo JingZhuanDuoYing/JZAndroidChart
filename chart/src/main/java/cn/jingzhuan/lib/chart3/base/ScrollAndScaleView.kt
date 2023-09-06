@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart3.base
 
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
@@ -9,7 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
-import cn.jingzhuan.lib.chart.Viewport
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.state.HighlightState
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.roundToInt
@@ -84,23 +85,34 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var highlightState = HighlightState.Initial
 
+    /**
+     * 最大可见数量
+     */
+    var maxVisibleEntryCount = 250
+
+    /**
+     * 最小可见数量
+     */
+    var minVisibleEntryCount = 15
+
+    /**
+     * 当前可见数量
+     */
+    var currentVisibleEntryCount = -1
+
+    /**
+     * 总数量
+     */
+    var totalEntryCount = 0
+
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     protected open fun init(attrs: AttributeSet?, defStyleAttr: Int) {
         setWillNotDraw(false)
@@ -129,7 +141,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         e1: MotionEvent,
         e2: MotionEvent,
         distanceX: Float,
-        distanceY: Float
+        distanceY: Float,
     ): Boolean {
         Log.i(TAG, "onScroll")
         if (!isLongPress && !isMultipleTouch) {
@@ -168,7 +180,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         e1: MotionEvent,
         e2: MotionEvent,
         velocityX: Float,
-        velocityY: Float
+        velocityY: Float,
     ): Boolean {
         Log.i(TAG, "onFling")
         if (!isTouching && isScrollEnable) {
@@ -247,6 +259,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         } else {
             onTouchPoint(event)
         }
+    }
+
+    open fun setCurrentViewport(viewport: RectF) {
+        currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
+        currentViewport.constrainViewport()
+//        triggerViewportChange()
     }
 
     /**

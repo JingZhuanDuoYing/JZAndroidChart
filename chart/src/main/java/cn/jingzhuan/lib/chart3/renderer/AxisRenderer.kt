@@ -3,13 +3,11 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
-import cn.jingzhuan.lib.chart.AxisAutoValues
-import cn.jingzhuan.lib.chart.component.Axis
-import cn.jingzhuan.lib.chart.component.AxisX
-import cn.jingzhuan.lib.chart.component.AxisY
+import cn.jingzhuan.lib.chart3.axis.Axis
+import cn.jingzhuan.lib.chart3.axis.AxisX
+import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
@@ -20,10 +18,10 @@ import kotlin.math.roundToInt
  * @since 2023-09-05
  * created by lei
  */
-class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
-    chart: AbstractChartView<V, T>?,
+class AxisRenderer<T : AbstractDataSet<*>>(
+    chart: AbstractChartView<T>,
     val axis: Axis
-) : AbstractRenderer<V, T>(chart!!) {
+) : AbstractRenderer<T>(chart) {
 
     private lateinit var axisPaint: Paint
 
@@ -57,7 +55,7 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
     override fun renderer(canvas: Canvas) {
         if (axis.labels == null) {
             if (axis is AxisX) {
-                computeAxisStopsX(viewport.left, viewport.right, axis, null)
+                computeAxisStopsX(viewport.left, viewport.right, axis)
             } else if (axis is AxisY) {
                 computeAxisStopsY(axis)
             }
@@ -112,8 +110,7 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
     private fun computeAxisStopsX(
         start: Float,
         stop: Float,
-        axis: AxisX,
-        autoValues: AxisAutoValues?
+        axis: AxisX
     ) {
         val range = (stop - start).toDouble()
         if (axis.gridCount == 0 || range <= 0) {
@@ -167,8 +164,8 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
      */
     fun drawAxisLabels(canvas: Canvas) {
         if (!axis.isLabelEnable) return
-        if (axis.labels == null || axis.labels.isEmpty()) return
-        val labels = axis.labels
+        if (axis.labels.isNullOrEmpty()) return
+        val labels = axis.labels ?: emptyList()
         labelTextPaint.color = axis.labelTextColor
         labelTextPaint.textSize = axis.labelTextSize
         var x = 0f
@@ -211,7 +208,7 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
                 )
                 labelOffset = labelBuffer.size - labelLength
                 labelTextPaint.textAlign = Paint.Align.CENTER
-                val colorSetter = axis.getLabelColorSetter()
+                val colorSetter = axis.labelColorSetter
                 if (colorSetter != null) {
                     labelTextPaint.color = colorSetter.getColorByIndex(i)
                 }
@@ -223,10 +220,10 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
             }
         } else {
             // Y轴
-            val height = contentRect.height() / (axis.labels.size - 1f)
+            val height = contentRect.height() / (labels.size - 1f)
             var separation = 0f
-            for (i in axis.labels.indices) {
-                val labelCharArray = axis.labels[i].toCharArray()
+            for (i in labels.indices) {
+                val labelCharArray = labels[i].toCharArray()
                 labelLength = labelCharArray.size
                 System.arraycopy(
                     labelCharArray,
@@ -239,12 +236,12 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
                 when (axis.axisPosition) {
                     AxisY.LEFT_OUTSIDE, AxisY.RIGHT_INSIDE -> {
                         labelTextPaint.textAlign = Paint.Align.RIGHT
-                        separation = -axis.labelSeparation.toFloat()
+                        separation = -axis.labelSeparation
                     }
 
                     AxisY.LEFT_INSIDE, AxisY.RIGHT_OUTSIDE -> {
                         labelTextPaint.textAlign = Paint.Align.LEFT
-                        separation = axis.labelSeparation.toFloat()
+                        separation = axis.labelSeparation
                     }
                 }
                 val textHeightOffset = (labelTextPaint.descent() + labelTextPaint.ascent()) / 2
@@ -275,9 +272,8 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
         if (axis is AxisX) {
             val width = contentRect.width() / count.toFloat()
             for (i in 1 until count) {
-                if (axis.getGirdLineColorSetter() != null) {
-                    gridPaint.color =
-                        axis.getGirdLineColorSetter().getColorByIndex(axis.getGridColor(), i)
+                if (axis.girdLineColorSetter != null) {
+                    gridPaint.color = axis.girdLineColorSetter!!.getColorByIndex(axis.gridColor, i)
                 }
                 canvas.drawLine(
                     contentRect.left + i * width,
@@ -291,8 +287,8 @@ class AxisRenderer<V : AbstractValue, T : AbstractDataSet<V>>(
         if (axis is AxisY) {
             val height = contentRect.height() / count.toFloat()
             for (i in 1 until count) {
-                if (axis.getGirdLineColorSetter() != null) {
-                    gridPaint.color = axis.getGirdLineColorSetter().getColorByIndex(axis.getGridColor(), i)
+                if (axis.girdLineColorSetter != null) {
+                    gridPaint.color = axis.girdLineColorSetter!!.getColorByIndex(axis.gridColor, i)
                 }
                 canvas.drawLine(
                     contentRect.left.toFloat(),

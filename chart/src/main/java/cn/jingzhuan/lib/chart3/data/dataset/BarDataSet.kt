@@ -1,11 +1,13 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
-import cn.jingzhuan.lib.chart.Viewport
-import cn.jingzhuan.lib.chart.component.AxisY
-import cn.jingzhuan.lib.chart.component.AxisY.AxisDependency
+import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
+import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
+import java.lang.Float.isInfinite
+import java.lang.Float.isNaN
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,7 +15,7 @@ import kotlin.math.min
  * @since 2023-09-05
  * created by lei
  */
-class BarDataSet @JvmOverloads constructor(
+open class BarDataSet @JvmOverloads constructor(
     barValues: List<BarValue>,
     @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
 ) : AbstractDataSet<BarValue>(barValues, axisDependency) {
@@ -46,9 +48,14 @@ class BarDataSet @JvmOverloads constructor(
         if (values.isEmpty()) return
         viewportYMax = -Float.MAX_VALUE
         viewportYMin = Float.MAX_VALUE
-        for (value in getVisiblePoints(viewport)!!) {
+
+        val visiblePoints = getVisiblePoints(viewport)
+        if (visiblePoints.isNullOrEmpty()) return
+
+        for (value in visiblePoints) {
             calcMinMaxY(value)
         }
+
         val range = viewportYMax - viewportYMin
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
             viewportYMin -= range * minValueOffsetPercent
@@ -62,7 +69,7 @@ class BarDataSet @JvmOverloads constructor(
         if (value == null || !value.isEnable) return
         if (value.values == null) return
         for (v in value.values!!) {
-            if (!java.lang.Float.isNaN(v) && !java.lang.Float.isInfinite(v)) {
+            if (!isNaN(v) && !isInfinite(v)) {
                 viewportYMin = min(viewportYMin, v)
                 viewportYMax = max(viewportYMax, v)
             }
