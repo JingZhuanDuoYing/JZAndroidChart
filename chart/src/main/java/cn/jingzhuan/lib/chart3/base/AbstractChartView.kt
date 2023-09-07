@@ -14,10 +14,9 @@ import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
-import cn.jingzhuan.lib.chart3.state.HighlightState
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import java.lang.ref.WeakReference
 import kotlin.math.max
 
@@ -253,7 +252,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         }
 
         // 画十字光标
-        if (highlightState != HighlightState.Initial) {
+        if (highlightState != HIGHLIGHT_STATUS_INITIAL) {
             drawHighlight(canvas)
         }
     }

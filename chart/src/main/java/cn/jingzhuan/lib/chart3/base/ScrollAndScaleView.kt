@@ -11,7 +11,9 @@ import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart3.Viewport
-import cn.jingzhuan.lib.chart3.state.HighlightState
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.roundToInt
 
@@ -83,7 +85,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 十字光标状态
      */
-    var highlightState = HighlightState.Initial
+    var highlightState = HIGHLIGHT_STATUS_INITIAL
 
     /**
      * 最大可见数量
@@ -249,13 +251,13 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * press、move、forever 都需要绘制十字光标
      */
     private fun onHighlightStateChange(event: MotionEvent) {
-        if (highlightState == HighlightState.Initial) {
+        if (highlightState == HIGHLIGHT_STATUS_INITIAL) {
             // 按下前为initial 按下后设置为Press
-            highlightState = HighlightState.Press
+            highlightState = HIGHLIGHT_STATUS_PRESS
             onTouchPoint(event)
-        } else if (highlightState == HighlightState.Press || highlightState == HighlightState.Move) {
+        } else if (highlightState == HIGHLIGHT_STATUS_PRESS || highlightState == HIGHLIGHT_STATUS_MOVE) {
             // 按下前为press || move 按下后设置为initial
-            highlightState = HighlightState.Initial
+            highlightState = HIGHLIGHT_STATUS_INITIAL
         } else {
             onTouchPoint(event)
         }

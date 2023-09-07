@@ -13,7 +13,7 @@ import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
-import cn.jingzhuan.lib.chart3.state.HighlightState
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 
 /**
  * @since 2023-09-05
@@ -146,7 +146,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     override fun cleanHighlight() {
-        highlightState = HighlightState.Initial
+        highlightState = HIGHLIGHT_STATUS_INITIAL
         highlightRenderer.cleanHighlight()
         invalidate()
     }
