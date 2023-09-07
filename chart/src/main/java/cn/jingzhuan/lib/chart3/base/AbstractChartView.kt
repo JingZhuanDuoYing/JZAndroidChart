@@ -9,9 +9,9 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
 import cn.jingzhuan.lib.chart.R
+import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.axis.AxisX
 import cn.jingzhuan.lib.chart3.axis.AxisY
-import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
@@ -32,13 +32,21 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     private var bitmapCanvas: Canvas? = null
 
-    lateinit var axisLeftRenderer: AxisRenderer<T>
+    val axisLeft = AxisY(AxisY.LEFT_INSIDE)
 
-    lateinit var axisRightRenderer: AxisRenderer<T>
+    val axisRight = AxisY(AxisY.RIGHT_INSIDE)
 
-    lateinit var axisTopRenderer: AxisRenderer<T>
+    val axisTop = AxisX(AxisX.TOP)
 
-    lateinit var axisBottomRenderer: AxisRenderer<T>
+    val axisBottom = AxisX(AxisX.BOTTOM)
+
+    protected lateinit var axisLeftRenderer: AxisRenderer<T>
+
+    protected lateinit var axisRightRenderer: AxisRenderer<T>
+
+    protected lateinit var axisTopRenderer: AxisRenderer<T>
+
+    protected lateinit var axisBottomRenderer: AxisRenderer<T>
 
     protected lateinit var highlightRenderer: HighlightRenderer<T>
 
@@ -167,16 +175,12 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     }
 
     private fun initAxisRenderers(ta: TypedArray) {
-        val axisLeft = AxisY(AxisY.LEFT_INSIDE)
+        axisTop.isGridLineEnable = false
+        axisTop.isLabelEnable = false
+
         axisLeftRenderer = AxisRenderer(this, axisLeft)
-
-        val axisRight = AxisY(AxisY.RIGHT_INSIDE)
         axisRightRenderer = AxisRenderer(this, axisRight)
-
-        val axisTop = AxisX(AxisX.TOP)
         axisTopRenderer = AxisRenderer(this, axisTop)
-
-        val axisBottom = AxisX(AxisX.BOTTOM)
         axisBottomRenderer = AxisRenderer(this, axisBottom)
 
         val mAxisRenderers: MutableList<AxisRenderer<T>> = ArrayList(4)
@@ -258,10 +262,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
-        val axisLeft = axisLeftRenderer.axis
         val chartLeft = paddingLeft + if (axisLeft.isInside) 0 else axisLeft.labelWidth
 
-        val axisRight = axisRightRenderer.axis
         val chartRight = width - paddingRight - if (axisRight.isInside) 0 else axisRight.labelWidth
 
         val axisBottom = axisBottomRenderer.axis
@@ -271,10 +273,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val axisLeft = axisLeftRenderer.axis
         val width = minChartWidth + paddingLeft + (if (axisLeft.isInside) 0 else axisLeft.labelWidth) + paddingRight
 
-        val axisBottom = axisBottomRenderer.axis
         val height = minChartHeight + (if (axisBottom.isInside) 0 else axisBottom.labelHeight) + paddingBottom
 
         setMeasuredDimension(
@@ -331,9 +331,4 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      * 十字光标选中
      */
     abstract fun highlightValue(highlight: Highlight?)
-
-    /**
-     * 清除十字光标
-     */
-    abstract fun cleanHighlight()
 }

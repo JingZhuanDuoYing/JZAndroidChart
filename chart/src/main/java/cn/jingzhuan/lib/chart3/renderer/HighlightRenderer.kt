@@ -6,8 +6,10 @@ import android.graphics.Rect
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
+import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.utils.NumberUtils
+import java.lang.Float.isNaN
 
 class HighlightRenderer<T : AbstractDataSet<*>>(
     private val chart: AbstractChartView<T>
@@ -23,7 +25,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
     private fun initPaints() {
         highlightLinePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        highlightLinePaint.style = Paint.Style.STROKE
+        highlightLinePaint.style = Paint.Style.FILL_AND_STROKE
         highlightLinePaint.strokeWidth = chart.highlightThickness
 
         labelTextPaint.textSize = chart.highlightTextSize
@@ -32,6 +34,10 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         renderPaint.style = Paint.Style.FILL
         renderPaint.color = chart.highlightTextBgColor
+    }
+
+    override fun getChartData(): ChartData<T>? {
+        return null
     }
 
     override fun renderer(canvas: Canvas) {
@@ -60,7 +66,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
      */
     private fun drawHighlightVertical(canvas: Canvas) {
         var x = highlight!!.x
-        if (java.lang.Float.isNaN(x)) return
+        if (isNaN(x)) return
         val thickness = chart.highlightThickness
         if (x < contentRect.left + thickness * 0.5f) {
             x = contentRect.left + thickness * 0.5f
@@ -78,7 +84,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
      */
     private fun drawHighlightHorizontal(canvas: Canvas) {
         var y = highlight!!.y
-        if (java.lang.Float.isNaN(y)) return
+        if (isNaN(y)) return
         val thickness = chart.highlightThickness
         if (y < contentRect.top + thickness * 0.5f) {
             y = contentRect.top + thickness * 0.5f
@@ -86,7 +92,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         if (y > contentRect.bottom - thickness * 0.5f) {
             y = contentRect.bottom - thickness * 0.5f
         }
-        canvas.drawLine(0f, y, contentRect.right.toFloat(), y, highlightLinePaint)
+        canvas.drawLine(contentRect.left.toFloat(), y, contentRect.right.toFloat(), y, highlightLinePaint)
     }
 
     /**
@@ -111,7 +117,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val leftMax = chartData!!.leftMax
         val leftMin = chartData.leftMin
         val price = getTouchPriceByY(y, leftMax, leftMin)
-        val valueFormatter = chart.axisLeftRenderer.axis.labelValueFormatter
+        val valueFormatter = chart.axisLeft.labelValueFormatter
         val text: String = valueFormatter?.format(price, 0)
             ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price, 2).toString()
         if (text.isEmpty()) return
@@ -152,7 +158,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val rightMax = chartData!!.rightMax
         val rightMin = chartData.rightMin
         val price = getTouchPriceByY(y, rightMax, rightMin)
-        val valueFormatter = chart.axisRightRenderer.axis.labelValueFormatter
+        val valueFormatter = chart.axisRight.labelValueFormatter
         val text: String = valueFormatter?.format(price, -1)
             ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price, 2).toString()
         if (text.isEmpty()) return
@@ -177,7 +183,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val highlight = highlight
         val x = highlight!!.x
         if (x.isNaN()) return
-        val formatter = chart.axisBottomRenderer.axis.valueIndexFormatter
+        val formatter = chart.axisBottom.valueIndexFormatter
         var text = ""
         if (formatter != null) {
             text = formatter.format(highlight.dataIndex)

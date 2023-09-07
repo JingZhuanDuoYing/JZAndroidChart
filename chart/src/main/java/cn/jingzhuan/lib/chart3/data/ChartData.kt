@@ -5,7 +5,6 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import java.util.Collections
 import kotlin.math.max
 import kotlin.math.min
@@ -25,8 +24,6 @@ open class ChartData<T : AbstractDataSet<*>> {
     var rightMin = Float.MAX_VALUE
 
     var rightMax = -Float.MAX_VALUE
-
-    var entryCount = 0
 
     var leftAxis: AxisY? = null
 
@@ -78,12 +75,11 @@ open class ChartData<T : AbstractDataSet<*>> {
         leftMax = lMax
         rightMin = rMin
         rightMax = rMax
-        entryCount = 0
 
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
                 for (t in dataSets) {
-                    if (!t.enable || t !is ScatterDataSet) continue
+
                     if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
                         t.calcMinMax(viewport, content, leftMax, leftMin)
                     }
@@ -98,9 +94,6 @@ open class ChartData<T : AbstractDataSet<*>> {
                         rightMax = max(rightMax, t.viewportYMax)
                         rightMin = min(rightMin, t.viewportYMin)
                     }
-                    if (t.getEntryCount() > entryCount) {
-                        entryCount = t.getEntryCount()
-                    }
                 }
             }
             setMinMax()
@@ -108,7 +101,15 @@ open class ChartData<T : AbstractDataSet<*>> {
     }
 
     fun setChart(chart: AbstractChartView<T>) {
-        leftAxis = chart.axisLeftRenderer.axis as AxisY
-        rightAxis = chart.axisRightRenderer.axis as AxisY
+        leftAxis = chart.axisLeft
+        rightAxis = chart.axisRight
+    }
+
+    open fun getTouchDataSet(): T?{
+        return null
+    }
+
+    open fun getTouchEntryCount(): Int{
+        return 0
     }
 }

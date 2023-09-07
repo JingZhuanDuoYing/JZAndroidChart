@@ -41,7 +41,7 @@ open class BarDataSet @JvmOverloads constructor(
     var valueFormatter: IValueFormatter? = null
 
     override fun getEntryCount(): Int {
-        return if (forceValueCount > 0) forceValueCount else values.size
+        return if (forceValueCount > 0) forceValueCount else max(minValueCount, values.size)
     }
 
     override fun calcMinMax(viewport: Viewport) {

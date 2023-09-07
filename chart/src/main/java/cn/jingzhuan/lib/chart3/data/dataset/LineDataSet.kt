@@ -7,6 +7,7 @@ import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
+import kotlin.math.max
 
 /**
  * @since 2023-09-05
@@ -60,7 +61,7 @@ open class LineDataSet @JvmOverloads constructor(
     var radius = 2f
 
     override fun getEntryCount(): Int {
-        return if (forceValueCount > 0) forceValueCount else values.size
+        return if (forceValueCount > 0) forceValueCount else max(minValueCount, values.size)
     }
 
     override fun calcMinMax(viewport: Viewport) {

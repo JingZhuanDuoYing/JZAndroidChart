@@ -48,6 +48,8 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var drawIndex = -1
 
+    var minValueCount = -1
+
     /**
      * 当前Dataset的标签
      */

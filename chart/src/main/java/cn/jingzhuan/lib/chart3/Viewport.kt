@@ -31,7 +31,7 @@ class Viewport : RectF {
     }
 
     fun initialized(): Boolean {
-        return !(left == AXIS_X_MIN && right == AXIS_X_MAX && top == -AXIS_Y_MIN && bottom == AXIS_Y_MAX)
+        return !(left == AXIS_X_MIN && right == AXIS_X_MAX && top == AXIS_Y_MIN && bottom == AXIS_Y_MAX)
     }
 
     fun moveToEnd(): Viewport {

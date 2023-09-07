@@ -3,10 +3,12 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
+import cn.jingzhuan.lib.chart.utils.FloatUtils
 import cn.jingzhuan.lib.chart3.axis.Axis
 import cn.jingzhuan.lib.chart3.axis.AxisX
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
+import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -20,7 +22,7 @@ import kotlin.math.roundToInt
  */
 class AxisRenderer<T : AbstractDataSet<*>>(
     chart: AbstractChartView<T>,
-    val axis: Axis
+    val axis: Axis,
 ) : AbstractRenderer<T>(chart) {
 
     private lateinit var axisPaint: Paint
@@ -47,6 +49,10 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         if (axis.labelTextSize > 0) {
             axis.labelHeight = abs(labelTextPaint.fontMetrics.top).toInt()
         }
+    }
+
+    override fun getChartData(): ChartData<T>? {
+        return null
     }
 
     /**
@@ -110,7 +116,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
     private fun computeAxisStopsX(
         start: Float,
         stop: Float,
-        axis: AxisX
+        axis: AxisX,
     ) {
         val range = (stop - start).toDouble()
         if (axis.gridCount == 0 || range <= 0) {
@@ -120,11 +126,11 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         val rawInterval = range / count
         val interval = roundToOneSignificantFigure(rawInterval).toDouble()
         val first = ceil(start / interval) * interval
-        axis.mLabelEntries = FloatArray(count + 1)
+        axis.labelEntries = FloatArray(count + 1)
         var f: Double = first
         var i = 0
         while (i < count + 1) {
-            axis.mLabelEntries[i] = f.toFloat()
+            axis.labelEntries[i] = f.toFloat()
             f += interval
             ++i
         }
@@ -147,12 +153,12 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         val max = axis.yMax.toDouble()
         val count = axis.gridCount + 1
         val interval = (max - min) / count
-        axis.mLabelEntries = FloatArray(count + 1)
+        axis.labelEntries = FloatArray(count + 1)
         if (min < Float.MAX_VALUE && max > -Float.MAX_VALUE && min <= max) {
             var f = min
             var j = 0
             while (j < count + 1) {
-                axis.mLabelEntries[j] = f.toFloat()
+                axis.labelEntries[j] = f.toFloat()
                 f += interval
                 j++
             }
@@ -162,7 +168,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
     /**
      * 画坐标轴文本
      */
-    fun drawAxisLabels(canvas: Canvas) {
+    private fun drawAxisLabels(canvas: Canvas) {
         if (!axis.isLabelEnable) return
         if (axis.labels.isNullOrEmpty()) return
         val labels = axis.labels ?: emptyList()
@@ -259,6 +265,129 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         }
     }
 
+    private fun drawGridLabels(canvas: Canvas) {
+        if (!axis.isLabelEnable) return
+        val labels: FloatArray = axis.labelEntries
+        if (labels.isEmpty()) return
+
+        labelTextPaint.color = axis.labelTextColor
+        labelTextPaint.textSize = axis.labelTextSize
+
+        var x = 0f
+        var y = 0f
+
+        when (axis.axisPosition) {
+            AxisX.TOP, AxisX.TOP_INSIDE -> {
+                x = contentRect.left.toFloat()
+                y = contentRect.top.toFloat()
+            }
+
+            AxisX.BOTTOM, AxisX.BOTTOM_INSIDE -> {
+                x = contentRect.left.toFloat()
+                y = (contentRect.top + contentRect.height()).toFloat()
+            }
+
+            AxisY.LEFT_INSIDE, AxisY.LEFT_OUTSIDE -> {
+                x = contentRect.left.toFloat()
+                y = contentRect.bottom.toFloat()
+            }
+
+            AxisY.RIGHT_INSIDE, AxisY.RIGHT_OUTSIDE -> {
+                x = contentRect.right.toFloat()
+                y = contentRect.bottom.toFloat()
+            }
+        }
+
+        var labelOffset: Int
+        var labelLength: Int
+
+        if (axis is AxisX) { // X轴
+            val width: Float = contentRect.width() / (labels.size - 1f)
+            for (i in labels.indices) {
+                val valueFormatter = axis.labelValueFormatter
+                if (valueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(labelBuffer, labels[i], 2)
+                } else {
+                    val labelCharArray = valueFormatter.format(labels[i], i).toCharArray()
+                    labelLength = labelCharArray.size
+                    System.arraycopy(labelCharArray, 0, labelBuffer, labelBuffer.size - labelLength, labelLength)
+                }
+                labelOffset = labelBuffer.size - labelLength
+
+                when (i) {
+                    0 -> {
+                        labelTextPaint.textAlign = Paint.Align.LEFT
+                    }
+                    labels.size - 1 -> {
+                        labelTextPaint.textAlign = Paint.Align.RIGHT
+                    }
+                    else -> {
+                        labelTextPaint.textAlign = Paint.Align.CENTER
+                    }
+                }
+
+                val colorSetter = axis.labelColorSetter
+                if (colorSetter != null) {
+                    labelTextPaint.color = colorSetter.getColorByIndex(i)
+                }
+                canvas.drawText(
+                    labelBuffer, labelOffset, labelLength,
+                    x + i * width,  // - textWidth * 0.5f,
+                    y + labelTextPaint.textSize,
+                    labelTextPaint
+                )
+            }
+        } else {
+            // Y轴
+            val height: Float = contentRect.height() / (labels.size - 1f)
+            var separation = 0f
+            for (i in labels.indices) {
+                val valueFormatter = axis.labelValueFormatter
+                if (valueFormatter == null) {
+                    labelLength = FloatUtils.formatFloatValue(labelBuffer, labels[i], 2)
+                } else {
+                    val labelCharArray = valueFormatter.format(labels[i], i).toCharArray()
+                    labelLength = labelCharArray.size
+                    System.arraycopy(labelCharArray, 0, labelBuffer, labelBuffer.size - labelLength, labelLength)
+                }
+
+                labelOffset = labelBuffer.size - labelLength
+
+                when (axis.axisPosition) {
+                    AxisY.LEFT_OUTSIDE, AxisY.RIGHT_INSIDE -> {
+                        labelTextPaint.textAlign = Paint.Align.RIGHT
+                        separation = -axis.labelSeparation
+                    }
+
+                    AxisY.LEFT_INSIDE, AxisY.RIGHT_OUTSIDE -> {
+                        labelTextPaint.textAlign = Paint.Align.LEFT
+                        separation = axis.labelSeparation
+                    }
+                }
+                var textHeightOffset: Float = (labelTextPaint.descent() + labelTextPaint.ascent()) / 2
+
+                if (i == 0) {
+                    // Bottom
+                    textHeightOffset = axis.labelSeparation
+                } else if (i == labels.size - 1) {
+                    // Top
+                    textHeightOffset += textHeightOffset - axis.labelSeparation
+                }
+
+                val colorSetter = (axis as AxisY).labelColorSetter
+                if (colorSetter != null) {
+                    labelTextPaint.color = colorSetter.getColorByIndex(i)
+                }
+                canvas.drawText(
+                    labelBuffer, labelOffset, labelLength,
+                    x + separation,
+                    y - i * height - textHeightOffset,
+                    labelTextPaint
+                )
+            }
+        }
+    }
+
     /**
      * 画网格线
      */
@@ -298,6 +427,14 @@ class AxisRenderer<T : AbstractDataSet<*>>(
                     gridPaint
                 )
             }
+        }
+    }
+
+    fun drawLabels(canvas: Canvas) {
+        if (axis.labels == null) {
+            drawGridLabels(canvas)
+        } else {
+            drawAxisLabels(canvas)
         }
     }
 }

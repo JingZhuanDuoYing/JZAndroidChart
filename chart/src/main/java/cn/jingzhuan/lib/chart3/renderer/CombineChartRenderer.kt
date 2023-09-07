@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
+import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -10,23 +11,57 @@ import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
+import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
+import kotlin.math.max
 
 /**
  * @since 2023-09-06
  */
-class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : AbstractRenderer<AbstractDataSet<*>>(chart)  {
+class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : AbstractRenderer<AbstractDataSet<*>>(chart) {
 
-    private val combineData: CombineData? = null
+    private var combineData: CombineData? = null
 
-    private var candlestickDraw = CandlestickDraw()
+    private var candlestickDraw: CandlestickDraw
+
+    init {
+        candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
+
+        val highlight = Highlight()
+        chart.addOnTouchPointListener(object : OnTouchPointListener {
+            override fun touch(x: Float, y: Float) {
+                if (!chart.isHighlightEnable) return
+                if (combineData == null) return
+
+                val dataSet = combineData!!.getTouchDataSet()
+
+                val valueCount = dataSet.getEntryCount()
+                val xPosition: Float
+                val yPosition: Float
+                highlight.touchX = x
+                highlight.touchY = y
+                val index: Int = getEntryIndex(x)
+                if (index in 0 until valueCount && index < dataSet.values.size) {
+                    val value = dataSet.getEntryForIndex(index) ?: return
+                    xPosition = max(contentRect.left.toFloat(), value.x)
+                    yPosition = value.y
+                    if (xPosition >= 0 && yPosition >= 0) {
+                        highlight.x = xPosition
+                        highlight.y = y
+                        highlight.dataIndex = index
+                        chart.highlightValue(highlight)
+                    }
+                }
+            }
+        })
+    }
 
     /**
      * 开始绘制
      */
     override fun renderer(canvas: Canvas) {
-        val combineData = chartData
+        val combineData = getChartData()
 
-        val sortedDataSets = combineData.allDataSet
+        val sortedDataSets = combineData!!.allDataSet
 
         for (i in sortedDataSets.indices) {
             val dataSet: AbstractDataSet<*> = sortedDataSets[i]
@@ -34,7 +69,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
             }
             if (dataSet is CandlestickDataSet) {
-                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet)
+                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, chartView.currentViewport)
             }
             if (dataSet is LineDataSet) {
 
@@ -71,7 +106,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         calcDataSetMinMax()
     }
 
-    override val chartData: CombineData
-        get() = combineData ?: CombineData()
+    override fun getChartData(): CombineData? {
+        if (combineData == null) combineData = CombineData()
+        return combineData
+    }
 
 }

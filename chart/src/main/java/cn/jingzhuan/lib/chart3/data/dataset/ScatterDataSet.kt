@@ -134,7 +134,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
     }
 
     override fun getEntryCount(): Int {
-        return if (forceValueCount > 0) forceValueCount else values.size
+        return if (forceValueCount > 0) forceValueCount else max(minValueCount, values.size)
     }
 
     override fun addEntry(value: ScatterValue?): Boolean {

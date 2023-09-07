@@ -40,7 +40,7 @@ open class TreeDataSet : AbstractDataSet<TreeValue> {
         }
 
     override fun getEntryCount(): Int {
-        return values.size
+        return max(minValueCount, values.size)
     }
 
     override fun calcMinMax(viewport: Viewport) {

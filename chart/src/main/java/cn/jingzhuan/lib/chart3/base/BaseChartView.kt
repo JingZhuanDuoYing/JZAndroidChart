@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
@@ -13,7 +12,6 @@ import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
-import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 
 /**
  * @since 2023-09-05
@@ -81,11 +79,11 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
      * 画坐标轴文本 (左、右、上 如果配置了)
      */
     override fun drawAxisLabels(canvas: Canvas) {
-        axisLeftRenderer.drawAxisLabels(canvas)
+        axisLeftRenderer.drawLabels(canvas)
 
-        axisRightRenderer.drawAxisLabels(canvas)
+        axisRightRenderer.drawLabels(canvas)
 
-        axisTopRenderer.drawAxisLabels(canvas)
+        axisTopRenderer.drawLabels(canvas)
 
     }
 
@@ -93,7 +91,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
      * 画坐标轴底部文本
      */
     override fun drawBottomLabels(canvas: Canvas) {
-        axisBottomRenderer.drawAxisLabels(canvas)
+        axisBottomRenderer.drawLabels(canvas)
     }
 
     /**
@@ -145,19 +143,24 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
     }
 
-    override fun cleanHighlight() {
-        highlightState = HIGHLIGHT_STATUS_INITIAL
+    override fun getEntryIndex(x: Float): Int {
+        return chartRenderer?.getEntryIndex(x) ?: -1
+    }
+
+    override fun getEntryX(index: Int): Float {
+        return chartRenderer?.getEntryX(index) ?: -1f
+    }
+
+    override fun onHighlightClean() {
         highlightRenderer.cleanHighlight()
         invalidate()
     }
-
-    override fun onTouchPoint(event: MotionEvent) {}
 
     override val renderPaint: Paint?
         get() = chartRenderer?.renderPaint
 
     override val chartData: ChartData<T>
-        get() = chartRenderer?.chartData ?: ChartData()
+        get() = chartRenderer?.getChartData() ?: ChartData()
 
     fun animateX(durationMillis: Int) {
         chartAnimator.animateX(durationMillis)
@@ -185,7 +188,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     fun animateXY(
         durationMillisX: Int, durationMillisY: Int, easingX: EasingFunction?,
-        easingY: EasingFunction?
+        easingY: EasingFunction?,
     ) {
         chartAnimator.animateXY(durationMillisX, durationMillisY, easingX, easingY)
     }

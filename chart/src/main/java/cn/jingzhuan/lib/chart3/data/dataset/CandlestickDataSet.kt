@@ -10,6 +10,7 @@ import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
+import kotlin.math.max
 
 /**
  * @since 2023-09-05
@@ -17,7 +18,7 @@ import java.lang.Float.isNaN
  */
 open class CandlestickDataSet @JvmOverloads constructor(
     candlestickValues: List<CandlestickValue>,
-    @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
+    @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH,
 ) : AbstractDataSet<CandlestickValue>(candlestickValues, axisDependency) {
 
     var isAutoWidth = true
@@ -129,7 +130,7 @@ open class CandlestickDataSet @JvmOverloads constructor(
     }
 
     override fun getEntryCount(): Int {
-        return values.size
+        return max(minValueCount, values.size)
     }
 
     override fun addEntry(value: CandlestickValue?): Boolean {

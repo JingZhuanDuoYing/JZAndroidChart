@@ -12,7 +12,7 @@ import kotlin.math.max
  * @since 2023-09-06
  * 综合ChartView
  */
-class CombineChartView : BaseChartView<AbstractDataSet<*>> {
+open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
     private var currentData = CombineData()
 
@@ -25,8 +25,8 @@ class CombineChartView : BaseChartView<AbstractDataSet<*>> {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun initChart() {
-        chartRenderer = CombineChartRenderer(this)
         super.initChart()
+        chartRenderer = CombineChartRenderer(this)
     }
 
     fun setCombineData(combineData: CombineData) {
@@ -83,7 +83,7 @@ class CombineChartView : BaseChartView<AbstractDataSet<*>> {
         }
     }
 
-    fun addDataSet(abstractDataSet: AbstractDataSet<*>) {
+    open fun addDataSet(abstractDataSet: AbstractDataSet<*>) {
         getRenderer()?.addDataSet(abstractDataSet)
     }
 

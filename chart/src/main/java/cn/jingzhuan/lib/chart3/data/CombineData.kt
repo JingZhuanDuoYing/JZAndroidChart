@@ -67,6 +67,22 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         return treeChartData.add(dataSet)
     }
 
+    fun getCombineDataSets(): List<AbstractDataSet<*>> {
+        return if (getCandlestickDataSets().isNotEmpty()) {
+            getCandlestickDataSets()
+        } else if (getBarDataSets().isNotEmpty()) {
+            getBarDataSets()
+        } else if (getLineDataSets().isNotEmpty()) {
+            getLineDataSets()
+        } else if (getTreeDataSets().isNotEmpty()) {
+            getTreeDataSets()
+        } else if (getScatterDataSets().isNotEmpty()) {
+            getTreeDataSets()
+        } else {
+            emptyList()
+        }
+    }
+
     override fun calcMaxMin(viewport: Viewport, content: Rect) {
         leftMin = Float.MAX_VALUE
         leftMax = -Float.MAX_VALUE
@@ -169,6 +185,14 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
             rightAxis?.yMin = rightMin
             rightAxis?.yMax = rightMax
         }
+    }
+
+    override fun getTouchDataSet(): AbstractDataSet<*> {
+        return getCombineDataSets().first()
+    }
+
+    override fun getTouchEntryCount(): Int {
+        return getTouchDataSet().values.size
     }
 
     fun addAll(dataSets: List<AbstractDataSet<*>>) {

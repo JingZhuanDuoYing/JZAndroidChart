@@ -10,9 +10,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
+import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
-import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.roundToInt
@@ -32,6 +34,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     private var mDetector: GestureDetectorCompat? = null
 
     private var mScaleDetector: JZScaleGestureDetector? = null
+
+    protected var touchPointListener: OnTouchPointListener? = null
 
     /**
      * 当前Viewport
@@ -73,6 +77,21 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var isScrollEnable = true
 
     /**
+     * 是否能够显示光标
+     */
+    var isHighlightEnable = true
+
+    /**
+     * 是否能够放大
+     */
+    var canZoomIn = true
+
+    /**
+     * 是否能够缩小
+     */
+    var canZoomOut = true
+
+    /**
      * 是否开启区间统计
      */
     var isOpenRange = false
@@ -80,7 +99,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 是否触发按下位置的回调
      */
-    private var touchPointEnable = true
+    var touchPointEnable = true
 
     /**
      * 十字光标状态
@@ -135,7 +154,37 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         Log.i(TAG, "onSingleTapUp")
-        onHighlightStateChange(e)
+        if (isDoubleTapToZoom) return false
+        if (isOpenRange) return false
+
+        if (isClickable && hasOnClickListeners()) {
+            // 光标清除
+            highlightState = HIGHLIGHT_STATUS_INITIAL
+            onHighlightClean()
+            performClick()
+        } else {
+            // 当前按下的位置有效
+            if (getEntryIndex(e.x) > 0) {
+                when (highlightState) {
+                    HIGHLIGHT_STATUS_INITIAL -> {
+                        highlightState = HIGHLIGHT_STATUS_PRESS
+                        onTouchPoint(e)
+                    }
+                    HIGHLIGHT_STATUS_FOREVER -> {
+                        onTouchPoint(e)
+                    }
+                    else -> {
+                        highlightState = HIGHLIGHT_STATUS_INITIAL
+                        onHighlightClean()
+                    }
+                }
+            } else {
+                highlightState = HIGHLIGHT_STATUS_INITIAL
+                onHighlightClean()
+                performClick()
+            }
+        }
+
         return true
     }
 
@@ -246,31 +295,14 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         return true
     }
 
-    /**
-     * 手指按下时 十字光标状态的更新
-     * press、move、forever 都需要绘制十字光标
-     */
-    private fun onHighlightStateChange(event: MotionEvent) {
-        if (highlightState == HIGHLIGHT_STATUS_INITIAL) {
-            // 按下前为initial 按下后设置为Press
-            highlightState = HIGHLIGHT_STATUS_PRESS
-            onTouchPoint(event)
-        } else if (highlightState == HIGHLIGHT_STATUS_PRESS || highlightState == HIGHLIGHT_STATUS_MOVE) {
-            // 按下前为press || move 按下后设置为initial
-            highlightState = HIGHLIGHT_STATUS_INITIAL
-        } else {
-            onTouchPoint(event)
-        }
-    }
-
-    open fun setCurrentViewport(viewport: RectF) {
+    fun setCurrentViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
 //        triggerViewportChange()
     }
 
     /**
-     * 滑动还未完成 强制停止
+     * 滑动还未完成 强制结束
      */
     fun finishScroll() {
         if (mScroller?.isFinished == false)
@@ -280,7 +312,48 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 按下位置的更新
      */
-    abstract fun onTouchPoint(event: MotionEvent)
+    private fun onTouchPoint(event: MotionEvent) {
+        if (touchPointListener != null) {
+            if (!isMultipleTouch && touchPointEnable) {
+                touchPointListener?.touch(event.x, event.y)
+            }
+        }
+    }
+
+    open fun isCanZoomIn(): Boolean {
+        return canZoomIn
+    }
+
+    open fun isCanZoomOut(): Boolean {
+        return canZoomOut
+    }
+
+    open fun zoomIn(@ForceAlign.XForce forceAlignX: Int) {
+
+    }
+
+    open fun zoomOut(@ForceAlign.XForce forceAlignX: Int) {
+
+    }
+
+    fun addOnTouchPointListener(listener: OnTouchPointListener) {
+        this.touchPointListener = listener
+    }
+
+    /**
+     * 获取下标
+     */
+    abstract fun getEntryIndex(x: Float): Int
+
+    /**
+     * 获取X
+     */
+    abstract fun getEntryX(index: Int): Float
+
+    /**
+     * 清除十字光标
+     */
+    abstract fun onHighlightClean()
 
     companion object {
         private const val TAG = "ScrollAndScaleView"

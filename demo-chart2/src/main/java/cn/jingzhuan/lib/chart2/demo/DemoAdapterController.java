@@ -8,6 +8,8 @@ import android.widget.Toast;
 import com.airbnb.epoxy.AutoModel;
 import com.airbnb.epoxy.EpoxyController;
 
+import cn.jingzhuan.lib.chart2.demo.chart3.Chart3Activity;
+
 /**
  * Created by Donglua on 17/7/26.
  */
@@ -29,7 +31,10 @@ public class DemoAdapterController extends EpoxyController {
     @AutoModel
     CommonButtonModel_ lineDrawingModel_;
 
-    private Context context;
+    @AutoModel
+    CommonButtonModel_ chart3Model_;
+
+    private final Context context;
 
     public DemoAdapterController(Context context) {
         this.context = context;
@@ -49,6 +54,12 @@ public class DemoAdapterController extends EpoxyController {
         );
         lineDrawingModel_.buttonText("画线工具");
         lineDrawingModel_.addTo(this);
+
+        chart3Model_.onClickListener(v ->
+                v.getContext().startActivity(new Intent(v.getContext(), Chart3Activity.class))
+        );
+        chart3Model_.buttonText("chart3");
+        chart3Model_.addTo(this);
 
         new LayoutDescTextBindingModel_().id("LineDataSet").text("LineDataSet Chart").addTo(this);
         lineChartModel.addTo(this);

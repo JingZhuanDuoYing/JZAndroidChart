@@ -72,7 +72,7 @@ open class Axis internal constructor(var axisPosition: Int) : AbstractAxis() {
 
     var valueIndexFormatter: IValueIndexFormatter? = null
 
-    var mLabelEntries = floatArrayOf()
+    var labelEntries = floatArrayOf()
 
     var isGridLineEnable = true
 

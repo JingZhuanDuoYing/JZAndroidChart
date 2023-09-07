@@ -14,6 +14,8 @@ import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
  * @author lei
  */
 abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) {
+    protected val chartView: AbstractChartView<T>
+
     protected var viewport: Viewport
 
     protected var contentRect: Rect
@@ -23,6 +25,8 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     protected var labelTextPaint: Paint
 
     init {
+        this.chartView = chart
+
         viewport = chart.currentViewport
         contentRect = chart.contentRect
 
@@ -31,6 +35,34 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         labelTextPaint = Paint()
         labelTextPaint.isAntiAlias = true
+
+        this.getChartData()?.setChart(chart)
+    }
+
+    open fun getEntryIndex(x: Float): Int {
+        if (getChartData() == null) return -1
+        val data = getChartData()
+
+        val valueCount = data!!.getTouchEntryCount()
+
+        var index: Int = (((x - contentRect.left) * viewport.width() / contentRect.width() + viewport.left) * valueCount.toFloat()).toInt()
+        if (index >= valueCount) index = valueCount - 1
+        if (index < 0) index = 0
+
+        return index
+    }
+
+    open fun getEntryX(index: Int): Float {
+        if (getChartData() == null) return -1f
+        val data = getChartData()
+
+        val valueCount = data!!.getTouchEntryCount()
+
+        var x: Float = contentRect.left + (index / valueCount.toFloat() - viewport.left) / viewport.width() * contentRect.width()
+        if (x > contentRect.right) x = contentRect.right.toFloat()
+        if (x < contentRect.left) x = contentRect.left.toFloat()
+
+        return x
     }
 
     /**
@@ -52,25 +84,24 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     }
 
     open fun addDataSet(dataSet: T?) {
-        chartData.add(dataSet)
+        getChartData()?.add(dataSet)
     }
 
     /**
      * 清掉chartData
      */
     open fun clearDataSet(){
-        chartData.clear()
+        getChartData()?.clear()
     }
 
     /**
      * 重新计算viewport
      */
     protected open fun calcDataSetMinMax() {
-        chartData.calcMaxMin(viewport, contentRect)
+        getChartData()?.calcMaxMin(viewport, contentRect)
     }
 
-    open val chartData: ChartData<T>
-        get() = ChartData()
+    abstract fun getChartData(): ChartData<T>?
 
     abstract fun renderer(canvas: Canvas)
 }
