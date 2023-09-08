@@ -103,17 +103,17 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     /**
      * 交叉线文本大小
      */
-    var highlightTextSize = 0f
+    var highlightTextSize = 0
 
     /**
      * 交叉线文本颜色
      */
-    var highlightTextColor = Color.TRANSPARENT
+    var highlightTextColor = 0
 
     /**
      * 交叉线文本背景颜色
      */
-    var highlightTextBgColor = Color.TRANSPARENT
+    var highlightTextBgColor = 0
 
     /**
      * 交叉线文本背景高度
@@ -123,7 +123,12 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     /**
      * 交叉线厚度
      */
-    var highlightThickness = 3f
+    var highlightThickness = 0
+
+    /**
+     * 交叉线颜色
+     */
+    var highlightColor = 0
 
     // </editor-fold desc="十字光标 配置">    ----------------------------------------------------------
 
@@ -157,7 +162,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
             this.bgColor = backgroundColor
 
             val drawLabelsInBottom = ta.getBoolean(R.styleable.Chart_drawLabelsInBottom, false)
-            isDrawLabelsInBottom = drawLabelsInBottom
+            this.isDrawLabelsInBottom = drawLabelsInBottom
 
             val showWaterMark = ta.getBoolean(R.styleable.Chart_showWaterMark, false)
             isShowWaterMark = showWaterMark
@@ -165,8 +170,26 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
             val isNightMode = ta.getBoolean(R.styleable.Chart_isNightMode, false)
             this.isNightMode = isNightMode
 
+            val highlightColor = ta.getColor(R.styleable.Chart_highlightColor, Color.BLACK)
+            this.highlightColor = highlightColor
+
+            val highlightThickness = ta.getDimensionPixelSize(R.styleable.Chart_highlightThickness, 3)
+            this.highlightThickness = highlightThickness
+
+            val highlightTextBgColor = ta.getColor(R.styleable.Chart_highlightTextBgColor, highlightColor)
+            this.highlightTextBgColor = highlightTextBgColor
+
+            val highlightTextBgHeight = ta.getDimensionPixelSize(R.styleable.Chart_highlightTextBgHeight, 50)
+            this.highlightTextBgHeight = highlightTextBgHeight
+
+            val highlightTextColor = ta.getColor(R.styleable.Chart_highlightTextColor, Color.WHITE)
+            this.highlightTextColor = highlightTextColor
+
+            val highlightTextSize = ta.getDimensionPixelSize(R.styleable.Chart_highlightTextSize, 28)
+            this.highlightTextSize = highlightTextSize
+
             initAxisRenderers(ta)
-            highlightRenderer = HighlightRenderer(this)
+
             ta.recycle()
         } catch (e: Exception) {
             ta.recycle()
@@ -196,6 +219,9 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         val axisThickness = ta.getDimension(R.styleable.Chart_axisThickness, 2f)
         val gridColor = ta.getColor(R.styleable.Chart_gridColor, Color.GRAY)
         val axisColor = ta.getColor(R.styleable.Chart_axisColor, Color.GRAY)
+        val bottomLabelHeight = ta.getDimensionPixelSize(R.styleable.Chart_bottomLabelHeight, 50)
+        axisBottom.labelHeight = bottomLabelHeight
+
         for (axisRenderer in mAxisRenderers) {
             val axis = axisRenderer.axis
             axis.labelTextSize = labelTextSize

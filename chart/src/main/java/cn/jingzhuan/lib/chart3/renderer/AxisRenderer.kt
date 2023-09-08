@@ -61,7 +61,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
     override fun renderer(canvas: Canvas) {
         if (axis.labels == null) {
             if (axis is AxisX) {
-                computeAxisStopsX(viewport.left, viewport.right, axis)
+                computeAxisStopsX(currentViewport.left, currentViewport.right, axis)
             } else if (axis is AxisY) {
                 computeAxisStopsY(axis)
             }

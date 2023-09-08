@@ -26,6 +26,11 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
     init {
         candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
 
+        chart.setViewportChangeListener { viewport ->
+            currentViewport.set(viewport)
+            calcDataSetMinMax()
+        }
+
         val highlight = Highlight()
         chart.addOnTouchPointListener(object : OnTouchPointListener {
             override fun touch(x: Float, y: Float) {
@@ -46,7 +51,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                     yPosition = value.y
                     if (xPosition >= 0 && yPosition >= 0) {
                         highlight.x = xPosition
-                        highlight.y = y
+                        highlight.y = if (chart.isFollowFingerY) y else yPosition
                         highlight.dataIndex = index
                         chart.highlightValue(highlight)
                     }

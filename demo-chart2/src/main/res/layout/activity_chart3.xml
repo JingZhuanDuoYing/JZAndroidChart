@@ -13,14 +13,16 @@
         android:layout_marginTop="15dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        app:backgroundColor="#F7F7F7"
         app:axisColor="#ffe5e5e5"
         app:axisThickness="0.5dp"
+        app:backgroundColor="#F7F7F7"
         app:gridColor="#ffe5e5e5"
         app:labelTextColor="#A1ABBB"
         app:labelTextSize="11dp"
-
-        />
+        app:bottomLabelHeight="18dp"
+        app:highlightTextBgHeight="18dp"
+        app:highlightColor="@color/colorAccent"
+        app:highlightThickness="1dp"/>
 
 
 </LinearLayout>

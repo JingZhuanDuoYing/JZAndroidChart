@@ -20,8 +20,8 @@ import cn.jingzhuan.lib.chart.event.HighlightStatusChangeListener
 import cn.jingzhuan.lib.chart.event.OnScaleListener
 import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart.utils.ForceAlign
-import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter
-import cn.jingzhuan.lib.chart2.demo.utils.JZDateTimeFormatter.formatTime
+import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
+import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -153,7 +153,7 @@ class RangeDemoActivity : AppCompatActivity() {
         combineChart.axisBottom.setValueIndexFormatter { index ->
             val time = candlestickValues.getOrNull(index)?.time
             if (time != null) {
-                JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
+                DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
             } else ""
         }
 
@@ -166,8 +166,8 @@ class RangeDemoActivity : AppCompatActivity() {
         if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
             val values = candlestickDataSet.first().getVisiblePoints(viewport)
             if (values.isNotEmpty()) {
-                leftTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
-                rightTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
+                leftTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
+                rightTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
             }
         }
     }

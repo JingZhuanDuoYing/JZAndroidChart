@@ -1,4 +1,4 @@
-package cn.jingzhuan.lib.chart2.demo.utils
+package cn.jingzhuan.lib.chart3.formatter
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -10,10 +10,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-object JZDateTimeFormatter {
+object DateTimeFormatter {
 
     private val dateFormatters = mutableMapOf<String, DateTimeFormatter>()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun ofPattern(pattern: String): DateTimeFormatter {
         return dateFormatters[pattern] ?: DateTimeFormatter.ofPattern(pattern, Locale.CHINA)
     }

@@ -8,6 +8,7 @@ package cn.jingzhuan.lib.chart3.data.value
 abstract class AbstractValue {
     var x = -1f
     var y = -1f
+    var time: Long = -1
 
     fun setCoordinate(x: Float, y: Float) {
         this.x = x

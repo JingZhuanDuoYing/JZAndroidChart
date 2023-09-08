@@ -13,7 +13,6 @@ class CandlestickValue : AbstractValue {
     var low: Float
     var open: Float
     var close: Float
-    var time: Long = -1
     var isVisible = true
     var paintStyle: Paint.Style? = null
     var color = ChartConstant.COLOR_NONE
@@ -75,10 +74,10 @@ class CandlestickValue : AbstractValue {
         paintStyle = mPaintStyle
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val that = o as CandlestickValue
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val that = other as CandlestickValue
         return that.high.compareTo(high) == 0
                 && that.low.compareTo(low) == 0
                 && that.open.compareTo(open) == 0

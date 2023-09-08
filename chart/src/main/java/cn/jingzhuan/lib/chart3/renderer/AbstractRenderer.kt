@@ -16,7 +16,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) {
     protected val chartView: AbstractChartView<T>
 
-    protected var viewport: Viewport
+    protected var currentViewport: Viewport
 
     protected var contentRect: Rect
 
@@ -27,7 +27,7 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     init {
         this.chartView = chart
 
-        viewport = chart.currentViewport
+        currentViewport = chart.currentViewport
         contentRect = chart.contentRect
 
         renderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -45,7 +45,7 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         val valueCount = data!!.getTouchEntryCount()
 
-        var index: Int = (((x - contentRect.left) * viewport.width() / contentRect.width() + viewport.left) * valueCount.toFloat()).toInt()
+        var index: Int = (((x - contentRect.left) * currentViewport.width() / contentRect.width() + currentViewport.left) * valueCount.toFloat()).toInt()
         if (index >= valueCount) index = valueCount - 1
         if (index < 0) index = 0
 
@@ -58,7 +58,7 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         val valueCount = data!!.getTouchEntryCount()
 
-        var x: Float = contentRect.left + (index / valueCount.toFloat() - viewport.left) / viewport.width() * contentRect.width()
+        var x: Float = contentRect.left + (index / valueCount.toFloat() - currentViewport.left) / currentViewport.width() * contentRect.width()
         if (x > contentRect.right) x = contentRect.right.toFloat()
         if (x < contentRect.left) x = contentRect.left.toFloat()
 
@@ -69,14 +69,14 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
      * Computes the pixel offset for the given X lib value. This may be outside the view bounds.
      */
     protected fun getDrawX(x: Float): Float {
-        return contentRect.left + contentRect.width() * (x - viewport.left) / viewport.width()
+        return contentRect.left + contentRect.width() * (x - currentViewport.left) / currentViewport.width()
     }
 
     /**
      * Computes the pixel offset for the given Y lib value. This may be outside the view bounds.
      */
     protected fun getDrawY(y: Float): Float {
-        return contentRect.bottom - contentRect.height() * (y - viewport.top) / viewport.height()
+        return contentRect.bottom - contentRect.height() * (y - currentViewport.top) / currentViewport.height()
     }
 
     open fun setTypeface(tf: Typeface?) {
@@ -98,7 +98,7 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
      * 重新计算viewport
      */
     protected open fun calcDataSetMinMax() {
-        getChartData()?.calcMaxMin(viewport, contentRect)
+        getChartData()?.calcMaxMin(currentViewport, contentRect)
     }
 
     abstract fun getChartData(): ChartData<T>?

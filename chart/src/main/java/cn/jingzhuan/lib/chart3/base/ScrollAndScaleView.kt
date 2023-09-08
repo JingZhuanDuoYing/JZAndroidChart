@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.base
 
 import android.content.Context
+import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -12,11 +13,16 @@ import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
+import cn.jingzhuan.lib.chart3.event.OnViewportChangeListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -27,24 +33,41 @@ import kotlin.math.roundToInt
 abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     JZScaleGestureDetector.OnScaleGestureListener {
 
-    protected var mScrollX = 0
+    private var mDistanceX = 0
 
-    private var mScroller: OverScroller? = null
+    private lateinit var mScroller: OverScroller
 
-    private var mDetector: GestureDetectorCompat? = null
+    private lateinit var mDetector: GestureDetectorCompat
 
-    private var mScaleDetector: JZScaleGestureDetector? = null
+    private lateinit var mScaleDetector: JZScaleGestureDetector
 
-    protected var touchPointListener: OnTouchPointListener? = null
+    private var touchPointListener: OnTouchPointListener? = null
+
+    private var viewportChangeListener: OnViewportChangeListener? = null
+
+    private var loadMoreListener: OnLoadMoreListener? = null
+
+    private val mSurfacePoint = Point()
 
     /**
      * 当前Viewport
      */
     var currentViewport = Viewport()
 
+    /**
+     * 内容区域
+     */
     var contentRect = Rect()
 
+    /**
+     * 底部label区域
+     */
     var bottomRect = Rect()
+
+    /**
+     * 仅用于 zooms and flings.
+     */
+    private val scrollerStartViewport = RectF()
 
     /**
      * 是否在触摸中
@@ -70,6 +93,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 是否多指操作
      */
     var isMultipleTouch = false
+
+    /**
+     * 光标水平线是否跟随手指
+     */
+    var isFollowFingerY = true
 
     /**
      * 是否能够滑动
@@ -132,7 +160,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     protected open fun init(attrs: AttributeSet?, defStyleAttr: Int) {
@@ -144,12 +171,23 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onDown(e: MotionEvent): Boolean {
         Log.i(TAG, "onDown")
+        scrollerStartViewport.set(currentViewport)
         finishScroll()
         return true
     }
 
     override fun onShowPress(e: MotionEvent) {
         Log.i(TAG, "onShowPress")
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+        Log.i(TAG, "onLongPress")
+        if (isOpenRange) return
+        if (!isLongPress) isLongPress = true
+        if (highlightState != HIGHLIGHT_STATUS_MOVE){
+            highlightState = HIGHLIGHT_STATUS_MOVE
+        }
+        onTouchPoint(e)
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
@@ -194,37 +232,74 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         distanceX: Float,
         distanceY: Float,
     ): Boolean {
-        Log.i(TAG, "onScroll")
+        if (!isScrollEnable) {
+            mScroller.forceFinished(true)
+            return false
+        }
+
         if (!isLongPress && !isMultipleTouch) {
-            scrollBy(distanceX.roundToInt(), 0)
+            Log.i(TAG, "onScroll")
+
+            mDistanceX = distanceX.roundToInt()
+
+            /**
+             * Pixel offset is the offset in screen pixels, while viewport offset is the
+             * offset within the current viewport. For additional information on surface sizes
+             * and pixel offsets, see the docs for []. For
+             * additional information about the viewport, see the comments for
+             * [currentViewport].
+             */
+            val viewportOffsetX: Float = mDistanceX * currentViewport.width() / contentRect.width()
+
+            computeScrollSurfaceSize(mSurfacePoint)
+
+            setViewportBottomLeft(currentViewport.left + viewportOffsetX)
             return true
         }
         return false
     }
 
-    override fun onLongPress(e: MotionEvent) {
-        Log.i(TAG, "onLongPress")
-        isLongPress = true
-        onTouchPoint(e)
-    }
-
     override fun computeScroll() {
         super.computeScroll()
-    }
 
-    override fun scrollBy(x: Int, y: Int) {
-        scrollTo(mScrollX - x.toFloat().roundToInt(), 0)
-    }
+        var needsInvalidate = false
 
-    override fun scrollTo(x: Int, y: Int) {
-        if (!isScrollEnable) {
-            mScroller!!.forceFinished(true)
-            return
+        if (mScroller.computeScrollOffset()) {
+
+            // The scroller isn't finished, meaning a fling or programmatic pan operation is currently active.
+            computeScrollSurfaceSize(mSurfacePoint)
+
+            val currX = mScroller.currX
+
+            Log.i(TAG, "computeScroll-> currX=${mScroller.currX} mScroller.isFinished=${mScroller.isFinished}")
+
+            val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
+            val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
+
+            val canScrollX = !leftSide || !rightSide
+
+            if (canScrollX && currX < 0) {
+                needsInvalidate = true
+            } else if (canScrollX && currX > mSurfacePoint.x - contentRect.width()) {
+                needsInvalidate = true
+            }
+            val currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN) * currX / mSurfacePoint.x
+            setViewportBottomLeft(currXRange)
+
+            if (currX <= 0 && leftSide) {
+                Log.w(TAG, "加载更多")
+                needsInvalidate = false
+                mScroller.forceFinished(true)
+                if (loadMoreListener != null) {
+                    loadMoreListener?.onLoadMore()
+                }
+            }
         }
-        val oldX = mScrollX
-        mScrollX = x
-        onScrollChanged(mScrollX, 0, oldX, 0)
-        invalidate()
+
+        if (needsInvalidate) {
+            Log.i(TAG, "computeScroll1")
+            triggerViewportChange()
+        }
     }
 
     override fun onFling(
@@ -233,8 +308,33 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         velocityX: Float,
         velocityY: Float,
     ): Boolean {
-        Log.i(TAG, "onFling")
         if (!isTouching && isScrollEnable) {
+            Log.i(TAG, "onFling")
+            val rightSide = currentViewport.right == Viewport.AXIS_X_MAX
+            if (rightSide) return false
+
+            // Flings use math in pixels (as opposed to math based on the viewport).
+            computeScrollSurfaceSize(mSurfacePoint)
+
+            Log.i(TAG, "onFling->mSurfacePoint(x,y)=${mSurfacePoint.x},${mSurfacePoint.y}")
+
+            scrollerStartViewport.set(currentViewport)
+
+            val startX: Int = (mSurfacePoint.x * (scrollerStartViewport.left - Viewport.AXIS_X_MIN) / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)).toInt()
+
+//            mScroller.forceFinished(true)
+
+            mScroller.fling(
+                startX,
+                0, -velocityX.roundToInt(),
+                0,
+                0, mSurfacePoint.x - contentRect.width(),
+                0, mSurfacePoint.y - contentRect.height(),
+                contentRect.width() / 2,
+                0
+            )
+
+            postInvalidateOnAnimation()
         }
         return true
     }
@@ -256,22 +356,24 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onTouchEvent(event: MotionEvent): Boolean {
         Log.i(TAG, "onTouchEvent")
 
-        if (event.pointerCount > 1) isLongPress = false
-
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
+                Log.i(TAG, "onTouchEvent->ACTION_DOWN")
                 isTouching = true
             }
 
             MotionEvent.ACTION_MOVE ->{
+                Log.i(TAG, "onTouchEvent->ACTION_MOVE")
                 //长按之后移动
                 if (isLongPress) onLongPress(event)
             }
 
             MotionEvent.ACTION_POINTER_UP ->{
+                Log.i(TAG, "onTouchEvent->ACTION_POINTER_UP")
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
+                Log.i(TAG, "onTouchEvent->ACTION_UP")
                 isTouching = false
                 if (isLongPress) {
                     isLongPress = false
@@ -282,6 +384,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                Log.i(TAG, "onTouchEvent->ACTION_CANCEL")
                 isLongPress = false
                 isTouching = false
                 invalidate()
@@ -290,23 +393,89 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             else -> {}
         }
         isMultipleTouch = event.pointerCount > 1
-        mDetector?.onTouchEvent(event)
-        mScaleDetector?.onTouchEvent(event)
+        mDetector.onTouchEvent(event)
+        mScaleDetector.onTouchEvent(event)
         return true
     }
 
     fun setCurrentViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
-//        triggerViewportChange()
+        triggerViewportChange()
+    }
+
+    protected open fun triggerViewportChange() {
+        if (viewportChangeListener != null) {
+            synchronized(this) {
+                try {
+                    viewportChangeListener?.onViewportChange(currentViewport)
+                } catch (e: Exception) {
+                    Log.d(TAG, "OnViewportChangeListener", e)
+                }
+            }
+        }
+        postInvalidateOnAnimation()
+    }
+
+    /**
+     * Sets the current viewport (defined by [currentViewport]) to the given
+     * X and Y positions. Note that the Y value represents the topmost pixel position, and thus
+     * the bottom of the [currentViewport] rectangle. For more details on why top and
+     * bottom are flipped, see [currentViewport].
+     */
+    private fun setViewportBottomLeft(x: Float) {
+        /**
+         * Constrains within the scroll range. The scroll range is simply the viewport extremes
+         * (AXIS_X_MAX, etc.) minus the viewport size. For example, if the extrema were 0 and 10,
+         * and the viewport size was 2, the scroll range would be 0 to 8.
+         */
+
+        val curWidth: Float = currentViewport.width()
+        val left = max(Viewport.AXIS_X_MIN, min(x, Viewport.AXIS_X_MAX - curWidth))
+
+        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
+            return
+        }
+
+        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
+        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
+
+        if (leftSide && currentViewport.left == left) {
+            return
+        }
+
+        if (rightSide && currentViewport.right == left + curWidth) {
+            return
+        }
+
+        currentViewport.left = left
+        currentViewport.right = left + curWidth
+
+        currentViewport.constrainViewport()
+
+        Log.i(TAG, "setViewportBottomLeft.left=${currentViewport.left}, currentViewport.right=${currentViewport.right}")
+        triggerViewportChange()
+    }
+
+    /**
+     * Computes the current scrollable surface size, in pixels. For example, if the entire lib
+     * area is visible, this is simply the current size of [contentRect]. If the lib
+     * is zoomed in 200% in both directions, the returned size will be twice as large horizontally
+     * and vertically.
+     */
+    private fun computeScrollSurfaceSize(out: Point) {
+        out.x = (contentRect.width() * (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)
+                / currentViewport.width()).toInt()
+        out.y = (contentRect.height() * (Viewport.AXIS_Y_MAX - Viewport.AXIS_Y_MIN)
+                / currentViewport.height()).toInt()
     }
 
     /**
      * 滑动还未完成 强制结束
      */
     fun finishScroll() {
-        if (mScroller?.isFinished == false)
-            mScroller?.forceFinished(true)
+        if (!mScroller.isFinished)
+            mScroller.forceFinished(true)
     }
 
     /**
@@ -338,6 +507,14 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun addOnTouchPointListener(listener: OnTouchPointListener) {
         this.touchPointListener = listener
+    }
+
+    fun setViewportChangeListener(listener: OnViewportChangeListener) {
+        this.viewportChangeListener = listener
+    }
+
+    open fun setOnLoadMoreListener(listener: OnLoadMoreListener) {
+        this.loadMoreListener = listener
     }
 
     /**

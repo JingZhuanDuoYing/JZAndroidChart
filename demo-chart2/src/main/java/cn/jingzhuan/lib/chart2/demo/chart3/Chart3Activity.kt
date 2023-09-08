@@ -34,40 +34,12 @@ class Chart3Activity : AppCompatActivity() {
         klineMain = findViewById(R.id.kline_main)
 //        klineMain.scaleSensitivity = 1.1f
 
-//        klineMain.axisBottom.setLabelValueFormatter { _, index ->
-//            when (index) {
-//                0 -> leftTime
-//                4 -> rightTime
-//                else -> ""
-//            }
-//        }
-//
-//        klineMain.axisBottom.setValueIndexFormatter { index ->
-//            val time = candlestickValues.getOrNull(index)?.time
-//            if (time != null) {
-//                JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(time * 1000L)
-//            } else ""
-//        }
-
     }
 
-//    private fun setLeftRightTime(
-//        viewport: Viewport
-//    ) {
-//        val candlestickDataSet = combineChart.candlestickDataSet
-//        if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
-//            val values = candlestickDataSet.first().getVisiblePoints(viewport)
-//            if (values.isNotEmpty()) {
-//                leftTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
-//                rightTime = JZDateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
-//            }
-//        }
-//    }
 
     private fun initListener() {
 
 //        combineChart.addOnViewportChangeListener { viewPort ->
-//            setLeftRightTime(viewPort)
 //        }
 
     }
@@ -87,7 +59,6 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         klineMain.setCombineData(data)
-//        setLeftRightTime(combineChart.currentViewport)
 
     }
 

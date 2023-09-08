@@ -19,6 +19,7 @@
         <attr name="labelTextSize" format="dimension" />
         <attr name="labelTextColor" format="color" />
         <attr name="labelSeparation" format="dimension" />
+        <attr name="bottomLabelHeight" format="dimension" />
         <attr name="axisThickness" format="dimension" />
         <attr name="axisColor" format="color" />
         <attr name="gridThickness" format="dimension" />
@@ -29,5 +30,13 @@
         <attr name="isNightMode" format="boolean" />
         <attr name="minChartWidth" format="dimension"/>
         <attr name="minChartHeight" format="dimension"/>
+
+        <attr name="highlightColor" format="color"/>
+        <attr name="highlightThickness" format="dimension"/>
+        <attr name="highlightTextSize" format="dimension"/>
+        <attr name="highlightTextColor" format="color"/>
+        <attr name="highlightTextBgColor" format="color"/>
+        <attr name="highlightTextBgHeight" format="dimension"/>
+
     </declare-styleable>
 </resources>

@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
+import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
 
 /**
  * @since 2023-09-05
@@ -35,6 +36,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     override fun initChart() {
         chartAnimator = ChartAnimator { postInvalidate() }
+        highlightRenderer = HighlightRenderer(this)
     }
 
     fun setRenderer(chartRenderer: AbstractRenderer<T>?) {
