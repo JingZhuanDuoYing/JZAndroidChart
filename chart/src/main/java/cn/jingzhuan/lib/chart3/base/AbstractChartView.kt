@@ -9,6 +9,7 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
 import cn.jingzhuan.lib.chart.R
+import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.axis.AxisX
 import cn.jingzhuan.lib.chart3.axis.AxisY
@@ -352,6 +353,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     abstract val chartData: ChartData<T>?
 
     abstract val renderPaint: Paint?
+
+    abstract fun getChartAnimator(): ChartAnimator?
 
     /**
      * 十字光标选中

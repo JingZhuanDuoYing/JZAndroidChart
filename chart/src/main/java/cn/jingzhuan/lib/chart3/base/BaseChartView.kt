@@ -24,7 +24,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     private val waterMarkPaint = Paint()
 
-    private lateinit var chartAnimator: ChartAnimator
+    private lateinit var animator: ChartAnimator
 
     constructor(context: Context?) : super(context)
 
@@ -35,7 +35,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun initChart() {
-        chartAnimator = ChartAnimator { postInvalidate() }
+        animator = ChartAnimator { postInvalidate() }
         highlightRenderer = HighlightRenderer(this)
     }
 
@@ -165,33 +165,37 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         get() = chartRenderer?.getChartData() ?: ChartData()
 
     fun animateX(durationMillis: Int) {
-        chartAnimator.animateX(durationMillis)
+        animator.animateX(durationMillis)
     }
 
     fun animateX(durationMillis: Int, easing: EasingFunction?) {
-        chartAnimator.animateX(durationMillis, easing)
+        animator.animateX(durationMillis, easing)
     }
 
     fun animateY(durationMillis: Int) {
-        chartAnimator.animateY(durationMillis)
+        animator.animateY(durationMillis)
     }
 
     fun animateY(durationMillis: Int, easing: EasingFunction?) {
-        chartAnimator.animateY(durationMillis, easing)
+        animator.animateY(durationMillis, easing)
     }
 
     fun animateXY(durationMillisX: Int, durationMillisY: Int) {
-        chartAnimator.animateXY(durationMillisX, durationMillisY)
+        animator.animateXY(durationMillisX, durationMillisY)
     }
 
     fun animateXY(durationMillisX: Int, durationMillisY: Int, easing: EasingFunction?) {
-        chartAnimator.animateXY(durationMillisX, durationMillisY, easing)
+        animator.animateXY(durationMillisX, durationMillisY, easing)
     }
 
     fun animateXY(
         durationMillisX: Int, durationMillisY: Int, easingX: EasingFunction?,
         easingY: EasingFunction?,
     ) {
-        chartAnimator.animateXY(durationMillisX, durationMillisY, easingX, easingY)
+        animator.animateXY(durationMillisX, durationMillisY, easingX, easingY)
+    }
+
+    override fun getChartAnimator(): ChartAnimator? {
+        return animator
     }
 }

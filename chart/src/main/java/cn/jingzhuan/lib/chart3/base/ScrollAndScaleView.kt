@@ -14,6 +14,7 @@ import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
+import cn.jingzhuan.lib.chart3.event.OnScaleListener
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.event.OnViewportChangeListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
@@ -21,6 +22,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -33,8 +35,6 @@ import kotlin.math.roundToInt
 abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     JZScaleGestureDetector.OnScaleGestureListener {
 
-    private var mDistanceX = 0
-
     private lateinit var mScroller: OverScroller
 
     private lateinit var mDetector: GestureDetectorCompat
@@ -46,6 +46,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     private var viewportChangeListener: OnViewportChangeListener? = null
 
     private var loadMoreListener: OnLoadMoreListener? = null
+
+    private var scaleListener: OnScaleListener? = null
 
     private val mSurfacePoint = Point()
 
@@ -73,6 +75,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 是否在触摸中
      */
     var isTouching = false
+
+    /**
+     * 是否正在缩放
+     */
+    var isScaling = false
 
     /**
      * 双击放大
@@ -154,6 +161,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var totalEntryCount = 0
 
+    var scaleSensitivity = 1.05f
+
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -232,31 +241,26 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         distanceX: Float,
         distanceY: Float,
     ): Boolean {
-        if (!isScrollEnable) {
-            mScroller.forceFinished(true)
+        if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch) {
+            finishScroll()
             return false
         }
 
-        if (!isLongPress && !isMultipleTouch) {
-            Log.i(TAG, "onScroll")
+        Log.i(TAG, "onScroll")
 
-            mDistanceX = distanceX.roundToInt()
+        /**
+         * Pixel offset is the offset in screen pixels, while viewport offset is the
+         * offset within the current viewport. For additional information on surface sizes
+         * and pixel offsets, see the docs for []. For
+         * additional information about the viewport, see the comments for
+         * [currentViewport].
+         */
+        val viewportOffsetX: Float = distanceX.roundToInt() * currentViewport.width() / contentRect.width()
 
-            /**
-             * Pixel offset is the offset in screen pixels, while viewport offset is the
-             * offset within the current viewport. For additional information on surface sizes
-             * and pixel offsets, see the docs for []. For
-             * additional information about the viewport, see the comments for
-             * [currentViewport].
-             */
-            val viewportOffsetX: Float = mDistanceX * currentViewport.width() / contentRect.width()
+        computeScrollSurfaceSize(mSurfacePoint)
 
-            computeScrollSurfaceSize(mSurfacePoint)
-
-            setViewportBottomLeft(currentViewport.left + viewportOffsetX)
-            return true
-        }
-        return false
+        setViewportBottomLeft(currentViewport.left + viewportOffsetX)
+        return true
     }
 
     override fun computeScroll() {
@@ -289,7 +293,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             if (currX <= 0 && leftSide) {
                 Log.w(TAG, "加载更多")
                 needsInvalidate = false
-                mScroller.forceFinished(true)
+                finishScroll()
                 if (loadMoreListener != null) {
                     loadMoreListener?.onLoadMore()
                 }
@@ -308,9 +312,18 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         velocityX: Float,
         velocityY: Float,
     ): Boolean {
-        if (!isTouching && isScrollEnable) {
+        if (!isTouching && isScrollEnable && canScroll()) {
             Log.i(TAG, "onFling")
+            val leftSide = currentViewport.left == Viewport.AXIS_X_MIN
             val rightSide = currentViewport.right == Viewport.AXIS_X_MAX
+
+            if (leftSide && rightSide) {
+                if (loadMoreListener != null) {
+                    loadMoreListener?.onLoadMore()
+                }
+                return false
+            }
+
             if (rightSide) return false
 
             // Flings use math in pixels (as opposed to math based on the viewport).
@@ -321,8 +334,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             scrollerStartViewport.set(currentViewport)
 
             val startX: Int = (mSurfacePoint.x * (scrollerStartViewport.left - Viewport.AXIS_X_MIN) / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)).toInt()
-
-//            mScroller.forceFinished(true)
 
             mScroller.fling(
                 startX,
@@ -340,22 +351,128 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onScale(detector: JZScaleGestureDetector): Boolean {
+        if (!isScaleEnable) return false
         Log.i(TAG, "onScale")
-        return false
+        isScaling = true
+
+        val spanX: Float = mScaleDetector.currentSpan
+        var lastSpanX: Float = mScaleDetector.previousSpan
+
+        // 双指距离比上次大，为放大
+        val zoomIn = spanX > lastSpanX
+
+        // 双指距离比上次小，为缩小
+        val zoomOut = lastSpanX > spanX
+
+        val canZoom = abs(abs(lastSpanX) - abs(spanX)) >= 5f
+
+        if (!canZoom) return false
+
+        if (zoomIn) {
+            canZoomOut = true
+            if (!isCanZoomIn()) return false
+        }
+
+        if (zoomOut) {
+            canZoomIn = true
+            if (!isCanZoomOut()) return false
+        }
+
+        var scaleSpanX = lastSpanX
+
+        if (zoomIn) {
+            scaleSpanX = spanX * scaleSensitivity
+        } else if (zoomOut) {
+            lastSpanX *= scaleSensitivity
+        }
+
+        val newWidth = if (zoomIn) {
+            lastSpanX / scaleSpanX * currentViewport.width()
+        } else {
+            lastSpanX / spanX * currentViewport.width()
+        }
+
+        if (newWidth < currentViewport.width() && currentViewport.width() < 0.001) {
+            return true
+        }
+
+        var focusX: Float = mScaleDetector.focusX
+
+        if (zoomOut) focusX *= scaleSensitivity else if (zoomIn) focusX /= scaleSensitivity
+
+        val viewportFocusX = (currentViewport.left + currentViewport.width() * (focusX - contentRect.left) / contentRect.width())
+
+        val ratio = viewportFocusX - newWidth * (focusX - contentRect.left) / contentRect.width()
+
+        if (!canScroll()) {
+            currentViewport.left = Viewport.AXIS_X_MIN
+            currentViewport.right = currentViewport.right - ratio
+            val count: Float = ((currentViewport.right - currentViewport.left) * totalEntryCount).toInt().toFloat()
+
+            if (count > maxVisibleEntryCount) {
+                currentViewport.right = maxVisibleEntryCount / totalEntryCount.toFloat() + currentViewport.left
+            }
+
+            if (currentViewport.right < Viewport.AXIS_X_MAX)
+                currentViewport.right = Viewport.AXIS_X_MAX
+        } else {
+            // 不足一屏 并且缩放到一屏时 能继续缩小
+            if (totalEntryCount < maxVisibleEntryCount && !zoomIn && zoomOut && currentViewport.left == Viewport.AXIS_X_MIN) {
+                currentViewport.left = Viewport.AXIS_X_MIN
+                currentViewport.right = currentViewport.right - ratio
+            } else {
+                // 优先向右缩进
+                currentViewport.left = ratio
+                if (currentViewport.left < Viewport.AXIS_X_MIN) currentViewport.left = Viewport.AXIS_X_MIN
+
+                if (currentViewport.left == Viewport.AXIS_X_MIN) {
+                    currentViewport.right = currentViewport.left + newWidth
+                    if (currentViewport.right > Viewport.AXIS_X_MAX) currentViewport.right = Viewport.AXIS_X_MAX
+                }
+
+                if (currentViewport.right > Viewport.AXIS_X_MAX) currentViewport.right = Viewport.AXIS_X_MAX
+
+                val count: Float = ((currentViewport.right - currentViewport.left) * totalEntryCount).toInt().toFloat()
+                if (count > maxVisibleEntryCount) {
+                    currentViewport.left = currentViewport.right - maxVisibleEntryCount / totalEntryCount.toFloat()
+                }
+
+                if (count < minVisibleEntryCount) {
+                    currentViewport.left = currentViewport.right - minVisibleEntryCount / totalEntryCount.toFloat()
+                }
+            }
+        }
+
+        currentVisibleEntryCount = ((currentViewport.right - currentViewport.left) * totalEntryCount).roundToInt()
+
+        currentViewport.constrainViewport()
+
+        triggerViewportChange()
+        if (scaleListener != null) {
+            scaleListener?.onScale(currentViewport)
+        }
+
+        return true
+
     }
 
     override fun onScaleBegin(detector: JZScaleGestureDetector): Boolean {
+        if (!isScaleEnable) return false
         Log.i(TAG, "onScaleBegin")
-        return false
+        if (scaleListener != null) {
+            scaleListener?.onScaleStart(currentViewport)
+        }
+        return true
     }
 
     override fun onScaleEnd(detector: JZScaleGestureDetector) {
         Log.i(TAG, "onScaleEnd")
+        if (scaleListener != null) {
+            scaleListener?.onScaleEnd(currentViewport)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        Log.i(TAG, "onTouchEvent")
-
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
                 Log.i(TAG, "onTouchEvent->ACTION_DOWN")
@@ -368,13 +485,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 if (isLongPress) onLongPress(event)
             }
 
-            MotionEvent.ACTION_POINTER_UP ->{
-                Log.i(TAG, "onTouchEvent->ACTION_POINTER_UP")
-                invalidate()
-            }
             MotionEvent.ACTION_UP -> {
                 Log.i(TAG, "onTouchEvent->ACTION_UP")
-                isTouching = false
+                if (isTouching) isTouching = false
+
+                if (isScaling) isScaling = false
+
                 if (isLongPress) {
                     isLongPress = false
                     // 之前是长按 抬起时直接return 不回调 onSingleTapUp
@@ -385,8 +501,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
             MotionEvent.ACTION_CANCEL -> {
                 Log.i(TAG, "onTouchEvent->ACTION_CANCEL")
-                isLongPress = false
-                isTouching = false
+                if (isScaling) isScaling = false
+                if (isLongPress) isLongPress = false
+                if (isTouching) isTouching = false
                 invalidate()
             }
 
@@ -473,9 +590,13 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 滑动还未完成 强制结束
      */
-    fun finishScroll() {
+    open fun finishScroll() {
         if (!mScroller.isFinished)
             mScroller.forceFinished(true)
+    }
+
+    open fun canScroll(): Boolean {
+        return totalEntryCount >= currentVisibleEntryCount
     }
 
     /**
@@ -513,8 +634,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         this.viewportChangeListener = listener
     }
 
-    open fun setOnLoadMoreListener(listener: OnLoadMoreListener) {
+    fun setOnLoadMoreListener(listener: OnLoadMoreListener) {
         this.loadMoreListener = listener
+    }
+
+    open fun setOnScaleListener(listener: OnScaleListener) {
+        this.scaleListener = listener
     }
 
     /**

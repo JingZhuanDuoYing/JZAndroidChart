@@ -66,11 +66,6 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
                 max = rMax
             }
 
-            AxisY.DEPENDENCY_BOTH, AxisY.DEPENDENCY_LEFT -> {
-                min = lMin
-                max = lMax
-            }
-
             else -> {
                 min = lMin
                 max = lMax
@@ -87,16 +82,13 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
 
         val visibleRange = candlestickDataSet.getVisibleRange(viewport)
 
-        val scale: Double = 1.0 / viewport.width()
-        val step: Double = contentRect.width() * scale / valueCount
-        val startX: Double = contentRect.left - viewport.left * contentRect.width() * scale
-        var candleWidth = candlestickDataSet.candleWidth.toDouble()
+        val scale = 1.0f / viewport.width()
+        val step = contentRect.width() * scale / valueCount
+        val startX = contentRect.left - viewport.left * contentRect.width() * scale
+        var candleWidth = candlestickDataSet.candleWidth
 
         if (candlestickDataSet.isAutoWidth) {
-            candleWidth = (contentRect.width() / max(
-                visibleRange,
-                candlestickDataSet.minValueCount.toFloat()
-            )).toDouble()
+            candleWidth = (contentRect.width() / max(visibleRange, candlestickDataSet.minValueCount.toFloat()))
         }
 
         val widthPercent = candlestickDataSet.candleWidthPercent
@@ -130,7 +122,7 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
                         val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
 
                         canvas.drawRect(
-                            xPosition.toFloat(),
+                            xPosition,
                             y1,
                             contentRect.right.toFloat(),
                             y2,
@@ -161,9 +153,9 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
                 renderPaint.color = candlestick.fillBackgroundColor
                 renderPaint.style = Paint.Style.FILL
                 canvas.drawRect(
-                    xPosition.toFloat(),
+                    xPosition,
                     0f,
-                    (xPosition + candleWidth).toFloat(),
+                    (xPosition + candleWidth),
                     canvas.height.toFloat(),
                     renderPaint
                 )
@@ -176,7 +168,7 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
 
             bodyBuffers[0] = (xPosition + (1 - widthPercent) * 0.5 * candleWidth).toFloat()
             bodyBuffers[1] = closeY
-            bodyBuffers[2] = (bodyBuffers[0] + candleWidth * widthPercent).toFloat()
+            bodyBuffers[2] = (bodyBuffers[0] + candleWidth * widthPercent)
             bodyBuffers[3] = openY
 
             upperShadowBuffers[0] = candlestickCenterX.toFloat()

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
+import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
@@ -11,7 +12,9 @@ import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
+import cn.jingzhuan.lib.chart3.draw.LineDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
+import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import kotlin.math.max
 
 /**
@@ -23,8 +26,12 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var candlestickDraw: CandlestickDraw
 
+    private var lineDraw: LineDraw
+
     init {
         candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
+
+        lineDraw = LineDraw(chart.contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
         chart.setViewportChangeListener { viewport ->
             currentViewport.set(viewport)
@@ -77,6 +84,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, chartView.currentViewport)
             }
             if (dataSet is LineDataSet) {
+                lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
+                lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, chartView.currentViewport)
 
             }
             if (dataSet is BarDataSet) {
