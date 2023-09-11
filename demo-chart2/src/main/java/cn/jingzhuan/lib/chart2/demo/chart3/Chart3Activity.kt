@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart2.demo.chart3
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import cn.jingzhuan.lib.chart2.demo.R
 import cn.jingzhuan.lib.chart3.data.CombineData
@@ -14,6 +16,14 @@ import cn.jingzhuan.lib.chart3.widget.KlineChartView
 class Chart3Activity : AppCompatActivity() {
 
     private lateinit var klineMain: KlineChartView
+
+    private lateinit var rg: RadioGroup
+
+    private lateinit var rbDay: RadioButton
+
+    private lateinit var rbYear: RadioButton
+
+    private lateinit var rbMinute: RadioButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +39,27 @@ class Chart3Activity : AppCompatActivity() {
 
     private fun initView() {
         klineMain = findViewById(R.id.kline_main)
-//        klineMain.scaleSensitivity = 1.1f
-
+        rg = findViewById(R.id.rg)
+        rbDay = findViewById(R.id.rb_day)
+        rbYear = findViewById(R.id.rb_year)
+        rbMinute = findViewById(R.id.rb_minute)
     }
 
 
     private fun initListener() {
+        rg.setOnCheckedChangeListener { group, id ->
+            when (id) {
+                rbDay.id -> {
 
+                }
+                rbYear.id -> {
+
+                }
+                rbMinute.id -> {
+
+                }
+            }
+        }
 //        combineChart.addOnViewportChangeListener { viewPort ->
 //        }
 

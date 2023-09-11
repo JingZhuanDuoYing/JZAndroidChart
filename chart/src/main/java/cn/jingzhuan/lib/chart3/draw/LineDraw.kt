@@ -24,48 +24,32 @@ import kotlin.math.max
  * @since 2023-09-10
  * @author lei 画线
  */
-class LineDraw : IDraw<LineDataSet> {
+class LineDraw(
+    var contentRect: Rect,
+    private var renderPaint: Paint,
+    private var chartAnimator: ChartAnimator,
+    private var isLineChart: Boolean = false
+) : IDraw<LineDataSet> {
 
     private lateinit var textPaint: Paint
 
     private lateinit var pointPaint: Paint
 
-    private lateinit var renderPaint: Paint
-
     private lateinit var path: Path
 
-    private lateinit var shaderPaths: MutableList<Path>
+    private var shaderPaths: MutableList<Path>
 
-    private lateinit var shaderPathColors: MutableList<Shader?>
+    private var shaderPathColors: MutableList<Shader?>
 
-    private lateinit var linePaths: MutableList<Path>
+    private var linePaths: MutableList<Path> = ArrayList()
 
     private var shaderPath: Path? = null
 
-    private lateinit var partLineList: MutableList<PartLineData>
-
-    private lateinit var contentRect: Rect
-
-    private var isLineChart = false
-
-    private lateinit var chartAnimator: ChartAnimator
+    private var partLineList: MutableList<PartLineData>
 
     private var isHighLight = false
 
-    constructor()
-
-    constructor(
-        contentRect: Rect,
-        renderPaint: Paint,
-        chartAnimator: ChartAnimator,
-        isLineChart: Boolean = false,
-    ) {
-        this.contentRect = contentRect
-        this.renderPaint = renderPaint
-        this.chartAnimator = chartAnimator
-        this.isLineChart = isLineChart
-
-        linePaths = ArrayList()
+    init {
         shaderPath = Path()
         shaderPaths = ArrayList()
         shaderPathColors = ArrayList()
@@ -165,13 +149,13 @@ class LineDraw : IDraw<LineDataSet> {
 
         var linePath = Path()
 
-        val offset = 0
+        val startIndexOffset = 0
 
         // 画带状线
         if (lineDataSet.isDrawBand) {
             try {
                 // 这里有潜在的崩溃问题，先catch，后续重写
-                drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, offset, max, min)
+                drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, startIndexOffset, max, min)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -193,7 +177,7 @@ class LineDraw : IDraw<LineDataSet> {
                 valuePhaseCount,
                 startX,
                 step,
-                offset,
+                startIndexOffset,
                 max,
                 min
             )
@@ -213,7 +197,7 @@ class LineDraw : IDraw<LineDataSet> {
                 val value: LineValue? = lineDataSet.getEntryForIndex(i)
                 if (value != null && !value.isValueNaN) {
                     firstValue = value
-                    firstXPosition = startX + step * (i + offset)
+                    firstXPosition = startX + step * (i + startIndexOffset)
                     break
                 }
                 i++
@@ -248,7 +232,7 @@ class LineDraw : IDraw<LineDataSet> {
                 i++
                 continue
             }
-            val xPosition = startX + step * (i + offset)
+            val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float =
                 (max - value.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
             value.setCoordinate(xPosition, yPosition)
@@ -356,9 +340,9 @@ class LineDraw : IDraw<LineDataSet> {
                 val lineValue: LineValue? = lineDataSet.getEntryForIndex(i - 1)
                 if (lineValue != null && shaderPath != null) {
                     shaderPath?.lineTo(lineValue.x, contentRect.bottom.toFloat())
-                    shaderPath?.lineTo(startX + offset * width, contentRect.bottom.toFloat())
+                    shaderPath?.lineTo(startX + startIndexOffset * width, contentRect.bottom.toFloat())
                     shaderPath?.lineTo(
-                        startX + offset * width,
+                        startX + startIndexOffset * width,
                         lineDataSet.values[0].y
                     )
                     shaderPath?.close()
@@ -408,7 +392,7 @@ class LineDraw : IDraw<LineDataSet> {
         valuePhaseCount: Int,
         startX: Float,
         step: Float,
-        offset: Int,
+        startIndexOffset: Int,
         max: Float,
         min: Float,
     ) {
@@ -437,7 +421,7 @@ class LineDraw : IDraw<LineDataSet> {
                 i++
                 continue
             }
-            val xPosition = startX + step * (i + offset)
+            val xPosition = startX + step * (i + startIndexOffset)
             var yPosition = (max - point.value) / (max - min) * contentRect.height()
             val candlestickCenterX = xPosition + candleWidth * 0.5f
             point.setCoordinate(candlestickCenterX, yPosition)
@@ -534,7 +518,7 @@ class LineDraw : IDraw<LineDataSet> {
         valuePhaseCount: Int,
         startX: Float,
         step: Float,
-        offset: Int,
+        startIndexOffset: Int,
         max: Float,
         min: Float,
     ) {
@@ -556,7 +540,7 @@ class LineDraw : IDraw<LineDataSet> {
 
             isCloseToBottom = point.value > point.secondValue
             //
-            val xPosition = startX + step * (i + offset)
+            val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float = (max - point.value) / (max - min) * contentRect.height()
             val secondYPosition: Float =
                 (max - point.secondValue) / (max - min) * contentRect.height()

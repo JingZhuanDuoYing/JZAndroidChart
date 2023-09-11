@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Paint.Align
 import android.graphics.Rect
-import cn.jingzhuan.lib.chart.utils.FloatUtils
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 
 /**
  * @since 2023-09-11
@@ -14,8 +14,6 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
     private val arrowLeft = "←"
 
     private val arrowRight = "→"
-
-    private val mLabelBuffer = CharArray(20)
 
     private var mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -39,13 +37,11 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
     ) {
 
         // 画最大值
-        val maxLength = FloatUtils.formatFloatValue(mLabelBuffer, maxValue, decimalDigitsNumber)
-
-        val maxText = String(mLabelBuffer, mLabelBuffer.size - maxLength, maxLength)
+        val maxText = NumberUtils.keepPrecision("$maxValue", decimalDigitsNumber)
 
         if (maxX < contentWidth shr 1) {
             mPaint.textAlign = Align.LEFT
-            val text = "$arrowLeft$maxText"
+            val text = arrowLeft + maxText
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -55,7 +51,7 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
             )
         } else {
             mPaint.textAlign = Align.RIGHT
-            val text = "$maxValue$arrowRight"
+            val text = maxText + arrowRight
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -66,13 +62,11 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
         }
 
         // 画最小值
-        val minLength = FloatUtils.formatFloatValue(mLabelBuffer, minValue, decimalDigitsNumber);
-
-        val minText = String(mLabelBuffer, mLabelBuffer.size - minLength, minLength)
+        val minText = NumberUtils.keepPrecision("$minValue", decimalDigitsNumber)
 
         if (minX < contentWidth shr 1) {
             mPaint.textAlign = Align.LEFT
-            val text = "$arrowLeft$minText"
+            val text = arrowLeft + minText
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -82,7 +76,7 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
             )
         } else {
             mPaint.textAlign = Align.RIGHT
-            val text = "$minValue$arrowRight"
+            val text = minText + arrowRight
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,

@@ -39,9 +39,9 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     var shapeAlign: Int = SHAPE_ALIGN_CENTER
 
-    private var ORIGINAL_VIEWPORT_Y_MIN = Float.MAX_VALUE
+    private var originalViewportYMin = Float.MAX_VALUE
 
-    private var ORIGINAL_VIEWPORT_Y_MAX = -Float.MAX_VALUE
+    private var originalViewportYMax = -Float.MAX_VALUE
 
     var isAutoWidth = true
 
@@ -62,8 +62,8 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
             calcViewportMinMax(value)
         }
 
-        ORIGINAL_VIEWPORT_Y_MAX = viewportYMax
-        ORIGINAL_VIEWPORT_Y_MIN = viewportYMin
+        originalViewportYMax = viewportYMax
+        originalViewportYMin = viewportYMin
         if (isAutoExpand) {
             for (value in visiblePoints) {
                 calcViewportMinMaxExpansion(value, viewport, content)
@@ -111,12 +111,16 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         val percent = shapeHeight / content.height().toFloat()
         val expand = range * percent
         if (expand <= 0f) return
-        val anchor: Float = if (shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
-            ORIGINAL_VIEWPORT_Y_MAX
-        } else if (shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
-            ORIGINAL_VIEWPORT_Y_MIN
-        } else {
-            value.value
+        val anchor = when (shapeAlign) {
+            SHAPE_ALIGN_PARENT_TOP -> {
+                originalViewportYMax
+            }
+            SHAPE_ALIGN_PARENT_BOTTOM -> {
+                originalViewportYMin
+            }
+            else -> {
+                value.value
+            }
         }
         val newValue: Float
         if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {

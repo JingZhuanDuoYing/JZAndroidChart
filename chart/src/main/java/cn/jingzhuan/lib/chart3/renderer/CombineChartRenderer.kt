@@ -14,6 +14,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
 import cn.jingzhuan.lib.chart3.draw.LineDraw
 import cn.jingzhuan.lib.chart3.draw.MaxMinArrowDraw
+import cn.jingzhuan.lib.chart3.draw.ScatterDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import kotlin.math.roundToInt
@@ -31,12 +32,16 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var lineDraw: LineDraw
 
+    private var scatterDraw: ScatterDraw
+
     init {
         maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
 
         candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
 
         lineDraw = LineDraw(chart.contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
+
+        scatterDraw = ScatterDraw(chart.contentRect)
 
         chart.setViewportChangeListener { viewport ->
             currentViewport.set(viewport)
@@ -88,17 +93,18 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
             }
             if (dataSet is CandlestickDataSet) {
-                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, chartView.currentViewport)
+                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, currentViewport)
             }
             if (dataSet is LineDataSet) {
                 lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
-                lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, chartView.currentViewport)
+                lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
 
             }
             if (dataSet is BarDataSet) {
 
             }
             if (dataSet is ScatterDataSet) {
+                scatterDraw.drawDataSet(canvas, combineData.scatterChartData, dataSet, currentViewport)
 
             }
 

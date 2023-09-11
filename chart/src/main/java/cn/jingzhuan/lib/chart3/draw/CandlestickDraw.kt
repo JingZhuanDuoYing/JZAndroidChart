@@ -15,10 +15,7 @@ import kotlin.math.max
  * @since 2023-09-06
  * @author lei 画K线
  */
-class CandlestickDraw : IDraw<CandlestickDataSet> {
-    private lateinit var renderPaint: Paint
-
-    private lateinit var contentRect: Rect
+class CandlestickDraw(var contentRect: Rect, private var renderPaint: Paint) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
 
@@ -26,12 +23,6 @@ class CandlestickDraw : IDraw<CandlestickDataSet> {
 
     private val bodyBuffers = FloatArray(4)
 
-    constructor()
-
-    constructor(contentRect: Rect, renderPaint: Paint) {
-        this.contentRect = contentRect
-        this.renderPaint = renderPaint
-    }
 
     override fun drawDataSet(
         canvas: Canvas,

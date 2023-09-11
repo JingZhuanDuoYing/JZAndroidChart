@@ -6,11 +6,67 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:checkedButton="@id/rb_day"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_day"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rb_red_left"
+                android:button="@null"
+                android:gravity="center"
+                android:text="日K"
+                android:textColor="@drawable/text_rb_red"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_year"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rb_red_center"
+                android:button="@null"
+                android:gravity="center"
+                android:text="年K"
+                android:textColor="@drawable/text_rb_red"
+                android:layout_marginStart="-1dp"
+                android:layout_marginEnd="-1dp"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_minute"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rb_red_right"
+                android:button="@null"
+                android:gravity="center"
+                android:text="分时"
+                android:textColor="@drawable/text_rb_red"
+                android:textSize="14sp" />
+        </RadioGroup>
+    </LinearLayout>
+
     <cn.jingzhuan.lib.chart3.widget.KlineChartView
         android:id="@+id/kline_main"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         app:axisColor="#ffe5e5e5"
