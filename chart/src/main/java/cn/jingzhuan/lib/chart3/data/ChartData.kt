@@ -55,7 +55,7 @@ open class ChartData<T : AbstractDataSet<*>> {
         rightMax = -Float.MAX_VALUE
     }
 
-    open fun setMinMax() {
+    private fun setMinMax() {
         if (leftAxis != null && leftMin != Float.MAX_VALUE) {
             leftAxis?.yMin = leftMin
             leftAxis?.yMax = leftMax
@@ -66,11 +66,11 @@ open class ChartData<T : AbstractDataSet<*>> {
         }
     }
 
-    open fun calcMaxMin(viewport: Viewport, content: Rect) {
-        calcMaxMin(viewport, content, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE)
+    open fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float) {
+        calcMaxMin(viewport, content, offsetPercent, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE)
     }
 
-    open fun calcMaxMin(viewport: Viewport, content: Rect, lMax: Float, lMin: Float, rMax: Float, rMin: Float) {
+    open fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float, lMax: Float, lMin: Float, rMax: Float, rMin: Float) {
         leftMin = lMin
         leftMax = lMax
         rightMin = rMin
@@ -95,6 +95,17 @@ open class ChartData<T : AbstractDataSet<*>> {
                         rightMin = min(rightMin, t.viewportYMin)
                     }
                 }
+
+                if (offsetPercent != 0f) {
+                    val rangeLeft = leftMax - leftMin
+                    leftMin -= rangeLeft * offsetPercent
+                    leftMax += rangeLeft * offsetPercent
+
+                    val rangeRight = rightMax - rightMin
+                    rightMin -= rangeRight * offsetPercent
+                    rightMax += rangeRight * offsetPercent
+                }
+
             }
             setMinMax()
         }

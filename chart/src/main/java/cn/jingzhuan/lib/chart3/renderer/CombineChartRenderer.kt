@@ -13,9 +13,10 @@ import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
 import cn.jingzhuan.lib.chart3.draw.LineDraw
+import cn.jingzhuan.lib.chart3.draw.MaxMinArrowDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
-import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-06
@@ -24,11 +25,15 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var combineData: CombineData? = null
 
+    private var maxMinArrowDraw: MaxMinArrowDraw
+
     private var candlestickDraw: CandlestickDraw
 
     private var lineDraw: LineDraw
 
     init {
+        maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
+
         candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
 
         lineDraw = LineDraw(chart.contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
@@ -51,17 +56,19 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val yPosition: Float
                 highlight.touchX = x
                 highlight.touchY = y
+
+                val from = (currentViewport.left * valueCount).roundToInt()
+                val to = (currentViewport.right * valueCount).roundToInt()
                 val index: Int = getEntryIndex(x)
-                if (index in 0 until valueCount && index < dataSet.values.size) {
+                if (index in from until to && index < dataSet.values.size) {
                     val value = dataSet.getEntryForIndex(index) ?: return
-                    xPosition = max(contentRect.left.toFloat(), value.x)
-                    yPosition = value.y
-                    if (xPosition >= 0 && yPosition >= 0) {
-                        highlight.x = xPosition
-                        highlight.y = if (chart.isFollowFingerY) y else yPosition
-                        highlight.dataIndex = index
-                        chart.highlightValue(highlight)
-                    }
+
+                    xPosition = value.x
+                    yPosition = if (chart.isFollowFingerY) y else value.y
+                    highlight.x = xPosition
+                    highlight.y = yPosition
+                    highlight.dataIndex = index
+                    chart.highlightValue(highlight)
                 }
             }
         })
@@ -95,6 +102,29 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
             }
 
+        }
+
+        if (chartView.isShowMaxMinValue) {
+            val chartData = getChartData() ?: return
+            val dataSet = chartData.getTouchDataSet()
+            if (dataSet is CandlestickDataSet) {
+                val max = chartData.leftMax
+                val min = chartData.leftMin
+
+                val maxIndex = dataSet.maxIndex
+                val maxData = dataSet.values[maxIndex]
+                val maxX = maxData.x
+                val maxValue = maxData.high
+                val maxY = (max - maxValue) / (max - min) * contentRect.height()
+
+                val minIndex = dataSet.minIndex
+                val minData = dataSet.values[minIndex]
+                val minX = dataSet.values[minIndex].x
+                val minValue = minData.low
+                val minY = (max - minValue) / (max - min) * contentRect.height()
+
+                maxMinArrowDraw.drawMaxMin(canvas, contentRect.width(), maxX, minX, maxY, minY, maxValue, minValue, chartView.decimalDigitsNumber)
+            }
         }
     }
 

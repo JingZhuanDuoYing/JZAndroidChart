@@ -38,5 +38,9 @@
         <attr name="highlightTextBgColor" format="color"/>
         <attr name="highlightTextBgHeight" format="dimension"/>
 
+        <attr name="showMaxMinValue" format="boolean" />
+        <attr name="maxMinValueTextSize" format="dimension"/>
+        <attr name="maxMinValueTextColor" format="color"/>
+
     </declare-styleable>
 </resources>

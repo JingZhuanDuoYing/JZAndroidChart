@@ -22,7 +22,11 @@
         app:bottomLabelHeight="18dp"
         app:highlightTextBgHeight="18dp"
         app:highlightColor="@color/colorAccent"
-        app:highlightThickness="1dp"/>
+        app:highlightThickness="1dp"
+        app:showWaterMark="true"
+        app:showMaxMinValue="true"
+        app:maxMinValueTextSize="11dp"
+        app:maxMinValueTextColor="#A1ABBB"/>
 
 
 </LinearLayout>

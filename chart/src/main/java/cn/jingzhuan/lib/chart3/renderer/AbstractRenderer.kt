@@ -97,8 +97,8 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     /**
      * 重新计算viewport
      */
-    protected open fun calcDataSetMinMax() {
-        getChartData()?.calcMaxMin(currentViewport, contentRect)
+    open fun calcDataSetMinMax() {
+        getChartData()?.calcMaxMin(currentViewport, contentRect, chartView.offsetPercent)
     }
 
     abstract fun getChartData(): ChartData<T>?

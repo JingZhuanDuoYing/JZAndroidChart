@@ -33,23 +33,27 @@ class LineValue : AbstractValue {
 
     constructor()
 
-    constructor(value: Float) {
+    constructor(value: Float, time: Long) {
         this.value = value
+        this.time = time
     }
 
-    constructor(value: Float, color: Int) {
+    constructor(value: Float, color: Int, time: Long) {
         this.value = value
         this.color = color
+        this.time = time
     }
 
-    constructor(value: Float, secondValue: Float) {
+    constructor(value: Float, secondValue: Float, time: Long) {
         this.value = value
         this.secondValue = secondValue
+        this.time = time
     }
 
-    constructor(value: Float, drawCircle: Boolean) {
+    constructor(value: Float, drawCircle: Boolean, time: Long) {
         this.value = value
         isDrawCircle = drawCircle
+        this.time = time
     }
 
     val isValueNaN: Boolean

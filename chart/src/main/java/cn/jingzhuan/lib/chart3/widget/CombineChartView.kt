@@ -97,5 +97,10 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
         return chartRenderer as CombineChartRenderer?
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
+        super.onSizeChanged(w, h, oldWidth, oldHeight)
+        getRenderer()?.calcDataSetMinMax()
+    }
+
 
 }

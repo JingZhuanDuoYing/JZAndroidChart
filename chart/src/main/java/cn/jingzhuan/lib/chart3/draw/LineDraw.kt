@@ -35,9 +35,13 @@ class LineDraw : IDraw<LineDataSet> {
     private lateinit var path: Path
 
     private lateinit var shaderPaths: MutableList<Path>
+
     private lateinit var shaderPathColors: MutableList<Shader?>
+
     private lateinit var linePaths: MutableList<Path>
+
     private var shaderPath: Path? = null
+
     private lateinit var partLineList: MutableList<PartLineData>
 
     private lateinit var contentRect: Rect
@@ -60,6 +64,12 @@ class LineDraw : IDraw<LineDataSet> {
         this.renderPaint = renderPaint
         this.chartAnimator = chartAnimator
         this.isLineChart = isLineChart
+
+        linePaths = ArrayList()
+        shaderPath = Path()
+        shaderPaths = ArrayList()
+        shaderPathColors = ArrayList()
+        partLineList = ArrayList()
 
         initPaint()
     }
@@ -230,7 +240,6 @@ class LineDraw : IDraw<LineDataSet> {
 
         if (lastIndex >= valueCount) lastIndex = valueCount - 1
 
-        val splitStartBaseX = 0f
         var preBaseX = Float.NaN
 
         while (i < valuePhaseCount && i < lineDataSet.values.size) {

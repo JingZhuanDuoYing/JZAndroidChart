@@ -60,6 +60,10 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var formatter: IValueFormatter? = null
 
+    var maxIndex = 0
+
+    var minIndex = 0
+
     constructor()
 
     constructor(tag: String?) {
@@ -77,7 +81,7 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     override fun calcMinMax(viewport: Viewport) {}
 
-    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, mix: Float) {
+    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
         calcMinMax(viewport)
     }
 

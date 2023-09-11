@@ -9,8 +9,6 @@ import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import java.util.Collections
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * @since 2023-09-06
@@ -83,52 +81,9 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         }
     }
 
-    override fun calcMaxMin(viewport: Viewport, content: Rect) {
-        leftMin = Float.MAX_VALUE
-        leftMax = -Float.MAX_VALUE
-        rightMin = Float.MAX_VALUE
-        rightMax = -Float.MAX_VALUE
-
-        if (treeChartData.dataSets.isNotEmpty()) {
-            treeChartData.calcMaxMin(viewport, content)
-            leftMin = min(treeChartData.leftMin, leftMin)
-            leftMax = max(treeChartData.leftMax, leftMax)
-            rightMin = min(treeChartData.rightMin, rightMin)
-            rightMax = max(treeChartData.rightMax, rightMax)
-        }
-
-        if (candlestickChartData.dataSets.isNotEmpty()) {
-            candlestickChartData.calcMaxMin(viewport, content)
-            leftMin = min(candlestickChartData.leftMin, leftMin)
-            leftMax = max(candlestickChartData.leftMax, leftMax)
-            rightMin = min(candlestickChartData.rightMin, rightMin)
-            rightMax = max(candlestickChartData.rightMax, rightMax)
-        }
-
-        if (lineChartData.dataSets.isNotEmpty()) {
-            lineChartData.calcMaxMin(viewport, content)
-            leftMin = min(lineChartData.leftMin, leftMin)
-            leftMax = max(lineChartData.leftMax, leftMax)
-            rightMin = min(lineChartData.rightMin, rightMin)
-            rightMax = max(lineChartData.rightMax, rightMax)
-        }
-
-        if (barChartData.dataSets.isNotEmpty()) {
-            barChartData.calcMaxMin(viewport, content)
-            leftMin = min(barChartData.leftMin, leftMin)
-            leftMax = max(barChartData.leftMax, leftMax)
-            rightMin = min(barChartData.rightMin, rightMin)
-            rightMax = max(barChartData.rightMax, rightMax)
-        }
-
-        if (scatterChartData.dataSets.isNotEmpty()) {
-            scatterChartData.calcMaxMin(viewport, content, leftMax, leftMin, rightMax, rightMin)
-            leftMin = min(scatterChartData.leftMin, leftMin)
-            leftMax = max(scatterChartData.leftMax, leftMax)
-            rightMin = min(scatterChartData.rightMin, rightMin)
-            rightMax = max(scatterChartData.rightMax, rightMax)
-        }
-
+    override fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float) {
+        if (content.width() == 0 && content.height() == 0) return
+        super.calcMaxMin(viewport, content, offsetPercent)
         treeChartData.leftMax = leftMax
         barChartData.leftMax = leftMax
         lineChartData.leftMax = leftMax
@@ -152,8 +107,6 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         lineChartData.rightMin = rightMin
         candlestickChartData.rightMin = rightMin
         scatterChartData.rightMin = rightMin
-
-        setMinMax()
     }
 
     override fun add(e: AbstractDataSet<*>?): Boolean {
@@ -174,17 +127,6 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
             return addDataSet(e)
         }
         return super.add(e)
-    }
-
-    override fun setMinMax() {
-        if (leftAxis != null) {
-            leftAxis?.yMin = leftMin
-            leftAxis?.yMax = leftMax
-        }
-        if (rightAxis != null) {
-            rightAxis?.yMin = rightMin
-            rightAxis?.yMax = rightMax
-        }
     }
 
     override fun getTouchDataSet(): AbstractDataSet<*> {

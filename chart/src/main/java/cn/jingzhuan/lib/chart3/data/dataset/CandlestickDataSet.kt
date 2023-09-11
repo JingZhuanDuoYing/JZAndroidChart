@@ -123,9 +123,11 @@ open class CandlestickDataSet @JvmOverloads constructor(
         if (isInfinite(value.high)) return
         if (value.low < viewportYMin) {
             viewportYMin = value.low
+            minIndex = values.indexOf(value)
         }
         if (value.high > viewportYMax) {
             viewportYMax = value.high
+            maxIndex = values.indexOf(value)
         }
     }
 

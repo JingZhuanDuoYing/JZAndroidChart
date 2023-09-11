@@ -11,7 +11,7 @@ interface IDataSet {
 
     fun calcMinMax(viewport: Viewport)
 
-    fun calcMinMax(viewport: Viewport, content: Rect, max: Float, mix: Float)
+    fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float)
 
     fun getEntryCount(): Int
 

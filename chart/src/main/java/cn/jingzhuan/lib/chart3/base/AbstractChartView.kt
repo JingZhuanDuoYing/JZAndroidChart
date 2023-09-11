@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.util.AttributeSet
 import cn.jingzhuan.lib.chart.R
@@ -133,6 +134,28 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     // </editor-fold desc="十字光标 配置">    ----------------------------------------------------------
 
+    /**
+     * 需要保留的小数位
+     */
+    var decimalDigitsNumber = 2
+
+    /**
+     * 是否展示最大最小值
+     */
+    var isShowMaxMinValue = false
+
+    /**
+     * 最大最小值文本大小
+     */
+    var maxMinValueTextSize = 0
+
+    /**
+     * 最大最小值文本颜色
+     */
+    var maxMinValueTextColor = 0
+
+    var offsetPercent = 0f
+
     constructor(context: Context?) : super(context) {
         init(null, 0)
     }
@@ -188,6 +211,15 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
             val highlightTextSize = ta.getDimensionPixelSize(R.styleable.Chart_highlightTextSize, 28)
             this.highlightTextSize = highlightTextSize
+
+            val isShowMaxMinValue = ta.getBoolean(R.styleable.Chart_showMaxMinValue, false)
+            this.isShowMaxMinValue = isShowMaxMinValue
+
+            val maxMinValueTextSize = ta.getDimensionPixelSize(R.styleable.Chart_maxMinValueTextSize, 28)
+            this.maxMinValueTextSize = maxMinValueTextSize
+
+            val maxMinValueTextColor = ta.getColor(R.styleable.Chart_maxMinValueTextColor, Color.WHITE)
+            this.maxMinValueTextColor = maxMinValueTextColor
 
             initAxisRenderers(ta)
 
@@ -297,6 +329,21 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         val contentBottom = height - paddingBottom - axisBottom.labelHeight
         contentRect[chartLeft, paddingTop, chartRight] = contentBottom
         bottomRect[chartLeft, contentBottom, chartRight] = height
+
+        offsetPercent = axisTop.axisThickness / contentRect.height().toFloat()
+        if (isShowMaxMinValue) calcMaxMinValuePercent()
+    }
+
+    private fun calcMaxMinValuePercent() {
+        val rect = Rect()
+        val textPaint = Paint().apply {
+            textSize = maxMinValueTextSize.toFloat()
+        }
+        val text = "8"
+        textPaint.getTextBounds(text, 0, text.length, rect)
+        val height = rect.height()
+        offsetPercent += height / contentRect.height().toFloat()
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
