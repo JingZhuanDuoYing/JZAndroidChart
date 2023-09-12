@@ -85,7 +85,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
     override fun renderer(canvas: Canvas) {
         val combineData = getChartData()
 
-        val sortedDataSets = combineData!!.allDataSet
+        val sortedDataSets = combineData?.allDataSet ?: return
 
         for (i in sortedDataSets.indices) {
             val dataSet: AbstractDataSet<*> = sortedDataSets[i]
@@ -110,6 +110,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         }
 
+        // 画最大最小值
         if (chartView.isShowMaxMinValue) {
             val chartData = getChartData() ?: return
             val dataSet = chartData.getTouchDataSet()

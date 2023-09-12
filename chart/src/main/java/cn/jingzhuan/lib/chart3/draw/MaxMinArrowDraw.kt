@@ -35,13 +35,15 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
         minValue: Float,
         decimalDigitsNumber: Int,
     ) {
-
+        val sb = StringBuilder()
         // 画最大值
         val maxText = NumberUtils.keepPrecision("$maxValue", decimalDigitsNumber)
 
         if (maxX < contentWidth shr 1) {
             mPaint.textAlign = Align.LEFT
-            val text = arrowLeft + maxText
+            sb.append(arrowLeft)
+            sb.append(maxText)
+            val text = sb.toString()
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -49,9 +51,12 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
                 maxY + mTextBounds.height() * 0.5f,
                 mPaint
             )
+            sb.clear()
         } else {
             mPaint.textAlign = Align.RIGHT
-            val text = maxText + arrowRight
+            sb.append(maxText)
+            sb.append(arrowRight)
+            val text = sb.toString()
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -59,6 +64,7 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
                 maxY + mTextBounds.height() * 0.5f,
                 mPaint
             )
+            sb.clear()
         }
 
         // 画最小值
@@ -66,7 +72,9 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
 
         if (minX < contentWidth shr 1) {
             mPaint.textAlign = Align.LEFT
-            val text = arrowLeft + minText
+            sb.append(arrowLeft)
+            sb.append(minText)
+            val text = sb.toString()
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -74,9 +82,12 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
                 minY + mTextBounds.height() * 0.5f,
                 mPaint
             )
+            sb.clear()
         } else {
             mPaint.textAlign = Align.RIGHT
-            val text = minText + arrowRight
+            sb.append(minText)
+            sb.append(arrowRight)
+            val text = sb.toString()
             mPaint.getTextBounds(text, 0, text.length, mTextBounds)
             canvas.drawText(
                 text,
@@ -84,6 +95,7 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
                 minY + mTextBounds.height() * 0.5f,
                 mPaint
             )
+            sb.clear()
         }
 
     }
