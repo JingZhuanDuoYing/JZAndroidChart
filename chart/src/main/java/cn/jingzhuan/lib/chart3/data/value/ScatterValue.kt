@@ -22,12 +22,18 @@ class ScatterValue : AbstractValue {
 
     constructor(value: Float, visible: Boolean) {
         this.value = value
-        isVisible = visible
+        this.isVisible = visible
+    }
+
+    constructor(value: Float, visible: Boolean, flags: List<Int>) {
+        this.value = value
+        this.isVisible = visible
+        this.flags = flags
     }
 
     constructor(value: Float, visible: Boolean, color: Int) {
         this.value = value
-        isVisible = visible
+        this.isVisible = visible
         this.color = color
     }
 }

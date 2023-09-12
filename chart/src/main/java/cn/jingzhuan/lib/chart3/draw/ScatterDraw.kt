@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
+import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
@@ -25,13 +26,13 @@ import kotlin.math.min
 
 class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
 
-    private val topHeights = mutableMapOf<String, Float>()
+    private val topHeights = ArrayMap<String, Float>()
 
-    private val bottomHeights = mutableMapOf<String, Float>()
+    private val bottomHeights = ArrayMap<String, Float>()
 
-    private val parentTopHeights = mutableMapOf<String, Float>()
+    private val parentTopHeights = ArrayMap<String, Float>()
 
-    private val parentBottomHeights = mutableMapOf<String, Float>()
+    private val parentBottomHeights = ArrayMap<String, Float>()
 
     override fun drawDataSet(
         canvas: Canvas,
@@ -39,6 +40,7 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
         dataSet: ScatterDataSet,
         viewport: Viewport,
     ) {
+        clearTemporaryData()
         drawScatter(
             canvas, dataSet, viewport,
             chartData.leftMax, chartData.leftMin,
@@ -176,5 +178,12 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
             i++
         }
 
+    }
+
+    private fun clearTemporaryData() {
+        topHeights.clear()
+        bottomHeights.clear()
+        parentTopHeights.clear()
+        parentBottomHeights.clear()
     }
 }

@@ -120,6 +120,10 @@ open class ChartData<T : AbstractDataSet<*>> {
         return null
     }
 
+    open fun getFlagDataSet(): T?{
+        return null
+    }
+
     open fun getTouchEntryCount(): Int{
         return 0
     }

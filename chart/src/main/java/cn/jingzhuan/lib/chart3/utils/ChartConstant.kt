@@ -41,4 +41,40 @@ object ChartConstant {
     const val HIGHLIGHT_STATUS_FOREVER = 3
 
     // </editor-fold desc="光标 状态">    --------------------
+
+    // <editor-fold desc="光标 标签组">    ---------------------
+
+    const val FLAG_TAG_NAME = "flag_tag_name"
+
+    /**
+     * 交易详情
+     */
+    const val FLAG_TRADE_DETAIL = 0
+
+    /**
+     * 交易详情(模)
+     */
+    const val FLAG_SIMULATE_TRADE_DETAIL = 1
+
+    /**
+     * 涨停分析
+     */
+    const val FLAG_LIMIT_UP = 2
+
+    /**
+     * 公告
+     */
+    const val FLAG_NOTICE = 3
+
+    /**
+     * 历史分时
+     */
+    const val FLAG_HISTORY_MINUTE = 4
+
+    /**
+     * 龙虎榜
+     */
+    const val FLAG_LHB = 5
+
+    // </editor-fold desc="光标 标签组">    --------------------
 }

@@ -8,6 +8,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TAG_NAME
 import java.util.Collections
 
 /**
@@ -65,7 +66,7 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         return treeChartData.add(dataSet)
     }
 
-    fun getCombineDataSets(): List<AbstractDataSet<*>> {
+    private fun getCombineDataSets(): List<AbstractDataSet<*>> {
         return if (getCandlestickDataSets().isNotEmpty()) {
             getCandlestickDataSets()
         } else if (getBarDataSets().isNotEmpty()) {
@@ -135,6 +136,15 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
 
     override fun getTouchEntryCount(): Int {
         return getTouchDataSet().values.size
+    }
+
+    override fun getFlagDataSet(): AbstractDataSet<*>? {
+        allDataSet.forEach {
+            if (it.tag == FLAG_TAG_NAME) {
+                return it
+            }
+        }
+        return null
     }
 
     fun addAll(dataSets: List<AbstractDataSet<*>>) {

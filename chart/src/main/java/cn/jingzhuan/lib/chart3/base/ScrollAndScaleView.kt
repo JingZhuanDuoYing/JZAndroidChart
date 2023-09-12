@@ -13,6 +13,8 @@ import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
+import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnScaleListener
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
@@ -48,6 +50,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     private var loadMoreListener: OnLoadMoreListener? = null
 
     private var scaleListener: OnScaleListener? = null
+
+    private var bottomAreaClickListener: OnBottomAreaClickListener? = null
+
+    private var flagClickListener: OnFlagClickListener? = null
 
     private val mSurfacePoint = Point()
 
@@ -161,7 +167,15 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var totalEntryCount = 0
 
+    /**
+     * 缩放乘数
+     */
     var scaleSensitivity = 1.05f
+
+    /**
+     * 是否显示底部标签组
+     */
+    var showBottomFlags = false
 
     constructor(context: Context?) : super(context)
 
@@ -181,6 +195,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onDown(e: MotionEvent): Boolean {
         Log.i(TAG, "onDown")
         scrollerStartViewport.set(currentViewport)
+
+        if (showBottomFlags && bottomAreaClickListener != null) {
+            bottomAreaClickListener?.onClick(e.x, e.y)
+        }
+
         finishScroll()
         return true
     }
@@ -192,6 +211,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onLongPress(e: MotionEvent) {
         Log.i(TAG, "onLongPress")
         if (isOpenRange) return
+
         if (!isLongPress) isLongPress = true
         if (highlightState != HIGHLIGHT_STATUS_MOVE){
             highlightState = HIGHLIGHT_STATUS_MOVE
@@ -203,6 +223,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         Log.i(TAG, "onSingleTapUp")
         if (isDoubleTapToZoom) return false
         if (isOpenRange) return false
+
+        if (bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())) {
+            return false
+        }
 
         if (isClickable && hasOnClickListeners()) {
             // 光标清除
@@ -352,6 +376,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onScale(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
+        if (isLongPress) return false
         Log.i(TAG, "onScale")
         isScaling = true
 
@@ -458,6 +483,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onScaleBegin(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
+        if (isLongPress) return false
         Log.i(TAG, "onScaleBegin")
         if (scaleListener != null) {
             scaleListener?.onScaleStart(currentViewport)
@@ -638,8 +664,22 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         this.loadMoreListener = listener
     }
 
-    open fun setOnScaleListener(listener: OnScaleListener) {
+    fun setOnScaleListener(listener: OnScaleListener) {
         this.scaleListener = listener
+    }
+
+    fun setOnBottomAreaClickListener(listener: OnBottomAreaClickListener) {
+        this.bottomAreaClickListener = listener
+    }
+
+    fun addOnFlagClickListener(listener: OnFlagClickListener) {
+        this.flagClickListener = listener
+    }
+
+    fun onFlagCallback(type: Int, index: Int) {
+        if (flagClickListener != null) {
+            flagClickListener?.onClick(type, index)
+        }
     }
 
     /**
