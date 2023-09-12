@@ -8,11 +8,16 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import cn.jingzhuan.lib.chart.component.AxisY
 import cn.jingzhuan.lib.chart2.demo.R
+import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
+import cn.jingzhuan.lib.chart2.demo.chart3.chart.SubKlineChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
+import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
+import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
@@ -23,11 +28,12 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LIMIT_UP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
-import cn.jingzhuan.lib.chart3.widget.KlineChartView
 
 class Chart3Activity : AppCompatActivity() {
 
-    private lateinit var klineMain: KlineChartView
+    private lateinit var klineMain: MainKlineChartView
+
+    private lateinit var klineSub1: SubKlineChartView
 
     private lateinit var rg: RadioGroup
 
@@ -47,12 +53,14 @@ class Chart3Activity : AppCompatActivity() {
 
         initListener()
 
-        setChartData()
+        setMainChartData()
 
+        setSubChartData()
     }
 
     private fun initView() {
         klineMain = findViewById(R.id.kline_main)
+        klineSub1 = findViewById(R.id.kline_sub1)
         rg = findViewById(R.id.rg)
         rbDay = findViewById(R.id.rb_day)
         rbYear = findViewById(R.id.rb_year)
@@ -63,15 +71,18 @@ class Chart3Activity : AppCompatActivity() {
     private fun initListener() {
         if (rbDay.isChecked) {
             klineMain.showBottomFlags = true
+            klineMain.valueIndexPattern = "yyyy-MM-dd"
         }
         rg.setOnCheckedChangeListener { group, id ->
             when (id) {
                 rbDay.id -> {
                     klineMain.showBottomFlags = true
+                    klineMain.valueIndexPattern = "yyyy-MM-dd"
                 }
 
                 rbYear.id -> {
                     klineMain.showBottomFlags = false
+                    klineMain.valueIndexPattern = "dd/HH:mm"
                 }
 
                 rbMinute.id -> {
@@ -82,18 +93,25 @@ class Chart3Activity : AppCompatActivity() {
 
         klineMain.addOnFlagClickListener(object : OnFlagClickListener{
             override fun onClick(type: Int, index: Int) {
-                if (type == FLAG_HISTORY_MINUTE) {
-                    Toast.makeText(this@Chart3Activity, "历史分时-> $index", Toast.LENGTH_SHORT).show()
-                } else if (type == FLAG_TRADE_DETAIL) {
-                    Toast.makeText(this@Chart3Activity, "交易详情-> $index", Toast.LENGTH_SHORT).show()
-                } else if (type == FLAG_SIMULATE_TRADE_DETAIL) {
-                    Toast.makeText(this@Chart3Activity, "交易详情(模)-> $index", Toast.LENGTH_SHORT).show()
-                } else if (type == FLAG_LIMIT_UP) {
-                    Toast.makeText(this@Chart3Activity, "涨停分析-> $index", Toast.LENGTH_SHORT).show()
-                } else if (type == FLAG_NOTICE) {
-                    Toast.makeText(this@Chart3Activity, "公告-> $index", Toast.LENGTH_SHORT).show()
-                } else if (type == FLAG_LHB) {
-                    Toast.makeText(this@Chart3Activity, "龙虎榜-> $index", Toast.LENGTH_SHORT).show()
+                when (type) {
+                    FLAG_HISTORY_MINUTE -> {
+                        Toast.makeText(this@Chart3Activity, "历史分时-> $index", Toast.LENGTH_SHORT).show()
+                    }
+                    FLAG_TRADE_DETAIL -> {
+                        Toast.makeText(this@Chart3Activity, "交易详情-> $index", Toast.LENGTH_SHORT).show()
+                    }
+                    FLAG_SIMULATE_TRADE_DETAIL -> {
+                        Toast.makeText(this@Chart3Activity, "交易详情(模)-> $index", Toast.LENGTH_SHORT).show()
+                    }
+                    FLAG_LIMIT_UP -> {
+                        Toast.makeText(this@Chart3Activity, "涨停分析-> $index", Toast.LENGTH_SHORT).show()
+                    }
+                    FLAG_NOTICE -> {
+                        Toast.makeText(this@Chart3Activity, "公告-> $index", Toast.LENGTH_SHORT).show()
+                    }
+                    FLAG_LHB -> {
+                        Toast.makeText(this@Chart3Activity, "龙虎榜-> $index", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -101,8 +119,38 @@ class Chart3Activity : AppCompatActivity() {
 
     }
 
+    private fun setSubChartData() {
+        val candlestickList = DataConfig.candlestickList
+        val barList = ArrayList<BarValue>()
+        var color: Int
+        var style: Paint.Style
+        candlestickList.forEachIndexed { index, value ->
+            if (value.open < value.close) {
+                color = Color.RED
+                style = Paint.Style.STROKE
+            } else if (value.open > value.close) {
+                color = Color.GREEN
+                style = Paint.Style.FILL
+            } else {
+                color = Color.GRAY
+                style = Paint.Style.FILL
+            }
+            barList.add(BarValue(value.low, color, style))
+        }
 
-    private fun setChartData() {
+        val barDataSet = BarDataSet(barList).apply {
+            isAutoBarWidth = true
+            axisDependency = AxisY.DEPENDENCY_LEFT
+        }
+
+        val data = CombineData().apply {
+            add(barDataSet)
+        }
+        klineSub1.setCombineData(data)
+    }
+
+
+    private fun setMainChartData() {
         val candlestickList = DataConfig.candlestickList
 
         val candlestickDataSet = CandlestickDataSet(candlestickList).apply {
@@ -160,9 +208,7 @@ class Chart3Activity : AppCompatActivity() {
             add(lineDataSet)
             add(scatterDataSet)
         }
-
         klineMain.setCombineData(data)
-
     }
 
 }

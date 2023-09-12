@@ -11,6 +11,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
+import cn.jingzhuan.lib.chart3.draw.BarDraw
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
 import cn.jingzhuan.lib.chart3.draw.LineDraw
 import cn.jingzhuan.lib.chart3.draw.MaxMinArrowDraw
@@ -30,6 +31,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var candlestickDraw: CandlestickDraw
 
+    private var barDraw: BarDraw
+
     private var lineDraw: LineDraw
 
     private var scatterDraw: ScatterDraw
@@ -38,6 +41,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
 
         candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
+
+        barDraw = BarDraw(chart.contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
 
         lineDraw = LineDraw(chart.contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
@@ -106,7 +111,10 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
 
             }
+
+            // 柱子
             if (dataSet is BarDataSet) {
+                barDraw.drawDataSet(canvas, combineData.barChartData, dataSet, currentViewport)
 
             }
 

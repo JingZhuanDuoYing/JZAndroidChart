@@ -9,14 +9,14 @@ import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
 import cn.jingzhuan.lib.chart3.formatter.IValueIndexFormatter
 
-class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
+open class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
 
-    var pattern: String = "yyyy-MM-dd"
+    var valueIndexPattern = "yyyy-MM-dd"
+
+    var bottomLabelPattern = "yyyy-MM-dd"
 
     init {
         isScaleEnable = true
-
-        currentVisibleEntryCount = 40
 
         axisLeft.apply {
             gridCount = 3
@@ -24,10 +24,15 @@ class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx,
             enableGridDashPathEffect(floatArrayOf(10f, 10f), 8f)
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
-                    return if (index == 1 || index == 3) "" else String.format("%.2f", value)
+                    return String.format("%.${decimalDigitsNumber}f", value)
                 }
             }
 
+        }
+
+        axisTop.apply {
+            gridCount = 0
+            isLabelEnable = false
         }
 
         axisRight.apply {
@@ -45,7 +50,7 @@ class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx,
                     val values = chartData.getTouchDataSet()?.values
                     val time = values?.getOrNull(index)?.time
                     return if (time != null) {
-                        DateTimeFormatter.ofPattern(pattern).formatTime(time * 1000L)
+                        DateTimeFormatter.ofPattern(valueIndexPattern).formatTime(time * 1000L)
                     } else ""
                 }
 
@@ -56,9 +61,9 @@ class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx,
                 override fun format(value: Float, index: Int): String {
                     val values = chartData.getTouchDataSet()?.getVisiblePoints(currentViewport)
                     return if (values.isNullOrEmpty()) "" else {
-                        val leftTime = DateTimeFormatter.ofPattern(pattern)
+                        val leftTime = DateTimeFormatter.ofPattern(bottomLabelPattern)
                             .formatTime(values.first().time * 1000L)
-                        val rightTime = DateTimeFormatter.ofPattern(pattern)
+                        val rightTime = DateTimeFormatter.ofPattern(bottomLabelPattern)
                             .formatTime(values.last().time * 1000L)
                         return when (index) {
                             0 -> leftTime

@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
  * 绘制光标
  */
 class HighlightRenderer<T : AbstractDataSet<*>>(
-    private val chart: AbstractChartView<T>
+    private val chart: AbstractChartView<T>,
 ) : AbstractRenderer<T>(chart) {
 
     var highlight: Highlight? = null
@@ -62,7 +62,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         initRect()
 
-        chart.setOnBottomAreaClickListener(object : OnBottomAreaClickListener{
+        chart.setOnBottomAreaClickListener(object : OnBottomAreaClickListener {
             override fun onClick(x: Float, y: Float) {
                 if (highlight == null) return
                 val index = highlight?.dataIndex ?: 0
@@ -176,7 +176,13 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         if (y > contentRect.bottom - thickness * 0.5f) {
             y = contentRect.bottom - thickness * 0.5f
         }
-        canvas.drawLine(contentRect.left.toFloat(), y, contentRect.right.toFloat(), y, highlightLinePaint)
+        canvas.drawLine(
+            contentRect.left.toFloat(),
+            y,
+            contentRect.right.toFloat(),
+            y,
+            highlightLinePaint
+        )
     }
 
     /**
@@ -288,7 +294,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                 var tradeSimulateWidth = 0
                 var limitUpWidth = 0
                 var noticeWidth = 0
-                var dateWidth = calculateWidth(text)
+                val dateWidth = calculateWidth(text)
                 var lhbWidth = 0
 
                 var tradeText = ""
@@ -339,7 +345,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                     lhbWidth = calculateWidth(sb.toString())
                 }
 
-                val totalWidth = tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth + lhbWidth
+                val totalWidth =
+                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth + lhbWidth
 
                 val bottomRect = chart.bottomRect
                 var left = x - totalWidth * 0.5f
@@ -367,7 +374,12 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                 }
 
                 if (tradeSimulateWidth != 0) {
-                    tradeSimulateRect.set(sortLeft, top, sortLeft + tradeSimulateWidth - splitSpace, bottom)
+                    tradeSimulateRect.set(
+                        sortLeft,
+                        top,
+                        sortLeft + tradeSimulateWidth - splitSpace,
+                        bottom
+                    )
                     sortLeft += tradeSimulateWidth
                     drawFlag(canvas, tradeSimulateRect, tradeSimulateText, 0xFFFD263F.toInt())
                 }
