@@ -31,11 +31,11 @@ class LineDraw(
     private var isLineChart: Boolean = false
 ) : IDraw<LineDataSet> {
 
-    private lateinit var textPaint: Paint
+    private var textPaint: Paint
 
-    private lateinit var pointPaint: Paint
+    private var pointPaint: Paint
 
-    private lateinit var path: Path
+    private var pointLinePath: Path
 
     private var shaderPaths: MutableList<Path>
 
@@ -55,12 +55,9 @@ class LineDraw(
         shaderPathColors = ArrayList()
         partLineList = ArrayList()
 
-        initPaint()
-    }
-
-    private fun initPaint() {
         pointPaint = Paint()
         pointPaint.style = Paint.Style.FILL
+        pointLinePath = Path()
 
         textPaint = Paint()
         textPaint.style = Paint.Style.FILL
@@ -69,8 +66,6 @@ class LineDraw(
         textPaint.textAlign = Paint.Align.CENTER
         textPaint.color = Color.WHITE
         textPaint.textSize = 25f
-
-        path = Path()
     }
 
     fun setHighLightState(isHighLight: Boolean) {
@@ -122,7 +117,6 @@ class LineDraw(
         renderPaint.strokeWidth = lineThickness.toFloat()
         renderPaint.color = lineDataSet.color
 
-        path.reset()
         shaderPaths.clear()
         shaderPathColors.clear()
 
@@ -408,8 +402,7 @@ class LineDraw(
         pointPaint.color = lineDataSet.color
         pointPaint.isAntiAlias = true
 
-        path.reset()
-        path = Path()
+        pointLinePath.reset()
 
         val candleWidth =
             contentRect.width() / max(visibleRange, lineDataSet.minValueCount.toFloat())
@@ -431,9 +424,9 @@ class LineDraw(
             if (yPosition - lineDataSet.radius < contentRect.top) yPosition += lineDataSet.radius
             if (isFirst) {
                 isFirst = false
-                path.moveTo(candlestickCenterX, yPosition)
+                pointLinePath.moveTo(candlestickCenterX, yPosition)
             } else {
-                path.lineTo(candlestickCenterX, yPosition)
+                pointLinePath.lineTo(candlestickCenterX, yPosition)
             }
             if (point.isDrawCircle) {
                 canvas.drawCircle(
@@ -446,7 +439,7 @@ class LineDraw(
             i++
         }
         if (lineDataSet.isLineVisible) {
-            canvas.drawPath(path, renderPaint)
+            canvas.drawPath(pointLinePath, renderPaint)
         }
     }
 

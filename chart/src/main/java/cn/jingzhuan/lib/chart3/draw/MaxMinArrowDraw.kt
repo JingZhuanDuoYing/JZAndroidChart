@@ -19,6 +19,8 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
 
     private val mTextBounds = Rect()
 
+    private val sb = StringBuilder()
+
     init {
         mPaint.color = textColor
         mPaint.textSize = textSize.toFloat()
@@ -35,7 +37,6 @@ class MaxMinArrowDraw(textColor: Int, textSize: Int) {
         minValue: Float,
         decimalDigitsNumber: Int,
     ) {
-        val sb = StringBuilder()
         // 画最大值
         val maxText = NumberUtils.keepPrecision("$maxValue", decimalDigitsNumber)
 

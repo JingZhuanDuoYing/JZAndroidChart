@@ -92,17 +92,25 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
             if (dataSet is TreeDataSet) {
 
             }
+
+            // 蜡烛
             if (dataSet is CandlestickDataSet) {
                 candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, currentViewport)
             }
+
+            // 线
             if (dataSet is LineDataSet) {
-                lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
+                if (dataSet.isHorizontalLine) {
+                    lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
+                }
                 lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
 
             }
             if (dataSet is BarDataSet) {
 
             }
+
+            // 图标
             if (dataSet is ScatterDataSet) {
                 scatterDraw.drawDataSet(canvas, combineData.scatterChartData, dataSet, currentViewport)
 
