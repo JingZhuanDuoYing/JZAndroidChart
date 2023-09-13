@@ -7,6 +7,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TAG_NAME
 import java.util.Collections
@@ -26,6 +27,8 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
 
     val scatterChartData: ScatterData = ScatterData()
 
+    val scatterTextChartData: ScatterTextData = ScatterTextData()
+
     fun getBarDataSets(): List<BarDataSet> {
         return barChartData.dataSets
     }
@@ -40,6 +43,10 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
 
     fun getScatterDataSets(): List<ScatterDataSet> {
         return scatterChartData.dataSets
+    }
+
+    fun getScatterTextDataSets(): List<ScatterTextDataSet> {
+        return scatterTextChartData.dataSets
     }
 
     fun getTreeDataSets(): List<TreeDataSet> {
@@ -62,8 +69,21 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         return scatterChartData.add(dataSet)
     }
 
+    fun addDataSet(dataSet: ScatterTextDataSet): Boolean {
+        return scatterTextChartData.add(dataSet)
+    }
+
     fun addDataSet(dataSet: TreeDataSet): Boolean {
         return treeChartData.add(dataSet)
+    }
+
+    fun clearAllChartData(){
+        treeChartData.clear()
+        barChartData.clear()
+        lineChartData.clear()
+        candlestickChartData.clear()
+        scatterTextChartData.clear()
+        scatterChartData.clear()
     }
 
     private fun getCombineDataSets(): List<AbstractDataSet<*>> {
@@ -90,24 +110,28 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         lineChartData.leftMax = leftMax
         candlestickChartData.leftMax = leftMax
         scatterChartData.leftMax = leftMax
+        scatterTextChartData.leftMax = leftMax
 
         treeChartData.leftMin = leftMin
         barChartData.leftMin = leftMin
         lineChartData.leftMin = leftMin
         candlestickChartData.leftMin = leftMin
         scatterChartData.leftMin = leftMin
+        scatterTextChartData.leftMin = leftMin
 
         treeChartData.rightMax = rightMax
         barChartData.rightMax = rightMax
         lineChartData.rightMax = rightMax
         candlestickChartData.rightMax = rightMax
         scatterChartData.rightMax = rightMax
+        scatterTextChartData.rightMax = rightMax
 
         treeChartData.rightMin = rightMin
         barChartData.rightMin = rightMin
         lineChartData.rightMin = rightMin
         candlestickChartData.rightMin = rightMin
         scatterChartData.rightMin = rightMin
+        scatterTextChartData.rightMin = rightMin
     }
 
     override fun add(e: AbstractDataSet<*>?): Boolean {
@@ -127,15 +151,18 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         if (e is ScatterDataSet) {
             return addDataSet(e)
         }
+        if (e is ScatterTextDataSet) {
+            return addDataSet(e)
+        }
         return super.add(e)
     }
 
-    override fun getTouchDataSet(): AbstractDataSet<*> {
-        return getCombineDataSets().first()
+    override fun getTouchDataSet(): AbstractDataSet<*>? {
+        return getCombineDataSets().firstOrNull()
     }
 
     override fun getTouchEntryCount(): Int {
-        return getTouchDataSet().values.size
+        return getTouchDataSet()?.values?.size ?: 0
     }
 
     override fun getFlagDataSet(): AbstractDataSet<*>? {
@@ -162,6 +189,7 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
             allDataSet.addAll(candlestickChartData.dataSets)
             allDataSet.addAll(lineChartData.dataSets)
             allDataSet.addAll(scatterChartData.dataSets)
+            allDataSet.addAll(scatterTextChartData.dataSets)
             allDataSet.sortWith { dataSet1, dataSet2 -> dataSet1.drawIndex - dataSet2.drawIndex }
             return allDataSet
         }

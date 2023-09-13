@@ -25,10 +25,10 @@ import kotlin.math.max
  * @author lei 画线
  */
 class LineDraw(
-    var contentRect: Rect,
-    private var renderPaint: Paint,
-    private var chartAnimator: ChartAnimator,
-    private var isLineChart: Boolean = false
+    private val contentRect: Rect,
+    private val renderPaint: Paint,
+    private val chartAnimator: ChartAnimator,
+    private val isLineChart: Boolean = false
 ) : IDraw<LineDataSet> {
 
     private var textPaint: Paint

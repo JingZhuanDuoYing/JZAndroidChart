@@ -20,10 +20,10 @@ import kotlin.math.roundToInt
  * @author lei 画柱子
  */
 class BarDraw(
-    var contentRect: Rect,
-    private var renderPaint: Paint,
-    private var textPaint: Paint,
-    private var chartAnimator: ChartAnimator,
+    private val contentRect: Rect,
+    private val renderPaint: Paint,
+    private val textPaint: Paint,
+    private val chartAnimator: ChartAnimator,
 ) : IDraw<BarDataSet> {
 
     private val labelBuffer = CharArray(100)
@@ -88,9 +88,9 @@ class BarDraw(
         }
         val percent: Float = dataSet.barWidthPercent
 
-        val scale: Float = 1 / viewport.width()
-        val step: Float = contentRect.width() * scale / valueCount
-        val startX: Float = contentRect.left - viewport.left * contentRect.width() * scale
+        val scale = 1f / viewport.width()
+        val step = contentRect.width() * scale / valueCount
+        val startX = contentRect.left - viewport.left * contentRect.width() * scale
 
 
         var i = 0

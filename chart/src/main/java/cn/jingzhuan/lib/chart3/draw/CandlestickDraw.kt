@@ -15,7 +15,7 @@ import kotlin.math.max
  * @since 2023-09-06
  * @author lei 画K线
  */
-class CandlestickDraw(var contentRect: Rect, private var renderPaint: Paint) : IDraw<CandlestickDataSet> {
+class CandlestickDraw(private val contentRect: Rect, private val renderPaint: Paint) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
 

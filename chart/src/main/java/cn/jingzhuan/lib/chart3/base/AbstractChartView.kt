@@ -18,7 +18,6 @@ import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
-import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import java.lang.ref.WeakReference
 import kotlin.math.max
 

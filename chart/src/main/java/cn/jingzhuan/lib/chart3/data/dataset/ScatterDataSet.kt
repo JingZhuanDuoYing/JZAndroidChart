@@ -129,7 +129,8 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         } else if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
             newValue = anchor - expand
             viewportYMin = min(newValue, viewportYMin)
-        } else { // shapeAlign == SHAPE_ALIGN_CENTER
+        } else {
+            // shapeAlign == SHAPE_ALIGN_CENTER
             val newMaxValue = anchor + expand / 2
             val newMinValue = anchor - expand / 2
             viewportYMax = max(newMaxValue, viewportYMax)

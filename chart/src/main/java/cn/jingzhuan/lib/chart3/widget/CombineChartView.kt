@@ -58,7 +58,12 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
         for (scatterDataSet in combineData.getScatterDataSets()) {
             addDataSet(scatterDataSet)
-            totalEntryCount = max(totalEntryCount, scatterDataSet.values.size)
+//            totalEntryCount = max(totalEntryCount, scatterDataSet.values.size)
+        }
+
+        for (scatterTextDataSet in combineData.getScatterTextDataSets()) {
+            addDataSet(scatterTextDataSet)
+//            totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
         }
 
 
@@ -89,6 +94,7 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
     fun cleanAllDataSet() {
         getRenderer()?.clearDataSet()
+        data = CombineData()
     }
 
     fun getCurrentData() = data

@@ -20,9 +20,11 @@ import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
+import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
@@ -33,6 +35,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LIMIT_UP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import kotlin.math.max
 import kotlin.math.min
 
@@ -93,11 +96,14 @@ class Chart3Activity : AppCompatActivity() {
                 rbDay.id -> {
                     klineMain.showBottomFlags = true
                     klineMain.valueIndexPattern = "yyyy-MM-dd"
+                    setMainChartData()
+                    setSubChartData()
                 }
 
                 rbYear.id -> {
                     klineMain.showBottomFlags = false
                     klineMain.valueIndexPattern = "dd/HH:mm"
+                    klineMain.cleanAllDataSet()
                 }
 
                 rbMinute.id -> {
@@ -258,32 +264,41 @@ class Chart3Activity : AppCompatActivity() {
 
         val lineList = ArrayList<LineValue>()
         val scatterList = ArrayList<ScatterValue>()
+        val scatterTextList = ArrayList<ScatterTextValue>()
         candlestickList.forEachIndexed { index, value ->
             lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
             when (index) {
                 118 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 108 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(1, 2)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 98 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(2, 3)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 88 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(3, 5)))
+                    scatterTextList.add(ScatterTextValue(true, value.high,value.low))
                 }
                 78 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 68 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(2)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 58 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(5)))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 else -> {
                     scatterList.add(ScatterValue(value.close, false))
+                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
             }
         }
@@ -293,11 +308,20 @@ class Chart3Activity : AppCompatActivity() {
             lineThickness = 3
         }
 
+        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
+            axisDependency = AxisY.DEPENDENCY_BOTH
+            text = "自"
+            textColor = 0xffFD263F.toInt()
+            textBgColor = 0xB3FFFFFF.toInt()
+            lineColor = 0xffFD263F.toInt()
+            frameColor = 0xffFD263F.toInt()
+            textSize = 30
+        }
 
         val scatterDataSet = ScatterDataSet(scatterList).apply {
             tag = ChartConstant.FLAG_TAG_NAME
             shape = scatterDrawable
-            shapeAlign = cn.jingzhuan.lib.chart.data.ScatterDataSet.SHAPE_ALIGN_PARENT_BOTTOM
+            shapeAlign = SHAPE_ALIGN_PARENT_BOTTOM
             isAutoWidth = false
         }
 
@@ -305,6 +329,8 @@ class Chart3Activity : AppCompatActivity() {
             add(candlestickDataSet)
             add(lineDataSet)
             add(scatterDataSet)
+            add(scatterDataSet)
+            add(scatterTextDataSet)
         }
         klineMain.setCombineData(data)
     }

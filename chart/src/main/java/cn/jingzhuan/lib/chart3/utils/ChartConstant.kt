@@ -19,6 +19,10 @@ object ChartConstant {
 
     const val SHAPE_ALIGN_PARENT_BOTTOM = 5
 
+    const val SCATTER_TEXT_ALIGN_TOP = 1
+
+    const val SCATTER_TEXT_ALIGN_BOTTOM = 2
+
     // <editor-fold desc="光标 状态">    ---------------------
     /**
      * 初始状态

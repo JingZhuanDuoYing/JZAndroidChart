@@ -24,7 +24,7 @@ import kotlin.math.min
  * @author lei 画图标
  */
 
-class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
+class ScatterDraw(private val contentRect: Rect) : IDraw<ScatterDataSet> {
 
     private val topHeights = ArrayMap<String, Float>()
 
@@ -37,10 +37,18 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
     override fun drawDataSet(
         canvas: Canvas,
         chartData: ChartData<ScatterDataSet>,
-        dataSet: ScatterDataSet,
         viewport: Viewport,
     ) {
         clearTemporaryData()
+        super.drawDataSet(canvas, chartData, viewport)
+    }
+
+    override fun drawDataSet(
+        canvas: Canvas,
+        chartData: ChartData<ScatterDataSet>,
+        dataSet: ScatterDataSet,
+        viewport: Viewport,
+    ) {
         drawScatter(
             canvas, dataSet, viewport,
             chartData.leftMax, chartData.leftMin,
@@ -108,15 +116,14 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
 
             val drawDeltaX = (i + startIndexOffset) / valueCount.toFloat()
 
-            val drawX =
-                contentRect.left + contentRect.width() * (drawDeltaX - viewport.left) / viewport.width()
+            val drawX = contentRect.left + contentRect.width() * (drawDeltaX - viewport.left) / viewport.width()
 
-            val xPosition: Float = dataSet.startXOffset + width * 0.5f + drawX - shapeWidth * 0.5f
+            val xPosition = dataSet.startXOffset + width * 0.5f + drawX - shapeWidth * 0.5f
             var yPosition: Float
             val heightIndexKey = i.toString()
             if (dataSet.shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
 
-                var offset: Float = shapeHeight
+                var offset = shapeHeight
                 if (!isNaN(value.value)) {
                     val lastOffset = parentBottomHeights[heightIndexKey] ?: 0f
                     offset += lastOffset
@@ -132,7 +139,7 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
                 }
             } else if (dataSet.shapeAlign == SHAPE_ALIGN_BOTTOM) {
 
-                var offset: Float = shapeHeight
+                var offset = shapeHeight
                 if (!isNaN(value.value)) {
                     val lastOffset = bottomHeights[heightIndexKey] ?: 0f
                     offset += lastOffset
@@ -155,8 +162,8 @@ class ScatterDraw(var contentRect: Rect) : IDraw<ScatterDataSet> {
             }
 
             value.setCoordinate(xPosition, yPosition)
-            val x: Int = (xPosition + dataSet.drawOffsetX).toInt()
-            val y: Int = (yPosition + dataSet.drawOffsetY).toInt()
+            val x = (xPosition + dataSet.drawOffsetX).toInt()
+            val y = (yPosition + dataSet.drawOffsetY).toInt()
             if (value.color != Color.TRANSPARENT) {
                 shape?.setColorFilter(value.color, PorterDuff.Mode.SRC_OVER)
             }

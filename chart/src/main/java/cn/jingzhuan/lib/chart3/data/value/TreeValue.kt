@@ -7,7 +7,7 @@ import kotlin.math.roundToInt
  * @since 2023-09-05
  * created by lei
  */
-class TreeValue(private var leafs: List<Leaf>?) : AbstractValue() {
+class TreeValue(var leafs: List<Leaf>?) : AbstractValue() {
 
     var isEnable = true
 

@@ -9,13 +9,15 @@ import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
-import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
 import cn.jingzhuan.lib.chart3.draw.BarDraw
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
 import cn.jingzhuan.lib.chart3.draw.LineDraw
 import cn.jingzhuan.lib.chart3.draw.MaxMinArrowDraw
 import cn.jingzhuan.lib.chart3.draw.ScatterDraw
+import cn.jingzhuan.lib.chart3.draw.ScatterTextDraw
+import cn.jingzhuan.lib.chart3.draw.TreeDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import kotlin.math.roundToInt
@@ -37,16 +39,24 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var scatterDraw: ScatterDraw
 
+    private var scatterTextDraw: ScatterTextDraw
+
+    private var treeDraw: TreeDraw
+
     init {
         maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
 
-        candlestickDraw = CandlestickDraw(chart.contentRect, renderPaint)
+        candlestickDraw = CandlestickDraw(contentRect, renderPaint)
 
-        barDraw = BarDraw(chart.contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
+        barDraw = BarDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
 
-        lineDraw = LineDraw(chart.contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
+        lineDraw = LineDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
-        scatterDraw = ScatterDraw(chart.contentRect)
+        scatterDraw = ScatterDraw(contentRect)
+
+        scatterTextDraw = ScatterTextDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator() )
+
+        treeDraw = TreeDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
         chart.addInternalViewportChangeListener { viewport ->
             currentViewport.set(viewport)
@@ -59,7 +69,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 if (!chart.isHighlightEnable) return
                 if (combineData == null) return
 
-                val dataSet = combineData!!.getTouchDataSet()
+                val dataSet = combineData?.getTouchDataSet() ?: return
 
                 val valueCount = dataSet.getEntryCount()
                 val xPosition: Float
@@ -95,7 +105,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         for (i in sortedDataSets.indices) {
             val dataSet: AbstractDataSet<*> = sortedDataSets[i]
             if (dataSet is TreeDataSet) {
-
+                if (chartView.focusIndex == -1) chartView.focusIndex = dataSet.values.size - 1
+                treeDraw.setFocusIndex(chartView.focusIndex)
+                treeDraw.drawDataSet(canvas, combineData.treeChartData, dataSet, currentViewport)
             }
 
             // 蜡烛
@@ -118,18 +130,20 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
             }
 
-            // 图标
-            if (dataSet is ScatterDataSet) {
-                scatterDraw.drawDataSet(canvas, combineData.scatterChartData, dataSet, currentViewport)
-
+            // 标签文本
+            if (dataSet is ScatterTextDataSet) {
+                scatterTextDraw.drawDataSet(canvas, combineData.scatterTextChartData, dataSet, currentViewport)
             }
 
         }
 
+        // 图标 画在上层
+        scatterDraw.drawDataSet(canvas, combineData.scatterChartData, currentViewport)
+
         // 画最大最小值
         if (chartView.isShowMaxMinValue) {
             val chartData = getChartData() ?: return
-            val dataSet = chartData.getTouchDataSet()
+            val dataSet = chartData.getTouchDataSet() ?: return
             if (dataSet is CandlestickDataSet) {
                 val max = chartData.leftMax
                 val min = chartData.leftMin
@@ -164,13 +178,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
      */
     override fun clearDataSet() {
         super.clearDataSet()
-//        cleanTreeDataSet()
-//        cleanLineDataSet()
-//        cleanBarDataSet()
-//        cleanCandlestickDataSet()
-//        cleanScatterDataSet()
-
+        getChartData()?.clearAllChartData()
         calcDataSetMinMax()
+        chartView.invalidate()
     }
 
     override fun getChartData(): CombineData? {
