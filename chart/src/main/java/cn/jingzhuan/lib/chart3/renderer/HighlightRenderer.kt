@@ -216,6 +216,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         // 画背景
         bgRect.set(contentRect.left, top.toInt(), contentRect.left + width, bottom.toInt())
+        renderPaint.color = chart.highlightTextBgColor
         canvas.drawRect(bgRect, renderPaint)
 
         // 画文本
@@ -257,6 +258,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         // 画背景
         bgRect.set(contentRect.right - width, top.toInt(), contentRect.right, bottom.toInt())
+        renderPaint.color = chart.highlightTextBgColor
         canvas.drawRect(bgRect, renderPaint)
 
         // 画文本
@@ -480,15 +482,11 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
     fun highlightValue(highlight: Highlight?) {
         if (highlight == null) return
-//        if (mHighlightStatusChangeListener != null) {
-//            mHighlightStatusChangeListener.onHighlightShow(highlight);
-//        }
         this.highlight = highlight
     }
 
     fun cleanHighlight() {
+        if (highlight == null) return
         highlight = null
-        //        if (mHighlightStatusChangeListener != null)
-//            mHighlightStatusChangeListener.onHighlightHide();
     }
 }

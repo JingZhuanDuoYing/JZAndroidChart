@@ -85,8 +85,25 @@
         app:maxMinValueTextSize="11dp"
         app:maxMinValueTextColor="#A1ABBB"/>
 
-    <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubKlineChartView
+    <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
         android:id="@+id/kline_sub1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_marginTop="5dp"
+        app:axisColor="#ffe5e5e5"
+        app:axisThickness="0.5dp"
+        app:gridColor="#ffe5e5e5"
+        app:labelTextColor="#A1ABBB"
+        app:labelTextSize="11dp"
+        app:highlightTextBgHeight="18dp"
+        app:highlightColor="#000"
+        app:highlightThickness="1dp"
+        app:highlightTextSize="11dp"/>
+
+    <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
+        android:id="@+id/kline_sub2"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:paddingStart="10dp"

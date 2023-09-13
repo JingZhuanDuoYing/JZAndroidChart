@@ -45,6 +45,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     private var touchPointListener: OnTouchPointListener? = null
 
+    private var internalViewportChangeListener: OnViewportChangeListener? = null
+
     private var viewportChangeListener: OnViewportChangeListener? = null
 
     private var loadMoreListener: OnLoadMoreListener? = null
@@ -148,6 +150,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var highlightState = HIGHLIGHT_STATUS_INITIAL
 
     /**
+     * 不是主动的 光标状态不变
+     */
+    var isStatic = false
+
+    /**
      * 最大可见数量
      */
     var maxVisibleEntryCount = 250
@@ -213,7 +220,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (isOpenRange) return
 
         if (!isLongPress) isLongPress = true
-        if (highlightState != HIGHLIGHT_STATUS_MOVE){
+        if (highlightState != HIGHLIGHT_STATUS_MOVE && !isStatic){
             highlightState = HIGHLIGHT_STATUS_MOVE
         }
         onTouchPoint(e)
@@ -236,17 +243,21 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         } else {
             // 当前按下的位置有效
             if (getEntryIndex(e.x) > 0) {
-                when (highlightState) {
-                    HIGHLIGHT_STATUS_INITIAL -> {
-                        highlightState = HIGHLIGHT_STATUS_PRESS
-                        onTouchPoint(e)
-                    }
-                    HIGHLIGHT_STATUS_FOREVER -> {
-                        onTouchPoint(e)
-                    }
-                    else -> {
-                        highlightState = HIGHLIGHT_STATUS_INITIAL
-                        onHighlightClean()
+                if (isStatic) {
+                    onTouchPoint(e)
+                } else {
+                    when (highlightState) {
+                        HIGHLIGHT_STATUS_INITIAL -> {
+                            highlightState = HIGHLIGHT_STATUS_PRESS
+                            onTouchPoint(e)
+                        }
+                        HIGHLIGHT_STATUS_FOREVER -> {
+                            onTouchPoint(e)
+                        }
+                        else -> {
+                            highlightState = HIGHLIGHT_STATUS_INITIAL
+                            onHighlightClean()
+                        }
                     }
                 }
             } else {
@@ -268,6 +279,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch) {
             finishScroll()
             return false
+        }
+
+        if (highlightState != HIGHLIGHT_STATUS_FOREVER) {
+            onHighlightClean()
         }
 
         Log.i(TAG, "onScroll")
@@ -379,6 +394,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (isLongPress) return false
         Log.i(TAG, "onScale")
         isScaling = true
+
+        if (highlightState != HIGHLIGHT_STATUS_FOREVER) {
+            onHighlightClean()
+        }
 
         val spanX: Float = mScaleDetector.currentSpan
         var lastSpanX: Float = mScaleDetector.previousSpan
@@ -548,6 +567,15 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     protected open fun triggerViewportChange() {
+        if (internalViewportChangeListener != null) {
+            synchronized(this) {
+                try {
+                    internalViewportChangeListener?.onViewportChange(currentViewport)
+                } catch (e: Exception) {
+                    Log.d(TAG, "OnViewportChangeListener", e)
+                }
+            }
+        }
         if (viewportChangeListener != null) {
             synchronized(this) {
                 try {
@@ -658,6 +686,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun setViewportChangeListener(listener: OnViewportChangeListener) {
         this.viewportChangeListener = listener
+    }
+
+    internal fun addInternalViewportChangeListener(listener: OnViewportChangeListener) {
+        this.internalViewportChangeListener = listener
     }
 
     fun setOnLoadMoreListener(listener: OnLoadMoreListener) {

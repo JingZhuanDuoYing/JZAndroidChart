@@ -48,7 +48,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         scatterDraw = ScatterDraw(chart.contentRect)
 
-        chart.setViewportChangeListener { viewport ->
+        chart.addInternalViewportChangeListener { viewport ->
             currentViewport.set(viewport)
             calcDataSetMinMax()
         }

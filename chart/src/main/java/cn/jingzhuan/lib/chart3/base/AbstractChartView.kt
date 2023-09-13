@@ -156,6 +156,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     var offsetPercent = 0f
 
+    var focusIndex = -1
+
     constructor(context: Context?) : super(context) {
         init(null, 0)
     }
@@ -315,9 +317,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         }
 
         // 画十字光标
-        if (highlightState != HIGHLIGHT_STATUS_INITIAL) {
-            drawHighlight(canvas)
-        }
+        drawHighlight(canvas)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {

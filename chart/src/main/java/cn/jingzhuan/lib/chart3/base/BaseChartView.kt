@@ -11,8 +11,12 @@ import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
+import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
+import cn.jingzhuan.lib.chart3.utils.ChartConstant
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 
 /**
  * @since 2023-09-05
@@ -25,6 +29,8 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     private val waterMarkPaint = Paint()
 
     private lateinit var animator: ChartAnimator
+
+    private var highlightListener: OnHighlightListener? = null
 
     constructor(context: Context?) : super(context)
 
@@ -140,7 +146,13 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     override fun highlightValue(highlight: Highlight?) {
         if (highlight != null) {
+            if (highlightState == HIGHLIGHT_STATUS_INITIAL && !isStatic) {
+                highlightState = HIGHLIGHT_STATUS_PRESS
+            }
             highlightRenderer.highlightValue(highlight)
+            if (highlightListener != null) {
+                highlightListener?.onHighlightShow(highlight)
+            }
             invalidate()
         }
     }
@@ -154,8 +166,17 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     override fun onHighlightClean() {
+        highlightState = HIGHLIGHT_STATUS_INITIAL
         highlightRenderer.cleanHighlight()
+        if (highlightListener != null){
+            highlightListener?.onHighlightHide()
+        }
+        focusIndex = -1
         invalidate()
+    }
+
+    open fun setOnHighlightListener(listener: OnHighlightListener) {
+        this.highlightListener = listener
     }
 
     override val renderPaint: Paint?

@@ -9,6 +9,7 @@ import android.util.AttributeSet
 open class StaticChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
 
     init {
+        isStatic = true
         isScrollEnable = false
         isScaleEnable = false
 

@@ -65,7 +65,7 @@ open class BarDataSet @JvmOverloads constructor(
         }
     }
 
-    private fun calcMinMaxY(value: BarValue?) {
+    protected fun calcMinMaxY(value: BarValue?) {
         if (value == null || !value.isEnable) return
         if (value.values == null) return
         for (v in value.values!!) {
