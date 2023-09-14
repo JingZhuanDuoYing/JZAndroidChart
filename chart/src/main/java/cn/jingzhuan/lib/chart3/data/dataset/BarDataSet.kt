@@ -26,8 +26,6 @@ open class BarDataSet @JvmOverloads constructor(
 
     var isAutoBarWidth = false
 
-    var forceValueCount = -1
-
     var strokeThickness = 2f
 
     var barWidthPercent = 0.8f

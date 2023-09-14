@@ -8,6 +8,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
+import kotlin.math.max
 
 /**
  * @since 2023-09-05
@@ -43,10 +44,12 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
         if (getChartData() == null) return -1
         val data = getChartData()
 
-        val valueCount = data!!.getTouchEntryCount()
+        val dataSet = data?.getTouchDataSet() ?: return -1
+
+        val valueCount = max(dataSet.values.size, dataSet.forceValueCount)
 
         var index: Int = (((x - contentRect.left) * currentViewport.width() / contentRect.width() + currentViewport.left) * valueCount.toFloat()).toInt()
-        if (index >= valueCount) index = valueCount - 1
+        if (index >= dataSet.values.size) index = dataSet.values.size - 1
         if (index < 0) index = 0
 
         return index

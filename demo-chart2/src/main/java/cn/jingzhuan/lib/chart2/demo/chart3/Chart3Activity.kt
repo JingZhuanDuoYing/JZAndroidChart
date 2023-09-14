@@ -4,22 +4,25 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import cn.jingzhuan.lib.chart.component.AxisY
 import cn.jingzhuan.lib.chart2.demo.R
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
+import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.OnSubChartTouchListener
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.MinuteLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
@@ -37,12 +40,15 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
+import cn.jingzhuan.lib.chart3.widget.MinuteChartView
 import kotlin.math.max
 import kotlin.math.min
 
 class Chart3Activity : AppCompatActivity() {
 
     private lateinit var klineMain: MainKlineChartView
+
+    private lateinit var minuteMain: MainMinuteChartView
 
     private lateinit var sub1: SubChartView
 
@@ -60,6 +66,12 @@ class Chart3Activity : AppCompatActivity() {
 
     private val subCharts by lazy { mutableListOf(sub1, sub2) }
 
+    private val lastClose = 3188.98f
+
+    private val highPrice = 3388.98f
+
+    private val lowPrice = 3018.98f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chart3)
@@ -75,6 +87,7 @@ class Chart3Activity : AppCompatActivity() {
 
     private fun initView() {
         klineMain = findViewById(R.id.kline_main)
+        minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
 
@@ -93,8 +106,11 @@ class Chart3Activity : AppCompatActivity() {
             klineMain.valueIndexPattern = "yyyy-MM-dd"
         }
         rg.setOnCheckedChangeListener { group, id ->
+            minuteMain.onHighlightClean()
             when (id) {
                 rbDay.id -> {
+                    klineMain.visibility = View.VISIBLE
+                    minuteMain.visibility = View.GONE
                     klineMain.apply {
                         showBottomFlags = true
                         valueIndexPattern = "yyyy-MM-dd"
@@ -105,6 +121,7 @@ class Chart3Activity : AppCompatActivity() {
                     }
 
                     subCharts.forEach {
+                        it.visibility = View.VISIBLE
                         it.cleanAllDataSet()
                     }
 
@@ -113,6 +130,8 @@ class Chart3Activity : AppCompatActivity() {
                 }
 
                 rbYear.id -> {
+                    klineMain.visibility = View.VISIBLE
+                    minuteMain.visibility = View.GONE
                     klineMain.apply {
                         showBottomFlags = false
                         valueIndexPattern = "dd/HH:mm"
@@ -123,15 +142,21 @@ class Chart3Activity : AppCompatActivity() {
                     }
 
                     subCharts.forEach {
+                        it.visibility = View.VISIBLE
                         it.cleanAllDataSet()
                     }
                     setMainKlineChartData(true)
                     setSubKlineChartData(true)
-
                 }
 
                 rbMinute.id -> {
-                    klineMain.showBottomFlags = false
+                    klineMain.visibility = View.GONE
+                    minuteMain.visibility = View.VISIBLE
+                    subCharts.forEach {
+                        it.visibility = View.GONE
+                    }
+
+                    setMainMinuteChartData()
                 }
             }
         }
@@ -364,6 +389,30 @@ class Chart3Activity : AppCompatActivity() {
             }
         }
         klineMain.setCombineData(data)
+    }
+
+    private fun setMainMinuteChartData() {
+        val candlestickList = DataConfig.candlestickList.toMutableList()
+
+        candlestickList.addAll(DataConfig.candlestickList)
+
+
+        val lineList = ArrayList<LineValue>()
+
+        candlestickList.forEach {value ->
+            lineList.add(LineValue(value.close, value.time))
+        }
+
+        val lineDataSet = MinuteLineDataSet(lineList, lastClose, highPrice, lowPrice).apply {
+            color = Color.BLUE
+            lineThickness = 3
+            forceValueCount = 242
+        }
+
+        val data = CombineData().apply {
+            add(lineDataSet)
+        }
+        minuteMain.setCombineData(data)
     }
 
 }

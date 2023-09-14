@@ -22,8 +22,6 @@ open class LineDataSet @JvmOverloads constructor(
 
     var headPoint: LineValue? = null
 
-    var forceValueCount = -1
-
     var shader: Shader? = null
 
     var shaderTop: Shader? = null

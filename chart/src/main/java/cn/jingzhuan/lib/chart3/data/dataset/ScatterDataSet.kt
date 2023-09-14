@@ -49,8 +49,6 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private var mTextValueRenderers: MutableList<TextValueRenderer>? = null
 
-    var forceValueCount = -1
-
     override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, mix: Float) {
         viewportYMax = max
         viewportYMin = mix

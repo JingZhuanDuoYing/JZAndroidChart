@@ -64,6 +64,8 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     var minIndex = 0
 
+    var forceValueCount = -1
+
     constructor()
 
     constructor(tag: String?) {

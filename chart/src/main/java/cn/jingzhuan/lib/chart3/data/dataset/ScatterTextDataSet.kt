@@ -42,8 +42,6 @@ open class ScatterTextDataSet(scatterTextValues: List<ScatterTextValue>) :
      */
     var isCircle = false
 
-    var forceValueCount = -1
-
     override fun addEntry(value: ScatterTextValue?): Boolean {
         if (value == null) return false
         return values.add(value)

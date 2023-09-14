@@ -9,6 +9,10 @@ object ChartConstant {
 
     const val COLOR_NONE = Color.TRANSPARENT
 
+    var COLOR_RED = 0xFFFD263F.toInt()
+
+    var COLOR_GREEN = 0xFF00AA3B.toInt()
+
     const val SHAPE_ALIGN_CENTER = 1
 
     const val SHAPE_ALIGN_TOP = 2

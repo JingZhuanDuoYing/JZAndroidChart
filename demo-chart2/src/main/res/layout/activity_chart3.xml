@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +8,16 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/top_option"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RadioGroup
             android:id="@+id/rg"
@@ -83,7 +88,34 @@
         app:showWaterMark="true"
         app:showMaxMinValue="true"
         app:maxMinValueTextSize="11dp"
-        app:maxMinValueTextColor="#A1ABBB"/>
+        app:maxMinValueTextColor="#A1ABBB"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_option"/>
+
+    <cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
+        android:id="@+id/minute_main"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:axisColor="#ffe5e5e5"
+        app:axisThickness="0.5dp"
+        app:gridColor="#ffe5e5e5"
+        app:labelTextColor="#A1ABBB"
+        app:labelTextSize="11dp"
+        app:bottomLabelHeight="18dp"
+        app:highlightTextBgHeight="18dp"
+        app:highlightColor="#000"
+        app:highlightThickness="1dp"
+        app:highlightTextSize="11dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_option"
+        android:visibility="gone"
+        />
+
 
     <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
         android:id="@+id/kline_sub1"
@@ -100,7 +132,10 @@
         app:highlightTextBgHeight="18dp"
         app:highlightColor="#000"
         app:highlightThickness="1dp"
-        app:highlightTextSize="11dp"/>
+        app:highlightTextSize="11dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kline_main"/>
 
     <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
         android:id="@+id/kline_sub2"
@@ -117,7 +152,10 @@
         app:highlightTextBgHeight="18dp"
         app:highlightColor="#000"
         app:highlightThickness="1dp"
-        app:highlightTextSize="11dp"/>
+        app:highlightTextSize="11dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kline_sub1"/>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

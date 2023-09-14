@@ -208,7 +208,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val leftMin = chartData.leftMin
         val price = getTouchPriceByY(y, leftMax, leftMin)
         val valueFormatter = chart.axisLeft.labelValueFormatter
-        val text: String = valueFormatter?.format(price, 0)
+        val text: String = valueFormatter?.format(price, -1)
             ?: if (price == -1f) "--" else String.format("%.2f", price)
         if (text.isEmpty()) return
 
@@ -460,10 +460,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
      * 计算文本长度
      */
     private fun calculateWidth(text: String): Int {
-        val rect = Rect()
         val padding = chart.resources.getDimensionPixelSize(R.dimen.jz_chart_highlight_text_padding)
-        labelTextPaint.getTextBounds(text, 0, text.length, rect)
-        return rect.width() + padding * 2
+        return labelTextPaint.measureText(text).roundToInt() + padding * 2
     }
 
     private fun getTouchPriceByY(touchY: Float, viewportMax: Float, viewportMin: Float): Float {
