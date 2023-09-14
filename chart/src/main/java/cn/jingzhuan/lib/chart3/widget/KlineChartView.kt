@@ -41,9 +41,9 @@ open class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView
         }
 
         axisBottom.apply {
-            gridCount = 3
+            gridCount = 1
             isLabelEnable = true
-            enableGridDashPathEffect(floatArrayOf(10f, 10f), 8f)
+
             valueIndexFormatter = object : IValueIndexFormatter {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun format(index: Int): String {
@@ -67,7 +67,7 @@ open class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView
                             .formatTime(values.last().time * 1000L)
                         return when (index) {
                             0 -> leftTime
-                            4 -> rightTime
+                            2 -> rightTime
                             else -> ""
                         }
                     }

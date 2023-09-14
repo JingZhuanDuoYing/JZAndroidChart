@@ -15,6 +15,7 @@ import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.OnSubChartTouchListener
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
 import cn.jingzhuan.lib.chart3.Highlight
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
@@ -67,9 +68,9 @@ class Chart3Activity : AppCompatActivity() {
 
         initListener()
 
-        setMainChartData()
+        setMainKlineChartData()
 
-        setSubChartData()
+        setSubKlineChartData()
     }
 
     private fun initView() {
@@ -94,16 +95,39 @@ class Chart3Activity : AppCompatActivity() {
         rg.setOnCheckedChangeListener { group, id ->
             when (id) {
                 rbDay.id -> {
-                    klineMain.showBottomFlags = true
-                    klineMain.valueIndexPattern = "yyyy-MM-dd"
-                    setMainChartData()
-                    setSubChartData()
+                    klineMain.apply {
+                        showBottomFlags = true
+                        valueIndexPattern = "yyyy-MM-dd"
+                        finishScroll()
+                        onHighlightClean()
+                        cleanAllDataSet()
+                        currentViewport = Viewport()
+                    }
+
+                    subCharts.forEach {
+                        it.cleanAllDataSet()
+                    }
+
+                    setMainKlineChartData()
+                    setSubKlineChartData()
                 }
 
                 rbYear.id -> {
-                    klineMain.showBottomFlags = false
-                    klineMain.valueIndexPattern = "dd/HH:mm"
-                    klineMain.cleanAllDataSet()
+                    klineMain.apply {
+                        showBottomFlags = false
+                        valueIndexPattern = "dd/HH:mm"
+                        finishScroll()
+                        onHighlightClean()
+                        cleanAllDataSet()
+                        currentViewport = Viewport()
+                    }
+
+                    subCharts.forEach {
+                        it.cleanAllDataSet()
+                    }
+                    setMainKlineChartData(true)
+                    setSubKlineChartData(true)
+
                 }
 
                 rbMinute.id -> {
@@ -200,8 +224,11 @@ class Chart3Activity : AppCompatActivity() {
         }
     }
 
-    private fun setSubChartData() {
-        val candlestickList = DataConfig.candlestickList
+    private fun setSubKlineChartData(isYear: Boolean = false) {
+        var candlestickList = DataConfig.candlestickList
+
+        if (isYear) candlestickList = candlestickList.subList(0, 30)
+
         val barList = ArrayList<BarValue>()
         val zeroBarList = ArrayList<BarValue>()
 
@@ -254,8 +281,10 @@ class Chart3Activity : AppCompatActivity() {
 
     }
 
-    private fun setMainChartData() {
-        val candlestickList = DataConfig.candlestickList
+    private fun setMainKlineChartData(isYear: Boolean = false) {
+        var candlestickList = DataConfig.candlestickList
+
+        if (isYear) candlestickList = candlestickList.subList(0, 30)
 
         val candlestickDataSet = CandlestickDataSet(candlestickList).apply {
             increasingPaintStyle = Paint.Style.STROKE
@@ -328,9 +357,11 @@ class Chart3Activity : AppCompatActivity() {
         val data = CombineData().apply {
             add(candlestickDataSet)
             add(lineDataSet)
-            add(scatterDataSet)
-            add(scatterDataSet)
-            add(scatterTextDataSet)
+            if (!isYear) {
+                add(scatterDataSet)
+                add(scatterDataSet)
+                add(scatterTextDataSet)
+            }
         }
         klineMain.setCombineData(data)
     }

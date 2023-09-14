@@ -1,10 +1,15 @@
 package cn.jingzhuan.lib.chart3.data
 
 import android.graphics.Rect
+import android.util.ArrayMap
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.axis.AxisX
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
+import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
 import java.util.Collections
 import kotlin.math.max
 import kotlin.math.min
@@ -25,9 +30,7 @@ open class ChartData<T : AbstractDataSet<*>> {
 
     var rightMax = -Float.MAX_VALUE
 
-    var leftAxis: AxisY? = null
-
-    var rightAxis: AxisY? = null
+    private var axisRenderers: ArrayMap<Int, AxisRenderer<T>>? = null
 
     val dataSets: MutableList<T>
         get() {
@@ -55,14 +58,19 @@ open class ChartData<T : AbstractDataSet<*>> {
         rightMax = -Float.MAX_VALUE
     }
 
-    private fun setMinMax() {
-        if (leftAxis != null && leftMin != Float.MAX_VALUE) {
-            leftAxis?.yMin = leftMin
-            leftAxis?.yMax = leftMax
-        }
-        if (rightAxis != null && rightMin != Float.MAX_VALUE) {
-            rightAxis?.yMin = rightMin
-            rightAxis?.yMax = rightMax
+    private fun setAxisMinMax() {
+        if (axisRenderers != null) {
+            val leftAxis = axisRenderers?.get(TYPE_AXIS_LEFT)?.axis as AxisY
+            leftAxis.apply {
+                yMin = leftMin
+                yMax = leftMax
+            }
+
+            val rightAxis = axisRenderers?.get(TYPE_AXIS_RIGHT)?.axis as AxisY
+            rightAxis.apply {
+                yMin = leftMin
+                yMax = leftMax
+            }
         }
     }
 
@@ -107,13 +115,12 @@ open class ChartData<T : AbstractDataSet<*>> {
                 }
 
             }
-            setMinMax()
         }
+        setAxisMinMax()
     }
 
     fun setChart(chart: AbstractChartView<T>) {
-        leftAxis = chart.axisLeft
-        rightAxis = chart.axisRight
+        axisRenderers = chart.axisRenderers
     }
 
     open fun getTouchDataSet(): T?{

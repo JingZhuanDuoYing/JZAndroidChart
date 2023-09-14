@@ -14,9 +14,9 @@ import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
-import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
 
 /**
  * @since 2023-09-05
@@ -43,6 +43,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     override fun initChart() {
         animator = ChartAnimator { postInvalidate() }
         highlightRenderer = HighlightRenderer(this)
+
     }
 
     fun setRenderer(chartRenderer: AbstractRenderer<T>?) {
@@ -73,67 +74,42 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
      * 画坐标轴
      */
     override fun drawAxis(canvas: Canvas) {
-        axisLeftRenderer.renderer(canvas)
-
-        axisRightRenderer.renderer(canvas)
-
-        axisTopRenderer.renderer(canvas)
-
-        axisBottomRenderer.renderer(canvas)
-
+        axisRenderers.values.forEach {
+            it.renderer(canvas)
+        }
     }
 
     /**
      * 画坐标轴文本 (左、右、上 如果配置了)
      */
     override fun drawAxisLabels(canvas: Canvas) {
-        axisLeftRenderer.drawLabels(canvas)
-
-        axisRightRenderer.drawLabels(canvas)
-
-        axisTopRenderer.drawLabels(canvas)
-
+        axisRenderers.forEach {
+            if (it.key != TYPE_AXIS_BOTTOM) {
+                it.value.drawLabels(canvas)
+            }
+        }
     }
 
     /**
      * 画坐标轴底部文本
      */
     override fun drawBottomLabels(canvas: Canvas) {
-        axisBottomRenderer.drawLabels(canvas)
+        axisRenderers.forEach {
+            if (it.key == TYPE_AXIS_BOTTOM) {
+                it.value.drawLabels(canvas)
+                return
+            }
+        }
     }
 
     /**
      * 画网格线
      */
     override fun drawGridLine(canvas: Canvas) {
-        // 左右 只画一次
-        val axisLeft = axisLeftRenderer.axis
-        val drawLeft = axisLeft.isEnable && axisLeft.isGridLineEnable && axisLeft.gridCount > 0
-
-        val axisRight = axisRightRenderer.axis
-        val drawRight = axisRight.isEnable && axisRight.isGridLineEnable && axisRight.gridCount > 0
-
-        if (drawLeft && drawRight) {
-            axisLeftRenderer.drawGridLines(canvas)
-        } else if (drawLeft) {
-            axisLeftRenderer.drawGridLines(canvas)
-        } else if (drawRight) {
-            axisRightRenderer.drawGridLines(canvas)
-        }
-
-        // 上下 只画一次
-        val axisTop = axisTopRenderer.axis
-        val drawTop = axisTop.isEnable && axisTop.isGridLineEnable && axisTop.gridCount > 0
-
-        val axisBottom = axisBottomRenderer.axis
-        val drawBottom = axisBottom.isEnable && axisBottom.isGridLineEnable && axisBottom.gridCount > 0
-
-        if (drawTop && drawBottom) {
-            axisTopRenderer.drawGridLines(canvas)
-        } else if (drawTop) {
-            axisTopRenderer.drawGridLines(canvas)
-        } else if (drawBottom) {
-            axisBottomRenderer.drawGridLines(canvas)
+        axisRenderers.forEach {
+            val axis = it.value.axis
+            val enable = axis.isEnable && axis.isGridLineEnable && axis.gridCount > 0
+            if (enable) it.value.drawGridLines(canvas)
         }
     }
 

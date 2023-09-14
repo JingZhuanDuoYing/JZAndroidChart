@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.util.ArrayMap
 import android.util.AttributeSet
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
@@ -18,6 +19,10 @@ import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_TOP
 import java.lang.ref.WeakReference
 import kotlin.math.max
 
@@ -29,7 +34,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     private var mDrawBitmap: WeakReference<Bitmap>? = null
 
-    private var mBitmapConfig = Bitmap.Config.ARGB_8888
+    private val mBitmapConfig = Bitmap.Config.ARGB_8888
 
     private var bitmapCanvas: Canvas? = null
 
@@ -41,13 +46,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     val axisBottom = AxisX(AxisX.BOTTOM)
 
-    protected lateinit var axisLeftRenderer: AxisRenderer<T>
-
-    protected lateinit var axisRightRenderer: AxisRenderer<T>
-
-    protected lateinit var axisTopRenderer: AxisRenderer<T>
-
-    protected lateinit var axisBottomRenderer: AxisRenderer<T>
+    val axisRenderers: ArrayMap<Int, AxisRenderer<T>> = ArrayMap(4)
 
     protected lateinit var highlightRenderer: HighlightRenderer<T>
 
@@ -235,16 +234,10 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         axisTop.isGridLineEnable = false
         axisTop.isLabelEnable = false
 
-        axisLeftRenderer = AxisRenderer(this, axisLeft)
-        axisRightRenderer = AxisRenderer(this, axisRight)
-        axisTopRenderer = AxisRenderer(this, axisTop)
-        axisBottomRenderer = AxisRenderer(this, axisBottom)
-
-        val mAxisRenderers: MutableList<AxisRenderer<T>> = ArrayList(4)
-        mAxisRenderers.add(axisLeftRenderer)
-        mAxisRenderers.add(axisRightRenderer)
-        mAxisRenderers.add(axisTopRenderer)
-        mAxisRenderers.add(axisBottomRenderer)
+        axisRenderers[TYPE_AXIS_LEFT] = AxisRenderer(this, axisLeft)
+        axisRenderers[TYPE_AXIS_TOP] = AxisRenderer(this, axisTop)
+        axisRenderers[TYPE_AXIS_RIGHT] = AxisRenderer(this, axisRight)
+        axisRenderers[TYPE_AXIS_BOTTOM] = AxisRenderer(this, axisBottom)
 
         val labelTextSize = ta.getDimension(R.styleable.Chart_labelTextSize, 28f)
         val labelSeparation = ta.getDimensionPixelSize(R.styleable.Chart_labelSeparation, 10).toFloat()
@@ -256,7 +249,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         val bottomLabelHeight = ta.getDimensionPixelSize(R.styleable.Chart_bottomLabelHeight, 50)
         axisBottom.labelHeight = bottomLabelHeight
 
-        for (axisRenderer in mAxisRenderers) {
+        for (axisRenderer in axisRenderers.values) {
             val axis = axisRenderer.axis
             axis.labelTextSize = labelTextSize
             axis.labelTextColor = labelTextColor
@@ -311,7 +304,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
             drawAxisLabels(canvas)
         }
 
-        if (axisBottomRenderer.axis.labelHeight != 0) {
+        val bottomLabelHeight = axisRenderers[TYPE_AXIS_BOTTOM]?.axis?.labelHeight ?: 0
+        if (bottomLabelHeight != 0) {
             drawBottomLabels(canvas)
         }
 
@@ -324,7 +318,6 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         val chartRight = width - paddingRight - if (axisRight.isInside) 0 else axisRight.labelWidth
 
-        val axisBottom = axisBottomRenderer.axis
         val contentBottom = height - paddingBottom - axisBottom.labelHeight
         contentRect[chartLeft, paddingTop, chartRight] = contentBottom
         bottomRect[chartLeft, contentBottom, chartRight] = height
@@ -357,10 +350,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     }
 
     fun setTypeface(tf: Typeface?) {
-        axisLeftRenderer.setTypeface(tf)
-        axisLeftRenderer.setTypeface(tf)
-        axisTopRenderer.setTypeface(tf)
-        axisBottomRenderer.setTypeface(tf)
+        axisRenderers.values.forEach { it.setTypeface(tf) }
     }
 
     private fun createBitmapCache() {

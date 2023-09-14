@@ -81,4 +81,12 @@ object ChartConstant {
     const val FLAG_LHB = 5
 
     // </editor-fold desc="光标 标签组">    --------------------
+
+    const val TYPE_AXIS_LEFT = 10
+
+    const val TYPE_AXIS_TOP = 11
+
+    const val TYPE_AXIS_RIGHT = 12
+
+    const val TYPE_AXIS_BOTTOM = 13
 }
