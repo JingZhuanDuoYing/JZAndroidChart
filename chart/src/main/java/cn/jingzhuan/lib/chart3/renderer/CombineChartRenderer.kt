@@ -1,9 +1,11 @@
 package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
+import android.util.Log
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
+import cn.jingzhuan.lib.chart3.base.ScrollAndScaleView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
@@ -20,6 +22,7 @@ import cn.jingzhuan.lib.chart3.draw.ScatterTextDraw
 import cn.jingzhuan.lib.chart3.draw.TreeDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -59,6 +62,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         treeDraw = TreeDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
         chart.addInternalViewportChangeListener { viewport ->
+            setPointWidth()
             currentViewport.set(viewport)
             calcDataSetMinMax()
         }
@@ -101,6 +105,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         val combineData = getChartData()
 
         val sortedDataSets = combineData?.allDataSet ?: return
+
+        if (chartView.pointWidth == 0f) setPointWidth()
 
         for (i in sortedDataSets.indices) {
             val dataSet: AbstractDataSet<*> = sortedDataSets[i]

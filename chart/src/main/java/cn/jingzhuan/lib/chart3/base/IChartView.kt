@@ -46,4 +46,9 @@ interface IChartView {
      * 画图表内容
      */
     fun drawChart(canvas: Canvas)
+
+    /**
+     * 画区间统计
+     */
+    fun drawRangeArea(canvas: Canvas)
 }

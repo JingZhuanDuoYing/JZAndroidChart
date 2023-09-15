@@ -27,7 +27,7 @@ object ChartConstant {
 
     const val SCATTER_TEXT_ALIGN_BOTTOM = 2
 
-    // <editor-fold desc="光标 状态">    ---------------------
+    // <editor-fold desc="光标 状态">    -------------------
     /**
      * 初始状态
      */
@@ -50,7 +50,7 @@ object ChartConstant {
 
     // </editor-fold desc="光标 状态">    --------------------
 
-    // <editor-fold desc="光标 标签组">    ---------------------
+    // <editor-fold desc="光标 标签组">    -------------------
 
     const val FLAG_TAG_NAME = "flag_tag_name"
 
@@ -84,7 +84,7 @@ object ChartConstant {
      */
     const val FLAG_LHB = 5
 
-    // </editor-fold desc="光标 标签组">    --------------------
+    // </editor-fold desc="光标 标签组">    ------------------
 
     const val TYPE_AXIS_LEFT = 10
 
@@ -101,4 +101,17 @@ object ChartConstant {
      * @see .zoomOut
      */
     const val ZOOM_AMOUNT = 0.15f
+
+    // <editor-fold desc="区间统计触摸状态">    -------------------
+
+    const val RANGE_TOUCH_NONE = 0
+
+    const val RANGE_TOUCH_LEFT = 1
+
+    const val RANGE_TOUCH_RIGHT = 2
+
+    const val RANGE_TOUCH_BOTH = 3
+
+    // </editor-fold desc="区间统计触摸状态">    ------------------
+
 }

@@ -136,7 +136,14 @@
             android:textSize="12sp"
             android:textColor="@color/colorAccent"/>
 
-
+        <TextView
+            android:id="@+id/tv_range"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="区间统计"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>
 

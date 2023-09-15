@@ -51,10 +51,6 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         }
     }
 
-    override fun getChartData(): ChartData<T>? {
-        return null
-    }
-
     /**
      * 画坐标轴
      */

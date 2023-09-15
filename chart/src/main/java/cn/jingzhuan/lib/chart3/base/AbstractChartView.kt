@@ -19,6 +19,7 @@ import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
+import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
@@ -49,6 +50,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     val axisRenderers: ArrayMap<Int, AxisRenderer<T>> = ArrayMap(4)
 
     protected lateinit var highlightRenderer: HighlightRenderer<T>
+
+    protected lateinit var rangeRenderer: RangeRenderer<T>
 
     var minChartWidth = 0
 
@@ -311,6 +314,9 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         // 画十字光标
         drawHighlight(canvas)
+
+        // 画区间统计
+        drawRangeArea(canvas)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
@@ -396,4 +402,14 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      * 十字光标选中
      */
     abstract fun highlightValue(highlight: Highlight?)
+
+    /**
+     * 打开区间统计
+     */
+    abstract fun openRange()
+
+    /**
+     * 关闭区间统计
+     */
+    abstract fun closeRange()
 }

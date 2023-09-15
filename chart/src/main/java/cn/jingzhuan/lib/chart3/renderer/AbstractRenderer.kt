@@ -41,10 +41,9 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     }
 
     open fun getEntryIndex(x: Float): Int {
-        if (getChartData() == null) return -1
-        val data = getChartData()
+        val data = getChartData() ?: return -1
 
-        val dataSet = data?.getTouchDataSet() ?: return -1
+        val dataSet = getChartData()?.getTouchDataSet() ?: return -1
 
         val valueCount = max(dataSet.values.size, dataSet.forceValueCount)
 
@@ -56,12 +55,22 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     }
 
     open fun getEntryX(index: Int): Float {
-        if (getChartData() == null) return -1f
-        val data = getChartData()
+        val data = getChartData() ?: return -1f
 
-        val valueCount = data!!.getTouchEntryCount()
+        val dataSet = data.getTouchDataSet() ?: return -1f
 
-        var x: Float = contentRect.left + (index / valueCount.toFloat() - currentViewport.left) / currentViewport.width() * contentRect.width()
+        val valueCount = data.getTouchEntryCount()
+
+        val scale = 1.0f / currentViewport.width()
+
+        val visibleRange = dataSet.getVisibleRange(currentViewport)
+        val pointWidth = contentRect.width() / max(visibleRange, dataSet.minValueCount.toFloat())
+
+        val step = contentRect.width() * scale / valueCount
+        val startX = contentRect.left - currentViewport.left * contentRect.width() * scale
+
+        var x = startX + step * index + pointWidth * 0.5f
+
         if (x > contentRect.right) x = contentRect.right.toFloat()
         if (x < contentRect.left) x = contentRect.left.toFloat()
 
@@ -80,6 +89,15 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
      */
     protected fun getDrawY(y: Float): Float {
         return contentRect.bottom - contentRect.height() * (y - currentViewport.top) / currentViewport.height()
+    }
+
+    protected fun setPointWidth() {
+        val dataSet = getChartData()?.getTouchDataSet()
+        if (dataSet != null) {
+            val visibleRange = dataSet.getVisibleRange(currentViewport)
+            val width = (contentRect.width() / max(visibleRange, dataSet.minValueCount.toFloat()))
+            chartView.pointWidth = width
+        }
     }
 
     open fun setTypeface(tf: Typeface?) {
@@ -104,7 +122,9 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
         getChartData()?.calcMaxMin(currentViewport, contentRect, chartView.offsetPercent)
     }
 
-    abstract fun getChartData(): ChartData<T>?
+    open fun getChartData(): ChartData<T>? {
+        return null
+    }
 
     abstract fun renderer(canvas: Canvas)
 }

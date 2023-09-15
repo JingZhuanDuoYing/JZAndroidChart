@@ -13,11 +13,14 @@ import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
+import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.utils.ForceAlign
+import cn.jingzhuan.lib.chart2.renderer.TouchDirection
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
+import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
 import cn.jingzhuan.lib.chart3.event.OnScaleListener
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.event.OnViewportChangeListener
@@ -25,6 +28,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.ZOOM_AMOUNT
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.abs
@@ -60,6 +64,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     private var flagClickListener: OnFlagClickListener? = null
 
+    protected var rangeChangeListener: OnRangeChangeListener? = null
+
     private val mSurfacePoint = Point()
 
     /**
@@ -85,7 +91,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 缩放器
      */
-    private lateinit var mZoomer: Zoomer
+    protected lateinit var mZoomer: Zoomer
 
     private val mZoomFocalPoint = PointF()
 
@@ -150,6 +156,31 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var isOpenRange = false
 
     /**
+     * 区间起点
+     */
+    protected var rangeStartIndex = -1
+
+    /**
+     * 区间终点
+     */
+    protected var rangeEndIndex = -1
+
+    /**
+     * 区间起点 x坐标
+     */
+    var rangeStartX = 0f
+
+    /**
+     * 区间终点 x坐标
+     */
+    var rangeEndX = 0f
+
+    /**
+     * 区间统计触摸类型
+     */
+    protected var rangeTouchType = RANGE_TOUCH_NONE
+
+    /**
      * 是否触发按下位置的回调
      */
     var touchPointEnable = true
@@ -193,6 +224,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 是否显示底部标签组
      */
     var showBottomFlags = false
+
+    var pointWidth = 0f
 
     constructor(context: Context?) : super(context)
 
@@ -596,8 +629,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 isTouching = true
             }
 
-            MotionEvent.ACTION_MOVE ->{
-                Log.i(TAG, "onTouchEvent->ACTION_MOVE")
+            MotionEvent.ACTION_MOVE -> {
+                Log.i(TAG, "onTouchEvent->ACTION_MOVE ")
                 //长按之后移动
                 if (isLongPress) onLongPress(event)
             }
@@ -659,6 +692,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 }
             }
         }
+
+        if (isOpenRange) onRangeChange()
         invalidate()
     }
 
@@ -832,6 +867,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             flagClickListener?.onClick(type, index)
         }
     }
+
+    fun setOnRangeChangeListener(listener: OnRangeChangeListener) {
+        this.rangeChangeListener = listener
+    }
+
+    abstract fun onRangeChange()
 
     /**
      * 获取下标

@@ -6,7 +6,6 @@ import android.graphics.Rect
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
-import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_HISTORY_MINUTE
@@ -118,10 +117,6 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         renderPaint.style = Paint.Style.FILL
         renderPaint.color = chart.highlightTextBgColor
-    }
-
-    override fun getChartData(): ChartData<T>? {
-        return null
     }
 
     override fun renderer(canvas: Canvas) {
@@ -346,9 +341,11 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                     lhbText = sb.toString()
                     lhbWidth = calculateWidth(sb.toString())
                 }
-
-                val totalWidth =
-                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth + lhbWidth
+                val totalWidth = if (lhbWidth == 0) {
+                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth
+                } else {
+                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth + splitSpace + lhbWidth
+                }
 
                 val bottomRect = chart.bottomRect
                 var left = x - totalWidth * 0.5f
