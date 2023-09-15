@@ -21,7 +21,7 @@ open class MinuteChartView(ctx: Context, attrs: AttributeSet?) : CombineChartVie
     var bottomLabelPattern = "HH:mm"
 
     init {
-        isScaleEnable = true
+        isScaleEnable = false
         isScrollEnable = false
 
         isEnableHighlightRightText = true

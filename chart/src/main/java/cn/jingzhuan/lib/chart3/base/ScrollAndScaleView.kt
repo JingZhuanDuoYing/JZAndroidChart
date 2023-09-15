@@ -287,7 +287,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         distanceX: Float,
         distanceY: Float,
     ): Boolean {
-        if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch) {
+        if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
             return false
         }
@@ -430,7 +430,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         velocityX: Float,
         velocityY: Float,
     ): Boolean {
-        if (!isTouching && isScrollEnable && canScroll()) {
+        if (!isTouching && isScrollEnable && canScroll() && !isMultipleTouch && !isScaling) {
             Log.i(TAG, "onFling")
             val leftSide = currentViewport.left == Viewport.AXIS_X_MIN
             val rightSide = currentViewport.right == Viewport.AXIS_X_MAX
@@ -606,14 +606,16 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 Log.i(TAG, "onTouchEvent->ACTION_UP")
                 if (isTouching) isTouching = false
 
-                if (isScaling) isScaling = false
+                if (isScaling) {
+                    isScaling = false
+                    return false
+                }
 
                 if (isLongPress) {
                     isLongPress = false
                     // 之前是长按 抬起时直接return 不回调 onSingleTapUp
                     return false
                 }
-                invalidate()
             }
 
             MotionEvent.ACTION_CANCEL -> {
@@ -747,11 +749,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     open fun isCanZoomIn(): Boolean {
-        return currentVisibleEntryCount > minVisibleEntryCount && canZoomIn
+        return currentVisibleEntryCount >= minVisibleEntryCount && canZoomIn
     }
 
     open fun isCanZoomOut(): Boolean {
-        return currentVisibleEntryCount < maxVisibleEntryCount && canZoomOut
+        return currentVisibleEntryCount <= maxVisibleEntryCount && canZoomOut
     }
 
     /**
