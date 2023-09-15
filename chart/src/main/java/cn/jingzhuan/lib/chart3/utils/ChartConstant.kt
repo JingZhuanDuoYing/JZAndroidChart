@@ -93,4 +93,12 @@ object ChartConstant {
     const val TYPE_AXIS_RIGHT = 12
 
     const val TYPE_AXIS_BOTTOM = 13
+
+    /**
+     * The scaling factor for a single zoom 'step'.
+     *
+     * @see .zoomIn
+     * @see .zoomOut
+     */
+    const val ZOOM_AMOUNT = 0.15f
 }

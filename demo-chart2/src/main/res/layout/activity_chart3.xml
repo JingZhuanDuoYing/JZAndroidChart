@@ -58,11 +58,24 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/bg_rb_red_right"
+                android:background="@drawable/bg_rb_red_center"
                 android:button="@null"
                 android:gravity="center"
                 android:text="分时"
                 android:textColor="@drawable/text_rb_red"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_callAuction"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rb_red_right"
+                android:button="@null"
+                android:gravity="center"
+                android:text="集合竞价"
+                android:textColor="@drawable/text_rb_red"
+                android:layout_marginStart="-1dp"
                 android:textSize="14sp" />
         </RadioGroup>
     </LinearLayout>
@@ -92,6 +105,40 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_option"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintLeft_toLeftOf="@+id/kline_main"
+        app:layout_constraintRight_toRightOf="@+id/kline_main"
+        app:layout_constraintBottom_toBottomOf="@id/kline_main">
+
+        <TextView
+            android:id="@+id/tv_zoom_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="放大"
+            android:textSize="12sp"
+            android:textColor="@android:color/holo_blue_dark"/>
+
+        <TextView
+            android:id="@+id/tv_zoom_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="缩小"
+            android:textSize="12sp"
+            android:textColor="@color/colorAccent"/>
+
+
+
+    </LinearLayout>
 
     <cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
         android:id="@+id/minute_main"

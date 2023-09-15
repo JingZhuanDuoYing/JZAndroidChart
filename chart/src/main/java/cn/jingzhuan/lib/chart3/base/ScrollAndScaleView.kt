@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart3.base
 
 import android.content.Context
 import android.graphics.Point
+import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -11,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
+import cn.jingzhuan.lib.chart.Zoomer
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
@@ -23,6 +25,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.ZOOM_AMOUNT
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.abs
 import kotlin.math.max
@@ -78,6 +81,13 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 仅用于 zooms and flings.
      */
     private val scrollerStartViewport = RectF()
+
+    /**
+     * 缩放器
+     */
+    private lateinit var mZoomer: Zoomer
+
+    private val mZoomFocalPoint = PointF()
 
     /**
      * 是否在触摸中
@@ -165,7 +175,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var minVisibleEntryCount = 15
 
     /**
-     * 当前可见数量
+     * 当前可见数量 （可滑动可缩放）
      */
     var currentVisibleEntryCount = -1
 
@@ -197,6 +207,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         mDetector = GestureDetectorCompat(context, this)
         mScaleDetector = JZScaleGestureDetector(context, this)
         mScroller = OverScroller(context)
+        mZoomer = Zoomer(context)
     }
 
     override fun onDown(e: MotionEvent): Boolean {
@@ -339,8 +350,76 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             }
         }
 
+        if (mZoomer.computeZoom()) {
+            Log.i(TAG, "mZoomer -> needsInvalidate")
+            // Performs the zoom since a zoom is in progress (either programmatically or via double-touch).
+
+            val newWidth = (1f - mZoomer.currZoom) * scrollerStartViewport.width()
+            val newHeight = (1f - mZoomer.currZoom) * scrollerStartViewport.height()
+            val pointWithinViewportY = ((mZoomFocalPoint.y - scrollerStartViewport.top) / scrollerStartViewport.height())
+
+            val viewportTopY = mZoomFocalPoint.y - newHeight * pointWithinViewportY
+            val viewportBottomY = mZoomFocalPoint.y + newHeight * (1f - pointWithinViewportY)
+
+            if (!canScroll()) {
+                // 向左缩进
+                mZoomFocalPoint[currentViewport.left] = (currentViewport.bottom + currentViewport.top) / 2f
+                val pointWithinViewportX = (mZoomFocalPoint.x - scrollerStartViewport.left) / scrollerStartViewport.width()
+                val viewportRightX = mZoomFocalPoint.x + newWidth * (1f - pointWithinViewportX)
+                currentViewport.set(Viewport.AXIS_X_MIN, viewportTopY, viewportRightX, viewportBottomY)
+
+                val count = ((currentViewport.right - currentViewport.left) * totalEntryCount.toFloat()).roundToInt()
+
+                if (count > maxVisibleEntryCount) {
+                    currentViewport.right = maxVisibleEntryCount.toFloat() / totalEntryCount.toFloat() + currentViewport.left
+                }
+
+                if (currentViewport.right < Viewport.AXIS_X_MAX) currentViewport.right = Viewport.AXIS_X_MAX
+            } else {
+                // 不足一屏 并且缩放到一屏时 能继续缩小
+                if (totalEntryCount < maxVisibleEntryCount && mZoomer.currZoom < 0f && currentViewport.left == Viewport.AXIS_X_MIN) {
+                    // 向左缩进
+                    mZoomFocalPoint[currentViewport.left] = (currentViewport.bottom + currentViewport.top) / 2f
+                    val pointWithinViewportX = (mZoomFocalPoint.x - scrollerStartViewport.left) / scrollerStartViewport.width()
+                    val viewportRightX = mZoomFocalPoint.x + newWidth * (1f - pointWithinViewportX)
+                    currentViewport.set(Viewport.AXIS_X_MIN, viewportTopY, viewportRightX, viewportBottomY)
+                } else {
+                    // 优先向右缩进
+                    mZoomFocalPoint[currentViewport.right] = (currentViewport.bottom + currentViewport.top) / 2f
+                    val pointWithinViewportX = (mZoomFocalPoint.x - scrollerStartViewport.left) / scrollerStartViewport.width()
+                    val viewportLeftX = mZoomFocalPoint.x - newWidth * pointWithinViewportX
+                    val viewportRightX = mZoomFocalPoint.x + newWidth * (1 - pointWithinViewportX)
+                    currentViewport.set(viewportLeftX, viewportTopY, viewportRightX, viewportBottomY)
+
+                    if (currentViewport.left < Viewport.AXIS_X_MIN) currentViewport.left = Viewport.AXIS_X_MIN
+
+                    if (currentViewport.left == Viewport.AXIS_X_MIN) {
+                        currentViewport.right = currentViewport.left + newWidth
+                        if (currentViewport.right > Viewport.AXIS_X_MAX) currentViewport.right = Viewport.AXIS_X_MAX
+                    }
+
+                    if (currentViewport.right > Viewport.AXIS_X_MAX) currentViewport.right = Viewport.AXIS_X_MAX
+
+                    val count = ((currentViewport.right - currentViewport.left) * totalEntryCount).roundToInt()
+                    if (count > maxVisibleEntryCount) {
+                        currentViewport.left = currentViewport.right - maxVisibleEntryCount.toFloat() / totalEntryCount.toFloat()
+                    }
+
+                    if (count < minVisibleEntryCount) {
+                        currentViewport.left = currentViewport.right - minVisibleEntryCount.toFloat() / totalEntryCount.toFloat()
+                    }
+                }
+            }
+
+            triggerScale()
+
+            if (scaleListener != null) scaleListener?.onScaleEnd(currentViewport)
+
+            needsInvalidate = true
+        }
+
         if (needsInvalidate) {
-            Log.i(TAG, "computeScroll1")
+            Log.i(TAG, "needsInvalidate")
             triggerViewportChange()
         }
     }
@@ -408,7 +487,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         // 双指距离比上次小，为缩小
         val zoomOut = lastSpanX > spanX
 
-        val canZoom = abs(abs(lastSpanX) - abs(spanX)) >= 5f
+        val canZoom = abs(abs(lastSpanX) - abs(spanX)) > 0f
 
         if (!canZoom) return false
 
@@ -436,7 +515,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             lastSpanX / spanX * currentViewport.width()
         }
 
-        if (newWidth < currentViewport.width() && currentViewport.width() < 0.001) {
+        if (newWidth < currentViewport.width() && currentViewport.width() < 0.001f) {
             return true
         }
 
@@ -487,17 +566,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             }
         }
 
-        currentVisibleEntryCount = ((currentViewport.right - currentViewport.left) * totalEntryCount).roundToInt()
-
-        currentViewport.constrainViewport()
-
+        triggerScale()
         triggerViewportChange()
-        if (scaleListener != null) {
-            scaleListener?.onScale(currentViewport)
-        }
 
         return true
-
     }
 
     override fun onScaleBegin(detector: JZScaleGestureDetector): Boolean {
@@ -566,7 +638,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         triggerViewportChange()
     }
 
-    protected open fun triggerViewportChange() {
+    private fun triggerViewportChange() {
         if (internalViewportChangeListener != null) {
             synchronized(this) {
                 try {
@@ -585,7 +657,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 }
             }
         }
-        postInvalidateOnAnimation()
+        invalidate()
     }
 
     /**
@@ -653,6 +725,16 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         return totalEntryCount >= currentVisibleEntryCount
     }
 
+    private fun triggerScale() {
+        currentVisibleEntryCount = ((currentViewport.right - currentViewport.left) * totalEntryCount).roundToInt()
+
+        currentViewport.constrainViewport()
+
+        if (scaleListener != null) {
+            scaleListener?.onScale(currentViewport)
+        }
+    }
+
     /**
      * 按下位置的更新
      */
@@ -665,19 +747,54 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     open fun isCanZoomIn(): Boolean {
-        return canZoomIn
+        return currentVisibleEntryCount > minVisibleEntryCount && canZoomIn
     }
 
     open fun isCanZoomOut(): Boolean {
-        return canZoomOut
+        return currentVisibleEntryCount < maxVisibleEntryCount && canZoomOut
+    }
+
+    /**
+     * Smoothly zooms the lib in one step.
+     */
+    open fun zoomIn() {
+        if (currentVisibleEntryCount <= minVisibleEntryCount) return
+        zoom(ZOOM_AMOUNT, ForceAlign.CENTER)
+    }
+
+    /**
+     * Smoothly zooms the lib out one step.
+     */
+    open fun zoomOut() {
+        if (currentVisibleEntryCount >= maxVisibleEntryCount) return
+        zoom(-ZOOM_AMOUNT, ForceAlign.CENTER)
+    }
+
+    open fun zoom(scalingFactor: Float, @ForceAlign.XForce forceAlignX: Int) {
+        scrollerStartViewport.set(currentViewport)
+        mZoomer.forceFinished(true)
+        mZoomer.startZoom(scalingFactor)
+        val forceX = when (forceAlignX) {
+            ForceAlign.LEFT -> currentViewport.left
+            ForceAlign.RIGHT -> currentViewport.right
+            ForceAlign.CENTER -> (currentViewport.right + currentViewport.left) / 2
+            else -> (currentViewport.right + currentViewport.left) / 2
+        }
+        mZoomFocalPoint.set(
+            forceX,
+            (currentViewport.bottom + currentViewport.top) / 2
+        )
+        triggerViewportChange()
     }
 
     open fun zoomIn(@ForceAlign.XForce forceAlignX: Int) {
-
+        if (currentVisibleEntryCount <= minVisibleEntryCount) return
+        zoom(ZOOM_AMOUNT, forceAlignX)
     }
 
     open fun zoomOut(@ForceAlign.XForce forceAlignX: Int) {
-
+        if (currentVisibleEntryCount >= maxVisibleEntryCount) return
+        zoom(-ZOOM_AMOUNT, forceAlignX)
     }
 
     fun addOnTouchPointListener(listener: OnTouchPointListener) {

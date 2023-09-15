@@ -84,6 +84,9 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
                     newViewport.right = viewportWidth
                 }
             }
+
+            if (currentVisibleEntryCount == -1) currentVisibleEntryCount = totalEntryCount
+
             setCurrentViewport(newViewport)
         }
     }

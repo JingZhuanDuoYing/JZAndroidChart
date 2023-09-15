@@ -80,22 +80,4 @@ open class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView
         }
     }
 
-    override fun isCanZoomIn(): Boolean {
-        return currentVisibleEntryCount >= minVisibleEntryCount && super.isCanZoomIn()
-    }
-
-    override fun isCanZoomOut(): Boolean {
-        return currentVisibleEntryCount <= maxVisibleEntryCount && super.isCanZoomOut()
-    }
-
-    override fun zoomIn(forceAlignX: Int) {
-        if (currentVisibleEntryCount <= minVisibleEntryCount) return
-        super.zoomIn(forceAlignX)
-    }
-
-    override fun zoomOut(forceAlignX: Int) {
-        if (currentVisibleEntryCount >= maxVisibleEntryCount) return
-        super.zoomOut(forceAlignX)
-    }
-
 }

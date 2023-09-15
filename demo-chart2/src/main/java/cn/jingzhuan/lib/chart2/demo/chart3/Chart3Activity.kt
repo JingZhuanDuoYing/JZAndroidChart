@@ -7,9 +7,11 @@ import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart2.demo.R
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
@@ -40,13 +42,16 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
-import cn.jingzhuan.lib.chart3.widget.MinuteChartView
 import kotlin.math.max
 import kotlin.math.min
 
 class Chart3Activity : AppCompatActivity() {
 
     private lateinit var klineMain: MainKlineChartView
+
+    private lateinit var tvZoomIn: TextView
+
+    private lateinit var tvZoomOot: TextView
 
     private lateinit var minuteMain: MainMinuteChartView
 
@@ -61,6 +66,8 @@ class Chart3Activity : AppCompatActivity() {
     private lateinit var rbYear: RadioButton
 
     private lateinit var rbMinute: RadioButton
+
+    private lateinit var rbCallAuction: RadioButton
 
     private val scatterDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_left) }
 
@@ -87,6 +94,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private fun initView() {
         klineMain = findViewById(R.id.kline_main)
+        tvZoomIn = findViewById(R.id.tv_zoom_in)
+        tvZoomOot = findViewById(R.id.tv_zoom_out)
         minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
@@ -97,6 +106,7 @@ class Chart3Activity : AppCompatActivity() {
         rbDay = findViewById(R.id.rb_day)
         rbYear = findViewById(R.id.rb_year)
         rbMinute = findViewById(R.id.rb_minute)
+        rbCallAuction = findViewById(R.id.rb_callAuction)
     }
 
 
@@ -157,6 +167,10 @@ class Chart3Activity : AppCompatActivity() {
                     }
 
                     setMainMinuteChartData()
+                }
+
+                rbCallAuction.id -> {
+
                 }
             }
         }
@@ -231,6 +245,13 @@ class Chart3Activity : AppCompatActivity() {
             }
         }
 
+        tvZoomIn.setOnClickListener {
+            klineMain.zoomIn(ForceAlign.LEFT)
+        }
+
+        tvZoomOot.setOnClickListener {
+            klineMain.zoomOut(ForceAlign.LEFT)
+        }
 
     }
 
