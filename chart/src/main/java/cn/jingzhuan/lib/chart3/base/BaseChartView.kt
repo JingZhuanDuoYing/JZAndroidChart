@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
@@ -17,9 +18,7 @@ import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
 import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
-import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -138,13 +137,17 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     override fun onHighlightClean() {
+        cleanHighlight()
+        invalidate()
+    }
+
+    fun cleanHighlight() {
         highlightState = HIGHLIGHT_STATUS_INITIAL
         highlightRenderer.cleanHighlight()
         if (highlightListener != null){
             highlightListener?.onHighlightHide()
         }
         focusIndex = -1
-        invalidate()
     }
 
     /**
@@ -161,76 +164,30 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
      */
     override fun openRange() {
         if (isOpenRange) return
-        val dataSet = chartData.getTouchDataSet() ?: return
         if (highlightState == HIGHLIGHT_STATUS_INITIAL) {
             // 光标未显示 画当前区域内
-            val listSize = dataSet.values.size
-            rangeStartIndex = (currentViewport.left * listSize).roundToInt()
-            rangeEndIndex = min(listSize - 1, (currentViewport.right * listSize - 1).roundToInt())
-
-            // 获取区间统计开始坐标
-            rangeStartX = getEntryX(rangeStartIndex)
-
-            // 获取区间统计结束坐标
-            rangeEndX = getEntryX(rangeEndIndex)
+            rangeRenderer.setRange(null)
         } else {
             val highlight = highlightRenderer.highlight ?: return
-            rangeStartX = highlight.x
-            rangeStartIndex = getEntryIndex(rangeStartX)
-
-            val listSize = dataSet.values.size
-            rangeEndIndex = min(listSize - 1, (currentViewport.right * listSize - 1).roundToInt())
-            rangeEndX = getEntryX(rangeEndIndex)
-
+            rangeRenderer.setRange(highlight.x)
             onHighlightClean()
         }
-        rangeTouchType = RANGE_TOUCH_NONE
         isOpenRange = true
         invalidate()
-
-        if (rangeChangeListener != null) {
-            rangeChangeListener?.onRange(rangeStartX, rangeEndX, rangeTouchType)
-        }
     }
 
     override fun closeRange() {
-        isOpenRange = false
-        rangeStartIndex = -1
-        rangeEndIndex = -1
-        rangeStartX = 0f
-        rangeEndX = 0f
+        cleanRange()
         invalidate()
     }
 
+    fun cleanRange() {
+        isOpenRange = false
+        rangeRenderer.cleanRange()
+    }
+
     override fun onRangeChange() {
-        if (currentViewport.width() == 1.0f) return
-        if (isOpenRange && rangeStartX != 0f && rangeEndX != 0f) {
-            val start = getEntryIndex(rangeStartX)
-            val end = getEntryIndex(rangeEndX)
-            if (isScaling || mZoomer.computeZoom()) {
-                val dataSet = chartData.getTouchDataSet() ?: return
-                val listSize = dataSet.values.size
-                val chartLeftIndex = (currentViewport.left * listSize).roundToInt()
-                val chartRightIndex: Int = min(listSize - 1, (currentViewport.right * listSize - 1).roundToInt())
-                if (rangeStartIndex < chartLeftIndex) {
-                    rangeEndIndex = chartLeftIndex + rangeEndIndex - rangeStartIndex
-                    if (rangeEndIndex > chartRightIndex) {
-                        rangeEndIndex = chartRightIndex
-                    }
-                    rangeStartIndex = chartLeftIndex
-                }
-                if (rangeEndIndex > chartRightIndex) {
-                    rangeEndIndex = chartRightIndex
-                }
-                rangeStartX = getEntryX(rangeStartIndex)
-                rangeEndX = getEntryX(rangeEndIndex)
-            }
-            if (start != 0 && end != 0 && rangeStartIndex != start && rangeEndIndex != end) {
-                rangeStartIndex = start
-                rangeEndIndex = end
-                rangeTouchType = RANGE_TOUCH_NONE
-            }
-        }
+        rangeRenderer.onViewChange()
     }
 
     override fun getEntryIndex(x: Float): Int {
@@ -284,5 +241,21 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     override fun getChartAnimator(): ChartAnimator? {
         return animator
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
+        super.onSizeChanged(w, h, oldWidth, oldHeight)
+        chartRenderer?.calcDataSetMinMax()
+    }
+
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (isOpenRange) {
+            if (rangeRenderer.onTouchEvent(event)) {
+                return true
+            }
+
+        }
+        return super.onTouchEvent(event)
     }
 }

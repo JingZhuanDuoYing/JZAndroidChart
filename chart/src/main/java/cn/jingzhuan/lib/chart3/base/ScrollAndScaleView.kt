@@ -13,9 +13,7 @@ import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
-import cn.jingzhuan.lib.chart.data.CandlestickDataSet
 import cn.jingzhuan.lib.chart.utils.ForceAlign
-import cn.jingzhuan.lib.chart2.renderer.TouchDirection
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
@@ -28,7 +26,6 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_MOVE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
-import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.ZOOM_AMOUNT
 import cn.jingzhuan.lib.source.JZScaleGestureDetector
 import kotlin.math.abs
@@ -60,11 +57,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     private var scaleListener: OnScaleListener? = null
 
-    private var bottomAreaClickListener: OnBottomAreaClickListener? = null
+    private var bottomFlagsClickListener: OnBottomAreaClickListener? = null
 
     private var flagClickListener: OnFlagClickListener? = null
 
-    protected var rangeChangeListener: OnRangeChangeListener? = null
+    var rangeChangeListener: OnRangeChangeListener? = null
 
     private val mSurfacePoint = Point()
 
@@ -156,31 +153,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var isOpenRange = false
 
     /**
-     * 区间起点
-     */
-    protected var rangeStartIndex = -1
-
-    /**
-     * 区间终点
-     */
-    protected var rangeEndIndex = -1
-
-    /**
-     * 区间起点 x坐标
-     */
-    var rangeStartX = 0f
-
-    /**
-     * 区间终点 x坐标
-     */
-    var rangeEndX = 0f
-
-    /**
-     * 区间统计触摸类型
-     */
-    protected var rangeTouchType = RANGE_TOUCH_NONE
-
-    /**
      * 是否触发按下位置的回调
      */
     var touchPointEnable = true
@@ -247,8 +219,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         Log.i(TAG, "onDown")
         scrollerStartViewport.set(currentViewport)
 
-        if (showBottomFlags && bottomAreaClickListener != null) {
-            bottomAreaClickListener?.onClick(e.x, e.y)
+        val isBottom = bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())
+
+        if (showBottomFlags && bottomFlagsClickListener != null && isBottom && highlightState != HIGHLIGHT_STATUS_INITIAL) {
+            bottomFlagsClickListener?.onClick(e.x, e.y)
         }
 
         finishScroll()
@@ -693,7 +667,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             }
         }
 
-        if (isOpenRange) onRangeChange()
+        if (isOpenRange) {
+            onRangeChange()
+        }
+
         invalidate()
     }
 
@@ -834,6 +811,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         zoom(-ZOOM_AMOUNT, forceAlignX)
     }
 
+    fun computeZoom(): Boolean {
+        return mZoomer.computeZoom()
+    }
+
     fun addOnTouchPointListener(listener: OnTouchPointListener) {
         this.touchPointListener = listener
     }
@@ -854,8 +835,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         this.scaleListener = listener
     }
 
-    fun setOnBottomAreaClickListener(listener: OnBottomAreaClickListener) {
-        this.bottomAreaClickListener = listener
+    fun setOnBottomFlagsClickListener(listener: OnBottomAreaClickListener) {
+        this.bottomFlagsClickListener = listener
     }
 
     fun addOnFlagClickListener(listener: OnFlagClickListener) {

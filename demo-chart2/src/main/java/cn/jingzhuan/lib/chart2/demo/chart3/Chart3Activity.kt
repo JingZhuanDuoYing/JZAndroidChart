@@ -34,6 +34,7 @@ import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
+import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_HISTORY_MINUTE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LHB
@@ -128,9 +129,11 @@ class Chart3Activity : AppCompatActivity() {
                         showBottomFlags = true
                         valueIndexPattern = "yyyy-MM-dd"
                         finishScroll()
-                        onHighlightClean()
+                        cleanHighlight()
                         cleanAllDataSet()
+                        cleanRange()
                         currentViewport = Viewport()
+                        invalidate()
                     }
 
                     subCharts.forEach {
@@ -149,9 +152,11 @@ class Chart3Activity : AppCompatActivity() {
                         showBottomFlags = false
                         valueIndexPattern = "dd/HH:mm"
                         finishScroll()
-                        onHighlightClean()
+                        cleanHighlight()
                         cleanAllDataSet()
+                        cleanRange()
                         currentViewport = Viewport()
+                        invalidate()
                     }
 
                     subCharts.forEach {
@@ -227,6 +232,13 @@ class Chart3Activity : AppCompatActivity() {
                             Toast.makeText(this@Chart3Activity, "龙虎榜-> $index", Toast.LENGTH_SHORT).show()
                         }
                     }
+                }
+
+            })
+
+            setOnRangeChangeListener(object : OnRangeChangeListener{
+                override fun onRange(startX: Float, endX: Float, touchType: Int) {
+                    Log.d("klineMain", "OnRangeChangeListener: startX =$startX, endX=$endX, touchType=$touchType")
                 }
 
             })

@@ -61,7 +61,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         initRect()
 
-        chart.setOnBottomAreaClickListener(object : OnBottomAreaClickListener {
+        chart.setOnBottomFlagsClickListener(object : OnBottomAreaClickListener {
             override fun onClick(x: Float, y: Float) {
                 if (highlight == null) return
                 val index = highlight?.dataIndex ?: 0
