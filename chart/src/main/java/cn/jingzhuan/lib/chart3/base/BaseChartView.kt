@@ -135,6 +135,19 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
     }
 
+    /**
+     * 光标位置更新 正常来说光标的下标不变 滑动时光标的x是变化的，当到达边界时，光标的X是不变的 以边界的x位准 算出下标值
+     */
+    override fun onHighlightForever() {
+        val highlight = highlightRenderer.highlightForever()
+        if (highlight != null) {
+            if (highlightListener != null) {
+                highlightListener?.onHighlightShow(highlight)
+            }
+            invalidate()
+        }
+    }
+
     override fun onHighlightClean() {
         cleanHighlight()
         invalidate()

@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -29,11 +30,13 @@ import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
 import cn.jingzhuan.lib.chart3.data.value.BarValue
+import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
+import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_HISTORY_MINUTE
@@ -42,7 +45,10 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LIMIT_UP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.max
 import kotlin.math.min
 
@@ -72,6 +78,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var rbCallAuction: RadioButton
 
+    private lateinit var llHistory: LinearLayout
+
     private val scatterDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_left) }
 
     private val subCharts by lazy { mutableListOf(sub1, sub2) }
@@ -82,9 +90,13 @@ class Chart3Activity : AppCompatActivity() {
 
     private val lowPrice = 3018.98f
 
+    private var klineList = mutableListOf<CandlestickValue>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chart3)
+
+        klineList = DataConfig.candlestickList.toMutableList()
 
         initView()
 
@@ -111,6 +123,7 @@ class Chart3Activity : AppCompatActivity() {
         rbYear = findViewById(R.id.rb_year)
         rbMinute = findViewById(R.id.rb_minute)
         rbCallAuction = findViewById(R.id.rb_callAuction)
+        llHistory = findViewById(R.id.ll_history)
     }
 
 
@@ -163,8 +176,8 @@ class Chart3Activity : AppCompatActivity() {
                         it.visibility = View.VISIBLE
                         it.cleanAllDataSet()
                     }
-                    setMainKlineChartData(true)
-                    setSubKlineChartData(true)
+                    setMainKlineYearChartData()
+                    setSubKlineYearChartData()
                 }
 
                 rbMinute.id -> {
@@ -214,6 +227,9 @@ class Chart3Activity : AppCompatActivity() {
                 override fun onClick(type: Int, index: Int) {
                     when (type) {
                         FLAG_HISTORY_MINUTE -> {
+                            if (klineMain.highlightState == HIGHLIGHT_STATUS_FOREVER) return
+                            llHistory.visibility = View.VISIBLE
+                            klineMain.highlightState = HIGHLIGHT_STATUS_FOREVER
                             Toast.makeText(this@Chart3Activity, "历史分时-> $index", Toast.LENGTH_SHORT).show()
                         }
                         FLAG_TRADE_DETAIL -> {
@@ -244,6 +260,11 @@ class Chart3Activity : AppCompatActivity() {
                 }
 
             })
+
+            setOnLoadMoreListener {
+                setMainKlineChartData(loadMore = true)
+                setSubKlineChartData()
+            }
         }
 
         subCharts.forEach {
@@ -276,6 +297,12 @@ class Chart3Activity : AppCompatActivity() {
             }
         }
 
+        llHistory.setOnClickListener {
+            klineMain.onHighlightClean()
+            llHistory.visibility = View.GONE
+
+        }
+
     }
 
     private fun touchSubHighlight(highlight: Highlight, ex: Float, ey: Float) {
@@ -293,11 +320,9 @@ class Chart3Activity : AppCompatActivity() {
         }
     }
 
-    private fun setSubKlineChartData(isYear: Boolean = false) {
+    private fun setSubKlineYearChartData() {
         var candlestickList = DataConfig.candlestickList
-
-        if (isYear) candlestickList = candlestickList.subList(0, 30)
-
+        candlestickList = candlestickList.subList(0, 30)
         val barList = ArrayList<BarValue>()
         val zeroBarList = ArrayList<BarValue>()
 
@@ -347,50 +372,134 @@ class Chart3Activity : AppCompatActivity() {
                 subChartView.setCombineData(zeroData)
             }
         }
+    }
+    private fun setSubKlineChartData(update: Boolean = false, loadMore: Boolean = false) {
+        val barList = ArrayList<BarValue>()
+        val zeroBarList = ArrayList<BarValue>()
+
+        var color: Int
+        var style: Paint.Style
+        klineList.forEachIndexed { index, value ->
+            if (value.open < value.close) {
+                color = Color.RED
+                style = Paint.Style.STROKE
+            } else if (value.open > value.close) {
+                color = Color.GREEN
+                style = Paint.Style.FILL
+            } else {
+                color = Color.GRAY
+                style = Paint.Style.FILL
+            }
+            barList.add(BarValue(value.low, color, style))
+
+            if (index % 3 == 0) {
+                zeroBarList.add(BarValue(-value.high, color, Paint.Style.FILL))
+            } else {
+                zeroBarList.add(BarValue(value.high, color, Paint.Style.FILL))
+            }
+        }
+
+        val barDataSet = BarDataSet(barList).apply {
+            isAutoBarWidth = true
+            axisDependency = AxisY.DEPENDENCY_LEFT
+        }
+        val data = CombineData().apply {
+            add(barDataSet)
+        }
+
+        val zeroBarDataSet = ZeroCenterBarDataSet(zeroBarList).apply {
+            isAutoBarWidth = true
+            axisDependency = AxisY.DEPENDENCY_LEFT
+        }
+        val zeroData = CombineData().apply {
+            add(zeroBarDataSet)
+        }
+
+        subCharts.forEachIndexed { index, subChartView ->
+            if (index == 0) {
+                subChartView.setCombineData(data)
+            }
+            if (index == 1) {
+                subChartView.setCombineData(zeroData)
+            }
+        }
 
     }
 
-    private fun setMainKlineChartData(isYear: Boolean = false) {
-        var candlestickList = DataConfig.candlestickList
+    private fun setMainKlineYearChartData() {
+        var klineList = DataConfig.candlestickList
+        klineList = klineList.subList(0, 30)
 
-        if (isYear) candlestickList = candlestickList.subList(0, 30)
-
-        val candlestickDataSet = CandlestickDataSet(candlestickList).apply {
+        val candlestickDataSet = CandlestickDataSet(klineList).apply {
             increasingPaintStyle = Paint.Style.STROKE
             strokeThickness = 3f
+        }
+        val lineList = ArrayList<LineValue>()
+        klineList.forEach { value ->
+            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
+        }
+
+        val lineDataSet = LineDataSet(lineList).apply {
+            color = Color.RED
+            lineThickness = 3
+        }
+
+        val data = CombineData().apply {
+            add(candlestickDataSet)
+            add(lineDataSet)
+        }
+        klineMain.setCombineData(data)
+    }
+
+    private fun setMainKlineChartData(update: Boolean = false, loadMore: Boolean = false) {
+
+        if (update) {
+            val random = klineList.random()
+            klineList.removeLast()
+            klineList.add(random)
+        }
+
+        if (loadMore) {
+            klineList.addAll(DataConfig.candlestickList)
+        }
+
+        val candlestickDataSet = CandlestickDataSet(klineList).apply {
+            increasingPaintStyle = Paint.Style.STROKE
+            strokeThickness = 3f
+            enableGap = true
         }
 
         val lineList = ArrayList<LineValue>()
         val scatterList = ArrayList<ScatterValue>()
         val scatterTextList = ArrayList<ScatterTextValue>()
-        candlestickList.forEachIndexed { index, value ->
-            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
+        klineList.forEachIndexed { index, value ->
+//            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
             when (index) {
-                118 -> {
+                klineList.size - 3 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
-                108 -> {
+                klineList.size - 13 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(1, 2)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
-                98 -> {
+                klineList.size - 23 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(2, 3)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
-                88 -> {
+                klineList.size - 33 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(3, 5)))
                     scatterTextList.add(ScatterTextValue(true, value.high,value.low))
                 }
-                78 -> {
+                klineList.size - 43 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
-                68 -> {
+                klineList.size - 53 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(2)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
-                58 -> {
+                klineList.size - 63 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(5)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
@@ -425,14 +534,17 @@ class Chart3Activity : AppCompatActivity() {
 
         val data = CombineData().apply {
             add(candlestickDataSet)
-            add(lineDataSet)
-            if (!isYear) {
-                add(scatterDataSet)
-                add(scatterDataSet)
-                add(scatterTextDataSet)
-            }
+//            add(lineDataSet)
+            add(scatterDataSet)
+            add(scatterDataSet)
+            add(scatterTextDataSet)
         }
-        klineMain.setCombineData(data)
+
+        if (loadMore) {
+            klineMain.setCombineDataByLoadMore(data, klineList.size)
+        } else {
+            klineMain.setCombineData(data)
+        }
     }
 
     private fun setMainMinuteChartData() {

@@ -480,6 +480,30 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         this.highlight = highlight
     }
 
+    fun highlightForever(): Highlight? {
+        val highlight = highlight ?: return null
+        var highlightIndex = highlight.dataIndex
+
+        var highlightX = chart.getEntryX(highlightIndex)
+
+        val pointWidth = chart.pointWidth
+
+        val leftX = contentRect.left + pointWidth * 0.5f
+        val rightX = contentRect.right - pointWidth * 0.5f
+        if (highlightX < leftX) {
+            highlightX = leftX
+            highlightIndex = chart.getEntryIndex(highlightX)
+        }
+        if (highlightX > rightX) {
+            highlightX = rightX
+            highlightIndex = chart.getEntryIndex(highlightX)
+        }
+
+        highlight.x = highlightX
+        highlight.dataIndex = highlightIndex
+        return highlight
+    }
+
     fun cleanHighlight() {
         if (highlight == null) return
         highlight = null

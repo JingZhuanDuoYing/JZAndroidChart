@@ -238,7 +238,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (isOpenRange) return
 
         if (!isLongPress) isLongPress = true
-        if (highlightState != HIGHLIGHT_STATUS_MOVE && !isStatic){
+        if (highlightState != HIGHLIGHT_STATUS_MOVE && highlightState != HIGHLIGHT_STATUS_FOREVER && !isStatic){
             highlightState = HIGHLIGHT_STATUS_MOVE
         }
         onTouchPoint(e)
@@ -671,6 +671,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             onRangeChange()
         }
 
+        if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
+            onHighlightForever()
+        }
+
         invalidate()
     }
 
@@ -853,6 +857,14 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         this.rangeChangeListener = listener
     }
 
+    /**
+     * viewport改变 光标状态为forever时 光标位置对应更新
+     */
+    abstract fun onHighlightForever()
+
+    /**
+     * viewport改变 区间统计位置对应更新
+     */
     abstract fun onRangeChange()
 
     /**

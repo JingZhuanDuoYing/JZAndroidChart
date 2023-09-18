@@ -15,13 +15,15 @@ interface IDraw<T : AbstractDataSet<*>> {
     fun drawDataSet(canvas: Canvas, chartData: ChartData<T>, dataSet: T, viewport: Viewport)
 
     fun drawDataSet(canvas: Canvas, chartData: ChartData<T>, viewport: Viewport){
-        for (dataSet in chartData.dataSets) {
-            drawDataSet(
-                canvas,
-                chartData,
-                dataSet,
-                viewport
-            )
+        synchronized (chartData) {
+            for (dataSet in chartData.dataSets) {
+                drawDataSet(
+                    canvas,
+                    chartData,
+                    dataSet,
+                    viewport
+                )
+            }
         }
     }
 

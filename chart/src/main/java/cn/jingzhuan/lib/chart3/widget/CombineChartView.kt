@@ -29,6 +29,20 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
         chartRenderer = CombineChartRenderer(this)
     }
 
+    fun setCombineDataByLoadMore(combineData: CombineData, dataSize: Int) {
+        if (dataSize > this.totalEntryCount) {
+            val lastCount = this.totalEntryCount
+            val viewport = currentViewport
+            val from = viewport.left * lastCount + (dataSize - lastCount)
+            val to = viewport.right * lastCount + (dataSize - lastCount)
+            viewport.left = from / dataSize
+            viewport.right = to / dataSize
+            setCurrentViewport(viewport)
+
+            setCombineData(combineData)
+        }
+    }
+
     fun setCombineData(combineData: CombineData) {
         this.data = combineData
 
@@ -65,7 +79,6 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             addDataSet(scatterTextDataSet)
 //            totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
         }
-
 
         this.totalEntryCount = totalEntryCount
 
