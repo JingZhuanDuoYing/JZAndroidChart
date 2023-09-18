@@ -8,9 +8,9 @@ package cn.jingzhuan.lib.chart3.event
 interface OnRangeChangeListener {
     /**
      * 区间统计坐标
-     * @param startX 开始的X坐标
-     * @param endX   结束的X坐标
+     * @param startIndex 开始下标
+     * @param endIndex   结束下坐标
      * @param touchType 触摸类型
      */
-    fun onRange(startX: Float, endX: Float, touchType: Int)
+    fun onRange(startIndex: Int, endIndex: Int, touchType: Int)
 }

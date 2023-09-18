@@ -16,6 +16,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_BOTH
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_RIGHT
+import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -246,13 +247,12 @@ class RangeRenderer<T : AbstractDataSet<*>>(
         onRangeChange()
     }
 
-    fun onViewChange() {
+    fun onViewportChange() {
         if (currentViewport.width() == 1.0f) return
         if (startX != 0f && endX != 0f) {
             val start = chart.getEntryIndex(startX)
             val end = chart.getEntryIndex(endX)
             if (chart.isScaling || chart.computeZoom()) {
-                Log.d("RangeRenderer", "onViewChange: 1")
                 val dataSet = chart.chartData?.getTouchDataSet() ?: return
                 val listSize = dataSet.values.size
                 val chartLeftIndex = (currentViewport.left * listSize).roundToInt()
@@ -269,15 +269,16 @@ class RangeRenderer<T : AbstractDataSet<*>>(
                 }
                 startX = chart.getEntryX(startIndex)
                 endX = chart.getEntryX(endIndex)
+                touchType = RANGE_TOUCH_NONE
+                onRangeChange()
             } else {
                 if (start != 0 && end != 0 && startIndex != start && endIndex != end) {
-                    Log.d("RangeRenderer", "onViewChange: 2")
                     startIndex = start
                     endIndex = end
+                    touchType = RANGE_TOUCH_NONE
+                    onRangeChange()
                 }
             }
-            touchType = RANGE_TOUCH_NONE
-            onRangeChange()
         }
     }
 
@@ -291,17 +292,14 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val isBottom = chart.bottomRect.contains(event.x.roundToInt(), event.y.roundToInt())
-                if (isBottom) {
-                    onCloseClick(event.x, event.y)
-                    return false
-                }
                 touchType = RANGE_TOUCH_NONE
                 val currentX = event.x
                 val currentY = event.y
+
                 lastPreX = currentX
 
-                return if (currentX >= leftTouchRect.right && currentX <= rightTouchRect.left) {
+                return if (currentX >= leftTouchRect.right && currentX <= rightTouchRect.left
+                    && currentY >= leftTouchRect.top && currentY < rightTouchRect.bottom) {
                     // 在左右touch之内 认为是同时滑动
                     touchType = RANGE_TOUCH_BOTH
                     true
@@ -318,6 +316,10 @@ class RangeRenderer<T : AbstractDataSet<*>>(
 
             MotionEvent.ACTION_MOVE -> {
                 val currentX = event.x
+                val deltaX = (currentX - lastPreX).absoluteValue
+                if (deltaX < chart.pointWidth && touchType != RANGE_TOUCH_NONE) {
+                    return true
+                }
                 try {
                     when (touchType) {
                         RANGE_TOUCH_BOTH -> {
@@ -338,6 +340,11 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             }
 
             MotionEvent.ACTION_UP -> {
+                val isBottom = chart.bottomRect.contains(event.x.roundToInt(), event.y.roundToInt())
+                if (isBottom) {
+                    onCloseClick(event.x, event.y)
+                    return false
+                }
                 touchType = RANGE_TOUCH_NONE
                 onRangeChange()
             }
@@ -425,7 +432,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
 
     private fun onRangeChange() {
         if (chart.rangeChangeListener != null){
-            chart.rangeChangeListener?.onRange(startX, endX, touchType)
+            chart.rangeChangeListener?.onRange(startIndex, endIndex, touchType)
         }
     }
 

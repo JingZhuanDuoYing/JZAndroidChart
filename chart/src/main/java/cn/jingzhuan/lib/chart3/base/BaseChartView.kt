@@ -19,7 +19,6 @@ import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
-import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-05
@@ -143,6 +142,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     fun cleanHighlight() {
         highlightState = HIGHLIGHT_STATUS_INITIAL
+        if (highlightRenderer.highlight == null) return
         highlightRenderer.cleanHighlight()
         if (highlightListener != null){
             highlightListener?.onHighlightHide()
@@ -187,7 +187,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     override fun onRangeChange() {
-        rangeRenderer.onViewChange()
+        rangeRenderer.onViewportChange()
     }
 
     override fun getEntryIndex(x: Float): Int {

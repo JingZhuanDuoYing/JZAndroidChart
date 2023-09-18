@@ -237,8 +237,10 @@ class Chart3Activity : AppCompatActivity() {
             })
 
             setOnRangeChangeListener(object : OnRangeChangeListener{
-                override fun onRange(startX: Float, endX: Float, touchType: Int) {
-                    Log.d("klineMain", "OnRangeChangeListener: startX =$startX, endX=$endX, touchType=$touchType")
+                override fun onRange(startIndex: Int, endIndex: Int, touchType: Int) {
+                    val startX = klineMain.getEntryX(startIndex)
+                    val endX = klineMain.getEntryX(endIndex)
+                    Log.d("klineMain", "OnRangeChangeListener: startIndex =$startIndex, endIndex=$endIndex, touchType=$touchType")
                 }
 
             })

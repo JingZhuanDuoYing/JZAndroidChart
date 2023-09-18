@@ -26,6 +26,7 @@ class SubChartView(ctx: Context, attrs: AttributeSet?) : StaticChartView(ctx, at
         addOnTouchPointListener(object : OnTouchPointListener {
             override fun touch(x: Float, y: Float) {
                 val chartMain = mainChartView ?: return
+                if (chartMain.isOpenRange) return
                 // 如果历史分时已打开
                 val mainHighlightState = chartMain.highlightState
                 if (mainHighlightState == HIGHLIGHT_STATUS_FOREVER) {
