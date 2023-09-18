@@ -347,7 +347,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             val currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN) * currX / mSurfacePoint.x
             setViewportBottomLeft(currXRange)
 
-            if (currX <= 0 && leftSide) {
+            if (currX < pointWidth * 0.5f && leftSide) {
                 Log.w(TAG, "加载更多")
                 needsInvalidate = false
                 finishScroll()
@@ -645,6 +645,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
         triggerViewportChange()
+    }
+
+    fun setStaticCurrentViewport(viewport: RectF) {
+        currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
+        currentViewport.constrainViewport()
     }
 
     private fun triggerViewportChange() {

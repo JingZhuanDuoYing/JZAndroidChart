@@ -460,7 +460,15 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         if (loadMore) {
-            klineList.addAll(DataConfig.candlestickList)
+            val newList = mutableListOf<CandlestickValue>()
+            DataConfig.candlestickList.forEachIndexed { index, value ->
+                val time = 1692322131L - 86400 * (120 + 1 + index)
+                newList.add(CandlestickValue(value.high, value.low, value.open, value.close, time))
+            }
+            val list = newList.reversed().toMutableList()
+            list.addAll(klineList)
+            klineList.clear()
+            klineList.addAll(list)
         }
 
         val candlestickDataSet = CandlestickDataSet(klineList).apply {

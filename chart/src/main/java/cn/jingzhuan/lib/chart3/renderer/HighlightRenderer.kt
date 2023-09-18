@@ -484,7 +484,11 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val highlight = highlight ?: return null
         var highlightIndex = highlight.dataIndex
 
-        var highlightX = chart.getEntryX(highlightIndex)
+        val viewport = chart.currentViewport
+
+        var highlightX = contentRect.left + (highlightIndex / chart.totalEntryCount.toFloat() - viewport.left) / viewport.width() * contentRect.width()
+        if (highlightX > contentRect.right) highlightX = contentRect.right.toFloat()
+        if (highlightX < contentRect.left) highlightX = contentRect.left.toFloat()
 
         val pointWidth = chart.pointWidth
 

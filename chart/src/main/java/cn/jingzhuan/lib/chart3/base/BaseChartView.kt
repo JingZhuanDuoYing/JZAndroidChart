@@ -10,12 +10,14 @@ import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
 import cn.jingzhuan.lib.chart3.Highlight
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
 import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
@@ -132,6 +134,18 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
                 highlightListener?.onHighlightShow(highlight)
             }
             invalidate()
+        }
+    }
+
+    fun handleLoadMoreHighlight(viewport: Viewport, dataSize: Int) {
+        if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
+            val highlight = highlightRenderer.highlight ?: return
+            var index = (((highlight.x - contentRect.left) * viewport.width() / contentRect.width() + viewport.left) * dataSize.toFloat()).toInt()
+            if (index >= dataSize) index = dataSize - 1
+            if (index < 0) index = 0
+            val dataIndex = index
+            highlight.dataIndex = dataIndex
+            highlightRenderer.highlightValue(highlight)
         }
     }
 

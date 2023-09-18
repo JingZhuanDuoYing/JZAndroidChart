@@ -37,7 +37,9 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             val to = viewport.right * lastCount + (dataSize - lastCount)
             viewport.left = from / dataSize
             viewport.right = to / dataSize
-            setCurrentViewport(viewport)
+
+            handleLoadMoreHighlight(viewport, dataSize)
+            setStaticCurrentViewport(viewport)
 
             setCombineData(combineData)
         }
