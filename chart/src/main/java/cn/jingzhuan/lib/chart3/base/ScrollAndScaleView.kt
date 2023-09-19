@@ -88,7 +88,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 缩放器
      */
-    protected lateinit var mZoomer: Zoomer
+    private lateinit var mZoomer: Zoomer
 
     private val mZoomFocalPoint = PointF()
 
@@ -289,10 +289,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onScroll(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
-        distanceY: Float,
+        distanceY: Float
     ): Boolean {
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
@@ -312,7 +312,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
          * additional information about the viewport, see the comments for
          * [currentViewport].
          */
-        val viewportOffsetX: Float = distanceX.roundToInt() * currentViewport.width() / contentRect.width()
+        val viewportOffsetX = distanceX.roundToInt() * currentViewport.width() / contentRect.width()
 
         computeScrollSurfaceSize(mSurfacePoint)
 
@@ -432,7 +432,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onFling(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float,

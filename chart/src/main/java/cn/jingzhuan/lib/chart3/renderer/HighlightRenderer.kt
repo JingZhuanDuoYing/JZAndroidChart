@@ -44,9 +44,6 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
     // 涨停分析flag
     private lateinit var limitUpRect: Rect
 
-    // 主题历史炒作flag
-    private lateinit var fireHistoryRect: Rect
-
     // 公告flag
     private lateinit var noticeRect: Rect
 
@@ -88,7 +85,6 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         tradeRect = Rect()
         tradeSimulateRect = Rect()
         limitUpRect = Rect()
-        fireHistoryRect = Rect()
         noticeRect = Rect()
         dateRect = Rect()
         lhbRect = Rect()
@@ -99,7 +95,6 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         tradeRect.setEmpty()
         tradeSimulateRect.setEmpty()
         limitUpRect.setEmpty()
-        fireHistoryRect.setEmpty()
         noticeRect.setEmpty()
         dateRect.setEmpty()
         lhbRect.setEmpty()
