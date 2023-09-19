@@ -22,6 +22,7 @@ import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.CombineData
+import cn.jingzhuan.lib.chart3.data.TimeRange
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
@@ -38,6 +39,8 @@ import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
+import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
+import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_HISTORY_MINUTE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LHB
@@ -47,6 +50,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
+import cn.jingzhuan.lib.chart3.widget.KlineTimeRangeView
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.max
@@ -55,6 +59,8 @@ import kotlin.math.min
 class Chart3Activity : AppCompatActivity() {
 
     private lateinit var klineMain: MainKlineChartView
+
+    private lateinit var llKlineOp: LinearLayout
 
     private lateinit var tvZoomIn: TextView
 
@@ -80,6 +86,10 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var llHistory: LinearLayout
 
+    private lateinit var tvInfo: TextView
+
+    private lateinit var timeRangeView: KlineTimeRangeView
+
     private val scatterDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_left) }
 
     private val subCharts by lazy { mutableListOf(sub1, sub2) }
@@ -91,6 +101,8 @@ class Chart3Activity : AppCompatActivity() {
     private val lowPrice = 3018.98f
 
     private var klineList = mutableListOf<CandlestickValue>()
+
+    private val sb = StringBuilder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +121,7 @@ class Chart3Activity : AppCompatActivity() {
 
     private fun initView() {
         klineMain = findViewById(R.id.kline_main)
+        llKlineOp = findViewById(R.id.ll_kline_op)
         tvZoomIn = findViewById(R.id.tv_zoom_in)
         tvZoomOot = findViewById(R.id.tv_zoom_out)
         tvRange = findViewById(R.id.tv_range)
@@ -124,6 +137,8 @@ class Chart3Activity : AppCompatActivity() {
         rbMinute = findViewById(R.id.rb_minute)
         rbCallAuction = findViewById(R.id.rb_callAuction)
         llHistory = findViewById(R.id.ll_history)
+        tvInfo = findViewById(R.id.tv_info)
+        timeRangeView = findViewById(R.id.time_range_view)
     }
 
 
@@ -138,6 +153,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbDay.id -> {
                     klineMain.visibility = View.VISIBLE
                     minuteMain.visibility = View.GONE
+                    llKlineOp.visibility = View.VISIBLE
                     klineMain.apply {
                         showBottomFlags = true
                         valueIndexPattern = "yyyy-MM-dd"
@@ -161,6 +177,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbYear.id -> {
                     klineMain.visibility = View.VISIBLE
                     minuteMain.visibility = View.GONE
+                    llKlineOp.visibility = View.VISIBLE
                     klineMain.apply {
                         showBottomFlags = false
                         valueIndexPattern = "dd/HH:mm"
@@ -183,6 +200,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbMinute.id -> {
                     klineMain.visibility = View.GONE
                     minuteMain.visibility = View.VISIBLE
+                    llKlineOp.visibility = View.GONE
                     subCharts.forEach {
                         it.visibility = View.GONE
                     }
@@ -204,11 +222,17 @@ class Chart3Activity : AppCompatActivity() {
             setOnHighlightListener(object : OnHighlightListener {
                 override fun onHighlightShow(highlight: Highlight?) {
                     Log.d("klineMain", "onHighlightShow: ")
+                    val index = highlight?.dataIndex ?: 0
+                    sb.clear()
+                    sb.append("开: ${klineList.getOrNull(index)?.open} 高: ${klineList.getOrNull(index)?.high} 低: ${klineList.getOrNull(index)?.low} 收: ${klineList.getOrNull(index)?.close}")
+                    runOnUiThread {
+                        tvInfo.text = sb.toString()
+                    }
                     subCharts.forEach {
                         val h = Highlight().apply {
                             x = highlight?.x ?: Float.NaN
                             y = Float.NaN
-                            dataIndex = highlight?.dataIndex ?: 0
+                            dataIndex = index
                             touchX = highlight?.touchX ?: Float.NaN
                             touchY = Float.NaN
                         }
@@ -256,7 +280,19 @@ class Chart3Activity : AppCompatActivity() {
                 override fun onRange(startIndex: Int, endIndex: Int, touchType: Int) {
                     val startX = klineMain.getEntryX(startIndex)
                     val endX = klineMain.getEntryX(endIndex)
+                    val cycle = endIndex - startIndex + 1
+                    val startTime = DateTimeFormatter.ofPattern(bottomLabelPattern).formatTime((klineList.getOrNull(startIndex)?.time ?: 0) * 1000L)
+                    val endTime = DateTimeFormatter.ofPattern(bottomLabelPattern).formatTime((klineList.getOrNull(endIndex)?.time ?: 0) * 1000L)
+
+                    val data = TimeRange(startTime, endTime, "${cycle}周期", startX, endX, touchType)
                     Log.d("klineMain", "OnRangeChangeListener: startIndex =$startIndex, endIndex=$endIndex, touchType=$touchType")
+                    timeRangeView.timeRange = data
+                }
+
+                override fun onClose() {
+                    Toast.makeText(this@Chart3Activity, "关闭区间统计", Toast.LENGTH_SHORT).show()
+                    tvInfo.visibility = View.VISIBLE
+                    timeRangeView.visibility = View.GONE
                 }
 
             })
@@ -294,6 +330,8 @@ class Chart3Activity : AppCompatActivity() {
         tvRange.setOnClickListener {
             if (!klineMain.isOpenRange) {
                 klineMain.openRange()
+                tvInfo.visibility = View.GONE
+                timeRangeView.visibility = View.VISIBLE
             }
         }
 
@@ -449,10 +487,13 @@ class Chart3Activity : AppCompatActivity() {
             add(lineDataSet)
         }
         klineMain.setCombineData(data)
+
+        sb.clear()
+        sb.append("开: ${klineList.last().open} 高: ${klineList.last().high} 低: ${klineList.last().low} 收: ${klineList.last().close}")
+        tvInfo.text = sb.toString()
     }
 
     private fun setMainKlineChartData(update: Boolean = false, loadMore: Boolean = false) {
-
         if (update) {
             val random = klineList.random()
             klineList.removeLast()
@@ -553,6 +594,10 @@ class Chart3Activity : AppCompatActivity() {
         } else {
             klineMain.setCombineData(data)
         }
+        sb.clear()
+        sb.append("开: ${klineList.last().open} 高: ${klineList.last().high} 低: ${klineList.last().low} 收: ${klineList.last().close}")
+        tvInfo.text = sb.toString()
+
     }
 
     private fun setMainMinuteChartData() {

@@ -13,4 +13,9 @@ interface OnRangeChangeListener {
      * @param touchType 触摸类型
      */
     fun onRange(startIndex: Int, endIndex: Int, touchType: Int)
+
+    /**
+     * 关闭区间统计
+     */
+    fun onClose()
 }

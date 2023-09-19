@@ -211,6 +211,9 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     fun cleanRange() {
         isOpenRange = false
         rangeRenderer.cleanRange()
+        if (rangeChangeListener != null){
+            rangeChangeListener?.onClose()
+        }
     }
 
     override fun onRangeChange() {

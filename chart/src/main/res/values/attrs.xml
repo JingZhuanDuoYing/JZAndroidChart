@@ -43,4 +43,15 @@
         <attr name="maxMinValueTextColor" format="color"/>
 
     </declare-styleable>
+
+
+    <declare-styleable name="KlineTimeRangeView">
+        <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textBackgroundColor" format="color"/>
+        <attr name="textBackgroundRadius" format="dimension"/>
+        <attr name="lineColor" format="color"/>
+        <attr name="lineThickness" format="dimension" />
+
+    </declare-styleable>
 </resources>
