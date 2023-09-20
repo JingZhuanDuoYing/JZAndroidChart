@@ -293,7 +293,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
-        distanceY: Float,
+        distanceY: Float
     ): Boolean {
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
