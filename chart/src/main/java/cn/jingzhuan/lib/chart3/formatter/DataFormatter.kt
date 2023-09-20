@@ -9,15 +9,15 @@ import cn.jingzhuan.lib.chart.data.DataFormatter
 class DataFormatter {
 
     // 数据精度
-    private var precision = 2
+    var precision = 2
 
     // 数据基本单位
-    private var unit = ""
+    var unit = ""
 
     // 数据附加单位
-    private var unitSuffix = ""
+    var unitSuffix = ""
 
-    private var isHide = false
+    var isHide = false
 
     constructor()
 
@@ -82,38 +82,6 @@ class DataFormatter {
             precisionValue = 2
         }
         this.precision = precisionValue
-    }
-
-    fun getPrecision(): Int {
-        return precision
-    }
-
-    fun setPrecision(precision: Int) {
-        this.precision = precision
-    }
-
-    fun getUnit(): String {
-        return unit
-    }
-
-    fun setUnit(unit: String) {
-        this.unit = unit
-    }
-
-    fun getUnitSuffix(): String {
-        return unitSuffix
-    }
-
-    fun setUnitSuffix(unitSuffix: String) {
-        this.unitSuffix = unitSuffix
-    }
-
-    fun isHide(): Boolean {
-        return isHide
-    }
-
-    fun setHide(hide: Boolean) {
-        isHide = hide
     }
 
     companion object {
