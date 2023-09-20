@@ -6,7 +6,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.AbstractValue
-import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
+import cn.jingzhuan.lib.chart3.formatter.DataFormatter
 import kotlin.math.roundToInt
 
 /**
@@ -58,7 +58,7 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
     /**
      * 数据格式化器
      */
-    var formatter: IValueFormatter? = null
+    var formatter: DataFormatter? = null
 
     var maxIndex = 0
 

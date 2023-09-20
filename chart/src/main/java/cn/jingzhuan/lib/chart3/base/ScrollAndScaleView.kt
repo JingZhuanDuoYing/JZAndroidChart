@@ -744,6 +744,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             mScroller.forceFinished(true)
     }
 
+    open fun isScrolling(): Boolean {
+        return !mScroller.isFinished
+    }
+
     open fun canScroll(): Boolean {
         return totalEntryCount >= currentVisibleEntryCount
     }

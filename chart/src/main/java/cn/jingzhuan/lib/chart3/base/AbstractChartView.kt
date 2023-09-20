@@ -375,7 +375,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         mDrawBitmap?.get()?.eraseColor(Color.TRANSPARENT)
     }
 
-    private fun releaseBitmap() {
+    fun releaseBitmap() {
         if (bitmapCanvas != null) {
             bitmapCanvas?.setBitmap(null)
             bitmapCanvas = null
