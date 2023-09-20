@@ -11,6 +11,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
+import androidx.annotation.FloatRange
 import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
 import cn.jingzhuan.lib.chart.utils.ForceAlign
@@ -292,7 +293,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
-        distanceY: Float
+        distanceY: Float,
     ): Boolean {
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
@@ -826,6 +827,40 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun computeZoom(): Boolean {
         return mZoomer.computeZoom()
+    }
+
+    open fun moveLeft() {
+        moveLeft(0.2f)
+    }
+
+    open fun moveRight() {
+        moveRight(0.2f)
+    }
+
+    open fun moveLeft(@FloatRange(from = 0.0, to = 1.0) percent: Float) {
+        computeScrollSurfaceSize(mSurfacePoint)
+        scrollerStartViewport.set(currentViewport)
+        val moveDistance = contentRect.width() * percent
+        val startX =
+            (mSurfacePoint.x * (scrollerStartViewport.left - Viewport.AXIS_X_MIN) / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)).toInt()
+        if (!mScroller.isFinished) {
+            mScroller.forceFinished(true)
+        }
+        mScroller.startScroll(startX, 0, -moveDistance.toInt(), 0, 300)
+        postInvalidateOnAnimation()
+    }
+
+    open fun moveRight(@FloatRange(from = 0.0, to = 1.0) percent: Float) {
+        computeScrollSurfaceSize(mSurfacePoint)
+        scrollerStartViewport.set(currentViewport)
+        val moveDistance: Float = contentRect.width() * percent
+        val startX =
+            (mSurfacePoint.x * (scrollerStartViewport.left - Viewport.AXIS_X_MIN) / (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN)).toInt()
+        if (!mScroller.isFinished) {
+            mScroller.forceFinished(true)
+        }
+        mScroller.startScroll(startX, 0, moveDistance.toInt(), 0, 300)
+        postInvalidateOnAnimation()
     }
 
     fun addOnTouchPointListener(listener: OnTouchPointListener) {
