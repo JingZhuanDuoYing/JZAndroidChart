@@ -7,9 +7,9 @@ import kotlin.math.max
 
 class MinuteLineDataSet(
     lineValues: List<LineValue>,
-    val lastClose: Float,
-    private val highPrice: Float,
-    private val lowPrice: Float
+    private val lastClose: Float,
+    private val highPrice: Float = 0f,
+    private val lowPrice: Float = 0f
 ) : LineDataSet(lineValues) {
 
     override fun calcMinMax(viewport: Viewport) {
