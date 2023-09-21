@@ -37,6 +37,21 @@ class LineValue : AbstractValue {
         this.value = value
     }
 
+    constructor(value: Float, color: Int) {
+        this.value = value
+        this.color = color
+    }
+
+    constructor(value: Float, secondValue: Float) {
+        this.value = value
+        this.secondValue = secondValue
+    }
+
+    constructor(value: Float, drawCircle: Boolean) {
+        this.value = value
+        this.isDrawCircle = drawCircle
+    }
+
     constructor(value: Float, time: Long) {
         this.value = value
         this.time = time
@@ -56,7 +71,7 @@ class LineValue : AbstractValue {
 
     constructor(value: Float, drawCircle: Boolean, time: Long) {
         this.value = value
-        isDrawCircle = drawCircle
+        this.isDrawCircle = drawCircle
         this.time = time
     }
 
