@@ -15,7 +15,7 @@ import java.util.Collections
 /**
  * @since 2023-09-06
  */
-class CombineData : ChartData<AbstractDataSet<*>>() {
+open class CombineData : ChartData<AbstractDataSet<*>>() {
 
     val treeChartData: TreeData = TreeData()
 
@@ -53,27 +53,27 @@ class CombineData : ChartData<AbstractDataSet<*>>() {
         return treeChartData.dataSets
     }
 
-    fun addDataSet(dataSet: BarDataSet): Boolean {
+    open fun addDataSet(dataSet: BarDataSet): Boolean {
         return barChartData.add(dataSet)
     }
 
-    fun addDataSet(dataSet: LineDataSet): Boolean {
+    open fun addDataSet(dataSet: LineDataSet): Boolean {
         return lineChartData.add(dataSet)
     }
 
-    fun addDataSet(dataSet: CandlestickDataSet): Boolean {
+    open fun addDataSet(dataSet: CandlestickDataSet): Boolean {
         return candlestickChartData.add(dataSet)
     }
 
-    fun addDataSet(dataSet: ScatterDataSet): Boolean {
+    open fun addDataSet(dataSet: ScatterDataSet): Boolean {
         return scatterChartData.add(dataSet)
     }
 
-    fun addDataSet(dataSet: ScatterTextDataSet): Boolean {
+    open fun addDataSet(dataSet: ScatterTextDataSet): Boolean {
         return scatterTextChartData.add(dataSet)
     }
 
-    fun addDataSet(dataSet: TreeDataSet): Boolean {
+    open fun addDataSet(dataSet: TreeDataSet): Boolean {
         return treeChartData.add(dataSet)
     }
 
