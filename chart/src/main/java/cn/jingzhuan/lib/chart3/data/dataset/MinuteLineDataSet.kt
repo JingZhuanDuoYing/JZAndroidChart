@@ -7,7 +7,7 @@ import kotlin.math.max
 
 class MinuteLineDataSet(
     lineValues: List<LineValue>,
-    private val lastClose: Float,
+    val lastClose: Float,
     private val highPrice: Float = 0f,
     private val lowPrice: Float = 0f
 ) : LineDataSet(lineValues) {
