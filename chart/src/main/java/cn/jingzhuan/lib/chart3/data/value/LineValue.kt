@@ -33,6 +33,10 @@ class LineValue : AbstractValue {
 
     constructor()
 
+    constructor(value: Float) {
+        this.value = value
+    }
+
     constructor(value: Float, time: Long) {
         this.value = value
         this.time = time
