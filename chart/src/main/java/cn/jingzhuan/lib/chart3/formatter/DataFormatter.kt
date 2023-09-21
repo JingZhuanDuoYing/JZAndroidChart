@@ -1,6 +1,5 @@
 package cn.jingzhuan.lib.chart3.formatter
 
-import cn.jingzhuan.lib.chart.data.DataFormatter
 
 /**
  * @since 2023-09-20
@@ -25,7 +24,6 @@ class DataFormatter {
         this.isHide = isHide
     }
 
-    @JvmOverloads
     constructor(unit: String?, unitSuffix: String = "") {
         var unitString = unit
         if (unitString == null || (unitString != UNIT_TRILLION
@@ -119,7 +117,7 @@ class DataFormatter {
             return DataFormatter(UNIT_CALC)
         }
 
-        fun CALC_SUFFIX(unitSuffix: String?): DataFormatter {
+        fun CALC_SUFFIX(unitSuffix: String): DataFormatter {
             return DataFormatter(UNIT_CALC_SUFFIX, unitSuffix)
         }
 
