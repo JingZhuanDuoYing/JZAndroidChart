@@ -22,8 +22,6 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var isVisible = true
 
-    var enable = true
-
     var viewportYMin = Float.MAX_VALUE
 
     var viewportYMax = -Float.MAX_VALUE
