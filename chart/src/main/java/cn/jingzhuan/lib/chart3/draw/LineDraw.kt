@@ -175,6 +175,7 @@ class LineDraw(
                 max,
                 min
             )
+            return
         }
 
         var i = 0

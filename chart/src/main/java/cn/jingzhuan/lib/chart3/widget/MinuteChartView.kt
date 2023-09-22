@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import androidx.annotation.RequiresApi
+import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.MinuteLineDataSet
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
@@ -74,10 +75,14 @@ open class MinuteChartView(ctx: Context, attrs: AttributeSet?) : CombineChartVie
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
                     if (index == 1 || value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE) return ""
-                    val lastClose = (chartData.getTouchDataSet() as MinuteLineDataSet).lastClose
-                    if (value.isNaN() || lastClose <= 0.0f) return ""
-                    val result = (value - lastClose) / lastClose
-                    return String.format("%.2f%%", result / 0.01f)
+                    val lineDataSet = chartData.dataSets.find { it is LineDataSet && it.lastClose != -1f } ?: return ""
+                    if (lineDataSet is LineDataSet) {
+                        val lastClose = lineDataSet.lastClose
+                        if (value.isNaN() || lastClose <= 0.0f) return ""
+                        val result = (value - lastClose) / lastClose
+                        return String.format("%.2f%%", result / 0.01f)
+                    }
+                    return ""
                 }
             }
         }

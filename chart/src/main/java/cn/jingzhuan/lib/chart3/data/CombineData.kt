@@ -89,10 +89,10 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
     private fun getCombineDataSets(): List<AbstractDataSet<*>> {
         return if (getCandlestickDataSets().isNotEmpty()) {
             getCandlestickDataSets()
-        } else if (getBarDataSets().isNotEmpty()) {
-            getBarDataSets()
         } else if (getLineDataSets().isNotEmpty()) {
             getLineDataSets()
+        } else if (getBarDataSets().isNotEmpty()) {
+            getBarDataSets()
         } else if (getTreeDataSets().isNotEmpty()) {
             getTreeDataSets()
         } else if (getScatterDataSets().isNotEmpty()) {

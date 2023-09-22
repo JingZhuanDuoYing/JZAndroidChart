@@ -18,6 +18,8 @@ open class LineDataSet @JvmOverloads constructor(
     @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
 ) : AbstractDataSet<LineValue>(lineValues, axisDependency) {
 
+    open var lastClose = -1f
+
     var lineThickness = 2
 
     var headPoint: LineValue? = null
