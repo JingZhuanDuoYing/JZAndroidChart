@@ -39,7 +39,7 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             viewport.right = to / dataSize
 
             handleLoadMoreHighlight(viewport, dataSize)
-            setStaticCurrentViewport(viewport)
+            setCurrentViewport(viewport)
 
             setCombineData(combineData)
         }
