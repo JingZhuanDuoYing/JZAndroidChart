@@ -522,7 +522,7 @@ class Chart3Activity : AppCompatActivity() {
         val scatterList = ArrayList<ScatterValue>()
         val scatterTextList = ArrayList<ScatterTextValue>()
         klineList.forEachIndexed { index, value ->
-//            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
+            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
             when (index) {
                 klineList.size - 3 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1)))
@@ -562,6 +562,7 @@ class Chart3Activity : AppCompatActivity() {
         val lineDataSet = LineDataSet(lineList).apply {
             color = Color.RED
             lineThickness = 3
+            isEnable = false
         }
 
         val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
@@ -583,7 +584,7 @@ class Chart3Activity : AppCompatActivity() {
 
         val data = CombineData().apply {
             add(candlestickDataSet)
-//            add(lineDataSet)
+            add(lineDataSet)
             add(scatterDataSet)
             add(scatterDataSet)
             add(scatterTextDataSet)

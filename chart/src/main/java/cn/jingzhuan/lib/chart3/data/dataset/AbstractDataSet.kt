@@ -64,6 +64,12 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     var forceValueCount = -1
 
+    var isEnable = true
+        set(value) {
+            this.isVisible = value
+            field = value
+        }
+
     constructor()
 
     constructor(tag: String?) {
@@ -116,4 +122,6 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
     fun getVisibleRange(viewport: Viewport): Float {
         return (viewport.right - viewport.left) * getEntryCount()
     }
+
+
 }
