@@ -6,7 +6,6 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
-import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
@@ -87,7 +86,7 @@ open class ChartData<T : AbstractDataSet<*>> {
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
                 for (t in dataSets) {
-                    if (!t.isEnable || t is ScatterDataSet) continue
+                    if (!t.isEnable) continue
 
                     if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
                         t.calcMinMax(viewport, content, leftMax, leftMin)
