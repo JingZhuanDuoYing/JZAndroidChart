@@ -351,7 +351,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     /**
      * 十字光标选中
      */
-    abstract fun highlightValue(highlight: Highlight?)
+    abstract fun highlightValue(highlight: Highlight?, enableCallback: Boolean = true)
 
     /**
      * 打开区间统计

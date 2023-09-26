@@ -117,6 +117,13 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
     }
 
+    fun setHighlight(highlight: Highlight?) {
+        if (highlight != null) {
+            highlightRenderer.highlightValue(highlight)
+            postInvalidate()
+        }
+    }
+
     /**
      * 画十字交叉线
      */
@@ -124,13 +131,13 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         highlightRenderer.renderer(canvas)
     }
 
-    override fun highlightValue(highlight: Highlight?) {
+    override fun highlightValue(highlight: Highlight?, enableCallback: Boolean) {
         if (highlight != null) {
             if (highlightState == HIGHLIGHT_STATUS_INITIAL && !isStatic) {
                 highlightState = HIGHLIGHT_STATUS_PRESS
             }
             highlightRenderer.highlightValue(highlight)
-            if (highlightListener != null) {
+            if (highlightListener != null && enableCallback) {
                 highlightListener?.onHighlightShow(highlight)
             }
             postInvalidate()
