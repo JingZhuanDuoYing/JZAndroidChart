@@ -14,8 +14,6 @@ import kotlin.math.max
  */
 open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
-    private var data = CombineData()
-
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -29,7 +27,8 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
         chartRenderer = CombineChartRenderer(this)
     }
 
-    fun setCombineDataByLoadMore(combineData: CombineData, dataSize: Int) {
+    fun setCombineDataByLoadMore(combineData: CombineData) {
+        val dataSize = combineData.getTouchEntryCount()
         if (dataSize > this.totalEntryCount) {
             val lastCount = this.totalEntryCount
             val viewport = currentViewport
@@ -46,8 +45,6 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
     }
 
     fun setCombineData(combineData: CombineData) {
-        this.data = combineData
-
         var totalEntryCount = 0
 
         cleanAllDataSet()
@@ -112,10 +109,7 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
     fun cleanAllDataSet() {
         getRenderer()?.clearDataSet()
-        data = CombineData()
     }
-
-    fun getCurrentData() = data
 
     private fun getRenderer(): CombineChartRenderer? {
         return chartRenderer as CombineChartRenderer?

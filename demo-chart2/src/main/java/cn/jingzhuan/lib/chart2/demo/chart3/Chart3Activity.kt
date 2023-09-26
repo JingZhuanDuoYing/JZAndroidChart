@@ -591,7 +591,7 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         if (loadMore) {
-            klineMain.setCombineDataByLoadMore(data, klineList.size)
+            klineMain.setCombineDataByLoadMore(data)
         } else {
             klineMain.setCombineData(data)
         }

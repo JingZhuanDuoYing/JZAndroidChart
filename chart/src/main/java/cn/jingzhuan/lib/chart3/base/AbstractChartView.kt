@@ -2,7 +2,6 @@ package cn.jingzhuan.lib.chart3.base
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -24,7 +23,6 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_TOP
-import java.lang.ref.WeakReference
 import kotlin.math.max
 
 /**
@@ -32,12 +30,6 @@ import kotlin.math.max
  * created by lei
  */
 abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, IChartView {
-
-    private var mDrawBitmap: WeakReference<Bitmap>? = null
-
-    private val mBitmapConfig = Bitmap.Config.ARGB_8888
-
-    private var bitmapCanvas: Canvas? = null
 
     val axisLeft = AxisY(AxisY.LEFT_INSIDE)
 
@@ -112,11 +104,6 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      * 交叉线文本颜色
      */
     var highlightTextColor = 0
-
-    /**
-     * 交叉线文本背景颜色
-     */
-    var highlightTextBgColor = 0
 
     /**
      * 交叉线文本背景高度
@@ -202,9 +189,6 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
             val highlightThickness = ta.getDimensionPixelSize(R.styleable.Chart_highlightThickness, 3)
             this.highlightThickness = highlightThickness
-
-            val highlightTextBgColor = ta.getColor(R.styleable.Chart_highlightTextBgColor, highlightColor)
-            this.highlightTextBgColor = highlightTextBgColor
 
             val highlightTextBgHeight = ta.getDimensionPixelSize(R.styleable.Chart_highlightTextBgHeight, 50)
             this.highlightTextBgHeight = highlightTextBgHeight
@@ -293,15 +277,12 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
             drawAxisLabels(canvas)
         }
 
-        createBitmapCache()
-
-        if (bitmapCanvas != null && renderPaint != null) {
-            drawChart(bitmapCanvas!!)
-            canvas.drawBitmap(mDrawBitmap?.get()!!, 0f, 0f, renderPaint)
-        }
+        drawChart(canvas)
 
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount)
+
+        canvas.save()
 
         if (!isDrawLabelsInBottom) {
             drawAxisLabels(canvas)
@@ -317,6 +298,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         // 画区间统计
         drawRangeArea(canvas)
+
+        canvas.restore()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
@@ -357,39 +340,6 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     fun setTypeface(tf: Typeface?) {
         axisRenderers.values.forEach { it.setTypeface(tf) }
-    }
-
-    private fun createBitmapCache() {
-        val width = contentRect.width() + contentRect.left
-        val height = contentRect.height()
-        if (mDrawBitmap == null || mDrawBitmap?.get() == null || mDrawBitmap?.get()?.width != width || mDrawBitmap?.get()?.height != height) {
-            if (width > 0 && height > 0) {
-                mDrawBitmap = WeakReference(
-                    Bitmap.createBitmap(
-                        resources.displayMetrics, width, height, mBitmapConfig
-                    )
-                )
-                bitmapCanvas = Canvas(mDrawBitmap?.get()!!)
-            } else return
-        }
-        mDrawBitmap?.get()?.eraseColor(Color.TRANSPARENT)
-    }
-
-    fun releaseBitmap() {
-        if (bitmapCanvas != null) {
-            bitmapCanvas?.setBitmap(null)
-            bitmapCanvas = null
-        }
-        if (mDrawBitmap != null) {
-            if (mDrawBitmap?.get() != null) mDrawBitmap?.get()?.recycle()
-            mDrawBitmap?.clear()
-            mDrawBitmap = null
-        }
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        releaseBitmap()
     }
 
     abstract val chartData: ChartData<T>?

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import cn.jingzhuan.lib.chart.R
@@ -111,7 +112,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         labelTextPaint.textAlign = Paint.Align.CENTER
 
         renderPaint.style = Paint.Style.FILL
-        renderPaint.color = chart.highlightTextBgColor
+        renderPaint.color = chart.highlightColor
     }
 
     override fun renderer(canvas: Canvas) {
@@ -206,10 +207,11 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         // 画背景
         bgRect.set(contentRect.left, top.toInt(), contentRect.left + width, bottom.toInt())
-        renderPaint.color = chart.highlightTextBgColor
+        renderPaint.color = chart.highlightColor
         canvas.drawRect(bgRect, renderPaint)
 
         // 画文本
+        labelTextPaint.color = chart.highlightTextColor
         val fontMetrics = labelTextPaint.fontMetrics
         val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
         val baseline = bgRect.centerY() + distance
@@ -248,10 +250,11 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
         // 画背景
         bgRect.set(contentRect.right - width, top.toInt(), contentRect.right, bottom.toInt())
-        renderPaint.color = chart.highlightTextBgColor
+        renderPaint.color = chart.highlightColor
         canvas.drawRect(bgRect, renderPaint)
 
         // 画文本
+        labelTextPaint.color = chart.highlightTextColor
         val fontMetrics = labelTextPaint.fontMetrics
         val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
         val baseline = bgRect.centerY() + distance
@@ -394,7 +397,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                 if (lhbWidth != 0) {
                     sortLeft += (dateWidth + splitSpace)
                 }
-                drawFlag(canvas, dateRect, text, chart.highlightColor)
+                drawFlag(canvas, dateRect, text, chart.highlightColor, chart.highlightTextColor)
 
                 if (lhbWidth != 0) {
                     lhbRect.set(sortLeft, top, sortLeft + lhbWidth, bottom)
@@ -404,12 +407,12 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             } else {
                 // 空 只画历史分时
                 setDateRect(text, x)
-                drawFlag(canvas, dateRect, text, chart.highlightColor)
+                drawFlag(canvas, dateRect, text, chart.highlightColor, chart.highlightTextColor)
             }
         } else {
             // 只画时间
             setDateRect(text, x)
-            drawFlag(canvas, dateRect, text, chart.highlightColor)
+            drawFlag(canvas, dateRect, text, chart.highlightColor, chart.highlightTextColor)
         }
     }
 
@@ -436,12 +439,13 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         dateRect.set(left.toInt(), top, right.toInt(), bottom)
     }
 
-    private fun drawFlag(canvas: Canvas, rect: Rect, text: String, bgColor: Int) {
+    private fun drawFlag(canvas: Canvas, rect: Rect, text: String, bgColor: Int, textColor: Int = Color.WHITE) {
         // 画背景
         renderPaint.color = bgColor
         canvas.drawRect(rect, renderPaint)
 
         // 画文本
+        labelTextPaint.color = textColor
         val fontMetrics = labelTextPaint.fontMetrics
         val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
         val baseline = rect.centerY() + distance

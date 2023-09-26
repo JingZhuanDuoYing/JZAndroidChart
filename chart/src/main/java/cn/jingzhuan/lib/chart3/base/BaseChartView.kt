@@ -133,7 +133,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
             if (highlightListener != null) {
                 highlightListener?.onHighlightShow(highlight)
             }
-            invalidate()
+            postInvalidate()
         }
     }
 
@@ -158,11 +158,12 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
             if (highlightListener != null) {
                 highlightListener?.onHighlightShow(highlight)
             }
-            invalidate()
+            postInvalidate()
         }
     }
 
     override fun onHighlightClean() {
+        if (highlightRenderer.highlight == null) return
         cleanHighlight()
         invalidate()
     }

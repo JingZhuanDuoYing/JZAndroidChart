@@ -35,7 +35,6 @@
         <attr name="highlightThickness" format="dimension"/>
         <attr name="highlightTextSize" format="dimension"/>
         <attr name="highlightTextColor" format="color"/>
-        <attr name="highlightTextBgColor" format="color"/>
         <attr name="highlightTextBgHeight" format="dimension"/>
 
         <attr name="showMaxMinValue" format="boolean" />
