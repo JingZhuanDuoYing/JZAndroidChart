@@ -11,6 +11,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
+import java.lang.Float.NaN
 import java.lang.Float.isNaN
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -133,6 +134,11 @@ class BarDraw(
                 }
 
                 if (barValue.valueCount > 1) bottom = calcHeight(floatValues[1], max, min)
+
+                if (bottom.isNaN()) {
+                    i++
+                    continue
+                }
 
                 val roundBottom = bottom.roundToInt()
                 if (roundBottom == contentRect.height()) {
