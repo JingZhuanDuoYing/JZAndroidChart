@@ -311,7 +311,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         contentRect[chartLeft, paddingTop, chartRight] = contentBottom
         bottomRect[chartLeft, contentBottom, chartRight] = height
 
-        offsetPercent = axisTop.axisThickness / contentRect.height().toFloat()
+//        offsetPercent = axisTop.axisThickness / contentRect.height().toFloat()
         if (isShowMaxMinValue) calcMaxMinValuePercent()
     }
 
