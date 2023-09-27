@@ -95,7 +95,9 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
         val dataSet = getChartData()?.getTouchDataSet()
         if (dataSet != null && contentRect.width() != 0) {
             val visibleRange = dataSet.getVisibleRange(currentViewport)
-            val width = (contentRect.width() / max(visibleRange, chartView.currentVisibleEntryCount.toFloat()))
+            val minValueCount = if (chartView.currentVisibleEntryCount == -1) dataSet.minValueCount.toFloat()
+                else chartView.currentVisibleEntryCount.toFloat()
+            val width = (contentRect.width() / max(visibleRange, minValueCount))
             chartView.pointWidth = width
         }
     }

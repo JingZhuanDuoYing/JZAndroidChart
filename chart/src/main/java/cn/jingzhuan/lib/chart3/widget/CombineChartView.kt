@@ -97,8 +97,6 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
                 }
             }
 
-            if (currentVisibleEntryCount == -1) currentVisibleEntryCount = totalEntryCount
-
             setCurrentViewport(newViewport)
         }
     }
