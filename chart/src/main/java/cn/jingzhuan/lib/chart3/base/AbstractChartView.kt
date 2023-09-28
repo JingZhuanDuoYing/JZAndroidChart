@@ -323,7 +323,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
         val text = "8"
         textPaint.getTextBounds(text, 0, text.length, rect)
         val height = rect.height()
-        offsetPercent += height / contentRect.height().toFloat()
+        offsetPercent = height / contentRect.height().toFloat()
 
     }
 
