@@ -184,7 +184,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val yPosition: Float = (max - lastPrice) / (max - min) * contentRect.height()
                 path.moveTo(0f, yPosition)
                 path.lineTo(contentRect.width().toFloat(), yPosition)
-                renderPaint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 8f)
+                renderPaint.pathEffect = DashPathEffect(floatArrayOf(5f, 5f, 5f, 5f), 0f)
                 renderPaint.color = chartView.lastPriceLineColor
                 canvas.drawPath(path, renderPaint)
 
