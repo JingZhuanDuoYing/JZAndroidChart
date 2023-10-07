@@ -41,6 +41,8 @@
         <attr name="maxMinValueTextSize" format="dimension"/>
         <attr name="maxMinValueTextColor" format="color"/>
 
+        <attr name="lastPriceLineColor" format="color"/>
+
     </declare-styleable>
 
 

@@ -464,6 +464,7 @@ class LineDraw(
         linePath.moveTo(0f, yPosition)
         linePath.lineTo(contentRect.width().toFloat(), yPosition)
         canvas.drawPath(linePath, renderPaint)
+        linePath.close()
 
         renderPaint.pathEffect = null
         renderPaint.style = Paint.Style.FILL

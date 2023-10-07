@@ -128,6 +128,7 @@
         app:showMaxMinValue="true"
         app:maxMinValueTextSize="11dp"
         app:maxMinValueTextColor="#A1ABBB"
+        app:lastPriceLineColor="#950BFF"
         app:layout_constraintLeft_toLeftOf="@+id/ll_info"
         app:layout_constraintRight_toRightOf="@+id/ll_info"
         app:layout_constraintTop_toBottomOf="@+id/ll_info"/>
@@ -179,6 +180,15 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="全屏"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/tv_price_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="现价线"
             android:textSize="12sp"
             android:textColor="@color/colorPrimary"/>
 

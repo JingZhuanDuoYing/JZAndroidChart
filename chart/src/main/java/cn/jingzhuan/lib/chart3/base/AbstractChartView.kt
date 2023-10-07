@@ -146,6 +146,16 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     var focusIndex = -1
 
+    /**
+     * 是否展示现价线
+     */
+    var isShowLastPriceLine = false
+
+    /**
+     * 现价线颜色
+     */
+    var lastPriceLineColor = 0
+
     constructor(context: Context?) : super(context) {
         init(null, 0)
     }
@@ -207,6 +217,9 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
             val maxMinValueTextColor = ta.getColor(R.styleable.Chart_maxMinValueTextColor, Color.WHITE)
             this.maxMinValueTextColor = maxMinValueTextColor
+
+            val lastPriceLineColor = ta.getColor(R.styleable.Chart_lastPriceLineColor, Color.WHITE)
+            this.lastPriceLineColor = lastPriceLineColor
 
             initAxisRenderers(ta)
 

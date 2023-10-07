@@ -1,6 +1,8 @@
 package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
+import android.graphics.Path
 import android.util.Log
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart3.Highlight
@@ -148,11 +150,10 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         // 画最大最小值
         if (chartView.isShowMaxMinValue) {
-            val chartData = getChartData() ?: return
-            val dataSet = chartData.getTouchDataSet() ?: return
+            val dataSet = combineData.getTouchDataSet() ?: return
             if (dataSet is CandlestickDataSet) {
-                val max = chartData.leftMax
-                val min = chartData.leftMin
+                val max = combineData.leftMax
+                val min = combineData.leftMin
 
                 val maxIndex = dataSet.maxIndex
                 val maxData = dataSet.values[maxIndex]
@@ -167,6 +168,28 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val minY = (max - minValue) / (max - min) * contentRect.height()
 
                 maxMinArrowDraw.drawMaxMin(canvas, contentRect.width(), maxX, minX, maxY, minY, maxValue, minValue, chartView.decimalDigitsNumber)
+            }
+        }
+
+        // 画现价线
+        if (chartView.isShowLastPriceLine && chartView.highlightState == ChartConstant.HIGHLIGHT_STATUS_INITIAL) {
+            val dataSet = combineData.getTouchDataSet() ?: return
+            if (dataSet is CandlestickDataSet) {
+                val max = combineData.leftMax
+                val min = combineData.leftMin
+
+                renderPaint.strokeWidth = chartView.highlightThickness.toFloat()
+                val path = Path()
+                val lastPrice = dataSet.values.toList().lastOrNull()?.close ?: return
+                val yPosition: Float = (max - lastPrice) / (max - min) * contentRect.height()
+                path.moveTo(0f, yPosition)
+                path.lineTo(contentRect.width().toFloat(), yPosition)
+                renderPaint.pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 8f)
+                renderPaint.color = chartView.lastPriceLineColor
+                canvas.drawPath(path, renderPaint)
+
+                path.close()
+                renderPaint.pathEffect = null
             }
         }
     }

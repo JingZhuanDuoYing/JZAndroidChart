@@ -71,6 +71,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvFull: TextView
 
+    private lateinit var tvPriceLine: TextView
+
     private lateinit var minuteMain: MainMinuteChartView
 
     private lateinit var sub1: SubChartView
@@ -107,6 +109,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private val sb = StringBuilder()
 
+    private var showPriceLine = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chart3)
@@ -129,6 +133,7 @@ class Chart3Activity : AppCompatActivity() {
         tvZoomOot = findViewById(R.id.tv_zoom_out)
         tvRange = findViewById(R.id.tv_range)
         tvFull = findViewById(R.id.tv_full)
+        tvPriceLine = findViewById(R.id.tv_price_line)
         minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
@@ -347,6 +352,12 @@ class Chart3Activity : AppCompatActivity() {
 
         tvFull.setOnClickListener {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        tvPriceLine.setOnClickListener {
+            showPriceLine = !showPriceLine
+            klineMain.isShowLastPriceLine = showPriceLine
+            klineMain.postInvalidate()
         }
 
     }
