@@ -6,10 +6,6 @@ import androidx.core.content.ContextCompat
 import cn.jingzhuan.lib.chart3.widget.KlineChartView
 
 class MainKlineChartView(ctx: Context, attrs: AttributeSet?) : KlineChartView(ctx, attrs) {
-//    app:highlightTextBgHeight="18dp"
-//    app:highlightColor="#000"
-//    app:highlightThickness="1dp"
-//    app:highlightTextSize="11dp"
 
     override fun initChart() {
         super.initChart()

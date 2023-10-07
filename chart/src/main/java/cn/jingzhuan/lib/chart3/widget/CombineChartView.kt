@@ -71,12 +71,12 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
         for (scatterDataSet in combineData.getScatterDataSets()) {
             addDataSet(scatterDataSet)
-//            totalEntryCount = max(totalEntryCount, scatterDataSet.values.size)
+            totalEntryCount = max(totalEntryCount, scatterDataSet.values.size)
         }
 
         for (scatterTextDataSet in combineData.getScatterTextDataSets()) {
             addDataSet(scatterTextDataSet)
-//            totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
+            totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
         }
 
         this.totalEntryCount = totalEntryCount

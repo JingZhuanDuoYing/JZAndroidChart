@@ -6,7 +6,11 @@ import android.util.AttributeSet
 /**
  * 无法点击 无法主动滑动 无法缩放
  */
-open class StaticChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
+open class StaticChartView(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : CombineChartView(context, attrs, defStyleAttr) {
 
     init {
         isStatic = true

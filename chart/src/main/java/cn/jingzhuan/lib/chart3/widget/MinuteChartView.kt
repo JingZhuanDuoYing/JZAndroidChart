@@ -15,7 +15,11 @@ import cn.jingzhuan.lib.chart3.formatter.IValueIndexFormatter
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_GREEN
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_RED
 
-open class MinuteChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
+open class MinuteChartView(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : CombineChartView(context, attrs, defStyleAttr) {
 
     var valueIndexPattern = "HH:mm"
 

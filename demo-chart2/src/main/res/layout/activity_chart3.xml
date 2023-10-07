@@ -172,6 +172,16 @@
             android:textSize="12sp"
             android:textColor="@color/colorPrimary"/>
 
+
+        <TextView
+            android:id="@+id/tv_full"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="全屏"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"/>
+
     </LinearLayout>
 
     <cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView

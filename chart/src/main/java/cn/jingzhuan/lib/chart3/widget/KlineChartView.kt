@@ -9,7 +9,11 @@ import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
 import cn.jingzhuan.lib.chart3.formatter.IValueIndexFormatter
 
-open class KlineChartView(ctx: Context, attrs: AttributeSet?) : CombineChartView(ctx, attrs) {
+open class KlineChartView(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : CombineChartView(context, attrs, defStyleAttr) {
 
     var valueIndexPattern = "yyyy-MM-dd"
 

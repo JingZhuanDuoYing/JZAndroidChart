@@ -1,5 +1,6 @@
 package cn.jingzhuan.lib.chart2.demo.chart3
 
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
@@ -68,6 +69,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvRange: TextView
 
+    private lateinit var tvFull: TextView
+
     private lateinit var minuteMain: MainMinuteChartView
 
     private lateinit var sub1: SubChartView
@@ -125,6 +128,7 @@ class Chart3Activity : AppCompatActivity() {
         tvZoomIn = findViewById(R.id.tv_zoom_in)
         tvZoomOot = findViewById(R.id.tv_zoom_out)
         tvRange = findViewById(R.id.tv_range)
+        tvFull = findViewById(R.id.tv_full)
         minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
@@ -339,6 +343,10 @@ class Chart3Activity : AppCompatActivity() {
             klineMain.onHighlightClean()
             llHistory.visibility = View.GONE
 
+        }
+
+        tvFull.setOnClickListener {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
 
     }
