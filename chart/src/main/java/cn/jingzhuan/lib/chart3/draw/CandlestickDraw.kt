@@ -4,25 +4,30 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-06
  * @author lei 画K线
  */
-class CandlestickDraw(private val contentRect: Rect, private val renderPaint: Paint) : IDraw<CandlestickDataSet> {
+class CandlestickDraw(
+    private val contentRect: Rect,
+    private val renderPaint: Paint,
+    private val textPaint: Paint,
+) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
 
     private val lowerShadowBuffers = FloatArray(4)
 
     private val bodyBuffers = FloatArray(4)
-
 
     override fun drawDataSet(
         canvas: Canvas,
@@ -99,48 +104,11 @@ class CandlestickDraw(private val contentRect: Rect, private val renderPaint: Pa
             val xPosition = startX + step * i
             val candlestickCenterX = xPosition + candleWidth * 0.5
 
-            if (candlestickDataSet.enableGap) {
+            // 画缺口
+            drawGaps(canvas, candlestickDataSet, xPosition, max, min, i, candleWidth)
 
-                renderPaint.color = candlestickDataSet.gapColor
-                renderPaint.style = Paint.Style.FILL
-
-                if (candlestickDataSet.lowGaps.size() > 0) {
-                    // 缺口
-                    val gap = candlestickDataSet.lowGaps[i, null]
-
-                    if (gap != null) {
-                        val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
-                        val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
-
-                        canvas.drawRect(
-                            xPosition,
-                            y1,
-                            contentRect.right.toFloat(),
-                            y2,
-                            renderPaint
-                        )
-                    }
-                }
-                if (candlestickDataSet.highGaps.size() > 0) {
-                    // 缺口
-                    val gap = candlestickDataSet.highGaps[i, null]
-
-                    if (gap != null) {
-                        val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
-                        val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
-
-                        canvas.drawRect(
-                            candlestickCenterX.toFloat(),
-                            y1,
-                            contentRect.right.toFloat(),
-                            y2,
-                            renderPaint
-                        )
-                    }
-                }
-            }
-
-            if (candlestick.fillBackgroundColor != COLOR_NONE) { // 画背景
+            // 画背景
+            if (candlestick.fillBackgroundColor != COLOR_NONE) {
                 renderPaint.color = candlestick.fillBackgroundColor
                 renderPaint.style = Paint.Style.FILL
                 canvas.drawRect(
@@ -264,6 +232,104 @@ class CandlestickDraw(private val contentRect: Rect, private val renderPaint: Pa
             i++
         }
 
+    }
+
+    private fun drawGaps(
+        canvas: Canvas,
+        candlestickDataSet: CandlestickDataSet,
+        xPosition: Float,
+        max: Float,
+        min: Float,
+        index: Int,
+        candleWidth: Float
+    ) {
+        if (candlestickDataSet.enableGap) {
+
+            renderPaint.color = candlestickDataSet.gapColor
+            renderPaint.style = Paint.Style.FILL
+
+            // 下跌缺口
+            if (candlestickDataSet.lowGaps.size() > 0) {
+                val gap = candlestickDataSet.lowGaps[index, null]
+                val startX = xPosition + candleWidth * 0.5f
+
+                if (gap != null) {
+                    val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
+                    val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
+
+                    canvas.drawRect(
+                        startX,
+                        y1,
+                        contentRect.right.toFloat(),
+                        y2,
+                        renderPaint
+                    )
+
+                    val text = "${gap.first}-${gap.second}"
+                    val rect = Rect()
+                    textPaint.getTextBounds(text, 0, text.length, rect)
+                    val textHeight = rect.height()
+                    val baseline = y2 + textHeight + 3f
+
+                    val textWidth = textPaint.measureText(text)
+
+                    val totalWidth = contentRect.right.toFloat() - startX - candleWidth * 0.5f
+
+                    if (textWidth > totalWidth) {
+                        val singleWidth = textWidth / text.length.toFloat()
+                        val leaveSpace = textWidth - totalWidth
+                        var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
+                        leaveIndex = max(0, leaveIndex - 3)
+                        val newText = text.removeRange(leaveIndex, text.length).plus("...")
+                        canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
+                    } else {
+                        canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
+                    }
+
+                }
+            }
+
+            // 上涨缺口
+            if (candlestickDataSet.highGaps.size() > 0) {
+                val gap = candlestickDataSet.highGaps[index, null]
+                val startX = xPosition + candleWidth * 0.5f
+
+                if (gap != null) {
+                    val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
+                    val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
+
+                    canvas.drawRect(
+                        startX,
+                        y1,
+                        contentRect.right.toFloat(),
+                        y2,
+                        renderPaint
+                    )
+
+                    val text = "${gap.first}-${gap.second}"
+                    val rect = Rect()
+                    textPaint.getTextBounds(text, 0, text.length, rect)
+                    val textHeight = rect.height()
+                    val baseline = y1 + textHeight + 3f
+
+                    val textWidth = textPaint.measureText(text)
+
+                    val totalWidth = contentRect.right.toFloat() - startX - candleWidth * 0.5f
+
+                    if (textWidth > totalWidth) {
+                        val singleWidth = textWidth / text.length.toFloat()
+                        val leaveSpace = textWidth - totalWidth
+                        var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
+                        leaveIndex = max(0, leaveIndex - 3)
+                        val newText = text.removeRange(leaveIndex, text.length).plus("...")
+                        canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
+                    } else {
+                        canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
+                    }
+                }
+            }
+
+        }
     }
 
 }

@@ -584,15 +584,15 @@ class Chart3Activity : AppCompatActivity() {
             isEnable = false
         }
 
-        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
-            axisDependency = AxisY.DEPENDENCY_BOTH
-            text = "自"
-            textColor = 0xffFD263F.toInt()
-            textBgColor = 0xB3FFFFFF.toInt()
-            lineColor = 0xffFD263F.toInt()
-            frameColor = 0xffFD263F.toInt()
-            textSize = 30
-        }
+//        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
+//            axisDependency = AxisY.DEPENDENCY_BOTH
+//            text = "自"
+//            textColor = 0xffFD263F.toInt()
+//            textBgColor = 0xB3FFFFFF.toInt()
+//            lineColor = 0xffFD263F.toInt()
+//            frameColor = 0xffFD263F.toInt()
+//            textSize = 30
+//        }
 
         val scatterDataSet = ScatterDataSet(scatterList).apply {
             tag = ChartConstant.FLAG_TAG_NAME
@@ -606,7 +606,7 @@ class Chart3Activity : AppCompatActivity() {
             add(lineDataSet)
             add(scatterDataSet)
             add(scatterDataSet)
-            add(scatterTextDataSet)
+//            add(scatterTextDataSet)
         }
 
         if (loadMore) {

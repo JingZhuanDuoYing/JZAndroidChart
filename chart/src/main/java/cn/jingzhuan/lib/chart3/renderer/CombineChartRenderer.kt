@@ -2,12 +2,10 @@ package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
-import android.graphics.Path
-import android.util.Log
+import android.graphics.Paint
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
-import cn.jingzhuan.lib.chart3.base.ScrollAndScaleView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
@@ -24,7 +22,6 @@ import cn.jingzhuan.lib.chart3.draw.ScatterTextDraw
 import cn.jingzhuan.lib.chart3.draw.TreeDraw
 import cn.jingzhuan.lib.chart3.event.OnTouchPointListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -51,7 +48,10 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
     init {
         maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
 
-        candlestickDraw = CandlestickDraw(contentRect, renderPaint)
+        candlestickDraw = CandlestickDraw(contentRect, renderPaint, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = chart.maxMinValueTextSize.toFloat()
+            color = chart.maxMinValueTextColor
+        })
 
         barDraw = BarDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
 
@@ -179,16 +179,13 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val min = combineData.leftMin
 
                 renderPaint.strokeWidth = chartView.highlightThickness.toFloat()
-                val path = Path()
                 val lastPrice = dataSet.values.toList().lastOrNull()?.close ?: return
                 val yPosition: Float = (max - lastPrice) / (max - min) * contentRect.height()
-                path.moveTo(0f, yPosition)
-                path.lineTo(contentRect.width().toFloat(), yPosition)
+
                 renderPaint.pathEffect = DashPathEffect(floatArrayOf(5f, 5f, 5f, 5f), 0f)
                 renderPaint.color = chartView.lastPriceLineColor
-                canvas.drawPath(path, renderPaint)
+                canvas.drawLine(0f, yPosition, contentRect.width().toFloat(), yPosition, renderPaint)
 
-                path.close()
                 renderPaint.pathEffect = null
             }
         }
