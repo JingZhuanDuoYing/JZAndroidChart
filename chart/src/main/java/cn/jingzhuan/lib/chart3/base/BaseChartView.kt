@@ -15,6 +15,7 @@ import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.renderer.AbstractRenderer
+import cn.jingzhuan.lib.chart3.renderer.DrawLineRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
 import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
@@ -48,6 +49,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         animator = ChartAnimator { postInvalidate() }
         highlightRenderer = HighlightRenderer(this)
         rangeRenderer = RangeRenderer(this)
+        drawLineRenderer = DrawLineRenderer(this)
     }
 
     fun setRenderer(chartRenderer: AbstractRenderer<T>?) {
@@ -226,6 +228,15 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
 
     override fun onRangeChange() {
         rangeRenderer.onViewportChange()
+    }
+
+    /**
+     * 画线工具
+     */
+    override fun drawLineTool(canvas: Canvas) {
+        if (isOpenDrawLine) {
+            drawLineRenderer.renderer(canvas)
+        }
     }
 
     override fun getEntryIndex(x: Float): Int {

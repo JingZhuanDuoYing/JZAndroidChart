@@ -16,7 +16,10 @@ import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
+import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
+import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
@@ -200,6 +203,23 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     var pointWidth = 0f
 
+    // <editor-fold desc="画线工具">    ----------------------------------------------------------
+    /**
+     * 是否开启画线
+     */
+    var isOpenDrawLine: Boolean = false
+
+    /**
+     * 画线状态
+     */
+    var drawLineState: DrawLineState = DrawLineState.none
+
+    var preDrawLine: DrawLineDataSet = DrawLineDataSet()
+
+    var drawLineListener: OnDrawLineListener? = null
+
+    // </editor-fold desc="画线工具">    ---------------------------------------------------------
+
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -220,13 +240,15 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         Log.i(TAG, "onDown")
         scrollerStartViewport.set(currentViewport)
 
+        finishScroll()
+
+        onPressDrawLine(e)
+
         val isBottom = bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())
 
         if (showBottomFlags && bottomFlagsClickListener != null && isBottom && highlightState != HIGHLIGHT_STATUS_INITIAL) {
             bottomFlagsClickListener?.onClick(e.x, e.y)
         }
-
-        finishScroll()
         return true
     }
 
@@ -237,6 +259,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onLongPress(e: MotionEvent) {
         Log.i(TAG, "onLongPress")
         if (isOpenRange) return
+        if (isDrawingLine()) return
 
         if (!isLongPress) isLongPress = true
         if (highlightState != HIGHLIGHT_STATUS_MOVE && highlightState != HIGHLIGHT_STATUS_FOREVER && !isStatic){
@@ -249,6 +272,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         Log.i(TAG, "onSingleTapUp")
         if (isDoubleTapToZoom) return false
         if (isOpenRange) return false
+        if (isDrawingLine()) return false
 
         if (bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())) {
             return false
@@ -293,8 +317,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
-        distanceY: Float
+        distanceY: Float,
     ): Boolean {
+        if (isDrawingLine()) return false
+
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
             return false
@@ -863,6 +889,51 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         postInvalidateOnAnimation()
     }
 
+    open fun getDrawLineTouchState(): DrawLineState {
+        return if (!isOpenDrawLine) DrawLineState.none else drawLineState
+    }
+
+    open fun setDrawLineTouchState(state: DrawLineState) {
+        if (!isOpenDrawLine) return
+        this.drawLineState = state
+    }
+
+    open fun isDrawingLine(): Boolean {
+        return isOpenDrawLine && (getDrawLineTouchState() == DrawLineState.first || getDrawLineTouchState() == DrawLineState.second)
+    }
+
+    private fun onPressDrawLine(e: MotionEvent) {
+        // 当前 画线类型
+        val type: Int = preDrawLine.lineType
+
+        // 没有设置类型/没有设置监听 不进行状态更新
+        if (isOpenDrawLine && type != 0 && drawLineListener != null) {
+            val point = PointF(e.x, e.y)
+            when (getDrawLineTouchState()) {
+                DrawLineState.none -> {
+                    // 第一步
+                    setDrawLineTouchState(DrawLineState.first)
+                    drawLineListener?.onTouch(drawLineState, point, type)
+                }
+                DrawLineState.first -> {
+                    // 第二步
+                    setDrawLineTouchState(DrawLineState.second)
+                    drawLineListener?.onTouch(drawLineState, point, type)
+                }
+                DrawLineState.second -> {
+                    // 完成
+                    setDrawLineTouchState(DrawLineState.complete)
+                    drawLineListener?.onTouch(drawLineState, point, type)
+                }
+                DrawLineState.complete -> {
+                    setDrawLineTouchState(DrawLineState.drag)
+                    drawLineListener?.onTouch(drawLineState, point, type)
+                }
+                DrawLineState.drag -> {}
+            }
+        }
+    }
+
     fun addOnTouchPointListener(listener: OnTouchPointListener) {
         this.touchPointListener = listener
     }
@@ -889,6 +960,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun addOnFlagClickListener(listener: OnFlagClickListener) {
         this.flagClickListener = listener
+    }
+
+    fun setOnDrawLineListener(listener: OnDrawLineListener) {
+        this.drawLineListener = listener
     }
 
     fun onFlagCallback(type: Int, index: Int) {

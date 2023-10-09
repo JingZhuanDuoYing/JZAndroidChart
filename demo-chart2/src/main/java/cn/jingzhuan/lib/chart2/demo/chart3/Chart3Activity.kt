@@ -12,6 +12,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart2.demo.R
@@ -19,6 +20,7 @@ import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.OnSubChartTouchListener
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
+import cn.jingzhuan.lib.chart2.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
@@ -73,6 +75,10 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvPriceLine: TextView
 
+    private lateinit var tvDrawLine: TextView
+
+    private lateinit var tvDrawSegment: TextView
+
     private lateinit var minuteMain: MainMinuteChartView
 
     private lateinit var sub1: SubChartView
@@ -90,6 +96,8 @@ class Chart3Activity : AppCompatActivity() {
     private lateinit var rbCallAuction: RadioButton
 
     private lateinit var llHistory: LinearLayout
+
+    private lateinit var llDrawLineTool: ConstraintLayout
 
     private lateinit var tvInfo: TextView
 
@@ -134,6 +142,8 @@ class Chart3Activity : AppCompatActivity() {
         tvRange = findViewById(R.id.tv_range)
         tvFull = findViewById(R.id.tv_full)
         tvPriceLine = findViewById(R.id.tv_price_line)
+        tvDrawLine = findViewById(R.id.tv_draw_line)
+        tvDrawSegment = findViewById(R.id.tv_draw_segment)
         minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
@@ -146,6 +156,7 @@ class Chart3Activity : AppCompatActivity() {
         rbMinute = findViewById(R.id.rb_minute)
         rbCallAuction = findViewById(R.id.rb_callAuction)
         llHistory = findViewById(R.id.ll_history)
+        llDrawLineTool = findViewById(R.id.ll_draw_line_tool)
         tvInfo = findViewById(R.id.tv_info)
         timeRangeView = findViewById(R.id.time_range_view)
     }
@@ -358,6 +369,24 @@ class Chart3Activity : AppCompatActivity() {
             showPriceLine = !showPriceLine
             klineMain.isShowLastPriceLine = showPriceLine
             klineMain.postInvalidate()
+        }
+
+        tvDrawLine.setOnClickListener {
+            klineMain.isOpenDrawLine = true
+            llDrawLineTool.visibility = View.VISIBLE
+        }
+
+        tvDrawSegment.setOnClickListener {
+            klineMain.preDrawLine.apply {
+                lineKey = "ltSegment2"
+                lineType = DrawLineType.ltSegment.ordinal
+            }
+
+            klineMain.chartData.add(klineMain.preDrawLine)
+        }
+
+        llDrawLineTool.setOnClickListener {
+            llDrawLineTool.visibility = View.GONE
         }
 
     }

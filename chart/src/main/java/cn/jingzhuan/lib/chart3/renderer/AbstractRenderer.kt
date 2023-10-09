@@ -41,8 +41,6 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
     }
 
     open fun getEntryIndex(x: Float): Int {
-        val data = getChartData() ?: return -1
-
         val dataSet = getChartData()?.getTouchDataSet() ?: return -1
 
         val valueCount = max(dataSet.values.size, dataSet.forceValueCount)

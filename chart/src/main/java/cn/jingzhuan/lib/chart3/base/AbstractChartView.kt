@@ -17,6 +17,7 @@ import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
+import cn.jingzhuan.lib.chart3.renderer.DrawLineRenderer
 import cn.jingzhuan.lib.chart3.renderer.HighlightRenderer
 import cn.jingzhuan.lib.chart3.renderer.RangeRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
@@ -44,6 +45,8 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     protected lateinit var highlightRenderer: HighlightRenderer<T>
 
     protected lateinit var rangeRenderer: RangeRenderer<T>
+
+    protected lateinit var drawLineRenderer: DrawLineRenderer<T>
 
     var minChartWidth = 0
 
@@ -311,6 +314,9 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         // 画区间统计
         drawRangeArea(canvas)
+
+        // 画线工具
+        drawLineTool(canvas)
 
         canvas.restore()
     }

@@ -51,4 +51,9 @@ interface IChartView {
      * 画区间统计
      */
     fun drawRangeArea(canvas: Canvas)
+
+    /**
+     * 画线工具
+     */
+    fun drawLineTool(canvas: Canvas)
 }

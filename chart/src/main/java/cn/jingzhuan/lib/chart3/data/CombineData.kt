@@ -5,6 +5,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
@@ -29,6 +30,8 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
 
     val scatterTextChartData: ScatterTextData = ScatterTextData()
 
+    val drawLineChartData: DrawLineData = DrawLineData()
+
     fun getBarDataSets(): List<BarDataSet> {
         return barChartData.dataSets
     }
@@ -51,6 +54,10 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
 
     fun getTreeDataSets(): List<TreeDataSet> {
         return treeChartData.dataSets
+    }
+
+    fun getDrawLineDataSets(): List<DrawLineDataSet> {
+        return drawLineChartData.dataSets
     }
 
     open fun addDataSet(dataSet: BarDataSet): Boolean {
@@ -77,6 +84,10 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
         return treeChartData.add(dataSet)
     }
 
+    open fun addDataSet(dataSet: DrawLineDataSet): Boolean {
+        return drawLineChartData.add(dataSet)
+    }
+
     fun clearAllChartData(){
         treeChartData.clear()
         barChartData.clear()
@@ -84,6 +95,7 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
         candlestickChartData.clear()
         scatterTextChartData.clear()
         scatterChartData.clear()
+        drawLineChartData.clear()
     }
 
     private fun getCombineDataSets(): List<AbstractDataSet<*>> {
@@ -96,7 +108,7 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
         } else if (getTreeDataSets().isNotEmpty()) {
             getTreeDataSets()
         } else if (getScatterDataSets().isNotEmpty()) {
-            getTreeDataSets()
+            getScatterDataSets()
         } else {
             emptyList()
         }
@@ -154,6 +166,9 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
         if (e is ScatterTextDataSet) {
             return addDataSet(e)
         }
+        if (e is DrawLineDataSet) {
+            return addDataSet(e)
+        }
         return super.add(e)
     }
 
@@ -190,6 +205,7 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
             allDataSet.addAll(lineChartData.dataSets)
             allDataSet.addAll(scatterChartData.dataSets)
             allDataSet.addAll(scatterTextChartData.dataSets)
+            allDataSet.addAll(drawLineChartData.dataSets)
             allDataSet.sortWith { dataSet1, dataSet2 -> dataSet1.drawIndex - dataSet2.drawIndex }
             return allDataSet
         }
