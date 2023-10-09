@@ -45,13 +45,17 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var treeDraw: TreeDraw
 
+    private val gapsTextPaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = chart.maxMinValueTextSize.toFloat()
+            color = chart.maxMinValueTextColor
+        }
+    }
+
     init {
         maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
 
-        candlestickDraw = CandlestickDraw(contentRect, renderPaint, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            textSize = chart.maxMinValueTextSize.toFloat()
-            color = chart.maxMinValueTextColor
-        })
+        candlestickDraw = CandlestickDraw(contentRect, renderPaint)
 
         barDraw = BarDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
 
@@ -120,6 +124,10 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
             // 蜡烛
             if (dataSet is CandlestickDataSet) {
+                if (dataSet.enableGap) {
+                    candlestickDraw.textPaint = gapsTextPaint
+                    candlestickDraw.decimalDigitsNumber = chartView.decimalDigitsNumber
+                }
                 candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, currentViewport)
             }
 

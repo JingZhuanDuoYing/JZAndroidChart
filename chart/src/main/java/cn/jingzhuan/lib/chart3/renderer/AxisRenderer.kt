@@ -8,7 +8,6 @@ import cn.jingzhuan.lib.chart3.axis.Axis
 import cn.jingzhuan.lib.chart3.axis.AxisX
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
-import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import kotlin.math.abs
 import kotlin.math.ceil

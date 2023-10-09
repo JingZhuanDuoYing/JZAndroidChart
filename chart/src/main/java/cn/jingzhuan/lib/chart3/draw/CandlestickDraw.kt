@@ -4,14 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
+import android.util.Pair
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-06
@@ -20,7 +20,8 @@ import kotlin.math.roundToInt
 class CandlestickDraw(
     private val contentRect: Rect,
     private val renderPaint: Paint,
-    private val textPaint: Paint,
+    var textPaint: Paint = Paint(),
+    var decimalDigitsNumber: Int = 2
 ) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
@@ -28,6 +29,7 @@ class CandlestickDraw(
     private val lowerShadowBuffers = FloatArray(4)
 
     private val bodyBuffers = FloatArray(4)
+
 
     override fun drawDataSet(
         canvas: Canvas,
@@ -252,81 +254,62 @@ class CandlestickDraw(
             if (candlestickDataSet.lowGaps.size() > 0) {
                 val gap = candlestickDataSet.lowGaps[index, null]
                 val startX = xPosition + candleWidth * 0.5f
-
-                if (gap != null) {
-                    val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
-                    val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
-
-                    canvas.drawRect(
-                        startX,
-                        y1,
-                        contentRect.right.toFloat(),
-                        y2,
-                        renderPaint
-                    )
-
-                    val text = "${gap.first}-${gap.second}"
-                    val rect = Rect()
-                    textPaint.getTextBounds(text, 0, text.length, rect)
-                    val textHeight = rect.height()
-                    val baseline = y2 + textHeight + 3f
-
-                    val textWidth = textPaint.measureText(text)
-
-                    val totalWidth = contentRect.right.toFloat() - startX - candleWidth * 0.5f
-
-                    if (textWidth > totalWidth) {
-                        val singleWidth = textWidth / text.length.toFloat()
-                        val leaveSpace = textWidth - totalWidth
-                        var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
-                        leaveIndex = max(0, leaveIndex - 3)
-                        val newText = text.removeRange(leaveIndex, text.length).plus("...")
-                        canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
-                    } else {
-                        canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
-                    }
-
-                }
+                drawGap(canvas, gap, startX, max, min, candleWidth, 0)
             }
 
             // 上涨缺口
             if (candlestickDataSet.highGaps.size() > 0) {
                 val gap = candlestickDataSet.highGaps[index, null]
                 val startX = xPosition + candleWidth * 0.5f
+                drawGap(canvas, gap, startX, max, min, candleWidth, 1)
+            }
 
-                if (gap != null) {
-                    val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
-                    val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
+        }
+    }
 
-                    canvas.drawRect(
-                        startX,
-                        y1,
-                        contentRect.right.toFloat(),
-                        y2,
-                        renderPaint
-                    )
+    private fun drawGap(
+        canvas: Canvas,
+        gap: Pair<Float, Float>?,
+        startX: Float,
+        max: Float,
+        min: Float,
+        candleWidth: Float,
+        type: Int
+    ) {
+        if (gap != null) {
+            val y1: Float = (max - gap.first) / (max - min) * contentRect.height()
+            val y2: Float = (max - gap.second) / (max - min) * contentRect.height()
 
-                    val text = "${gap.first}-${gap.second}"
-                    val rect = Rect()
-                    textPaint.getTextBounds(text, 0, text.length, rect)
-                    val textHeight = rect.height()
-                    val baseline = y1 + textHeight + 3f
+            canvas.drawRect(
+                startX,
+                y1,
+                contentRect.right.toFloat(),
+                y2,
+                renderPaint
+            )
 
-                    val textWidth = textPaint.measureText(text)
+            val firstText = NumberUtils.keepPrecision("${gap.first}", decimalDigitsNumber)
+            val secondText = NumberUtils.keepPrecision("${gap.second}", decimalDigitsNumber)
 
-                    val totalWidth = contentRect.right.toFloat() - startX - candleWidth * 0.5f
+            val text = "$firstText-$secondText"
+            val rect = Rect()
+            textPaint.getTextBounds(text, 0, text.length, rect)
+            val textHeight = rect.height()
+            val baseline = (if (type == 0) y2 else y1) + textHeight + 3f
 
-                    if (textWidth > totalWidth) {
-                        val singleWidth = textWidth / text.length.toFloat()
-                        val leaveSpace = textWidth - totalWidth
-                        var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
-                        leaveIndex = max(0, leaveIndex - 3)
-                        val newText = text.removeRange(leaveIndex, text.length).plus("...")
-                        canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
-                    } else {
-                        canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
-                    }
-                }
+            val textWidth = textPaint.measureText(text)
+
+            val totalWidth = contentRect.right.toFloat() - startX - candleWidth * 0.5f
+
+            if (textWidth > totalWidth) {
+                val singleWidth = textWidth / text.length.toFloat()
+                val leaveSpace = textWidth - totalWidth
+                var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
+                leaveIndex = max(0, leaveIndex - 3)
+                val newText = text.removeRange(leaveIndex, text.length).plus("...")
+                canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
+            } else {
+                canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
             }
 
         }
