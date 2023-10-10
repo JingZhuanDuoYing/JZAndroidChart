@@ -1,10 +1,12 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
+import android.graphics.PointF
 import android.graphics.RectF
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
+import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
@@ -66,6 +68,20 @@ class DrawLineDataSet@JvmOverloads constructor(
     var bcap: String? = null
 
     var rectF: RectF = RectF()
+
+    var pointRadiusIn = 8f
+
+    var pointRadiusOut = 16f
+
+    var pointStart: PointF? = null
+
+    var pointEnd: PointF? = null
+
+    var startPointRect = RectF()
+
+    var endPointRect = RectF()
+
+    var lineState = DrawLineState.complete
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

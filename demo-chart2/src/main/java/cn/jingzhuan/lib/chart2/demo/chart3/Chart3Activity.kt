@@ -37,6 +37,7 @@ import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
+import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
@@ -115,6 +116,8 @@ class Chart3Activity : AppCompatActivity() {
     private val sb = StringBuilder()
 
     private var showPriceLine = false
+
+    private var index = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -374,12 +377,15 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         tvDrawSegment.setOnClickListener {
-            klineMain.preDrawLine.apply {
-                lineKey = "ltSegment2"
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltSegment$index"
                 lineType = DrawLineType.ltSegment.ordinal
+                lineState = DrawLineState.none
             }
 
-            klineMain.chartData.add(klineMain.preDrawLine)
+            klineMain.chartData.add(dataSet)
         }
 
         llDrawLineTool.setOnClickListener {

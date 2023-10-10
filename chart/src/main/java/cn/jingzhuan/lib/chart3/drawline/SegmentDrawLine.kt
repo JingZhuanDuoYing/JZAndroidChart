@@ -3,8 +3,6 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Rect
-import android.graphics.RectF
 import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -39,7 +37,7 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         if (values.size != 2) return
         val startValue = values[0]
         val endValue = values[1]
-        val visibleValues = baseDataSet.getVisiblePoints(viewport)
+        val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return
         val key = dataSet.lineKey ?: return
         val linePath = Path()
@@ -72,7 +70,7 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
             if (heightSets.containsKey(key)) {
                 height = heightSets[key]!!
             }
-            val rightX = contentRect.right.toFloat()
+            val rightX = chartView.contentRect.right.toFloat()
             val rightY = (rightX - startX) / width * height + startY
             Log.d(
                 "onDraw", "width=" + width + "height=" + height +
@@ -88,24 +86,25 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         canvas.drawPath(linePath, linePaint)
     }
 
-    override fun drawTypeShape(canvas: Canvas) {
+    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet) {
         // 当前形状是线段 先画线段 再画背景
-        if (pointStart == null || pointEnd == null) return
+        if (dataSet.pointStart == null || dataSet.pointEnd == null) return
         linePaint.style = Paint.Style.STROKE
 
-        linePath.moveTo(pointStart!!.x, pointStart!!.y)
-        linePath.lineTo(pointEnd!!.x, pointEnd!!.y)
+        linePath.moveTo(dataSet.pointStart!!.x, dataSet.pointStart!!.y)
+        linePath.lineTo(dataSet.pointEnd!!.x, dataSet.pointEnd!!.y)
         canvas.drawPath(linePath, linePaint)
 
         linePath.close()
 
         linePaint.style = Paint.Style.STROKE
-        linePaint.strokeWidth = radiusOut * 2f
+        linePaint.strokeWidth = dataSet.pointRadiusIn * 2f
         linePaint.alpha = 30
-        linePath.moveTo(pointStart!!.x, pointStart!!.y)
-        linePath.lineTo(pointEnd!!.x, pointEnd!!.y)
+        linePath.moveTo(dataSet.pointStart!!.x, dataSet.pointStart!!.y)
+        linePath.lineTo(dataSet.pointEnd!!.x, dataSet.pointEnd!!.y)
 
         canvas.drawPath(linePath, linePaint)
+
 
 
         linePath.close()

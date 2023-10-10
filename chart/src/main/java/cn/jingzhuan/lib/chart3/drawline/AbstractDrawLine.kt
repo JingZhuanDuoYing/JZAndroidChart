@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
+import android.util.Log
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
@@ -19,19 +20,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     protected val chartView: AbstractChartView<T>
 
-    protected val viewport: Viewport
-
-    protected val contentRect: Rect
-
     protected val linePaint by lazy { Paint() }
 
     protected val bgPaint by lazy { Paint() }
 
     protected val textPaint by lazy { Paint() }
-
-    protected var radiusIn = 0f
-
-    protected var radiusOut = 0f
 
     private var baseValues: List<AbstractValue> = ArrayList()
 
@@ -39,19 +32,9 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     protected var viewportMin = 0f
 
-    private var touchState = DrawLineState.none
-
-    protected var pointStart: PointF? = null
-
-    protected var pointEnd: PointF? = null
 
     init {
         this.chartView = chart
-        this.viewport = chart.currentViewport
-        this.contentRect = chart.contentRect
-
-        radiusIn = chart.resources.getDimensionPixelSize(R.dimen.jz_draw_line_point_in).toFloat()
-        radiusOut = chart.resources.getDimensionPixelSize(R.dimen.jz_draw_line_point_out).toFloat()
         initPaint()
     }
 
@@ -77,46 +60,64 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         viewportMax = lMax
         viewportMin = lMin
         setPaint(dataSet)
-        drawTouchState(canvas)
+        drawTouchState(canvas, dataSet)
     }
 
-    override fun onTouch(state: DrawLineState, point: PointF, dataSet: DrawLineDataSet) {
-        touchState = state
-        when (state) {
-            DrawLineState.none -> {
-                pointStart = PointF()
-                pointEnd = PointF()
-            }
+//    override fun onTouch(state: DrawLineState, point: PointF, dataSet: DrawLineDataSet) {
+//        touchState = state
+//        when (state) {
+//            DrawLineState.none -> {
+//                pointStart = PointF()
+//                pointEnd = PointF()
+//            }
+//
+//            DrawLineState.first -> {
+//                pointStart = point
+//            }
+//            DrawLineState.second -> {
+//                pointEnd = point
+//            }
+//            DrawLineState.complete -> {
+//                if (pointStart != null && pointEnd != null) {
+//                    if (chartView.drawLineListener != null) {
+//                        chartView.drawLineListener?.onComplete(pointStart!!, pointEnd!!, dataSet.lineType, dataSet)
+//                    }
+//                }
+//            }
+//            DrawLineState.drag -> {
+//
+//            }
+//        }
+//    }
 
+    open fun drawTouchState(canvas: Canvas, dataSet: DrawLineDataSet) {
+        linePaint.style = Paint.Style.FILL
+        when (dataSet.lineState) {
+            DrawLineState.none -> {
+                Log.d("onPressDrawLine", "drawTouchState: none")
+//                drawTypeShape(canvas)
+            }
             DrawLineState.first -> {
-                pointStart = point
+                Log.d("onPressDrawLine", "drawTouchState: first")
+                // 第一步 画起点
+                drawStartPoint(canvas, dataSet)
             }
             DrawLineState.second -> {
-                pointEnd = point
-            }
-            DrawLineState.drag -> {
-
+                Log.d("onPressDrawLine", "drawTouchState: second")
+                // 第二步 画起点 、终点、 高亮背景、存入数据
+                drawStartPoint(canvas, dataSet)
+                drawEndPoint(canvas, dataSet)
+                drawTypeShape(canvas, dataSet)
             }
             DrawLineState.complete -> {
-                if (pointStart != null && pointEnd != null) {
-                    if (chartView.drawLineListener != null) {
-                        chartView.drawLineListener?.onComplete(pointStart!!, pointEnd!!, dataSet.lineType, dataSet)
-                    }
-                }
+                Log.d("onPressDrawLine", "drawTouchState: complete")
+//                drawStartPoint(canvas)
+//                drawEndPoint(canvas)
+//                drawTypeShape(canvas)
             }
-        }
-    }
-
-    open fun drawTouchState(canvas: Canvas) {
-        linePaint.style = Paint.Style.FILL
-        if (touchState == DrawLineState.first) {
-            // 第一步 画起点
-            drawStartPoint(canvas)
-        } else if (touchState == DrawLineState.second) {
-            // 第二步 画起点 、终点、 高亮背景、存入数据
-            drawStartPoint(canvas)
-            drawEndPoint(canvas)
-            drawTypeShape(canvas)
+            DrawLineState.drag -> {
+                Log.d("onPressDrawLine", "drawTouchState: drag")
+            }
         }
     }
 
@@ -124,32 +125,32 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     /**
      * 画起点
      */
-    private fun drawStartPoint(canvas: Canvas) {
-        if (pointStart == null) return
-        val index = chartView.getEntryIndex(pointStart!!.x)
+    private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet) {
+        if (dataSet.pointStart == null) return
+        val index = chartView.getEntryIndex(dataSet.pointStart!!.x)
         val cx = baseValues[index].x
-        pointStart?.x = cx
+        dataSet.pointStart?.x = cx
         bgPaint.alpha = 30
-        canvas.drawCircle(cx, pointStart!!.y, radiusOut, bgPaint)
-        canvas.drawCircle(cx, pointStart!!.y, radiusIn, linePaint)
+        canvas.drawCircle(cx, dataSet.pointStart!!.y, dataSet.pointRadiusOut, bgPaint)
+        canvas.drawCircle(cx, dataSet.pointStart!!.y, dataSet.pointRadiusIn, linePaint)
     }
 
     /**
      * 画终点
      */
-    private fun drawEndPoint(canvas: Canvas) {
-        if (pointEnd == null) return
-        val index = chartView.getEntryIndex(pointEnd!!.x)
+    private fun drawEndPoint(canvas: Canvas, dataSet: DrawLineDataSet) {
+        if (dataSet.pointEnd == null) return
+        val index = chartView.getEntryIndex(dataSet.pointEnd!!.x)
         val cx = baseValues[index].x
-        pointEnd?.x = cx
+        dataSet.pointEnd?.x = cx
         bgPaint.alpha = 30
-        canvas.drawCircle(cx, pointEnd!!.y, radiusOut, bgPaint)
-        canvas.drawCircle(cx, pointEnd!!.y, radiusIn, linePaint)
+        canvas.drawCircle(cx, dataSet.pointEnd!!.y, dataSet.pointRadiusOut, bgPaint)
+        canvas.drawCircle(cx, dataSet.pointEnd!!.y, dataSet.pointRadiusIn, linePaint)
     }
 
     protected open fun getScaleY(value: Float): Float {
         return if (viewportMax > viewportMin && viewportMax > 0) {
-            (viewportMax - value) / (viewportMax - viewportMin) * contentRect.height()
+            (viewportMax - value) / (viewportMax - viewportMin) * chartView.contentRect.height()
         } else -1f
     }
 }

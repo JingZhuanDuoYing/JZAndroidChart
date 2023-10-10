@@ -242,8 +242,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
         finishScroll()
 
-        onPressDrawLine(e)
-
         val isBottom = bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())
 
         if (showBottomFlags && bottomFlagsClickListener != null && isBottom && highlightState != HIGHLIGHT_STATUS_INITIAL) {
@@ -684,6 +682,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             synchronized(this) {
                 try {
                     internalViewportChangeListener?.onViewportChange(currentViewport)
+                    onDrawLineViewportChange(currentViewport)
                 } catch (e: Exception) {
                     Log.d(TAG, "OnViewportChangeListener", e)
                 }
@@ -902,37 +901,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         return isOpenDrawLine && (getDrawLineTouchState() == DrawLineState.first || getDrawLineTouchState() == DrawLineState.second)
     }
 
-    private fun onPressDrawLine(e: MotionEvent) {
-        // 当前 画线类型
-        val type: Int = preDrawLine.lineType
-
-        // 没有设置类型/没有设置监听 不进行状态更新
-        if (isOpenDrawLine && type != 0 && drawLineListener != null) {
-            val point = PointF(e.x, e.y)
-            when (getDrawLineTouchState()) {
-                DrawLineState.none -> {
-                    // 第一步
-                    setDrawLineTouchState(DrawLineState.first)
-                    drawLineListener?.onTouch(drawLineState, point, type)
-                }
-                DrawLineState.first -> {
-                    // 第二步
-                    setDrawLineTouchState(DrawLineState.second)
-                    drawLineListener?.onTouch(drawLineState, point, type)
-                }
-                DrawLineState.second -> {
-                    // 完成
-                    setDrawLineTouchState(DrawLineState.complete)
-                    drawLineListener?.onTouch(drawLineState, point, type)
-                }
-                DrawLineState.complete -> {
-                    setDrawLineTouchState(DrawLineState.drag)
-                    drawLineListener?.onTouch(drawLineState, point, type)
-                }
-                DrawLineState.drag -> {}
-            }
-        }
-    }
 
     fun addOnTouchPointListener(listener: OnTouchPointListener) {
         this.touchPointListener = listener
@@ -995,6 +963,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 获取X
      */
     abstract fun getEntryX(index: Int): Float
+
+    abstract fun onDrawLineViewportChange(viewport: Viewport)
 
     /**
      * 清除十字光标
