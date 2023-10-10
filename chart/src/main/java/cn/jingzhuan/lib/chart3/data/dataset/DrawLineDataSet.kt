@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
+import android.graphics.RectF
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
@@ -63,6 +64,8 @@ class DrawLineDataSet@JvmOverloads constructor(
      * 是否除权
      */
     var bcap: String? = null
+
+    var rectF: RectF = RectF()
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

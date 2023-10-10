@@ -3,6 +3,8 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
+import android.graphics.RectF
 import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -17,6 +19,8 @@ import kotlin.math.abs
 class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
     private val widthSets: MutableMap<String, Float>
     private val heightSets: MutableMap<String, Float>
+
+    private val linePath = Path()
 
     init {
         widthSets = ConcurrentHashMap()
@@ -88,9 +92,22 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         // 当前形状是线段 先画线段 再画背景
         if (pointStart == null || pointEnd == null) return
         linePaint.style = Paint.Style.STROKE
-        val linePath = Path()
+
         linePath.moveTo(pointStart!!.x, pointStart!!.y)
         linePath.lineTo(pointEnd!!.x, pointEnd!!.y)
         canvas.drawPath(linePath, linePaint)
+
+        linePath.close()
+
+        linePaint.style = Paint.Style.STROKE
+        linePaint.strokeWidth = radiusOut * 2f
+        linePaint.alpha = 30
+        linePath.moveTo(pointStart!!.x, pointStart!!.y)
+        linePath.lineTo(pointEnd!!.x, pointEnd!!.y)
+
+        canvas.drawPath(linePath, linePaint)
+
+
+        linePath.close()
     }
 }

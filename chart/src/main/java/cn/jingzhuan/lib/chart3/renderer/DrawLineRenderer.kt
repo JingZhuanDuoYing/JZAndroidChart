@@ -63,6 +63,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 val endTime = baseValues.getOrNull(endIndex)?.time ?: 0L
                 val endValue =  viewportMax - point2.y / contentRect.height() * (viewportMax - viewportMin)
                 dataSet.values.add(DrawLineValue(endValue, endTime))
+
+                chart.postInvalidate()
             }
 
         })

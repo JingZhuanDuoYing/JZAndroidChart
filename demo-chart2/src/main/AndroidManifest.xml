@@ -19,13 +19,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".DrawLineActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".chart3.Chart3Activity"
             android:exported="false">
             <meta-data

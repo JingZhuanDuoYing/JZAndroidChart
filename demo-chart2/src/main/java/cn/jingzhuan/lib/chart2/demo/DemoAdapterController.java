@@ -29,9 +29,6 @@ public class DemoAdapterController extends EpoxyController {
     CommonButtonModel_ rangeChartModel_;
 
     @AutoModel
-    CommonButtonModel_ lineDrawingModel_;
-
-    @AutoModel
     CommonButtonModel_ chart3Model_;
 
     private final Context context;
@@ -48,12 +45,6 @@ public class DemoAdapterController extends EpoxyController {
         );
         rangeChartModel_.buttonText("区间统计");
         rangeChartModel_.addTo(this);
-
-        lineDrawingModel_.onClickListener(v ->
-                v.getContext().startActivity(new Intent(v.getContext(), DrawLineActivity.class))
-        );
-        lineDrawingModel_.buttonText("画线工具");
-        lineDrawingModel_.addTo(this);
 
         chart3Model_.onClickListener(v ->
                 v.getContext().startActivity(new Intent(v.getContext(), Chart3Activity.class))

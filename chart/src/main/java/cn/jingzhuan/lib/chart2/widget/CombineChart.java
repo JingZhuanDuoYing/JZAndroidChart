@@ -9,7 +9,6 @@ import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
-import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
@@ -102,9 +101,7 @@ public class CombineChart extends BaseChart {
             addDataSet(scatterTextDataSet);
             entryCount = Math.max(entryCount, scatterTextDataSet.getValues().size());
         }
-        for (DrawLineDataSet drawLineDataSet : combineData.getDrawLineData()){
-            addDataSet(drawLineDataSet);
-        }
+
         setEntryCount(entryCount);
 
         if (!mCurrentViewport.initialized() && entryCount > 0) {
@@ -210,12 +207,6 @@ public class CombineChart extends BaseChart {
                 return true;
             }
         }
-//        // 开启了画线模式
-//        if (isOpenDrawLine() && getRenderer().getDrawLineRenderer() != null) {
-//            if (getRenderer().getDrawLineRenderer().onTouchEvent(event)) {
-//                return true;
-//            }
-//        }
         return super.onTouchEvent(event);
     }
 

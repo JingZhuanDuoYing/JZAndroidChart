@@ -79,6 +79,10 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
         }
 
+        for (drawLineDataSet in combineData.getDrawLineDataSets()) {
+            addDataSet(drawLineDataSet)
+        }
+
         this.totalEntryCount = totalEntryCount
 
         if (!currentViewport.initialized() && totalEntryCount > 0) {

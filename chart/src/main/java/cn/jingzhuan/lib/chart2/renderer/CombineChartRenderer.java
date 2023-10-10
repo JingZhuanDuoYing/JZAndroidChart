@@ -9,7 +9,6 @@ import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.data.BarDataSet;
 import cn.jingzhuan.lib.chart.data.CandlestickDataSet;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
-import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.data.PointLineDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterDataSet;
 import cn.jingzhuan.lib.chart.data.ScatterTextDataSet;
@@ -46,8 +45,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
 
     protected ScatterTextRenderer scatterTextRenderer;
 
-    protected DrawLineRenderer drawLineRenderer;
-
     private final Chart chart;
 
     private CombineData combineData;
@@ -64,7 +61,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         rangeRenderer = initRangeChartRenderer(chart);
         pointLineRenderer = initPointLineRenderer(chart);
         scatterTextRenderer = initScatterTextRenderer(chart);
-        drawLineRenderer = initLineDrawingToolRenderer(chart);
         this.chart = chart;
 
         chart.setInternalViewportChangeListener(new OnViewportChangeListener() {
@@ -112,10 +108,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         return new LineRenderer(chart);
     }
 
-    private DrawLineRenderer initLineDrawingToolRenderer(Chart chart) {
-        return new DrawLineRenderer(chart);
-    }
-
     @Override
     protected void renderDataSet(Canvas canvas) {
         CombineData combineData = getChartData();
@@ -154,9 +146,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             if (chart.getRangeEnable()) {
                 rangeRenderer.renderDataSet(canvas, combineData.getCandlestickChartData(), candlestickDataSet);
             }
-
-            drawLineRenderer.setCandlestickChartData(combineData.getCandlestickChartData());
-            drawLineRenderer.renderDataSet(canvas, combineData.getDrawLineChartData());
         }
 
     }
@@ -242,8 +231,6 @@ public class CombineChartRenderer extends AbstractDataRenderer {
             pointLineRenderer.addDataSet((PointLineDataSet) dataSet);
         } else if (dataSet instanceof ScatterTextDataSet) {
             scatterTextRenderer.addDataSet((ScatterTextDataSet) dataSet);
-        } else if (dataSet instanceof DrawLineDataSet) {
-            drawLineRenderer.addDataSet((DrawLineDataSet) dataSet);
         }
 
         calcDataSetMinMax();
@@ -443,9 +430,5 @@ public class CombineChartRenderer extends AbstractDataRenderer {
         barChartRenderer.setHighlightThickness(highlightThickness);
         lineRenderer.setHighlightThickness(highlightThickness);
         candlestickChartRenderer.setHighlightThickness(highlightThickness);
-    }
-
-    public DrawLineRenderer getDrawLineRenderer() {
-        return this.drawLineRenderer;
     }
 }

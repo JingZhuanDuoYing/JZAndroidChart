@@ -23,8 +23,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
     private PointLineData pointLineData;
     private ScatterTextData scatterTextData;
 
-    private DrawLineData drawLineData;
-
     public CombineData() {
         treeData = new TreeData();
         barData = new BarData();
@@ -33,7 +31,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         scatterData = new ScatterData();
         pointLineData = new PointLineData();
         scatterTextData = new ScatterTextData();
-        drawLineData = new DrawLineData();
     }
 
     public List<BarDataSet> getBarData() {
@@ -64,10 +61,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return treeData.getDataSets();
     }
 
-    public List<DrawLineDataSet> getDrawLineData() {
-        return drawLineData.getDataSets();
-    }
-
     public BarData getBarChartData() {
         return barData;
     }
@@ -96,10 +89,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         return treeData;
     }
 
-    public DrawLineData getDrawLineChartData() {
-        return this.drawLineData;
-    }
-
     public boolean addDataSet(BarDataSet dataSet) {
         return barData.add(dataSet);
     }
@@ -126,10 +115,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
 
     public boolean addDataSet(TreeDataSet dataSet) {
         return treeData.add(dataSet);
-    }
-
-    public boolean addDataSet(DrawLineDataSet dataSet) {
-        return drawLineData.add(dataSet);
     }
 
     public void setCombineData(CombineData combineData) {
@@ -305,9 +290,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         if (e instanceof ScatterTextDataSet) {
             return addDataSet((ScatterTextDataSet) e);
         }
-        if (e instanceof DrawLineDataSet) {
-            return addDataSet((DrawLineDataSet) e);
-        }
         return super.add(e);
     }
 
@@ -340,7 +322,6 @@ public class CombineData extends ChartData<AbstractDataSet> {
         allDataSet.addAll(scatterData.getDataSets());
         allDataSet.addAll(pointLineData.getDataSets());
         allDataSet.addAll(scatterTextData.getDataSets());
-        allDataSet.addAll(drawLineData.getDataSets());
 
         Collections.sort(allDataSet, new Comparator<AbstractDataSet>() {
             @Override

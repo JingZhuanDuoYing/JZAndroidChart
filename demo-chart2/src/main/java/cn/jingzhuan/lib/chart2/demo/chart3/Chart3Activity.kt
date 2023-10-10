@@ -20,7 +20,6 @@ import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.OnSubChartTouchListener
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView
-import cn.jingzhuan.lib.chart2.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
@@ -28,19 +27,19 @@ import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.TimeRange
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.MinuteLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
-import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
+import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
-import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
@@ -54,8 +53,6 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import cn.jingzhuan.lib.chart3.widget.KlineTimeRangeView
-import java.util.Timer
-import java.util.TimerTask
 import kotlin.math.max
 import kotlin.math.min
 
@@ -630,11 +627,13 @@ class Chart3Activity : AppCompatActivity() {
             isAutoWidth = false
         }
 
+        val drawLineDataSet = klineMain.chartData.dataSets.find { it is DrawLineDataSet }
+
         val data = CombineData().apply {
             add(candlestickDataSet)
             add(lineDataSet)
             add(scatterDataSet)
-            add(scatterDataSet)
+            add(drawLineDataSet)
 //            add(scatterTextDataSet)
         }
 

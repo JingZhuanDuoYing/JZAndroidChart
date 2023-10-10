@@ -17,7 +17,6 @@ import android.widget.EdgeEffect;
 import android.widget.OverScroller;
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.Zoomer;
-import cn.jingzhuan.lib.chart.data.DrawLineDataSet;
 import cn.jingzhuan.lib.chart.event.OnLoadMoreKlineListener;
 import cn.jingzhuan.lib.chart.event.OnScaleListener;
 import cn.jingzhuan.lib.chart.event.OnSingleEntryClickListener;
@@ -29,10 +28,6 @@ import cn.jingzhuan.lib.chart.component.AxisY;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.event.OnViewportChangeListener;
 import cn.jingzhuan.lib.chart.utils.ForceAlign;
-import cn.jingzhuan.lib.chart2.drawline.DrawLineTouchState;
-import cn.jingzhuan.lib.chart2.drawline.DrawLineType;
-import cn.jingzhuan.lib.chart2.drawline.OnDrawLineCompleteListener;
-import cn.jingzhuan.lib.chart2.drawline.OnDrawLineTouchListener;
 import cn.jingzhuan.lib.source.JZScaleGestureDetector;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -429,8 +424,6 @@ public abstract class Chart extends BitmapCachedChart {
             releaseEdgeEffects();
             mScrollerStartViewport.set(mCurrentViewport);
             mScroller.forceFinished(true);
-
-            onPressDrawLine(e);
 //            postInvalidateOnAnimation();
             return true;
         }
@@ -439,7 +432,6 @@ public abstract class Chart extends BitmapCachedChart {
         public void onLongPress(MotionEvent e) {
             Log.d("JZChart", "onLongPress");
             if(getRangeEnable()) return;
-            if (isDrawingLine()) return;
             mIsLongPress = true;
             onTouchPoint(e);
             e.setAction(MotionEvent.ACTION_UP);
@@ -451,7 +443,6 @@ public abstract class Chart extends BitmapCachedChart {
             Log.d("JZChart", "onSingleTapUp");
             if (mDoubleTapToZoom) return false;
             if(getRangeEnable()) return false;
-            if (isDrawingLine()) return false;
             if (isClickable() && hasOnClickListeners()) {
                 cleanHighlight();
                 performClick();
@@ -495,7 +486,6 @@ public abstract class Chart extends BitmapCachedChart {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (isDrawingLine()) return false;
             if (!isMultipleTouch()) {
 //                Log.d("JZChart", "onScroll");
                 mDistanceX = distanceX;
@@ -1446,103 +1436,6 @@ public abstract class Chart extends BitmapCachedChart {
     }
 
     // </editor-fold desc="十字光标 配置">    ----------------------------------------------------------
-
-    // <editor-fold desc="画线工具">    ----------------------------------------------------------
-    /**
-     * 是否开启画线
-     */
-    private boolean openDrawLine = false;
-
-    /**
-     * 画线状态
-     */
-    private DrawLineTouchState drawLineTouchState = DrawLineTouchState.none;
-
-    private DrawLineDataSet preDrawLineDataSet = new DrawLineDataSet(DrawLineType.ltNone);
-
-    private OnDrawLineTouchListener onDrawLineTouchListener;
-
-    private OnDrawLineCompleteListener onDrawLineCompleteListener;
-
-    public boolean isOpenDrawLine() {
-        return openDrawLine;
-    }
-
-    public void setOpenDrawLine(boolean openDrawLine) {
-        this.openDrawLine = openDrawLine;
-    }
-
-    public DrawLineTouchState getDrawLineTouchState() {
-        if (!isOpenDrawLine()) return DrawLineTouchState.none;
-        return drawLineTouchState;
-    }
-
-    public void setDrawLineTouchState(DrawLineTouchState drawLineTouchState) {
-        if (!isOpenDrawLine()) return;
-        this.drawLineTouchState = drawLineTouchState;
-    }
-
-    public boolean isDrawingLine() {
-        return isOpenDrawLine() && (getDrawLineTouchState() == DrawLineTouchState.first || getDrawLineTouchState() == DrawLineTouchState.second);
-    }
-
-    public DrawLineDataSet getPreDrawLineDataSet() {
-        return this.preDrawLineDataSet;
-    }
-
-    public void setPreDrawLineDataSet(DrawLineDataSet dataSet) {
-        this.preDrawLineDataSet = dataSet;
-    }
-
-    public void setDrawLineComplete(PointF point1, PointF point2) {
-        if (getOnDrawLineCompleteListener() != null) {
-            getOnDrawLineCompleteListener().onComplete(point1, point2, preDrawLineDataSet.getLineType());
-        }
-    }
-
-    public OnDrawLineTouchListener getDrawLineTouchListener() {
-        return this.onDrawLineTouchListener;
-    }
-
-    public void setOnDrawLineTouchListener(OnDrawLineTouchListener mOnDrawLineTouchListener) {
-        this.onDrawLineTouchListener = mOnDrawLineTouchListener;
-    }
-
-    public OnDrawLineCompleteListener getOnDrawLineCompleteListener() {
-        return onDrawLineCompleteListener;
-    }
-
-    public void setOnDrawLineCompleteListener(OnDrawLineCompleteListener onDrawLineCompleteListener) {
-        this.onDrawLineCompleteListener = onDrawLineCompleteListener;
-    }
-
-    private void onPressDrawLine(MotionEvent e) {
-        // 当前 画线类型
-        int type = getPreDrawLineDataSet().getLineType();
-        // 没有设置类型/没有设置监听 不进行状态更新
-        if (isOpenDrawLine() && type != 0 && getDrawLineTouchListener() != null) {
-            PointF point = new PointF(e.getX(), e.getY());
-            DrawLineTouchState state = getDrawLineTouchState();
-            if (state == DrawLineTouchState.none) {
-                // 第一步
-                setDrawLineTouchState(DrawLineTouchState.first);
-                getDrawLineTouchListener().onTouch(DrawLineTouchState.first, point, type);
-            } else if (state == DrawLineTouchState.first) {
-                // 第二步
-                setDrawLineTouchState(DrawLineTouchState.second);
-                getDrawLineTouchListener().onTouch(DrawLineTouchState.second, point, type);
-            }else if (state == DrawLineTouchState.second) {
-                // 完成
-                setDrawLineTouchState(DrawLineTouchState.complete);
-                getDrawLineTouchListener().onTouch(DrawLineTouchState.complete, point, type);
-            }else if (state == DrawLineTouchState.complete) {
-                setDrawLineTouchState(DrawLineTouchState.drag);
-                getDrawLineTouchListener().onTouch(DrawLineTouchState.drag, point, type);
-            }
-        }
-    }
-
-    // </editor-fold desc="画线工具">    ----------------------------------------------------------
 
     protected boolean canScroll() {
         return getEntryCount() >= getCurrentVisibleEntryCount();
