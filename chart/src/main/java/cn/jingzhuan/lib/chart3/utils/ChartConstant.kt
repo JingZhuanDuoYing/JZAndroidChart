@@ -114,4 +114,16 @@ object ChartConstant {
 
     // </editor-fold desc="区间统计触摸状态">    ------------------
 
+    // <editor-fold desc="画线工具拖动状态">    -------------------
+
+    const val DRAW_LINE_NONE = 0
+
+    const val DRAW_LINE_DRAG_LEFT = 1
+
+    const val DRAW_LINE_DRAG_RIGHT = 2
+
+    const val DRAW_LINE_DRAG_BOTH = 3
+
+    // </editor-fold desc="画线工具拖动状态">    ------------------
+
 }

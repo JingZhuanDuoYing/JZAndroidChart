@@ -297,10 +297,6 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         chartRenderer?.calcDataSetMinMax()
     }
 
-    override fun onDrawLineViewportChange(viewport: Viewport) {
-        if (isOpenDrawLine) drawLineRenderer.onViewportChange(viewport)
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isOpenRange) {
             if (rangeRenderer.onTouchEvent(event)) {

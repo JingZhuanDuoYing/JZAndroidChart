@@ -16,7 +16,6 @@ import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
-import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
@@ -212,9 +211,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * 画线状态
      */
-    var drawLineState: DrawLineState = DrawLineState.none
-
-    var preDrawLine: DrawLineDataSet = DrawLineDataSet()
+    private var drawLineState: DrawLineState = DrawLineState.none
 
     var drawLineListener: OnDrawLineListener? = null
 
@@ -383,7 +380,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
 
         if (mZoomer.computeZoom()) {
-            Log.i(TAG, "mZoomer -> needsInvalidate")
             // Performs the zoom since a zoom is in progress (either programmatically or via double-touch).
 
             val newWidth = (1f - mZoomer.currZoom) * scrollerStartViewport.width()
@@ -451,7 +447,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
 
         if (needsInvalidate) {
-            Log.i(TAG, "needsInvalidate")
             triggerViewportChange()
         }
     }
@@ -682,7 +677,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             synchronized(this) {
                 try {
                     internalViewportChangeListener?.onViewportChange(currentViewport)
-                    onDrawLineViewportChange(currentViewport)
                 } catch (e: Exception) {
                     Log.d(TAG, "OnViewportChangeListener", e)
                 }
@@ -963,8 +957,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 获取X
      */
     abstract fun getEntryX(index: Int): Float
-
-    abstract fun onDrawLineViewportChange(viewport: Viewport)
 
     /**
      * 清除十字光标

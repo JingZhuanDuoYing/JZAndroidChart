@@ -2,16 +2,15 @@ package cn.jingzhuan.lib.chart3.renderer
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
 import androidx.collection.ArrayMap
-import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import cn.jingzhuan.lib.chart3.data.value.AbstractValue
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.drawline.AbstractDrawLine
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
@@ -19,6 +18,7 @@ import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
+import kotlin.math.absoluteValue
 
 /**
  * @since 2023-10-09
@@ -31,47 +31,14 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     private val drawMap = ArrayMap<Int, AbstractDrawLine<T>>()
 
+    private var dragState = ChartConstant.DRAW_LINE_NONE
+
+    private var preDrawLine = DrawLineDataSet()
+
     init {
         initDraw(chart)
         initListener(chart)
     }
-
-    fun onViewportChange(viewport: Viewport) {
-        Log.d("onPressDrawLine", "viewport")
-        val chartData = (chart.chartData as CombineData)
-        val dataSet = chartView.preDrawLine
-        val baseDataSet = chartData.getTouchDataSet() ?: return
-        val viewportMax = baseDataSet.viewportYMax
-        val viewportMin = baseDataSet.viewportYMin
-        val values = dataSet.values
-        if (values.size != 2) return
-        val startValue = values[0]
-        val endValue = values[1]
-        val visibleValues = baseDataSet.getVisiblePoints(viewport)
-        if (visibleValues.isNullOrEmpty()) return
-        var startX = -1f
-        var endX = -1f
-        for (baseValue in visibleValues) {
-            if (baseValue.time == startValue.time) {
-                startX = baseValue.x
-            }
-            if (baseValue.time == endValue.time) {
-                endX = baseValue.x
-            }
-        }
-        val startY = (viewportMax - startValue.value) / (viewportMax - viewportMin) * chartView.contentRect.height()
-        val endY = (viewportMax - endValue.value) / (viewportMax - viewportMin) * chartView.contentRect.height()
-
-        dataSet.pointStart = PointF(startX, startY)
-        dataSet.pointEnd = PointF(endX, endY)
-
-        val radius = dataSet.pointRadiusOut
-
-        dataSet.startPointRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
-
-        dataSet.endPointRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
-    }
-
 
     private fun initListener(chart: AbstractChartView<T>) {
 //        chart.setOnDrawLineListener(object : OnDrawLineListener{
@@ -123,6 +90,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         val drawLineChartData = chartData.drawLineChartData
         val baseDataSet = chartData.getTouchDataSet()
         if (baseDataSet != null) {
+            Log.d("onPressDrawLine", "renderer: ${drawLineChartData.dataSets.size}")
             for (dataSet in drawLineChartData.dataSets) {
                 if (dataSet.isVisible) {
                     drawDataSet(canvas, dataSet, baseDataSet, chartData.leftMax, chartData.leftMin)
@@ -151,59 +119,83 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
             MotionEvent.ACTION_MOVE -> {
                 Log.d("onPressDrawLine", "onTouchEvent: ACTION_MOVE")
+                val x = event.x
+                val y = event.y
+                if (dragState == ChartConstant.DRAW_LINE_DRAG_LEFT) {
+                    // 移动起点
+                    if (preDrawLine.startDrawValue != null) {
+                        val chartData = (chart.chartData as CombineData)
+                        val baseDataSet = chartData.getTouchDataSet()
+                        if (baseDataSet != null) {
+                            val index = chartView.getEntryIndex(x)
+                            val baseValue = baseDataSet.getEntryForIndex(index)
+                            if (baseValue != null) {
+                                val time = baseValue.time
+                                val value = baseDataSet.viewportYMax - y / contentRect.height() * (baseDataSet.viewportYMax - baseDataSet.viewportYMin)
+                                preDrawLine.startDrawValue = DrawLineValue(value, time)
+                                preDrawLine.lineState = DrawLineState.second
+                                chartView.postInvalidate()
+                            }
+                        }
+                    }
+                    return true
+                } else if(dragState == ChartConstant.DRAW_LINE_DRAG_RIGHT){
+                    // 移动终点
+                    if (preDrawLine.endDrawValue != null) {
+                        val chartData = (chart.chartData as CombineData)
+                        val baseDataSet = chartData.getTouchDataSet()
+                        if (baseDataSet != null) {
+                            val index = chartView.getEntryIndex(x)
+                            val baseValue = baseDataSet.getEntryForIndex(index)
+                            if (baseValue != null) {
+                                val time = baseValue.time
+                                val value = baseDataSet.viewportYMax - y / contentRect.height() * (baseDataSet.viewportYMax - baseDataSet.viewportYMin)
+                                preDrawLine.endDrawValue = DrawLineValue(value, time)
+                                preDrawLine.lineState = DrawLineState.second
+                                chartView.postInvalidate()
+                            }
+                        }
+                    }
+                } else if (dragState == ChartConstant.DRAW_LINE_DRAG_BOTH){
+                    Log.d("onPressDrawLine", "DRAW_LINE_DRAG_BOTH: 一起滑动")
+                    return true
+                }
 
-//                return true
+                return false
             }
 
             MotionEvent.ACTION_UP -> {
+                dragState = ChartConstant.DRAW_LINE_NONE
 
             }
         }
         return false
     }
 
-    private fun onPressDrawLine(e: MotionEvent) {
-        if (!chartView.isOpenDrawLine) return
+    private fun onPressDrawLine(e: MotionEvent): Boolean {
+        if (!chartView.isOpenDrawLine) return false
         val point = PointF(e.x, e.y)
 
-        val chartData = (chart.chartData as CombineData)
-        val drawLineChartData = chartData.drawLineChartData
-
-        val dataSets = drawLineChartData.dataSets
-
-        // 先检查是否有未开始的画线
-        var preDrawLine = dataSets.findLast { it.lineState != DrawLineState.complete}
-
-        // 再看当前点所在的位置
-        if (preDrawLine == null) {
-            for (dataSet in dataSets) {
-                if (dataSet.lineState == DrawLineState.complete) {
-                    if (dataSet.pointStart!= null && dataSet.pointEnd != null ) {
-                        if (dataSet.startPointRect.contains(point.x, point.y) || dataSet.endPointRect.contains(point.x, point.y)) {
-                            preDrawLine = dataSet
-                            break
-                        }
-                    }
-                }
-            }
-        }
+        val preDrawLine = getPreDrawLine(e)
 
         if (preDrawLine == null || preDrawLine.lineType == 0) {
-            return
+            return false
         }
+
+        this.preDrawLine = preDrawLine
 
         // 当前 画线类型
         val type = preDrawLine.lineType
 
-        val radius = preDrawLine.pointRadiusOut
+        val chartData = (chart.chartData as CombineData)
+        val baseDataSet = chartData.getTouchDataSet() ?: return false
 
         when (preDrawLine.lineState) {
             DrawLineState.none -> {
                 // 第一步
                 chartView.setDrawLineTouchState(DrawLineState.first)
                 preDrawLine.lineState = DrawLineState.first
-                preDrawLine.pointStart = point
-                preDrawLine.startPointRect = RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius)
+                preDrawLine.startDrawValue = getValue(point, baseDataSet.values, baseDataSet.viewportYMax, baseDataSet.viewportYMin)
 
                 chartView.drawLineListener?.onTouch(DrawLineState.first, point, type)
                 chartView.postInvalidate()
@@ -214,68 +206,114 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 chartView.setDrawLineTouchState(DrawLineState.second)
 
                 preDrawLine.lineState = DrawLineState.second
-                preDrawLine.pointEnd = point
-                preDrawLine.endPointRect = RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius)
+                preDrawLine.endDrawValue = getValue(point, baseDataSet.values, baseDataSet.viewportYMax, baseDataSet.viewportYMin)
 
                 chartView.drawLineListener?.onTouch(DrawLineState.second, point, type)
                 chartView.postInvalidate()
-
-                onComplete(preDrawLine)
             }
 
             DrawLineState.second -> {
                 // 完成
-                if (preDrawLine.pointStart!= null && preDrawLine.pointEnd != null ) {
-                    if (preDrawLine.startPointRect.contains(point.x, point.y)) {
-
-                    } else if (preDrawLine.endPointRect.contains(point.x, point.y)) {
+                if (preDrawLine.startDrawValue!= null && preDrawLine.endDrawValue != null ) {
+                    if (dragState != ChartConstant.DRAW_LINE_NONE) {
 
                     } else {
                         preDrawLine.lineState = DrawLineState.complete
-
                         chartView.setDrawLineTouchState(DrawLineState.complete)
                         chartView.drawLineListener?.onTouch(DrawLineState.complete, point, type)
+                        chartView.postInvalidate()
                     }
-                    chartView.postInvalidate()
                 }
             }
 
             DrawLineState.complete -> {
-                if (preDrawLine.pointStart!= null && preDrawLine.pointEnd != null ) {
-                    if (preDrawLine.startPointRect.contains(point.x, point.y)) {
-                        preDrawLine.lineState = DrawLineState.second
-                        chartView.setDrawLineTouchState(DrawLineState.second)
-                    } else if (preDrawLine.endPointRect.contains(point.x, point.y)) {
-                        preDrawLine.lineState = DrawLineState.second
-                        chartView.setDrawLineTouchState(DrawLineState.second)
-                    } else {
-                        chartView.drawLineListener?.onTouch(DrawLineState.complete, point, type)
-                    }
+                if (dragState != ChartConstant.DRAW_LINE_NONE) {
+                    preDrawLine.lineState = DrawLineState.second
+                    chartView.setDrawLineTouchState(DrawLineState.second)
                     chartView.postInvalidate()
+                } else {
+                    chartView.drawLineListener?.onTouch(DrawLineState.complete, point, type)
                 }
 
             }
 
             DrawLineState.drag -> {}
         }
+        return true
     }
 
-    private fun onComplete(dataSet: DrawLineDataSet) {
+    private fun getPreDrawLine(e: MotionEvent): DrawLineDataSet? {
         val chartData = (chart.chartData as CombineData)
+        val drawLineChartData = chartData.drawLineChartData
+        val baseDataSet = chartData.getTouchDataSet() ?: return null
 
-        val baseValues = chartData.getTouchDataSet()?.values ?: return
+        val dataSets = drawLineChartData.dataSets
 
-        val viewportMax = chartData.leftMax
-        val viewportMin = chartData.leftMin
+        var preDrawLine: DrawLineDataSet? = null
+        // 遍历当前画线DataSets(如果有) || 点击的区域内有
+        // 起点或终点区域 可拖动
+        // 起点和终点之前的区域 整体平移
+        for (dataSet in dataSets) {
+            if (dataSet.lineState == DrawLineState.complete) {
+                val inArea = checkInDrawLineArea(dataSet, PointF(e.x, e.y), baseDataSet)
+                if (inArea) {
+                    preDrawLine = dataSet
+                    break
+                }
+            } else {
+                preDrawLine = dataSet
+                break
+            }
+        }
 
-        val startIndex = chartView.getEntryIndex(dataSet.pointStart!!.x)
-        val startTime = baseValues.getOrNull(startIndex)?.time ?: 0L
-        val startValue = viewportMax - dataSet.pointStart!!.y / contentRect.height() * (viewportMax - viewportMin)
-        dataSet.values.add(DrawLineValue(startValue, startTime))
+        return preDrawLine
+    }
 
-        val endIndex = chartView.getEntryIndex(dataSet.pointEnd!!.x)
-        val endTime = baseValues.getOrNull(endIndex)?.time ?: 0L
-        val endValue = viewportMax - dataSet.pointEnd!!.y / contentRect.height() * (viewportMax - viewportMin)
-        dataSet.values.add(DrawLineValue(endValue, endTime))
+    private fun checkInDrawLineArea(dataSet: DrawLineDataSet, point: PointF, baseDataSet: AbstractDataSet<*>): Boolean {
+        val startValue = dataSet.startDrawValue
+        val endValue =  dataSet.endDrawValue
+        val radius = dataSet.pointRadiusOut * 3f
+
+        if (startValue == null && endValue == null) return false
+
+        val startX = baseDataSet.values.find { it.time == startValue?.time }?.x ?: 0f
+        val startY = chartView.getScaleY(startValue?.value ?: 0f, baseDataSet.viewportYMax, baseDataSet.viewportYMin)
+
+        val endX = baseDataSet.values.find { it.time == endValue?.time }?.x ?: 0f
+        val endY = chartView.getScaleY(endValue?.value ?: 0f, baseDataSet.viewportYMax, baseDataSet.viewportYMin)
+
+        val startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
+
+        val endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
+
+        val centerY = (startY + endY).absoluteValue * 0.5f
+        val centerRect = RectF(startX, centerY + radius, endX, centerY - radius)
+
+        if (startRect.contains(point.x, point.y)) {
+            dragState = ChartConstant.DRAW_LINE_DRAG_LEFT
+            return true
+        }
+
+        if (endRect.contains(point.x, point.y)) {
+            dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
+            return true
+        }
+
+        if (centerRect.contains(point.x, point.y)) {
+            dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
+            return true
+        }
+        return false
+    }
+
+    private fun getValue(
+        point: PointF,
+        baseValues: MutableList<out AbstractValue>,
+        viewportMax: Float, viewportMin: Float
+    ) : DrawLineValue {
+        val index = chartView.getEntryIndex(point.x)
+        val startTime = baseValues.getOrNull(index)?.time ?: 0L
+        val startValue = viewportMax - point.y / contentRect.height() * (viewportMax - viewportMin)
+        return DrawLineValue(startValue, startTime)
     }
 }

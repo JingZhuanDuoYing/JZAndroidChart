@@ -15,5 +15,5 @@ interface IDrawLine {
 
 //    fun onTouch(state: DrawLineState, point: PointF, dataSet: DrawLineDataSet)
 
-    fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet)
+    fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>)
 }

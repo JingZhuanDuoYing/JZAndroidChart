@@ -67,21 +67,21 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var bcap: String? = null
 
-    var rectF: RectF = RectF()
+    var startDrawValue: DrawLineValue? = null
+
+    var endDrawValue: DrawLineValue? = null
 
     var pointRadiusIn = 8f
 
     var pointRadiusOut = 16f
 
-    var pointStart: PointF? = null
-
-    var pointEnd: PointF? = null
-
-    var startPointRect = RectF()
-
-    var endPointRect = RectF()
+//    var pointStart: PointF? = null
+//
+//    var pointEnd: PointF? = null
 
     var lineState = DrawLineState.complete
+
+    var isDrawing = false
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

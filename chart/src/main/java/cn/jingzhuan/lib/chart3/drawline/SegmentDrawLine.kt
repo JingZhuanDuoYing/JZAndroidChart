@@ -18,8 +18,6 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
     private val widthSets: MutableMap<String, Float>
     private val heightSets: MutableMap<String, Float>
 
-    private val linePath = Path()
-
     init {
         widthSets = ConcurrentHashMap()
         heightSets = ConcurrentHashMap()
@@ -33,10 +31,10 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         lMin: Float
     ) {
         super.onDraw(canvas, dataSet, baseDataSet, lMax, lMin)
-        val values = dataSet.values
-        if (values.size != 2) return
-        val startValue = values[0]
-        val endValue = values[1]
+        val startValue = dataSet.startDrawValue
+        val endValue = dataSet.endDrawValue
+        if (startValue == null || endValue == null) return
+
         val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return
         val key = dataSet.lineKey ?: return
@@ -86,27 +84,33 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         canvas.drawPath(linePath, linePaint)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet) {
+    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>) {
         // 当前形状是线段 先画线段 再画背景
-        if (dataSet.pointStart == null || dataSet.pointEnd == null) return
+        val startValue = dataSet.startDrawValue
+        val endValue = dataSet.endDrawValue
+        if (startValue == null || endValue == null) return
+
+        val startX = baseDataSet.values.find { it.time == startValue.time }?.x ?: return
+        val startY = chartView.getScaleY(startValue.value, viewportMax, viewportMin)
+
+        val endX = baseDataSet.values.find { it.time == endValue.time }?.x ?: return
+        val endY = chartView.getScaleY(endValue.value, viewportMax, viewportMin)
+
         linePaint.style = Paint.Style.STROKE
+        val path = Path()
+        path.moveTo(startX, startY)
+        path.lineTo(endX, endY)
+        path.close()
 
-        linePath.moveTo(dataSet.pointStart!!.x, dataSet.pointStart!!.y)
-        linePath.lineTo(dataSet.pointEnd!!.x, dataSet.pointEnd!!.y)
-        canvas.drawPath(linePath, linePaint)
-
-        linePath.close()
+        canvas.drawPath(path, linePaint)
 
         linePaint.style = Paint.Style.STROKE
-        linePaint.strokeWidth = dataSet.pointRadiusIn * 2f
-        linePaint.alpha = 30
-        linePath.moveTo(dataSet.pointStart!!.x, dataSet.pointStart!!.y)
-        linePath.lineTo(dataSet.pointEnd!!.x, dataSet.pointEnd!!.y)
-
-        canvas.drawPath(linePath, linePaint)
-
-
-
-        linePath.close()
+        linePaint.strokeWidth = dataSet.pointRadiusOut * 2f
+        linePaint.alpha = 10
+        path.reset()
+        path.moveTo(startX, startY)
+        path.lineTo(endX, endY)
+        path.close()
+        canvas.drawPath(path, linePaint)
     }
 }

@@ -295,6 +295,9 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         drawChart(canvas)
 
+        // 画线工具
+        drawLineTool(canvas)
+
         // Removes clipping rectangle
         canvas.restoreToCount(clipRestoreCount)
 
@@ -314,9 +317,6 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
         // 画区间统计
         drawRangeArea(canvas)
-
-        // 画线工具
-        drawLineTool(canvas)
 
         canvas.restore()
     }
@@ -359,6 +359,13 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     fun setTypeface(tf: Typeface?) {
         axisRenderers.values.forEach { it.setTypeface(tf) }
+    }
+
+    fun getScaleY(value: Float, viewportMax: Float, viewportMin: Float): Float {
+        if (viewportMax > viewportMin && viewportMax > 0) {
+            return (viewportMax - value) / (viewportMax - viewportMin) * contentRect.height()
+        }
+        return -1f
     }
 
     abstract val chartData: ChartData<T>?
