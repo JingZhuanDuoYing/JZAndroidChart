@@ -311,4 +311,8 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
         return super.onTouchEvent(event)
     }
+
+    override fun isDrawingLine(): Boolean {
+        return super.isDrawingLine() && drawLineRenderer.checkIfHaveDrawing()
+    }
 }

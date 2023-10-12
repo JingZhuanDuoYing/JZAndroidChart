@@ -208,11 +208,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var isOpenDrawLine: Boolean = false
 
-    /**
-     * 画线状态
-     */
-    private var drawLineState: DrawLineState = DrawLineState.none
-
     var drawLineListener: OnDrawLineListener? = null
 
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
@@ -882,17 +877,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         postInvalidateOnAnimation()
     }
 
-    open fun getDrawLineTouchState(): DrawLineState {
-        return if (!isOpenDrawLine) DrawLineState.none else drawLineState
-    }
-
-    open fun setDrawLineTouchState(state: DrawLineState) {
-        if (!isOpenDrawLine) return
-        this.drawLineState = state
-    }
-
     open fun isDrawingLine(): Boolean {
-        return isOpenDrawLine && (getDrawLineTouchState() == DrawLineState.first || getDrawLineTouchState() == DrawLineState.second)
+        return isOpenDrawLine
     }
 
 

@@ -1,11 +1,16 @@
 package cn.jingzhuan.lib.chart2.demo.chart3
 
+import android.content.Context
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -39,6 +44,7 @@ import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
+import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
@@ -77,6 +83,10 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvDrawSegment: TextView
 
+    private lateinit var tvRevoke: TextView
+
+    private lateinit var tvDelete: TextView
+
     private lateinit var minuteMain: MainMinuteChartView
 
     private lateinit var sub1: SubChartView
@@ -100,6 +110,10 @@ class Chart3Activity : AppCompatActivity() {
     private lateinit var tvInfo: TextView
 
     private lateinit var timeRangeView: KlineTimeRangeView
+
+    private lateinit var tvStep: TextView
+
+    private lateinit var ivCap: ImageView
 
     private val scatterDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_left) }
 
@@ -144,6 +158,8 @@ class Chart3Activity : AppCompatActivity() {
         tvPriceLine = findViewById(R.id.tv_price_line)
         tvDrawLine = findViewById(R.id.tv_draw_line)
         tvDrawSegment = findViewById(R.id.tv_draw_segment)
+        tvRevoke = findViewById(R.id.tv_revoke)
+        tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
@@ -159,6 +175,8 @@ class Chart3Activity : AppCompatActivity() {
         llDrawLineTool = findViewById(R.id.ll_draw_line_tool)
         tvInfo = findViewById(R.id.tv_info)
         timeRangeView = findViewById(R.id.time_range_view)
+        tvStep = findViewById(R.id.tv_step)
+        ivCap = findViewById(R.id.iv_cap)
     }
 
 
@@ -321,6 +339,34 @@ class Chart3Activity : AppCompatActivity() {
                 setMainKlineChartData(loadMore = true)
                 setSubKlineChartData()
             }
+
+            setOnDrawLineListener(object : OnDrawLineListener {
+                override fun onTouch(state: DrawLineState, point: PointF, type: Int) {
+                    if (state == DrawLineState.first) {
+                        tvStep.visibility = View.VISIBLE
+                        tvStep.text = "请点击放置终点 1/2"
+                    } else if (state == DrawLineState.complete) {
+                        tvStep.visibility = View.VISIBLE
+                        tvStep.text = "已完成"
+                    }
+                }
+
+                override fun onDrag(point: PointF, state: Int) {
+                    if (state != ChartConstant.DRAW_LINE_NONE) {
+                        val bitmap =  getBitmap(point)
+                        ivCap.visibility = View.VISIBLE
+                        ivCap.setImageBitmap(bitmap)
+                        ivCap.translationX = point.x
+                        ivCap.translationY = point.y
+                        ivCap.postInvalidate()
+                    } else {
+                        ivCap.visibility = View.GONE
+                        ivCap.setImageBitmap(null)
+                    }
+                    Log.d("onPressDrawLine", "正在拖拽 point={${point.x}, ${point.y}----state=$state")
+                }
+
+            })
         }
 
         subCharts.forEach {
@@ -382,16 +428,61 @@ class Chart3Activity : AppCompatActivity() {
             val dataSet = DrawLineDataSet().apply {
                 lineKey = "ltSegment$index"
                 lineType = DrawLineType.ltSegment.ordinal
-                lineState = DrawLineState.none
+                lineState = DrawLineState.prepare
             }
 
-            klineMain.chartData.add(dataSet)
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置起点 0/2"
         }
 
-        llDrawLineTool.setOnClickListener {
-            llDrawLineTool.visibility = View.GONE
+        tvRevoke.setOnClickListener {
+            if (rbDay.isChecked) {
+                val data =  (klineMain.chartData as CombineData)
+                val drawLineDataSets = data.getDrawLineDataSets().toMutableList()
+                if (drawLineDataSets.isEmpty()) return@setOnClickListener
+                drawLineDataSets.removeLast()
+                data.drawLineChartData.clear()
+                data.addAll(drawLineDataSets)
+                klineMain.postInvalidate()
+
+            } else if (rbMinute.isChecked) {
+
+            }
         }
 
+        tvDelete.setOnClickListener {
+            if (rbDay.isChecked) {
+                val data =  (klineMain.chartData as CombineData)
+                data.drawLineChartData.clear()
+                klineMain.postInvalidate()
+
+            }
+        }
+
+    }
+
+    private fun getBitmap(point: PointF): Bitmap {
+        val view = window.decorView
+        view.isDrawingCacheEnabled = true
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+//        canvas.clipRect(point.x - 100f, point.y - 100f, point.x + 100f, point.y +100f)
+        view.draw(canvas)
+        view.isDrawingCacheEnabled = false
+        val width = dp2px(100f)
+        val height = dp2px(80f)
+        var x = max(point.x- width * 0.5f, 0f).toInt()
+        Log.d("onPressDrawLine", "正在拖拽 point=$x, bitmap.width - width=${bitmap.width - width}")
+        if (x >= bitmap.width - width) x = bitmap.width - width
+        var y = max(point.y - height * 0.5f, 0f).toInt()
+        if (y >= bitmap.height - height) y = bitmap.height - height
+        val clipBitmap = Bitmap.createBitmap(bitmap, x, y, width, height)
+        return clipBitmap
     }
 
     private fun touchSubHighlight(highlight: Highlight, ex: Float, ey: Float) {
@@ -676,6 +767,11 @@ class Chart3Activity : AppCompatActivity() {
             add(lineDataSet)
         }
         minuteMain.setCombineData(data)
+    }
+
+    fun dp2px(dpValue: Float): Int {
+        val density = resources.displayMetrics.density
+        return (dpValue * density + 0.5f).toInt()
     }
 
 }

@@ -1,8 +1,6 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
-import android.graphics.PointF
-import android.graphics.RectF
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
@@ -75,13 +73,12 @@ class DrawLineDataSet@JvmOverloads constructor(
 
     var pointRadiusOut = 16f
 
-//    var pointStart: PointF? = null
-//
-//    var pointEnd: PointF? = null
-
     var lineState = DrawLineState.complete
 
-    var isDrawing = false
+    /**
+     * 是否选中
+     */
+    var isSelect = false
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

@@ -1,7 +1,6 @@
 package cn.jingzhuan.lib.chart3.event
 
 import android.graphics.PointF
-import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 
 /**
@@ -13,5 +12,5 @@ interface OnDrawLineListener {
 
     fun onTouch(state: DrawLineState, point: PointF, type: Int)
 
-    fun onComplete(point1: PointF, point2: PointF, type: Int, dataSet: DrawLineDataSet)
+    fun onDrag(point: PointF, state: Int)
 }

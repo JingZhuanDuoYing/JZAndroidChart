@@ -8,9 +8,9 @@ package cn.jingzhuan.lib.chart3.drawline
  */
 enum class DrawLineState {
     /**
-     * 默认
+     * 预备
      */
-    none,
+    prepare,
 
     /**
      * 第一步
@@ -18,17 +18,7 @@ enum class DrawLineState {
     first,
 
     /**
-     * 第二步
-     */
-    second,
-
-    /**
      * 完成
      */
-    complete,
-
-    /**
-     * 拖动
-     */
-    drag
+    complete
 }

@@ -38,7 +38,6 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return
         val key = dataSet.lineKey ?: return
-        val linePath = Path()
         var startX = -1f
         var endX = -1f
         for (baseValue in visibleValues) {
@@ -49,8 +48,8 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
                 endX = baseValue.x
             }
         }
-        val startY = getScaleY(startValue.value)
-        val endY = getScaleY(endValue.value)
+        val startY = chartView.getScaleY(startValue.value, lMax, lMin)
+        val endY = chartView.getScaleY(endValue.value, lMax, lMin)
         if (startX != -1f && endX != -1f) {
             val width = abs(endX - startX)
             val height = abs(endY - startY)
@@ -74,40 +73,30 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
                 "onDraw", "width=" + width + "height=" + height +
                         "startY=" + startY + "rightY=" + rightY + "endY=" + endY
             )
-            linePath.moveTo(startX, startY)
-            linePath.lineTo(rightX, rightY)
+            canvas.drawLine(startX, startY, rightX, rightY, linePaint)
         } else {
-            linePath.moveTo(startX, startY)
-            linePath.lineTo(endX, endY)
+            canvas.drawLine(startX, startY, endX, endY, linePaint)
         }
-        linePaint.style = Paint.Style.STROKE
-        canvas.drawPath(linePath, linePaint)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>) {
+    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         // 当前形状是线段 先画线段 再画背景
         val startValue = dataSet.startDrawValue
         val endValue = dataSet.endDrawValue
         if (startValue == null || endValue == null) return
 
         val startX = baseDataSet.values.find { it.time == startValue.time }?.x ?: return
-        val startY = chartView.getScaleY(startValue.value, viewportMax, viewportMin)
+        val startY = chartView.getScaleY(startValue.value, lMax, lMin)
 
         val endX = baseDataSet.values.find { it.time == endValue.time }?.x ?: return
-        val endY = chartView.getScaleY(endValue.value, viewportMax, viewportMin)
+        val endY = chartView.getScaleY(endValue.value, lMax, lMin)
 
-        linePaint.style = Paint.Style.STROKE
-        val path = Path()
-        path.moveTo(startX, startY)
-        path.lineTo(endX, endY)
-        path.close()
-
-        canvas.drawPath(path, linePaint)
+        canvas.drawLine(startX, startY, endX, endY, linePaint)
 
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = dataSet.pointRadiusOut * 2f
         linePaint.alpha = 10
-        path.reset()
+        val path = Path()
         path.moveTo(startX, startY)
         path.lineTo(endX, endY)
         path.close()
