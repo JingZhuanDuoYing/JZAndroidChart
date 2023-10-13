@@ -80,6 +80,16 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var isSelect = false
 
+    /**
+     * 两点之间X距离 当且仅当两个点的时候适用
+     */
+    var distanceX = 0f
+
+    /**
+     * 两点之间Y距离 当且仅当两个点的时候适用
+     */
+    var distanceY = 0f
+
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false
         calcViewportMinMax(value)

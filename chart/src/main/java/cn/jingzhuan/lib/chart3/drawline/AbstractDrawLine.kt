@@ -46,24 +46,21 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     override fun onDraw(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         setPaint(dataSet)
+        if (!dataSet.isSelect) return
         linePaint.style = Paint.Style.FILL
         when (dataSet.lineState) {
             DrawLineState.prepare -> {
                 Log.d("onPressDrawLine", "准备阶段")
             }
             DrawLineState.first -> {
-                Log.d("onPressDrawLine", "第一步，画起点")
                 // 第一步 画起点
                 drawStartPoint(canvas, dataSet, baseDataSet, lMax, lMin)
             }
             DrawLineState.complete -> {
                 // 第二步 画起点 、终点、 高亮背景、存入数据
-                if (dataSet.isSelect) {
-                    Log.d("onPressDrawLine", "第二步 选中->画起点 、终点、 高亮背景、存入数据")
-                    drawStartPoint(canvas, dataSet, baseDataSet, lMax, lMin)
-                    drawEndPoint(canvas, dataSet, baseDataSet, lMax, lMin)
-                    drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
-                }
+                drawStartPoint(canvas, dataSet, baseDataSet, lMax, lMin)
+                drawEndPoint(canvas, dataSet, baseDataSet, lMax, lMin)
+                drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
             }
         }
     }
@@ -75,20 +72,15 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.startDrawValue ?: return
 
-        val x = baseDataSet.values.find { it.time == value.time }?.x ?: return
+        val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
+        if (visibleValues.isNullOrEmpty()) return
+
+        val x = visibleValues.find { it.time == value.time }?.x ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
         bgPaint.alpha = 30
         canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)
-
-//        if (dragState == ChartConstant.DRAW_LINE_DRAG_LEFT) {
-//            Log.d("onPressDrawLine", "renderer: ")
-//            canvas.save()
-//            canvas.clipRect(x - 100f, y - 100f, x + 100f, y +100f)
-//            canvas.drawColor(Color.RED)
-//            canvas.restore()
-//        }
     }
 
     /**
@@ -97,7 +89,10 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     private fun drawEndPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.endDrawValue ?: return
 
-        val x = baseDataSet.values.find { it.time == value.time }?.x ?: return
+        val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
+        if (visibleValues.isNullOrEmpty()) return
+
+        val x = visibleValues.find { it.time == value.time }?.x ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
         bgPaint.alpha = 30

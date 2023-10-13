@@ -12,5 +12,5 @@ interface OnDrawLineListener {
 
     fun onTouch(state: DrawLineState, point: PointF, type: Int)
 
-    fun onDrag(point: PointF, state: Int)
+    fun onDrag(bitmapPoint: PointF, translatePoint: PointF, state: Int)
 }

@@ -60,6 +60,8 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import cn.jingzhuan.lib.chart3.widget.KlineTimeRangeView
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.max
 import kotlin.math.min
 
@@ -82,6 +84,8 @@ class Chart3Activity : AppCompatActivity() {
     private lateinit var tvDrawLine: TextView
 
     private lateinit var tvDrawSegment: TextView
+
+    private lateinit var tvDrawStraight: TextView
 
     private lateinit var tvRevoke: TextView
 
@@ -158,6 +162,7 @@ class Chart3Activity : AppCompatActivity() {
         tvPriceLine = findViewById(R.id.tv_price_line)
         tvDrawLine = findViewById(R.id.tv_draw_line)
         tvDrawSegment = findViewById(R.id.tv_draw_segment)
+        tvDrawStraight = findViewById(R.id.tv_draw_straight)
         tvRevoke = findViewById(R.id.tv_revoke)
         tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
@@ -348,22 +353,32 @@ class Chart3Activity : AppCompatActivity() {
                     } else if (state == DrawLineState.complete) {
                         tvStep.visibility = View.VISIBLE
                         tvStep.text = "已完成"
+
+                        val timer = Timer()
+                        timer.schedule(object : TimerTask() {
+                            override fun run() {
+                                runOnUiThread {
+                                    tvStep.visibility = View.GONE
+                                    tvStep.text = ""
+                                }
+                            }
+                        }, 1000L)
                     }
                 }
 
-                override fun onDrag(point: PointF, state: Int) {
+                override fun onDrag(bitmapPoint: PointF, translatePoint: PointF, state: Int) {
                     if (state != ChartConstant.DRAW_LINE_NONE) {
-                        val bitmap =  getBitmap(point)
+                        ivCap.visibility = View.GONE
+                        val bitmap =  getBitmap(bitmapPoint)
                         ivCap.visibility = View.VISIBLE
                         ivCap.setImageBitmap(bitmap)
-                        ivCap.translationX = point.x
-                        ivCap.translationY = point.y
-                        ivCap.postInvalidate()
+                        ivCap.translationX = translatePoint.x - 100f
+                        ivCap.translationY = translatePoint.y - 50f
                     } else {
                         ivCap.visibility = View.GONE
                         ivCap.setImageBitmap(null)
                     }
-                    Log.d("onPressDrawLine", "正在拖拽 point={${point.x}, ${point.y}----state=$state")
+                    Log.d("onPressDrawLine", "正在拖拽 point={${translatePoint.x}, ${translatePoint.y}----state=$state")
                 }
 
             })
@@ -440,6 +455,24 @@ class Chart3Activity : AppCompatActivity() {
             tvStep.text = "请点击放置起点 0/2"
         }
 
+        tvDrawStraight.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltStraight$index"
+                lineType = DrawLineType.ltStraightLine.ordinal
+                lineState = DrawLineState.prepare
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置起点 0/2"
+        }
+
         tvRevoke.setOnClickListener {
             if (rbDay.isChecked) {
                 val data =  (klineMain.chartData as CombineData)
@@ -471,13 +504,17 @@ class Chart3Activity : AppCompatActivity() {
         view.isDrawingCacheEnabled = true
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-//        canvas.clipRect(point.x - 100f, point.y - 100f, point.x + 100f, point.y +100f)
+        canvas.save()
+        canvas.clipRect(point.x - 100f, point.y - 100f, point.x + 100f, point.y +100f)
         view.draw(canvas)
+        canvas.restore()
         view.isDrawingCacheEnabled = false
-        val width = dp2px(100f)
-        val height = dp2px(80f)
+
+        // 宽高缩小3倍
+        val width = dp2px(100f / 3f)
+        val height = dp2px(80f / 3f)
         var x = max(point.x- width * 0.5f, 0f).toInt()
-        Log.d("onPressDrawLine", "正在拖拽 point=$x, bitmap.width - width=${bitmap.width - width}")
+
         if (x >= bitmap.width - width) x = bitmap.width - width
         var y = max(point.y - height * 0.5f, 0f).toInt()
         if (y >= bitmap.height - height) y = bitmap.height - height

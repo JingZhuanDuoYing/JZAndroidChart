@@ -7,7 +7,6 @@ import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 
 /**
@@ -15,13 +14,6 @@ import kotlin.math.abs
  * 画线段
  */
 class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
-    private val widthSets: MutableMap<String, Float>
-    private val heightSets: MutableMap<String, Float>
-
-    init {
-        widthSets = ConcurrentHashMap()
-        heightSets = ConcurrentHashMap()
-    }
 
     override fun onDraw(
         canvas: Canvas,
@@ -31,49 +23,50 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         lMin: Float
     ) {
         super.onDraw(canvas, dataSet, baseDataSet, lMax, lMin)
-        val startValue = dataSet.startDrawValue
-        val endValue = dataSet.endDrawValue
-        if (startValue == null || endValue == null) return
-
         val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return
-        val key = dataSet.lineKey ?: return
-        var startX = -1f
-        var endX = -1f
-        for (baseValue in visibleValues) {
-            if (baseValue.time == startValue.time) {
-                startX = baseValue.x
-            }
-            if (baseValue.time == endValue.time) {
-                endX = baseValue.x
-            }
-        }
-        val startY = chartView.getScaleY(startValue.value, lMax, lMin)
-        val endY = chartView.getScaleY(endValue.value, lMax, lMin)
+
+        val startPoint = dataSet.startDrawValue
+        val endPoint = dataSet.endDrawValue
+        if (startPoint == null || endPoint == null) return
+
+        val startValue = startPoint.value
+        val endValue = endPoint.value
+        if (startValue > lMax && endValue > lMax) return
+        if (startValue < lMin && endValue < lMin) return
+
+//        val key = dataSet.lineKey ?: return
+        val startX = visibleValues.find { it.time == startPoint.time }?.x ?: -1f
+        var endX = visibleValues.find { it.time == endPoint.time }?.x ?: -1f
+
+        Log.d("onDraw", "startX=  $startX  endX= $endX")
+        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+
         if (startX != -1f && endX != -1f) {
-            val width = abs(endX - startX)
-            val height = abs(endY - startY)
-            widthSets[key] = width
-            heightSets[key] = height
+            // 两点的之前的x，y 赋值
+            dataSet.distanceX = abs(endX - startX)
+            dataSet.distanceY = abs(endY - startY)
         }
+
+        // 当前两点均不在可视区域时 因为是线段 不再绘制
         if (startX == -1f && endX == -1f) return
-        if (endX == -1f) {
+
+        // 起点在屏幕内，终点滑出右侧边界，需计算右边界的点
+        if (startX != -1f && endX == -1f) {
             // 根据平行截割定理 得(rightY - startY) / (endY - startY) = (rightX - startX) / (endX - startX)
-            var width = 0f
-            var height = 0f
-            if (widthSets.containsKey(key)) {
-                width = widthSets[key]!!
-            }
-            if (heightSets.containsKey(key)) {
-                height = heightSets[key]!!
-            }
             val rightX = chartView.contentRect.right.toFloat()
-            val rightY = (rightX - startX) / width * height + startY
+            val rightY = (rightX - startX) / dataSet.distanceX * dataSet.distanceY + startY
             Log.d(
-                "onDraw", "width=" + width + "height=" + height +
-                        "startY=" + startY + "rightY=" + rightY + "endY=" + endY
-            )
+                "onDraw", "width= + ${dataSet.distanceX}  height= ${dataSet.distanceY} startY= $startY + rightY= $rightY + endY=  $endY")
             canvas.drawLine(startX, startY, rightX, rightY, linePaint)
+        } else if (startX == -1f) {
+            // 根据平行截割定理 得(endY - startY) / (leftY - startY) = (endX - startX) / (endX - leftX)
+            val leftX = chartView.contentRect.left.toFloat()
+            val leftY = dataSet.distanceY / dataSet.distanceX / (endX - leftX) * dataSet.distanceY + startY
+            Log.d(
+                "onDraw", "width= + ${dataSet.distanceX}  height= ${dataSet.distanceY}, $startY + leftX= $leftX + leftY=  $leftY")
+            canvas.drawLine(leftX, leftY, endX, endY, linePaint)
         } else {
             canvas.drawLine(startX, startY, endX, endY, linePaint)
         }
