@@ -638,6 +638,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                     // 之前是长按 抬起时直接return 不回调 onSingleTapUp
                     return false
                 }
+                if (isDrawingLine()) return false
             }
 
             MotionEvent.ACTION_CANCEL -> {
@@ -645,6 +646,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 if (isScaling) isScaling = false
                 if (isLongPress) isLongPress = false
                 if (isTouching) isTouching = false
+                if (isDrawingLine()) return false
                 invalidate()
             }
 

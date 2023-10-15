@@ -77,7 +77,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         val x = visibleValues.find { it.time == value.time }?.x ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
-
+        Log.d("onPressDrawLine", "画起点, x=$x, y=$y")
         bgPaint.alpha = 30
         canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)
@@ -93,8 +93,9 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         if (visibleValues.isNullOrEmpty()) return
 
         val x = visibleValues.find { it.time == value.time }?.x ?: return
+        Log.d("onPressDrawLine", "画终点2,x=$x")
         val y = chartView.getScaleY(value.value, lMax, lMin)
-
+        Log.d("onPressDrawLine", "画终点, x=$x, y=$y")
         bgPaint.alpha = 30
         canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)

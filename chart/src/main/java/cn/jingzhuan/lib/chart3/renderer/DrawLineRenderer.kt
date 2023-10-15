@@ -116,7 +116,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         val time = baseValue.time
                         val value = chartData.leftMax - y / contentRect.height() * (chartData.leftMax - chartData.leftMin)
                         preDrawLine.startDrawValue = DrawLineValue(value, time)
+                        preDrawLine.startDrawValue?.x = baseValue.x
+                        preDrawLine.startDrawValue?.y = y
+                        preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
+                        preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
                         preDrawLine.isSelect = true
+                        Log.d("onPressDrawLine", "移动起点->index=$index, startX= ${baseValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
                         chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), PointF(event.x, event.y), ChartConstant.DRAW_LINE_DRAG_LEFT)
 
                         chartView.postInvalidate()
@@ -134,7 +139,13 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         val time = baseValue.time
                         val value = chartData.leftMax - y / contentRect.height() * (chartData.leftMax - chartData.leftMin)
                         preDrawLine.endDrawValue = DrawLineValue(value, time)
+                        preDrawLine.endDrawValue?.x = baseValue.x
+                        preDrawLine.endDrawValue?.y = y
+                        preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
+                        preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
+
                         preDrawLine.isSelect = true
+
                         chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), PointF(event.x, event.y), ChartConstant.DRAW_LINE_DRAG_RIGHT)
 
                         chartView.postInvalidate()
@@ -149,39 +160,25 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 val deltaY = y - lastPreY
                 val visibleValues = baseDataSet?.getVisiblePoints(currentViewport)
                 if (baseDataSet != null && !visibleValues.isNullOrEmpty()) {
-                    val lastStartTime = preDrawLine.startDrawValue!!.time
-                    if (preDrawLine.startDrawValue!!.x == -1f) {
-                        preDrawLine.startDrawValue!!.x = visibleValues.find { it.time == lastStartTime }?.x ?: -1f
-                    }
-                    val lastStartX = preDrawLine.startDrawValue!!.x
-                    val nowStartX = lastStartX + deltaX
-
-                    val lastStartY = chartView.getScaleY(preDrawLine.startDrawValue!!.value, chartData.leftMax, chartData.leftMin)
-                    val nowStartY = lastStartY + deltaY
-
+                    val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
+                    val nowStartY = preDrawLine.startDrawValue!!.y + deltaY
                     val startIndex = chartView.getEntryIndex(nowStartX)
-                    Log.d("onPressDrawLine", "一起滑动startIndex $startIndex, lastPreX=$lastPreX, nowStartX= $nowStartX, deltaX= $deltaX")
+                    Log.d("onPressDrawLine", "一起滑动startIndex $startIndex,nowStartX= $nowStartX, nowStartY= $nowStartY")
                     val startBaseValue = baseDataSet.getEntryForIndex(startIndex)
 
                     if (startBaseValue != null) {
                         val time = startBaseValue.time
                         val value = chartData.leftMax - nowStartY / contentRect.height() * (chartData.leftMax - chartData.leftMin)
                         preDrawLine.startDrawValue = DrawLineValue(value, time)
-                        preDrawLine.startDrawValue!!.x = nowStartX
+                        preDrawLine.startDrawValue?.x = nowStartX
+                        preDrawLine.startDrawValue?.y = nowStartY
+                        Log.d("onPressDrawLine", "一起滑动startIndex $startIndex, time=$time, value=$value")
                     }
 
-                    val lastEndTime = preDrawLine.endDrawValue!!.time
-                    if (preDrawLine.endDrawValue!!.x == -1f) {
-                        preDrawLine.endDrawValue!!.x = visibleValues.find { it.time == lastEndTime }?.x ?: -1f
-                    }
-                    val lastEndX =  preDrawLine.endDrawValue!!.x
-                    val nowEndX = lastEndX + deltaX
-
-                    val lastEndY = chartView.getScaleY(preDrawLine.endDrawValue!!.value, chartData.leftMax, chartData.leftMin)
-                    val nowEndY = lastEndY + deltaY
-
+                    val nowEndX = preDrawLine.endDrawValue!!.x + deltaX
+                    val nowEndY = preDrawLine.endDrawValue!!.y + deltaY
                     val endIndex = chartView.getEntryIndex(nowEndX)
-                    Log.d("onPressDrawLine", "一起滑动startIndex $endIndex")
+                    Log.d("onPressDrawLine", "一起滑动endIndex $startIndex,nowEndX= $nowStartX, nowEndY= $nowStartY")
                     val endBaseValue = baseDataSet.getEntryForIndex(endIndex)
 
                     if (endBaseValue != null) {
@@ -189,6 +186,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         val value = chartData.leftMax - nowEndY / contentRect.height() * (chartData.leftMax - chartData.leftMin)
                         preDrawLine.endDrawValue = DrawLineValue(value, time)
                         preDrawLine.endDrawValue!!.x = nowEndX
+                        preDrawLine.endDrawValue?.y = nowEndY
+                        Log.d("onPressDrawLine", "一起滑动endIndex $endIndex, time=$time, value=$value")
                     }
 
                     preDrawLine.isSelect = true
@@ -237,6 +236,9 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 preDrawLine.isSelect = true
                 preDrawLine.endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
 
+                preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
+                preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
+
                 chartView.drawLineListener?.onTouch(DrawLineState.complete, point, lineType)
                 chartView.postInvalidate()
             }
@@ -280,17 +282,34 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun checkInDrawLineArea(dataSet: DrawLineDataSet, point: PointF, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float): Boolean {
+        val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
+        if (visibleValues.isNullOrEmpty()) return false
+
         val startValue = dataSet.startDrawValue
         val endValue =  dataSet.endDrawValue
         val radius = dataSet.pointRadiusOut * 3f
 
         if (startValue == null && endValue == null) return false
 
-        val startX = baseDataSet.values.find { it.time == startValue?.time }?.x ?: 0f
-        val startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
+        var startX = visibleValues.find { it.time == startValue?.time }?.x ?: -1f
+        var startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
 
-        val endX = baseDataSet.values.find { it.time == endValue?.time }?.x ?: 0f
-        val endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
+        var endX = visibleValues.find { it.time == endValue?.time }?.x ?: -1f
+        var endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
+
+        if (startX != -1f && endX == -1f) {
+            endX = startX + dataSet.distanceX
+            endY = startY + dataSet.distanceY
+        } else if (startX == -1f && endX != -1f) {
+            startX = endX - dataSet.distanceX
+            startY = endY - dataSet.distanceY
+        }
+        dataSet.startDrawValue?.x = startX
+        dataSet.startDrawValue?.y = startY
+        dataSet.endDrawValue?.x = endX
+        dataSet.endDrawValue?.y = endY
+
+        Log.d("onPressDrawLine", "checkInDrawLineArea->startX= $startX, startY= $startY,endX= $endX,endY= $endY,")
 
         val startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
 
@@ -326,9 +345,13 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         viewportMax: Float, viewportMin: Float
     ) : DrawLineValue {
         val index = chartView.getEntryIndex(point.x)
-        val startTime = baseValues.getOrNull(index)?.time ?: 0L
+        val baseValue = baseValues.getOrNull(index)
+        val startTime = baseValue?.time ?: 0L
+        val selectX = baseValue?.x ?: -1f
+
         val startValue = viewportMax - point.y / contentRect.height() * (viewportMax - viewportMin)
-        return DrawLineValue(startValue, startTime)
+        val selectY = point.y
+        return DrawLineValue(startValue, startTime).apply { x = selectX; y = selectY }
     }
 
     fun checkIfHaveDrawing(): Boolean {
