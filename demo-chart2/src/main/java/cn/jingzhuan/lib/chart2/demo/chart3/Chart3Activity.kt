@@ -87,6 +87,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvDrawStraight: TextView
 
+    private lateinit var tvDrawEndAnchor: TextView
+
     private lateinit var tvRevoke: TextView
 
     private lateinit var tvDelete: TextView
@@ -163,6 +165,7 @@ class Chart3Activity : AppCompatActivity() {
         tvDrawLine = findViewById(R.id.tv_draw_line)
         tvDrawSegment = findViewById(R.id.tv_draw_segment)
         tvDrawStraight = findViewById(R.id.tv_draw_straight)
+        tvDrawEndAnchor = findViewById(R.id.tv_draw_end_anchor)
         tvRevoke = findViewById(R.id.tv_revoke)
         tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
@@ -469,6 +472,24 @@ class Chart3Activity : AppCompatActivity() {
             val dataSet = DrawLineDataSet().apply {
                 lineKey = "ltStraight$index"
                 lineType = DrawLineType.ltStraightLine.ordinal
+                lineState = DrawLineState.prepare
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置起点 0/2"
+        }
+
+        tvDrawEndAnchor.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltEndAnchorLine$index"
+                lineType = DrawLineType.ltEndAnchorLine.ordinal
                 lineState = DrawLineState.prepare
             }
 

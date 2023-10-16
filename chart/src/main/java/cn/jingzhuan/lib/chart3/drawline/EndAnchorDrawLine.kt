@@ -7,6 +7,7 @@ import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import kotlin.math.atan2
 
 /**
  * @since 2023-10-16
@@ -57,6 +58,8 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         } else {
             canvas.drawLine(startX, startY, endX, endY, linePaint)
         }
+        // 画箭头
+        drawArrow(canvas, dataSet, startX, startY, endX, endY)
     }
 
     override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
@@ -93,5 +96,38 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         path.lineTo(endX, endY)
         path.close()
         canvas.drawPath(path, linePaint)
+
+        // 画箭头
+        drawArrow(canvas, dataSet, startX, startY, endX, endY)
+    }
+
+    private fun drawArrow(canvas: Canvas, dataSet: DrawLineDataSet, startX: Float, startY: Float, endX: Float, endY: Float) {
+        // 画箭头
+
+        canvas.save()
+        // 箭头长度
+        val arrowHeight = dataSet.pointRadiusOut * 1.8f
+        // 当前夹角
+        val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+
+        val x1 = endX - dataSet.pointRadiusOut
+        val y1 = endY + arrowHeight
+
+        val x2 = endX + dataSet.pointRadiusOut
+        val y2 = endY + arrowHeight
+
+        canvas.rotate(angle.toFloat() + 90f, endX, endY)
+
+        linePaint.style = Paint.Style.FILL
+        linePaint.alpha = 255
+        linePaint.strokeWidth = 1f
+        val trianglePath = Path()
+        trianglePath.moveTo(endX, endY)
+        trianglePath.lineTo(x1, y1)
+        trianglePath.lineTo(x2, y2)
+        trianglePath.close()
+        canvas.drawPath(trianglePath, linePaint)
+
+        canvas.restore()
     }
 }
