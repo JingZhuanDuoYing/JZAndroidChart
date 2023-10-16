@@ -15,6 +15,7 @@ import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.drawline.AbstractDrawLine
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
+import cn.jingzhuan.lib.chart3.drawline.EndAnchorDrawLine
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.drawline.StraightDrawLine
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
@@ -52,6 +53,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     private fun initDraw(chart: AbstractChartView<T>) {
         drawMap[DrawLineType.ltSegment.ordinal] = SegmentDrawLine(chart)
         drawMap[DrawLineType.ltStraightLine.ordinal] = StraightDrawLine(chart)
+        drawMap[DrawLineType.ltEndAnchorLine.ordinal] = EndAnchorDrawLine(chart)
     }
 
     override fun renderer(canvas: Canvas) {

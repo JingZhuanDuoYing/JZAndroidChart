@@ -442,6 +442,7 @@ class LineDraw(
         if (lineDataSet.isLineVisible) {
             canvas.drawPath(pointLinePath, renderPaint)
         }
+        renderPaint.pathEffect = null
     }
 
     /**

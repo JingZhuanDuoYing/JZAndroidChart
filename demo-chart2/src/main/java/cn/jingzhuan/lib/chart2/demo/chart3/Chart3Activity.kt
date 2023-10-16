@@ -394,6 +394,14 @@ class Chart3Activity : AppCompatActivity() {
 
                     override fun checkIfClickToSwitch() {
                         Toast.makeText(this@Chart3Activity, "切换指标", Toast.LENGTH_SHORT).show()
+                        val index = subCharts.indexOf(it)
+                        if (index == 1) {
+                            val lineDataSets = (it.chartData as CombineData).getLineDataSets()
+                            lineDataSets.forEach { dataSet->
+                                dataSet.isPointLine = false
+                            }
+                            it.postInvalidate()
+                        }
                     }
 
                 })
@@ -592,7 +600,7 @@ class Chart3Activity : AppCompatActivity() {
     }
     private fun setSubKlineChartData(update: Boolean = false, loadMore: Boolean = false) {
         val barList = ArrayList<BarValue>()
-        val zeroBarList = ArrayList<BarValue>()
+        val lineList = ArrayList<LineValue>()
 
         var color: Int
         var style: Paint.Style
@@ -609,11 +617,8 @@ class Chart3Activity : AppCompatActivity() {
             }
             barList.add(BarValue(value.low, color, style))
 
-            if (index % 3 == 0) {
-                zeroBarList.add(BarValue(-value.high, color, Paint.Style.FILL))
-            } else {
-                zeroBarList.add(BarValue(value.high, color, Paint.Style.FILL))
-            }
+            lineList.add(LineValue(value.close))
+
         }
 
         val barDataSet = BarDataSet(barList).apply {
@@ -624,12 +629,12 @@ class Chart3Activity : AppCompatActivity() {
             add(barDataSet)
         }
 
-        val zeroBarDataSet = ZeroCenterBarDataSet(zeroBarList).apply {
-            isAutoBarWidth = true
+        val lineDataSet = LineDataSet(lineList).apply {
+            isPointLine = true
             axisDependency = AxisY.DEPENDENCY_LEFT
         }
-        val zeroData = CombineData().apply {
-            add(zeroBarDataSet)
+        val lineData = CombineData().apply {
+            add(lineDataSet)
         }
 
         subCharts.forEachIndexed { index, subChartView ->
@@ -637,7 +642,7 @@ class Chart3Activity : AppCompatActivity() {
                 subChartView.setCombineData(data)
             }
             if (index == 1) {
-                subChartView.setCombineData(zeroData)
+                subChartView.setCombineData(lineData)
             }
         }
 
