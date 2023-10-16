@@ -16,7 +16,6 @@ import androidx.core.view.GestureDetectorCompat
 import cn.jingzhuan.lib.chart.Zoomer
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
-import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener

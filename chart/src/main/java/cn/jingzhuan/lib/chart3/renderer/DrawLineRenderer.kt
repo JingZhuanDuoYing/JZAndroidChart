@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
+import cn.jingzhuan.lib.chart3.base.BaseChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -16,6 +17,7 @@ import cn.jingzhuan.lib.chart3.drawline.AbstractDrawLine
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.drawline.EndAnchorDrawLine
+import cn.jingzhuan.lib.chart3.drawline.RectDrawLine
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.drawline.StraightDrawLine
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
@@ -54,6 +56,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         drawMap[DrawLineType.ltSegment.ordinal] = SegmentDrawLine(chart)
         drawMap[DrawLineType.ltStraightLine.ordinal] = StraightDrawLine(chart)
         drawMap[DrawLineType.ltEndAnchorLine.ordinal] = EndAnchorDrawLine(chart)
+        drawMap[DrawLineType.ltRect.ordinal] = RectDrawLine(chart)
     }
 
     override fun renderer(canvas: Canvas) {
@@ -220,6 +223,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         if (preDrawLine == null || lineType == 0) {
             return false
         }
+
+        (chartView as BaseChartView).cleanHighlight()
 
         when (preDrawLine.lineState) {
             DrawLineState.prepare -> {
