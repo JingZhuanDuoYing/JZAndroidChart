@@ -65,8 +65,14 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var bcap: String? = null
 
+    /**
+     * 瞄点起点
+     */
     var startDrawValue: DrawLineValue? = null
 
+    /**
+     * 瞄点终点
+     */
     var endDrawValue: DrawLineValue? = null
 
     var pointRadiusIn = 8f
@@ -89,6 +95,11 @@ class DrawLineDataSet@JvmOverloads constructor(
      * 两点之间Y距离 当且仅当两个点的时候适用
      */
     var distanceY = 0f
+
+
+    var leftCrossValue = -1f
+
+    var rightCrossValue = -1f
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

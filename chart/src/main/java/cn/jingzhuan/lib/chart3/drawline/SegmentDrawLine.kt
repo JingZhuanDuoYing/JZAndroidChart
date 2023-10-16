@@ -35,7 +35,6 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         if (startValue > lMax && endValue > lMax) return
         if (startValue < lMin && endValue < lMin) return
 
-//        val key = dataSet.lineKey ?: return
         var startX = visibleValues.find { it.time == startPoint.time }?.x ?: -1f
         var endX = visibleValues.find { it.time == endPoint.time }?.x ?: -1f
 
