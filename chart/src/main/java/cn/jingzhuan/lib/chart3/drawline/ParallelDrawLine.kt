@@ -12,10 +12,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * @since 2023-10-13
- * 画直线
+ * @since 2023-10-17
+ * 画平行线
  */
-class StraightDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
+class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
 
     override fun onDraw(
         canvas: Canvas,

@@ -334,6 +334,20 @@
             android:layout_marginStart="10dp"/>
 
         <TextView
+            android:id="@+id/tv_draw_parallel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画平行线"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_rect"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
             android:id="@+id/tv_revoke"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

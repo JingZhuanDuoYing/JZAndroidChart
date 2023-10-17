@@ -26,25 +26,25 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
     }
 
     override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
-        val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
-        if (visibleValues.isNullOrEmpty()) return
+        val startPoint = dataSet.startDrawValue
+        val endPoint = dataSet.endDrawValue
+        if (startPoint == null || endPoint == null) return
 
-        val startValue = dataSet.startDrawValue
-        val endValue = dataSet.endDrawValue
-        if (startValue == null || endValue == null) return
+        if (startPoint.value > lMax && endPoint.value > lMax) return
+        if (startPoint.value < lMin && endPoint.value < lMin) return
 
-        var startX = visibleValues.find { it.time == startValue.time }?.x ?: -1f
-        var startY = chartView.getScaleY(startValue.value, lMax, lMin)
+        val startIndex = baseDataSet.values.indexOfFirst { it.time == startPoint.time }
+        val startX = getEntryX(startIndex, baseDataSet) ?: return
+        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        if (!dataSet.isSelect) {
+            startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
+        }
 
-        var endX = visibleValues.find { it.time == endValue.time }?.x ?: -1f
-        var endY = chartView.getScaleY(endValue.value, lMax, lMin)
-
-        if (startX != -1f && endX == -1f) {
-            endX = startX + dataSet.distanceX
-            endY = startY + dataSet.distanceY
-        } else if (startX == -1f && endX != -1f) {
-            startX = endX - dataSet.distanceX
-            startY = endY - dataSet.distanceY
+        val endIndex = baseDataSet.values.indexOfFirst { it.time == endPoint.time }
+        val endX = getEntryX(endIndex, baseDataSet) ?: return
+        val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+        if (!dataSet.isSelect) {
+            endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
         val rect = RectF(startX, startY, endX, endY)

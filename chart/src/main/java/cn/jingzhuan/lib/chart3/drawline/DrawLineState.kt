@@ -18,6 +18,11 @@ enum class DrawLineState {
     first,
 
     /**
+     * 第二步
+     */
+    second,
+
+    /**
      * 完成
      */
     complete

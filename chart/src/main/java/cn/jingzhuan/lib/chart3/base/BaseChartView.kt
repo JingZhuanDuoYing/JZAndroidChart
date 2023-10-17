@@ -10,7 +10,6 @@ import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart.animation.ChartAnimator
 import cn.jingzhuan.lib.chart.animation.Easing.EasingFunction
 import cn.jingzhuan.lib.chart3.Highlight
-import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
@@ -146,14 +145,15 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
     }
 
-    fun handleLoadMoreHighlight(viewport: Viewport, dataSize: Int) {
+    fun handleLoadMoreIndex(dataSize: Int) {
         if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
             val highlight = highlightRenderer.highlight ?: return
-            var index = (((highlight.x - contentRect.left) * viewport.width() / contentRect.width() + viewport.left) * dataSize.toFloat()).toInt()
-            if (index >= dataSize) index = dataSize - 1
-            if (index < 0) index = 0
-            val dataIndex = index
-            highlight.dataIndex = dataIndex
+            highlight.dataIndex = highlight.dataIndex + dataSize
+            highlight.x = getEntryX(highlight.dataIndex)
+
+            if (highlight.x > contentRect.right - pointWidth * 0.5f) {
+                highlight.x = contentRect.right - pointWidth * 0.5f
+            }
             highlightRenderer.highlightValue(highlight)
         }
     }

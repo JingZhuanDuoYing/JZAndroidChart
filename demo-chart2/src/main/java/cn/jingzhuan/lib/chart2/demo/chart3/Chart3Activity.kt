@@ -91,6 +91,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvDrawRect: TextView
 
+    private lateinit var tvDrawParallel: TextView
+
     private lateinit var tvRevoke: TextView
 
     private lateinit var tvDelete: TextView
@@ -169,6 +171,7 @@ class Chart3Activity : AppCompatActivity() {
         tvDrawStraight = findViewById(R.id.tv_draw_straight)
         tvDrawEndAnchor = findViewById(R.id.tv_draw_end_anchor)
         tvDrawRect = findViewById(R.id.tv_draw_rect)
+        tvDrawParallel = findViewById(R.id.tv_draw_parallel)
         tvRevoke = findViewById(R.id.tv_revoke)
         tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
@@ -355,7 +358,11 @@ class Chart3Activity : AppCompatActivity() {
                 override fun onTouch(state: DrawLineState, point: PointF, type: Int) {
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
-                        tvStep.text = "请点击放置终点 1/2"
+                        tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
+                    } else if (state == DrawLineState.second) {
+                        if(type == DrawLineType.ltParallelLine.ordinal) {
+                            tvStep.text = "请确第二个点的位置"
+                        }
                     } else if (state == DrawLineState.complete) {
                         tvStep.visibility = View.VISIBLE
                         tvStep.text = "已完成"
@@ -522,6 +529,25 @@ class Chart3Activity : AppCompatActivity() {
             tvStep.visibility = View.VISIBLE
             tvStep.text = "请点击放置起点 0/2"
         }
+
+        tvDrawParallel.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltParallelLine$index"
+                lineType = DrawLineType.ltParallelLine.ordinal
+                lineState = DrawLineState.prepare
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置起点 0/3"
+        }
+
 
         tvRevoke.setOnClickListener {
             if (rbDay.isChecked) {

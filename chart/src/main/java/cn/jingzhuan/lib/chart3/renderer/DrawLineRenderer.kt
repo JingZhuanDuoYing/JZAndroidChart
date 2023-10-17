@@ -17,9 +17,11 @@ import cn.jingzhuan.lib.chart3.drawline.AbstractDrawLine
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
 import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import cn.jingzhuan.lib.chart3.drawline.EndAnchorDrawLine
+import cn.jingzhuan.lib.chart3.drawline.ParallelDrawLine
 import cn.jingzhuan.lib.chart3.drawline.RectDrawLine
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.drawline.StraightDrawLine
+import cn.jingzhuan.lib.chart3.event.OnDrawLineTouchListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -50,6 +52,19 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     init {
         initDraw(chart)
+
+        chart.addOnDrawLineTouchListener(object : OnDrawLineTouchListener{
+
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float,
+            ) {
+                onMoveDrawLine(e2)
+            }
+
+        })
     }
 
     private fun initDraw(chart: AbstractChartView<T>) {
@@ -57,6 +72,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         drawMap[DrawLineType.ltStraightLine.ordinal] = StraightDrawLine(chart)
         drawMap[DrawLineType.ltEndAnchorLine.ordinal] = EndAnchorDrawLine(chart)
         drawMap[DrawLineType.ltRect.ordinal] = RectDrawLine(chart)
+        drawMap[DrawLineType.ltParallelLine.ordinal] = ParallelDrawLine(chart)
     }
 
     override fun renderer(canvas: Canvas) {
@@ -84,6 +100,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         draw?.onDraw(canvas, dataSet, baseDataSet, leftMax, leftMin)
     }
 
+
     fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -93,7 +110,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                onMoveDrawLine(event)
+//                onMoveDrawLine(event)
             }
 
             MotionEvent.ACTION_UP -> {
@@ -108,53 +125,34 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         val y = event.y
         val chartData = (chart.chartData as CombineData?)
         val drawLineChartData = chartData?.drawLineChartData
-        val baseDataSet = chartData?.getTouchDataSet()
+        val baseDataSet = chartData?.getTouchDataSet() ?: return false
 
         val preDrawLine = drawLineChartData?.dataSets?.find { it.isSelect } ?: return false
         if (dragState == ChartConstant.DRAW_LINE_DRAG_LEFT) {
             // 移动起点
             if (preDrawLine.startDrawValue != null) {
-                if (baseDataSet != null) {
-                    val index = chartView.getEntryIndex(x)
-                    val baseValue = baseDataSet.getEntryForIndex(index)
-                    if (baseValue != null) {
-                        val time = baseValue.time
-                        val value = chartData.leftMax - y / contentRect.height() * (chartData.leftMax - chartData.leftMin)
-                        preDrawLine.startDrawValue = DrawLineValue(value, time)
-                        preDrawLine.startDrawValue?.x = baseValue.x
-                        preDrawLine.startDrawValue?.y = y
-                        preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
-                        preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
-                        preDrawLine.isSelect = true
-                        Log.d("onPressDrawLine", "移动起点->index=$index, startX= ${baseValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
-                        chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), PointF(event.x, event.y), ChartConstant.DRAW_LINE_DRAG_LEFT)
-
-                        chartView.postInvalidate()
-                    }
+                val point = PointF(x, y)
+                val startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                if (startDrawValue != null) {
+                    preDrawLine.startDrawValue = startDrawValue
+                    preDrawLine.isSelect = true
+                    Log.d("onPressDrawLine", "移动起点->index=${startDrawValue.dataIndex}, startX= ${startDrawValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
+                    chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_LEFT)
+                    chartView.postInvalidate()
                 }
             }
             return true
         } else if(dragState == ChartConstant.DRAW_LINE_DRAG_RIGHT){
             // 移动终点
             if (preDrawLine.endDrawValue != null) {
-                if (baseDataSet != null) {
-                    val index = chartView.getEntryIndex(x)
-                    val baseValue = baseDataSet.getEntryForIndex(index)
-                    if (baseValue != null) {
-                        val time = baseValue.time
-                        val value = chartData.leftMax - y / contentRect.height() * (chartData.leftMax - chartData.leftMin)
-                        preDrawLine.endDrawValue = DrawLineValue(value, time)
-                        preDrawLine.endDrawValue?.x = baseValue.x
-                        preDrawLine.endDrawValue?.y = y
-                        preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
-                        preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
-
-                        preDrawLine.isSelect = true
-
-                        chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), PointF(event.x, event.y), ChartConstant.DRAW_LINE_DRAG_RIGHT)
-
-                        chartView.postInvalidate()
-                    }
+                val point = PointF(x, y)
+                val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                if (endDrawValue != null) {
+                    preDrawLine.endDrawValue = endDrawValue
+                    preDrawLine.isSelect = true
+                    Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
+                    chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_RIGHT)
+                    chartView.postInvalidate()
                 }
             }
             return true
@@ -163,39 +161,26 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
             if (preDrawLine.startDrawValue != null && preDrawLine.endDrawValue != null) {
                 val deltaX = x - lastPreX
                 val deltaY = y - lastPreY
-                val visibleValues = baseDataSet?.getVisiblePoints(currentViewport)
-                if (baseDataSet != null && !visibleValues.isNullOrEmpty()) {
+                val visibleValues = baseDataSet.getVisiblePoints(currentViewport)
+                if (!visibleValues.isNullOrEmpty()) {
                     val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
                     val nowStartY = preDrawLine.startDrawValue!!.y + deltaY
-                    val startIndex = chartView.getEntryIndex(nowStartX)
-                    Log.d("onPressDrawLine", "一起滑动startIndex $startIndex,nowStartX= $nowStartX, nowStartY= $nowStartY")
-                    val startBaseValue = baseDataSet.getEntryForIndex(startIndex)
+                    val startPoint = PointF(nowStartX, nowStartY)
+                    val startDrawValue = getValue(startPoint, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    startDrawValue?.x = nowStartX
 
-                    if (startBaseValue != null) {
-                        val time = startBaseValue.time
-                        val value = chartData.leftMax - nowStartY / contentRect.height() * (chartData.leftMax - chartData.leftMin)
-                        preDrawLine.startDrawValue = DrawLineValue(value, time)
-                        preDrawLine.startDrawValue?.x = nowStartX
-                        preDrawLine.startDrawValue?.y = nowStartY
-                        Log.d("onPressDrawLine", "一起滑动startIndex $startIndex, time=$time, value=$value")
-                    }
+                    preDrawLine.startDrawValue = startDrawValue
 
                     val nowEndX = preDrawLine.endDrawValue!!.x + deltaX
                     val nowEndY = preDrawLine.endDrawValue!!.y + deltaY
-                    val endIndex = chartView.getEntryIndex(nowEndX)
-                    Log.d("onPressDrawLine", "一起滑动endIndex $startIndex,nowEndX= $nowStartX, nowEndY= $nowStartY")
-                    val endBaseValue = baseDataSet.getEntryForIndex(endIndex)
+                    val endPoint = PointF(nowEndX, nowEndY)
+                    val endDrawValue = getValue(endPoint, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    endDrawValue?.x = nowEndX
 
-                    if (endBaseValue != null) {
-                        val time = endBaseValue.time
-                        val value = chartData.leftMax - nowEndY / contentRect.height() * (chartData.leftMax - chartData.leftMin)
-                        preDrawLine.endDrawValue = DrawLineValue(value, time)
-                        preDrawLine.endDrawValue!!.x = nowEndX
-                        preDrawLine.endDrawValue?.y = nowEndY
-                        Log.d("onPressDrawLine", "一起滑动endIndex $endIndex, time=$time, value=$value")
-                    }
+                    preDrawLine.endDrawValue = endDrawValue
 
                     preDrawLine.isSelect = true
+
                     chartView.postInvalidate()
                 }
             }
@@ -233,23 +218,33 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 preDrawLine.isSelect = true
                 preDrawLine.startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
 
-                chartView.drawLineListener?.onTouch(DrawLineState.first, point, lineType)
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
                 chartView.postInvalidate()
             }
 
             DrawLineState.first -> {
                 // 第二步
-                preDrawLine.lineState = DrawLineState.complete
+                if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
+                    preDrawLine.lineState = DrawLineState.second
+                } else {
+                    preDrawLine.lineState = DrawLineState.complete
+                }
                 preDrawLine.isSelect = true
                 preDrawLine.endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
 
-                preDrawLine.distanceX = (preDrawLine.endDrawValue?.x ?: 0f) - (preDrawLine.startDrawValue?.x ?: 0f)
-                preDrawLine.distanceY = (preDrawLine.endDrawValue?.y ?: 0f) - (preDrawLine.startDrawValue?.y ?: 0f)
-
-                chartView.drawLineListener?.onTouch(DrawLineState.complete, point, lineType)
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
                 chartView.postInvalidate()
             }
 
+            DrawLineState.second -> {
+                if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
+                    preDrawLine.lineState = DrawLineState.complete
+                    preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    preDrawLine.isSelect = true
+                    chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
+                    chartView.postInvalidate()
+                }
+            }
 
             DrawLineState.complete -> {
                 preDrawLine.isSelect = dragState != ChartConstant.DRAW_LINE_NONE
@@ -298,31 +293,20 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
         if (startValue == null && endValue == null) return false
 
-        var startX = visibleValues.find { it.time == startValue?.time }?.x ?: -1f
-        var startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
+        val startX = drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
 
-        var endX = visibleValues.find { it.time == endValue?.time }?.x ?: -1f
-        var endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
+        val endX = drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
 
-        if (startX != -1f && endX == -1f) {
-            endX = startX + dataSet.distanceX
-            endY = startY + dataSet.distanceY
-        } else if (startX == -1f && endX != -1f) {
-            startX = endX - dataSet.distanceX
-            startY = endY - dataSet.distanceY
-        }
-        dataSet.startDrawValue?.x = startX
-        dataSet.startDrawValue?.y = startY
-        dataSet.endDrawValue?.x = endX
-        dataSet.endDrawValue?.y = endY
-
-        Log.d("onPressDrawLine", "checkInDrawLineArea->startX= $startX, startY= $startY,endX= $endX,endY= $endY,")
+        Log.d("onPressDrawLine", "checkInDrawLineArea->startX= $startX, startValue?.dataIndex=${startValue?.dataIndex}, startY= $startY,endX= $endX,endY= $endY,")
 
         val startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
 
         val endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
 
         val centerY = (startY + endY).absoluteValue * 0.5f
+
         val centerRect = RectF(startX, centerY + radius, endX, centerY - radius)
 
         if (point.x in min(startRect.left, startRect.right)..max(startRect.left, startRect.right)
@@ -349,16 +333,17 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     private fun getValue(
         point: PointF,
         baseValues: MutableList<out AbstractValue>,
-        viewportMax: Float, viewportMin: Float
-    ) : DrawLineValue {
+        viewportMax: Float,
+        viewportMin: Float
+    ) : DrawLineValue? {
         val index = chartView.getEntryIndex(point.x)
-        val baseValue = baseValues.getOrNull(index)
-        val startTime = baseValue?.time ?: 0L
-        val selectX = baseValue?.x ?: -1f
+        val baseValue = baseValues.getOrNull(index) ?: return null
+        val startTime = baseValue.time
+        val selectX = baseValue.x
 
         val startValue = viewportMax - point.y / contentRect.height() * (viewportMax - viewportMin)
         val selectY = point.y
-        return DrawLineValue(startValue, startTime).apply { x = selectX; y = selectY }
+        return DrawLineValue(startValue, startTime).apply { dataIndex = index; x = selectX; y = selectY }
     }
 
     fun checkIfHaveDrawing(): Boolean {

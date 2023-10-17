@@ -30,6 +30,7 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
     fun setCombineDataByLoadMore(combineData: CombineData) {
         val dataSize = combineData.getTouchEntryCount()
         if (dataSize > this.totalEntryCount) {
+            isLoadMore = true
             val lastCount = this.totalEntryCount
             val viewport = currentViewport
             val from = viewport.left * lastCount + (dataSize - lastCount)
@@ -37,10 +38,12 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             viewport.left = from / dataSize
             viewport.right = to / dataSize
 
-            handleLoadMoreHighlight(viewport, dataSize)
+            handleLoadMoreIndex(dataSize - lastCount)
+
             setCurrentViewport(viewport)
 
             setCombineData(combineData)
+            isLoadMore = false
         }
     }
 

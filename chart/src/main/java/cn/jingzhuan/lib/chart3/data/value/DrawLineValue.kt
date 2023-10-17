@@ -9,6 +9,7 @@ import java.util.Objects
 class DrawLineValue : AbstractValue {
     var value = 0f
 
+    var dataIndex = -1
 
     var isVisible = false
 

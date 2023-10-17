@@ -75,6 +75,11 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var endDrawValue: DrawLineValue? = null
 
+    /**
+     * 瞄点第三个点
+     */
+    var thirdDrawValue: DrawLineValue? = null
+
     var pointRadiusIn = 8f
 
     var pointRadiusOut = 16f
@@ -85,17 +90,6 @@ class DrawLineDataSet@JvmOverloads constructor(
      * 是否选中
      */
     var isSelect = false
-
-    /**
-     * 两点之间X距离 当且仅当两个点的时候适用
-     */
-    var distanceX = 0f
-
-    /**
-     * 两点之间Y距离 当且仅当两个点的时候适用
-     */
-    var distanceY = 0f
-
 
     var leftCrossValue = -1f
 

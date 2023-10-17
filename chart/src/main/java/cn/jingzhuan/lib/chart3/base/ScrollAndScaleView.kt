@@ -18,6 +18,7 @@ import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
+import cn.jingzhuan.lib.chart3.event.OnDrawLineTouchListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
@@ -64,6 +65,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     private var flagClickListener: OnFlagClickListener? = null
 
     var rangeChangeListener: OnRangeChangeListener? = null
+
+    private var drawLineTouchListener: OnDrawLineTouchListener? = null
 
     private val mSurfacePoint = Point()
 
@@ -209,6 +212,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     var drawLineListener: OnDrawLineListener? = null
 
+    var isLoadMore = false
+
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
 
     constructor(context: Context?) : super(context)
@@ -308,7 +313,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         distanceX: Float,
         distanceY: Float,
     ): Boolean {
-        if (isDrawingLine()) return false
+        if (isDrawingLine()) {
+            if (drawLineTouchListener != null) {
+                drawLineTouchListener?.onScroll(e1, e2, distanceX, distanceY)
+            }
+            return false
+        }
 
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
@@ -348,19 +358,20 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
             val currX = mScroller.currX
 
-            Log.i(TAG, "computeScroll-> currX=${mScroller.currX} mScroller.isFinished=${mScroller.isFinished}")
+//            Log.i(TAG, "computeScroll-> currX=${mScroller.currX} mScroller.isFinished=${mScroller.isFinished}")
 
             val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
-            val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
+//            val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
 
-            val canScrollX = !leftSide || !rightSide
+//            val canScrollX = !leftSide || !rightSide
 
-            if (canScrollX && currX < 0) {
-                needsInvalidate = true
-            } else if (canScrollX && currX > mSurfacePoint.x - contentRect.width()) {
-                needsInvalidate = true
-            }
+//            if (canScrollX && currX < 0) {
+//                needsInvalidate = true
+//            } else if (canScrollX && currX > mSurfacePoint.x - contentRect.width()) {
+//                needsInvalidate = true
+//            }
             val currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN) * currX / mSurfacePoint.x
+            Log.i(TAG, "computeScroll-> currXRange=${currXRange} mScroller.isFinished=${mScroller.isFinished}")
             setViewportBottomLeft(currXRange)
 
             if (currX < pointWidth * 0.5f && leftSide) {
@@ -441,6 +452,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
 
         if (needsInvalidate) {
+            Log.i(TAG, "computeScroll-> needsInvalidate")
             triggerViewportChange()
         }
     }
@@ -637,7 +649,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                     // 之前是长按 抬起时直接return 不回调 onSingleTapUp
                     return false
                 }
-                if (isDrawingLine()) return false
+                if (isDrawingLine()) {
+                    return false
+                }
             }
 
             MotionEvent.ACTION_CANCEL -> {
@@ -660,7 +674,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     fun setCurrentViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
-        triggerViewportChange()
+        if (!isLoadMore) triggerViewportChange()
     }
 
     fun setStaticCurrentViewport(viewport: RectF) {
@@ -913,6 +927,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun setOnDrawLineListener(listener: OnDrawLineListener) {
         this.drawLineListener = listener
+    }
+
+    fun addOnDrawLineTouchListener(listener: OnDrawLineTouchListener) {
+        this.drawLineTouchListener = listener
     }
 
     fun onFlagCallback(type: Int, index: Int) {
