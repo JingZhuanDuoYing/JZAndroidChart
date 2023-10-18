@@ -122,7 +122,9 @@ object ChartConstant {
 
     const val DRAW_LINE_DRAG_RIGHT = 2
 
-    const val DRAW_LINE_DRAG_BOTH = 3
+    const val DRAW_LINE_DRAG_THIRD = 3
+
+    const val DRAW_LINE_DRAG_BOTH = 4
 
     // </editor-fold desc="画线工具拖动状态">    ------------------
 

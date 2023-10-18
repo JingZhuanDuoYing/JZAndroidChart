@@ -55,7 +55,7 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         // 画选中背景
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.STROKE
-            linePaint.strokeWidth = dataSet.pointRadiusOut * 2f
+            linePaint.strokeWidth = dataSet.pointOuterR * 2f
             linePaint.alpha = 10
             val path = Path()
             path.moveTo(startX, startY)
@@ -73,14 +73,14 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
 
         canvas.save()
         // 箭头长度
-        val arrowHeight = dataSet.pointRadiusOut * 1.8f
+        val arrowHeight = dataSet.pointOuterR * 1.8f
         // 当前夹角
         val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
 
-        val x1 = endX - dataSet.pointRadiusOut
+        val x1 = endX - dataSet.pointOuterR
         val y1 = endY + arrowHeight
 
-        val x2 = endX + dataSet.pointRadiusOut
+        val x2 = endX + dataSet.pointOuterR
         val y2 = endY + arrowHeight
 
         canvas.rotate(angle.toFloat() + 90f, endX, endY)

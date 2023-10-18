@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.util.Log
 import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
@@ -392,10 +391,10 @@ class RangeRenderer<T : AbstractDataSet<*>>(
         val newEndX: Float = currentX - lastPreX + endX
         if (rightIndex != endIndex && rightIndex > chartLeftIndex && rightIndex <= chartRightIndex) {
             endIndex = rightIndex
-            if (rightIndex - leftIndex <= maxDiffEntry && newEndX < endX) {
-                startIndex = rightIndex - 1
+            startIndex = if (rightIndex - leftIndex <= maxDiffEntry && newEndX < endX) {
+                rightIndex - 1
             } else {
-                startIndex = leftIndex
+                leftIndex
             }
             startX = chart.getEntryX(startIndex)
             endX = chart.getEntryX(endIndex)

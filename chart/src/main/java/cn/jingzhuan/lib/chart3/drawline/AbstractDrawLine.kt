@@ -18,7 +18,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     protected val linePaint by lazy { Paint() }
 
-    protected val bgPaint by lazy { Paint() }
+    private val bgPaint by lazy { Paint() }
 
     protected val textPaint by lazy { Paint() }
 
@@ -84,8 +84,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val y = chartView.getScaleY(value.value, lMax, lMin)
         Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = 30
-        canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)
+        canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
+        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
     }
 
     /**
@@ -99,8 +99,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = 30
-        canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)
+        canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
+        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
     }
 
     /**
@@ -114,8 +114,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = 30
-        canvas.drawCircle(x, y, dataSet.pointRadiusOut, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointRadiusIn, linePaint)
+        canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
+        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
     }
 
     fun getEntryX(index: Int, baseDataSet: AbstractDataSet<*>): Float? {

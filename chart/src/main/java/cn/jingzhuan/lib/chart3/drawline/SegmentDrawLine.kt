@@ -53,7 +53,7 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         // 画选中背景
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.STROKE
-            linePaint.strokeWidth = dataSet.pointRadiusOut * 2f
+            linePaint.strokeWidth = dataSet.pointOuterR * 2f
             linePaint.alpha = 10
             val path = Path()
             path.moveTo(startX, startY)

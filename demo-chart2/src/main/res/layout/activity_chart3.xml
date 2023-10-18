@@ -334,6 +334,34 @@
             android:layout_marginStart="10dp"/>
 
         <TextView
+            android:id="@+id/tv_draw_hjfg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画黄金分割"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_segment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_draw_fbnc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画斐波那挈线"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_hjfg"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_segment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
             android:id="@+id/tv_draw_parallel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

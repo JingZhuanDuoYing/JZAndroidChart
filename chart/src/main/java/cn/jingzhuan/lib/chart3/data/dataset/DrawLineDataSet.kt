@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
+import android.graphics.PointF
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
@@ -43,7 +44,7 @@ class DrawLineDataSet@JvmOverloads constructor(
     /**
      * 字体大小
      */
-    var fontSize = 0
+    var fontSize = 24
 
     /**
      * 字体类型
@@ -80,9 +81,15 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var thirdDrawValue: DrawLineValue? = null
 
-    var pointRadiusIn = 8f
+    /**
+     * 点 内圆半径
+     */
+    var pointInnerR = 8f
 
-    var pointRadiusOut = 16f
+    /**
+     * 点 外圆半径
+     */
+    var pointOuterR = 16f
 
     var lineState = DrawLineState.complete
 
@@ -94,6 +101,10 @@ class DrawLineDataSet@JvmOverloads constructor(
     var leftCrossValue = -1f
 
     var rightCrossValue = -1f
+
+    var sLeftCrossValue = -1f
+
+    var sRightCrossValue = -1f
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false
