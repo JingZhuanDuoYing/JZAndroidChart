@@ -54,17 +54,19 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val width = chartView.contentRect.width().toFloat()
         val height = chartView.contentRect.height().toFloat()
 
-        // 画背景
-        linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.pointOuterR * 2f
-        linePaint.alpha = 50
-        canvas.drawRect(0f, startY, width, endY, linePaint)
-
         // 画第一条线
         linePaint.style = Paint.Style.FILL
         linePaint.strokeWidth = dataSet.lineSize
         linePaint.alpha = 255
         canvas.drawLine(0f, startY, width, startY, linePaint)
+
+        // 画第一条线选中背景
+        if (dataSet.isSelect) {
+            linePaint.style = Paint.Style.FILL
+            linePaint.strokeWidth = dataSet.pointOuterR * 2f
+            linePaint.alpha = 10
+            canvas.drawLine(0f, startY, width, startY, linePaint)
+        }
 
         // 画文本
         sb.append("base")
@@ -79,6 +81,14 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.strokeWidth = dataSet.lineSize
         linePaint.alpha = 255
         canvas.drawLine(0f, endY, width, endY, linePaint)
+
+        // 画第二条线选中背景
+        if (dataSet.isSelect) {
+            linePaint.style = Paint.Style.FILL
+            linePaint.strokeWidth = dataSet.pointOuterR * 2f
+            linePaint.alpha = 10
+            canvas.drawLine(0f, endY, width, endY, linePaint)
+        }
 
         // 画文本
         sb.append("100%")
