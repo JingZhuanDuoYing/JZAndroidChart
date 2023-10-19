@@ -47,13 +47,18 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
+        // 画矩形
         val rect = RectF(startX, startY, endX, endY)
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = dataSet.lineSize
         canvas.drawRect(rect, linePaint)
 
-        linePaint.style = Paint.Style.FILL
-        linePaint.alpha = if(dataSet.isSelect) 10 else 50
-        canvas.drawRect(rect, linePaint)
+        // 画矩形四条边的背景
+        if (dataSet.isSelect) {
+            linePaint.style = Paint.Style.STROKE
+            linePaint.strokeWidth = dataSet.pointOuterR * 2f
+            linePaint.alpha = 10
+            canvas.drawRect(rect, linePaint)
+        }
     }
 }
