@@ -430,9 +430,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun onRangeChange() {
-        if (chart.rangeChangeListener != null){
-            chart.rangeChangeListener?.onRange(startIndex, endIndex, touchType)
-        }
+        chart.changeRange(startIndex, endIndex, touchType)
     }
 
     private fun onCloseClick(x: Float, y: Float) {

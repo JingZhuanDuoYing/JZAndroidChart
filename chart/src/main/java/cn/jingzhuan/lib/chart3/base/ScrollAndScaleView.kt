@@ -64,7 +64,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     private var flagClickListener: OnFlagClickListener? = null
 
-    var rangeChangeListener: OnRangeChangeListener? = null
+    protected var rangeChangeListener: OnRangeChangeListener? = null
 
     private var drawLineTouchListener: OnDrawLineTouchListener? = null
 
@@ -703,7 +703,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
 
         if (isOpenRange) {
-            onRangeChange()
+            onRangeViewPortChange()
         }
 
         if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
@@ -951,7 +951,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     /**
      * viewport改变 区间统计位置对应更新
      */
-    abstract fun onRangeChange()
+    abstract fun onRangeViewPortChange()
 
     /**
      * 获取下标

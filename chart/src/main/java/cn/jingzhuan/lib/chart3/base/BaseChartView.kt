@@ -218,6 +218,12 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         invalidate()
     }
 
+    override fun changeRange(startIndex: Int, endIndex: Int, touchType: Int) {
+        if (rangeChangeListener != null){
+            rangeChangeListener?.onRange(startIndex, endIndex, touchType)
+        }
+    }
+
     fun cleanRange() {
         isOpenRange = false
         rangeRenderer.cleanRange()
@@ -226,7 +232,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         }
     }
 
-    override fun onRangeChange() {
+    override fun onRangeViewPortChange() {
         rangeRenderer.onViewportChange()
     }
 

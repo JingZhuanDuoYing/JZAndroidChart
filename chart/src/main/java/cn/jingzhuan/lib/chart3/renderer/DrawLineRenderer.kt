@@ -164,7 +164,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val point = PointF(x, y)
                     val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
                     if (endDrawValue != null) {
-                        // 斐波那挈 终点不能小于等于起点点
+                        // 斐波那挈 终点不能小于等于起点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
                             return true
                         }
