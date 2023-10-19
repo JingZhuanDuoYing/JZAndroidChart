@@ -97,6 +97,8 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvDrawParallel: TextView
 
+    private lateinit var tvAdsorb: TextView
+
     private lateinit var tvRevoke: TextView
 
     private lateinit var tvDelete: TextView
@@ -178,6 +180,7 @@ class Chart3Activity : AppCompatActivity() {
         tvDrawHJFG = findViewById(R.id.tv_draw_hjfg)
         tvDrawFBNC = findViewById(R.id.tv_draw_fbnc)
         tvDrawParallel = findViewById(R.id.tv_draw_parallel)
+        tvAdsorb = findViewById(R.id.tv_adsorb)
         tvRevoke = findViewById(R.id.tv_revoke)
         tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
@@ -588,6 +591,19 @@ class Chart3Activity : AppCompatActivity() {
             }
             tvStep.visibility = View.VISIBLE
             tvStep.text = "请点击放置起点 0/3"
+        }
+
+        if (klineMain.isDrawLineAdsorb) {
+            tvAdsorb.setBackgroundColor(ContextCompat.getColor(tvAdsorb.context, R.color.colorPrimary))
+        }
+
+        tvAdsorb.setOnClickListener {
+            klineMain.isDrawLineAdsorb = !klineMain.isDrawLineAdsorb
+            if (klineMain.isDrawLineAdsorb) {
+                tvAdsorb.setBackgroundColor(ContextCompat.getColor(tvAdsorb.context, R.color.colorPrimary))
+            } else {
+                tvAdsorb.setBackgroundColor(Color.TRANSPARENT)
+            }
         }
 
 

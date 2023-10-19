@@ -13,6 +13,7 @@ import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.data.value.AbstractValue
+import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.drawline.AbstractDrawLine
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
@@ -52,6 +53,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
      * 上一次触摸的y坐标
      */
     private var lastPreY = 0f
+
+    private val lessDistanceY by lazy { 25 }
 
     init {
         initDraw(chart)
@@ -142,7 +145,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 // 移动起点
                 if (preDrawLine.startDrawValue != null) {
                     val point = PointF(x, y)
-                    val startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    val startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
                     if (startDrawValue != null) {
                         // 斐波那挈 起点不能大于等于终点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && startDrawValue.dataIndex >= preDrawLine.endDrawValue!!.dataIndex) {
@@ -162,7 +165,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 // 移动终点
                 if (preDrawLine.endDrawValue != null) {
                     val point = PointF(x, y)
-                    val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
                     if (endDrawValue != null) {
                         // 斐波那挈 终点不能小于等于起点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
@@ -181,7 +184,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 // 移动平行点
                 if (preDrawLine.thirdDrawValue != null) {
                     val point = PointF(x, y)
-                    val thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    val thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
                     if (thirdDrawValue != null) {
                         preDrawLine.thirdDrawValue = thirdDrawValue
                         preDrawLine.isSelect = true
@@ -457,17 +460,42 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     private fun getValue(
         point: PointF,
         baseValues: MutableList<out AbstractValue>,
-        viewportMax: Float,
-        viewportMin: Float
+        lMax: Float,
+        lMin: Float,
+        adsorb: Boolean = false
     ) : DrawLineValue? {
         val index = chartView.getEntryIndex(point.x)
         val baseValue = baseValues.getOrNull(index) ?: return null
-        val startTime = baseValue.time
+        val time = baseValue.time
         val selectX = baseValue.x
+        var selectY = point.y
 
-        val startValue = viewportMax - point.y / contentRect.height() * (viewportMax - viewportMin)
-        val selectY = point.y
-        return DrawLineValue(startValue, startTime).apply { dataIndex = index; x = selectX; y = selectY }
+        // 如果是K线才有吸附功能
+        if (adsorb && baseValue is CandlestickValue) {
+            val openY = chartView.getScaleY(baseValue.open, lMax, lMin)
+            val closeY =  chartView.getScaleY(baseValue.close, lMax, lMin)
+            val highY =  chartView.getScaleY(baseValue.high, lMax, lMin)
+            val lowY =  chartView.getScaleY(baseValue.low, lMax, lMin)
+
+            when (selectY) {
+                in highY - lessDistanceY..highY -> {
+                    selectY = highY
+                }
+                in closeY - lessDistanceY..closeY -> {
+                    selectY = closeY
+                }
+                in openY - lessDistanceY..openY -> {
+                    selectY = openY
+                }
+                in lowY - lessDistanceY..lowY -> {
+                    selectY = lowY
+                }
+            }
+        }
+
+        val value = lMax - selectY / contentRect.height() * (lMax - lMin)
+
+        return DrawLineValue(value, time).apply { dataIndex = index; x = selectX; y = selectY }
     }
 
     fun checkIfHaveDrawing(): Boolean {

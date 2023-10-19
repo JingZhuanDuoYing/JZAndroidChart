@@ -210,11 +210,16 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var isOpenDrawLine: Boolean = false
 
+    /**
+     * 是否开启画线自动吸附功能 (蜡烛的开高收低)
+     */
+    var isDrawLineAdsorb: Boolean = true
+
     var drawLineListener: OnDrawLineListener? = null
 
-    var isLoadMore = false
-
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
+
+    var isLoadMore = false
 
     constructor(context: Context?) : super(context)
 

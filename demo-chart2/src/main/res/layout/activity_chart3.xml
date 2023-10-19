@@ -376,6 +376,20 @@
             android:layout_marginStart="10dp"/>
 
         <TextView
+            android:id="@+id/tv_adsorb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="吸附"
+            android:textSize="12sp"
+            android:textColor="@android:color/holo_green_dark"
+            app:layout_constraintLeft_toLeftOf="@+id/tv_delete"
+            app:layout_constraintRight_toRightOf="@+id/tv_delete"
+            app:layout_constraintBottom_toTopOf="@+id/tv_revoke"
+            android:layout_marginBottom="20dp"
+            />
+
+        <TextView
             android:id="@+id/tv_revoke"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
