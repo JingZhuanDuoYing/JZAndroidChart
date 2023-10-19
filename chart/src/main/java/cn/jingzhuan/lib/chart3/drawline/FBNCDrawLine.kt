@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -62,7 +63,6 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
-        val width = chartView.contentRect.width().toFloat()
         val height = chartView.contentRect.height().toFloat()
 
         val bottomY = height - textHeight - textTopPadding
@@ -82,7 +82,8 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         }
 
         // 画第一条线文本
-        sb.append("1")
+        var firstDrawIndex = 1
+        sb.append("$firstDrawIndex")
         canvas.drawText(sb.toString(), startX - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
         sb.clear()
 
@@ -101,27 +102,49 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         }
 
         // 画第二条线文本
-        sb.append("2")
+        var secondDrawIndex = endIndex - startIndex + 1
+        firstDrawIndex = secondDrawIndex
+        sb.append("$secondDrawIndex")
         canvas.drawText(sb.toString(), endX - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
         sb.clear()
 
+        // 画第三条线
+        val thirdDrawIndex = (endIndex - startIndex) * 2 + 1
+        val thirdX = getEntryX(startIndex + (endIndex - startIndex) * 2, baseDataSet) ?: -1f
+        linePaint.style = Paint.Style.FILL
+        linePaint.strokeWidth = dataSet.lineSize * 0.5f
+        linePaint.alpha = 255
+        canvas.drawLine(thirdX, 0f, thirdX, bottomY, linePaint)
+        secondDrawIndex = thirdDrawIndex
+
+        // 画第三条线文本
+        sb.append("$thirdDrawIndex")
+        canvas.drawText(sb.toString(), thirdX - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
+        sb.clear()
+
         // 画剩余等比数列
-//        val lastIndex = baseDataSet.values.size - 1
-//        linePaint.style = Paint.Style.FILL
-//        linePaint.strokeWidth = dataSet.lineSize
-//        linePaint.alpha = 255
-//
-//        var firstIndex = 0
-//        var secondIndex = endIndex - startIndex + 1
-//
-//        for (i in endIndex until lastIndex) {
-//            val currentIndex = firstIndex + secondIndex + 1
-//            val x = chartView.getEntryX(startIndex + currentIndex)
-//            canvas.drawLine(x, 0f, x, bottomY, linePaint)
-//            firstIndex = secondIndex
-//            secondIndex = currentIndex
-//        }
+        val lastIndex = baseDataSet.values.size - 1
+        linePaint.style = Paint.Style.FILL
+        linePaint.strokeWidth = dataSet.lineSize * 0.5f
+        linePaint.alpha = 255
 
+        // 基准线的差
+        val diff = endIndex - startIndex - 1
+        var i = startIndex + secondDrawIndex * 2
 
+        while (i < lastIndex) {
+            val currentIndex = firstDrawIndex + secondDrawIndex + diff
+            if (currentIndex + startIndex > lastIndex) break
+            val x = getEntryX(startIndex + currentIndex - 1, baseDataSet) ?: -1f
+            canvas.drawLine(x, 0f, x, bottomY, linePaint)
+
+            sb.append("$currentIndex")
+            canvas.drawText(sb.toString(), x - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
+            sb.clear()
+
+            firstDrawIndex = secondDrawIndex
+            secondDrawIndex = currentIndex
+            i = secondDrawIndex
+        }
     }
 }

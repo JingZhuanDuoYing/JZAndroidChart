@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.base.BaseChartView
@@ -143,6 +144,11 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val point = PointF(x, y)
                     val startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
                     if (startDrawValue != null) {
+                        // 斐波那挈 起点不能大于等于终点
+                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && startDrawValue.dataIndex >= preDrawLine.endDrawValue!!.dataIndex) {
+                            return true
+                        }
+
                         preDrawLine.startDrawValue = startDrawValue
                         preDrawLine.isSelect = true
                         Log.d("onPressDrawLine", "移动起点->index=${startDrawValue.dataIndex}, startX= ${startDrawValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
@@ -158,6 +164,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val point = PointF(x, y)
                     val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
                     if (endDrawValue != null) {
+                        // 斐波那挈 终点不能小于等于起点点
+                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
+                            return true
+                        }
                         preDrawLine.endDrawValue = endDrawValue
                         preDrawLine.isSelect = true
                         Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
@@ -254,6 +264,15 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         (chartView as BaseChartView).cleanHighlight()
+
+        if (lineType == DrawLineType.ltFBNC.ordinal) {
+            if (preDrawLine.lineState == DrawLineState.first && point.x < (preDrawLine.startDrawValue?.x ?: -1f)) {
+                Toast.makeText(chart.context, "斐波那挈终点不能早于或等于起点", Toast.LENGTH_SHORT).show()
+                preDrawLine.isSelect = true
+                chartView.postInvalidate()
+                return true
+            }
+        }
 
         when (preDrawLine.lineState) {
             DrawLineState.prepare -> {
@@ -417,6 +436,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
                 return true
             }
+        } else if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+            // 斐波那挈 不能同时拖动
+            dragState = ChartConstant.DRAW_LINE_NONE
+            return false
         } else {
             val runY = (startY + endY).absoluteValue * 0.5f
             val runRect = RectF(startX, runY + radius, endX, runY - radius)

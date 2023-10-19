@@ -54,19 +54,25 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val width = chartView.contentRect.width().toFloat()
         val height = chartView.contentRect.height().toFloat()
 
+        // 画背景
+        linePaint.style = Paint.Style.FILL
+        linePaint.strokeWidth = dataSet.pointOuterR * 2f
+        linePaint.alpha = 50
+        canvas.drawRect(0f, startY, width, endY, linePaint)
+
         // 画第一条线
         linePaint.style = Paint.Style.FILL
         linePaint.strokeWidth = dataSet.lineSize
         linePaint.alpha = 255
         canvas.drawLine(0f, startY, width, startY, linePaint)
 
-        // 画第一条线选中背景
-        if (dataSet.isSelect) {
-            linePaint.style = Paint.Style.FILL
-            linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
-            canvas.drawLine(0f, startY, width, startY, linePaint)
-        }
+        // 画文本
+        sb.append("base")
+        val value1 = String.format("%.${chartView.decimalDigitsNumber}f", lMax - startY / height * (lMax - lMin))
+        sb.append("  $value1")
+        val text1 = sb.toString()
+        canvas.drawText(text1, 15f, startY - 5f, textPaint)
+        sb.clear()
 
         // 画第二条线
         linePaint.style = Paint.Style.FILL
@@ -74,13 +80,13 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.alpha = 255
         canvas.drawLine(0f, endY, width, endY, linePaint)
 
-        // 画第二条线选中背景
-        if (dataSet.isSelect) {
-            linePaint.style = Paint.Style.FILL
-            linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
-            canvas.drawLine(0f, endY, width, endY, linePaint)
-        }
+        // 画文本
+        sb.append("100%")
+        val value2 = String.format("%.${chartView.decimalDigitsNumber}f", lMax - endY / height * (lMax - lMin))
+        sb.append("  $value2")
+        val text2 = sb.toString()
+        canvas.drawText(text2, 15f, endY - 5f, textPaint)
+        sb.clear()
 
         // 画黄金分割虚线 固定比例 7条虚线
         linePaint.strokeWidth = 3f
