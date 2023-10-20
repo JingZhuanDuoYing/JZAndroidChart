@@ -416,20 +416,24 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         if (startValue == null && endValue == null) return false
 
         // 检查是否能拖动起点
-        val startX =
-            drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val startX = drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
         val startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
-        val startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
+        var startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
+        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+            startRect = RectF(startX - radius, 0f, startX + radius, contentRect.height().toFloat())
+        }
         if (checkInRect(point, startRect)) {
             dragState = ChartConstant.DRAW_LINE_DRAG_LEFT
             return true
         }
 
         // 检查是否能拖动终点
-        val endX =
-            drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val endX = drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
         val endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
-        val endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
+        var endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
+        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+            endRect = RectF(endX - radius, 0f, endX + radius, contentRect.height().toFloat())
+        }
         if (checkInRect(point, endRect)) {
             dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
             return true
