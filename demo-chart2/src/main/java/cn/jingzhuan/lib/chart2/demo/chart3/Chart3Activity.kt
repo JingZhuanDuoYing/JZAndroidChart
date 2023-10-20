@@ -825,7 +825,7 @@ class Chart3Activity : AppCompatActivity() {
         val candlestickDataSet = CandlestickDataSet(klineList).apply {
             increasingPaintStyle = Paint.Style.STROKE
             strokeThickness = 3f
-            enableGap = true
+            enableGap = false
         }
 
         val lineList = ArrayList<LineValue>()

@@ -69,6 +69,8 @@ open class CandlestickDataSet @JvmOverloads constructor(
 
     var highGaps: SparseArray<Pair<Float, Float>> = SparseArray()
 
+    var gapMaxSize = 3
+
     var candleWidthPercent = 0.8f
 
     override fun calcMinMax(viewport: Viewport) {
