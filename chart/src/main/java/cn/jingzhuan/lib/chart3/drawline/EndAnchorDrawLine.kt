@@ -26,7 +26,13 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+    override fun drawTypeShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        baseDataSet: AbstractDataSet<*>,
+        lMax: Float,
+        lMin: Float
+    ) {
 
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
@@ -52,30 +58,28 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         // 画线段
         canvas.drawLine(startX, startY, endX, endY, linePaint)
 
+        // 当前起点与终点的夹角
+        val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+
         // 画选中背景
+        val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
         if (dataSet.isSelect) {
-            linePaint.style = Paint.Style.STROKE
-            linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
-            val path = Path()
-            path.moveTo(startX, startY)
-            path.lineTo(endX, endY)
-            path.close()
+            linePaint.style = Paint.Style.FILL
+            linePaint.alpha = dataSet.selectAlpha
             canvas.drawPath(path, linePaint)
         }
 
         // 画箭头
-        drawArrow(canvas, dataSet, startX, startY, endX, endY)
+        drawArrow(canvas, dataSet, angle.toFloat(), endX, endY)
     }
 
-    private fun drawArrow(canvas: Canvas, dataSet: DrawLineDataSet, startX: Float, startY: Float, endX: Float, endY: Float) {
-        // 画箭头
-
+    /**
+     * 画箭头
+     */
+    private fun drawArrow(canvas: Canvas, dataSet: DrawLineDataSet, angle: Float, endX: Float, endY: Float) {
         canvas.save()
         // 箭头长度
         val arrowHeight = dataSet.pointOuterR * 1.8f
-        // 当前夹角
-        val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
 
         val x1 = endX - dataSet.pointOuterR
         val y1 = endY + arrowHeight
@@ -83,7 +87,7 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         val x2 = endX + dataSet.pointOuterR
         val y2 = endY + arrowHeight
 
-        canvas.rotate(angle.toFloat() + 90f, endX, endY)
+        canvas.rotate(angle + 90f, endX, endY)
 
         linePaint.style = Paint.Style.FILL
         linePaint.alpha = 255

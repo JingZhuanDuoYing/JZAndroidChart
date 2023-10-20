@@ -1,12 +1,11 @@
 package cn.jingzhuan.lib.chart3.data.dataset
 
 import android.graphics.Color
-import android.graphics.PointF
+import android.graphics.Region
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
-import cn.jingzhuan.lib.chart3.drawline.DrawLineType
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 import kotlin.math.max
@@ -17,8 +16,7 @@ import kotlin.math.max
  */
 class DrawLineDataSet@JvmOverloads constructor(
     drawLineValues: List<DrawLineValue> = emptyList(),
-    @AxisY.AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH,
-    drawLineType: DrawLineType = DrawLineType.ltNone
+    @AxisY.AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
 ) : AbstractDataSet<DrawLineValue>(drawLineValues, axisDependency) {
 
     /**
@@ -91,20 +89,30 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var pointOuterR = 16f
 
+    /**
+     * 画线步骤
+     */
     var lineState = DrawLineState.complete
+
+    /**
+     * 选中背景的透明度 默认10%
+     */
+    var selectAlpha = 25
+
+    /**
+     * 选中的区域  用于判断点击的点是否在此区域中
+     */
+    var selectRegion: Region? = null
+
+    /**
+     * 平行点选中的区域  用于判断点击的点是否在此区域中
+     */
+    var parallelSelectRegion: Region? = null
 
     /**
      * 是否选中
      */
     var isSelect = false
-
-    var leftCrossValue = -1f
-
-    var rightCrossValue = -1f
-
-    var sLeftCrossValue = -1f
-
-    var sRightCrossValue = -1f
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

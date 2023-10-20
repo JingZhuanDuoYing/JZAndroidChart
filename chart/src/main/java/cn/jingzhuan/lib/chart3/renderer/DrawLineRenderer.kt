@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.widget.Toast
 import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
@@ -25,11 +26,11 @@ import cn.jingzhuan.lib.chart3.drawline.ParallelDrawLine
 import cn.jingzhuan.lib.chart3.drawline.RectDrawLine
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.drawline.StraightDrawLine
-import cn.jingzhuan.lib.chart3.event.OnDrawLineTouchListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
-import kotlin.math.absoluteValue
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-10-09
@@ -44,6 +45,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     private var dragState = ChartConstant.DRAW_LINE_NONE
 
+    private val mTouchSlop by lazy { ViewConfiguration.get(chart.context).scaledTouchSlop }
+
     /**
      * 上一次触摸的x坐标
      */
@@ -54,24 +57,13 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
      */
     private var lastPreY = 0f
 
+    /**
+     * 吸附时最小距离
+     */
     private val lessDistanceY by lazy { 25 }
 
     init {
         initDraw(chart)
-
-        chart.addOnDrawLineTouchListener(object : OnDrawLineTouchListener{
-
-            override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent,
-                distanceX: Float,
-                distanceY: Float,
-            ) {
-                Log.d("DrawLineRenderer", "onScroll")
-                onMoveDrawLine(e2)
-            }
-
-        })
     }
 
     private fun initDraw(chart: AbstractChartView<T>) {
@@ -113,20 +105,26 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                Log.d("DrawLineRenderer", "MotionEvent.ACTION_DOWN->dragState=$dragState")
                 lastPreX = event.x
                 lastPreY = event.y
                 onPressDrawLine(event)
             }
 
             MotionEvent.ACTION_MOVE -> {
-                Log.d("DrawLineRenderer", "MotionEvent.ACTION_MOVE")
-//                onMoveDrawLine(event)
+                val diffX: Float = abs(event.x - lastPreX)
+                val diffY: Float = abs(event.y - lastPreY)
+                if (diffX <= mTouchSlop && diffY <= mTouchSlop) {
+                    return false
+                }
+                onMoveDrawLine(event)
             }
 
             MotionEvent.ACTION_UP -> {
-                Log.d("DrawLineRenderer", "MotionEvent.ACTION_UP")
-                chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), PointF(event.x, event.y), ChartConstant.DRAW_LINE_NONE)
+                chartView.drawLineListener?.onDrag(
+                    PointF(event.rawX, event.rawY),
+                    PointF(event.x, event.y),
+                    ChartConstant.DRAW_LINE_NONE
+                )
             }
         }
         return false
@@ -145,10 +143,19 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 // 移动起点
                 if (preDrawLine.startDrawValue != null) {
                     val point = PointF(x, y)
-                    val startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
+                    val startDrawValue = getValue(
+                        point,
+                        baseDataSet.values,
+                        chartData.leftMax,
+                        chartData.leftMin,
+                        chart.isDrawLineAdsorb
+                    )
                     if (startDrawValue != null) {
                         // 斐波那挈 起点不能大于等于终点
-                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && startDrawValue.dataIndex >= preDrawLine.endDrawValue!!.dataIndex) {
+                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal
+                            && preDrawLine.endDrawValue != null
+                            && startDrawValue.dataIndex >= preDrawLine.endDrawValue!!.dataIndex
+                        ) {
                             return true
                         }
 
@@ -161,11 +168,18 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 }
                 return true
             }
+
             ChartConstant.DRAW_LINE_DRAG_RIGHT -> {
                 // 移动终点
                 if (preDrawLine.endDrawValue != null) {
                     val point = PointF(x, y)
-                    val endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
+                    val endDrawValue = getValue(
+                        point,
+                        baseDataSet.values,
+                        chartData.leftMax,
+                        chartData.leftMin,
+                        chart.isDrawLineAdsorb
+                    )
                     if (endDrawValue != null) {
                         // 斐波那挈 终点不能小于等于起点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
@@ -180,11 +194,18 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 }
                 return true
             }
+
             ChartConstant.DRAW_LINE_DRAG_THIRD -> {
                 // 移动平行点
                 if (preDrawLine.thirdDrawValue != null) {
                     val point = PointF(x, y)
-                    val thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, chart.isDrawLineAdsorb)
+                    val thirdDrawValue = getValue(
+                        point,
+                        baseDataSet.values,
+                        chartData.leftMax,
+                        chartData.leftMin,
+                        chart.isDrawLineAdsorb
+                    )
                     if (thirdDrawValue != null) {
                         preDrawLine.thirdDrawValue = thirdDrawValue
                         preDrawLine.isSelect = true
@@ -195,6 +216,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 }
                 return true
             }
+
             ChartConstant.DRAW_LINE_DRAG_BOTH -> {
                 // 一起滑动
                 if (preDrawLine.startDrawValue != null && preDrawLine.endDrawValue != null) {
@@ -212,7 +234,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
                         val nowStartY = preDrawLine.startDrawValue!!.y + deltaY
                         val startPoint = PointF(nowStartX, nowStartY)
-                        val startDrawValue = getValue(startPoint, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                        val startDrawValue = getValue(
+                            startPoint,
+                            baseDataSet.values,
+                            chartData.leftMax,
+                            chartData.leftMin
+                        )
                         startDrawValue?.x = nowStartX
 
                         preDrawLine.startDrawValue = startDrawValue
@@ -220,7 +247,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         val nowEndX = preDrawLine.endDrawValue!!.x + deltaX
                         val nowEndY = preDrawLine.endDrawValue!!.y + deltaY
                         val endPoint = PointF(nowEndX, nowEndY)
-                        val endDrawValue = getValue(endPoint, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                        val endDrawValue = getValue(
+                            endPoint,
+                            baseDataSet.values,
+                            chartData.leftMax,
+                            chartData.leftMin
+                        )
                         endDrawValue?.x = nowEndX
 
                         preDrawLine.endDrawValue = endDrawValue
@@ -230,7 +262,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                             val nowThirdY = preDrawLine.thirdDrawValue!!.y + deltaY
 
                             val thirdPoint = PointF(nowThirdX, nowThirdY)
-                            val thirdDrawValue = getValue(thirdPoint, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                            val thirdDrawValue = getValue(
+                                thirdPoint,
+                                baseDataSet.values,
+                                chartData.leftMax,
+                                chartData.leftMin
+                            )
                             thirdDrawValue?.x = nowThirdX
                             preDrawLine.thirdDrawValue = thirdDrawValue
                         }
@@ -244,6 +281,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 lastPreY = event.y
                 return true
             }
+
             else -> return false
         }
 
@@ -334,7 +372,13 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         dataSets.forEach { it.isSelect = false }
         for (dataSet in dataSets) {
             if (dataSet.lineState == DrawLineState.complete) {
-                val inLine = checkIfInLine(dataSet, PointF(e.x, e.y), baseDataSet, chartData.leftMax, chartData.leftMin)
+                val inLine = checkIfInLine(
+                    dataSet,
+                    PointF(e.x, e.y),
+                    baseDataSet,
+                    chartData.leftMax,
+                    chartData.leftMin
+                )
                 if (inLine) {
                     dataSet.isSelect = true
                     preDrawLine = dataSet
@@ -354,53 +398,26 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 && point.y in min(rectF.top, rectF.bottom)..max(rectF.top, rectF.bottom))
     }
 
-    /**
-     * 检查是否在直线、平行线内
-     */
-    private fun checkInStraight(dataSet: DrawLineDataSet, point: PointF, lMax: Float, lMin: Float, radius: Float) : Boolean{
-        if (dataSet.thirdDrawValue != null) {
-            val leftY = chartView.getScaleY(dataSet.sLeftCrossValue, lMax, lMin)
-            val rightY = chartView.getScaleY(dataSet.sRightCrossValue, lMax, lMin)
-            val rectF = RectF(0f, leftY - radius, chartView.contentRect.width().toFloat(), rightY + radius)
-            if (checkInRect(point, rectF)) {
-                return true
-            }
-        }
-
-        val leftY = chartView.getScaleY(dataSet.leftCrossValue, lMax, lMin)
-        val rightY = chartView.getScaleY(dataSet.rightCrossValue, lMax, lMin)
-        val rectF = RectF(0f, leftY - radius, chartView.contentRect.width().toFloat(), rightY + radius)
-        if (checkInRect(point, rectF)) {
-            return true
-        }
-        return false
-    }
-
-    /**
-     * 检查是否在黄金分割范围内
-     */
-    private fun checkInHJFG(dataSet: DrawLineDataSet, point: PointF, startY: Float, endY: Float) : Boolean{
-        val radius = dataSet.pointOuterR * 2
-        val rectF = RectF(0f, startY - radius, chartView.contentRect.width().toFloat(), endY + radius)
-        if (checkInRect(point, rectF)) {
-            return true
-        }
-        return false
-    }
-
-    private fun checkIfInLine(dataSet: DrawLineDataSet, point: PointF, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float): Boolean {
+    private fun checkIfInLine(
+        dataSet: DrawLineDataSet,
+        point: PointF,
+        baseDataSet: AbstractDataSet<*>,
+        lMax: Float,
+        lMin: Float,
+    ): Boolean {
         val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return false
 
         val startValue = dataSet.startDrawValue
-        val endValue =  dataSet.endDrawValue
+        val endValue = dataSet.endDrawValue
         val thirdValue = dataSet.thirdDrawValue
         val radius = dataSet.pointOuterR * 3f
 
         if (startValue == null && endValue == null) return false
 
         // 检查是否能拖动起点
-        val startX = drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val startX =
+            drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
         val startY = chartView.getScaleY(startValue?.value ?: 0f, lMax, lMin)
         val startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
         if (checkInRect(point, startRect)) {
@@ -409,7 +426,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         // 检查是否能拖动终点
-        val endX = drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
+        val endX =
+            drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
         val endY = chartView.getScaleY(endValue?.value ?: 0f, lMax, lMin)
         val endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
         if (checkInRect(point, endRect)) {
@@ -429,24 +447,17 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         // 检查是否能同时拖动
-        if (dataSet.lineType == DrawLineType.ltStraightLine.ordinal || dataSet.lineType == DrawLineType.ltParallelLine.ordinal) {
-            if (checkInStraight(dataSet, point, lMax, lMin, radius)) {
-                dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
-                return true
-            }
-        } else if (dataSet.lineType == DrawLineType.ltHJFG.ordinal) {
-            if (checkInHJFG(dataSet, point, startY, endY)) {
-                dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
-                return true
-            }
-        } else if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
             // 斐波那挈 不能同时拖动
             dragState = ChartConstant.DRAW_LINE_NONE
             return false
         } else {
-            val runY = (startY + endY).absoluteValue * 0.5f
-            val runRect = RectF(startX, runY + radius, endX, runY - radius)
-            if (checkInRect(point, runRect) || checkInStraight(dataSet, point, lMax, lMin, radius)) {
+            val region = dataSet.selectRegion
+            val parallelRegion = dataSet.parallelSelectRegion
+
+            if (region?.contains(point.x.roundToInt(), point.y.roundToInt()) == true
+                || parallelRegion?.contains(point.x.roundToInt(), point.y.roundToInt()) == true
+            ) {
                 dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
                 return true
             }
@@ -462,8 +473,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         baseValues: MutableList<out AbstractValue>,
         lMax: Float,
         lMin: Float,
-        adsorb: Boolean = false
-    ) : DrawLineValue? {
+        adsorb: Boolean = false,
+    ): DrawLineValue? {
         val index = chartView.getEntryIndex(point.x)
         val baseValue = baseValues.getOrNull(index) ?: return null
         val time = baseValue.time
@@ -473,20 +484,23 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         // 如果是K线才有吸附功能
         if (adsorb && baseValue is CandlestickValue) {
             val openY = chartView.getScaleY(baseValue.open, lMax, lMin)
-            val closeY =  chartView.getScaleY(baseValue.close, lMax, lMin)
-            val highY =  chartView.getScaleY(baseValue.high, lMax, lMin)
-            val lowY =  chartView.getScaleY(baseValue.low, lMax, lMin)
+            val closeY = chartView.getScaleY(baseValue.close, lMax, lMin)
+            val highY = chartView.getScaleY(baseValue.high, lMax, lMin)
+            val lowY = chartView.getScaleY(baseValue.low, lMax, lMin)
 
             when (selectY) {
                 in highY - lessDistanceY..highY -> {
                     selectY = highY
                 }
+
                 in closeY - lessDistanceY..closeY -> {
                     selectY = closeY
                 }
+
                 in openY - lessDistanceY..openY -> {
                     selectY = openY
                 }
+
                 in lowY - lessDistanceY..lowY -> {
                     selectY = lowY
                 }

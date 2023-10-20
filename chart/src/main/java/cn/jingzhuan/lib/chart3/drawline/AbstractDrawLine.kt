@@ -2,11 +2,16 @@ package cn.jingzhuan.lib.chart3.drawline
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+import android.graphics.Region
 import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
 
 /**
  * @since 2023-10-09
@@ -83,7 +88,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val x = getEntryX(value.dataIndex, baseDataSet) ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
         Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
-        bgPaint.alpha = 30
+        bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
     }
@@ -98,7 +103,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
         Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
-        bgPaint.alpha = 30
+        bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
     }
@@ -113,9 +118,57 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
         Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
-        bgPaint.alpha = 30
+        bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
+    }
+
+    protected fun updatePath(
+        dataSet: DrawLineDataSet,
+        angle: Float,
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float,
+        parallel: Boolean = false
+    ) : Path {
+        // 90 + angle (当前选中矩形与圆的相交点 相对水平线的角度)
+        // radius * cos((90 + angle) * Math.PI / 180).toFloat() 以起点为圆心 利用夹角算出水平偏移
+        val diffW = dataSet.pointOuterR * cos((90 + angle) * Math.PI / 180).toFloat()
+
+        // radius * sin((90 + angle) * Math.PI / 180).toFloat() 以起点为圆心 利用夹角算出垂直偏移
+        val diffH = dataSet.pointOuterR * sin((90 + angle) * Math.PI / 180).toFloat()
+
+        val x1 = startX + diffW
+        val y1 = startY + diffH
+
+        val x2 = startX - diffW
+        val y2 = startY - diffH
+
+        val x3 = endX + diffW
+        val y3 = endY + diffH
+
+        val x4 = endX - diffW
+        val y4 = endY - diffH
+
+        val path = Path()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y2)
+        path.lineTo(x4, y4)
+        path.lineTo(x3, y3)
+        path.close()
+
+        val rectF = RectF()
+        path.computeBounds(rectF, true)
+        val region = Region()
+        region.setPath(path, Region(rectF.left.toInt(), rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()))
+        if (parallel) {
+            dataSet.parallelSelectRegion = region
+        } else {
+            dataSet.selectRegion = region
+        }
+
+        return path
     }
 
     fun getEntryX(index: Int, baseDataSet: AbstractDataSet<*>): Float? {

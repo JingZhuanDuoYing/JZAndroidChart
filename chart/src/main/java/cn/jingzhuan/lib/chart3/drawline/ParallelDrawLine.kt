@@ -2,8 +2,6 @@ package cn.jingzhuan.lib.chart3.drawline
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
-import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -29,7 +27,13 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+    override fun drawTypeShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        baseDataSet: AbstractDataSet<*>,
+        lMax: Float,
+        lMin: Float
+    ) {
         // 当前形状是平行 先画第一条直线及背景 再画第二条直线及背景 起点在图表在边界，终点在图表右边界
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
@@ -51,92 +55,62 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         }
 
         val width = chartView.contentRect.width().toFloat()
-        val height = chartView.contentRect.height().toFloat()
 
+        // 当前起点与终点的夹角
+        val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+
+        // 根据cos(angel) = (chartView.right - min(startX, endX)) / 半径 (与边界交叉点的直线距离)
+        val rightRadius = (width - startX) / cos(angle * Math.PI / 180).toFloat()
+        val leftRadius = (startX - 0f) / cos(angle * Math.PI / 180).toFloat()
+
+        // val radius = chartView.right - min(startX, endX)
+        // x1 = x0 + r * cos(a * PI /180 )
+        // y1 = y0 + r * sin(a * PI /180 )
+        val x1 = startX + rightRadius * cos(angle * Math.PI / 180).toFloat()
+        val y1 = startY + rightRadius * sin(angle * Math.PI / 180).toFloat()
+
+        val x2 = startX - leftRadius * cos(angle * Math.PI / 180).toFloat()
+        val y2 = startY - leftRadius * sin(angle * Math.PI / 180).toFloat()
+
+        // 画第一条线
+        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.alpha = 255
+        canvas.drawLine(x1, y1, x2, y2, linePaint)
+
+        val path = updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
+
+        // 画选中背景
         if (dataSet.isSelect) {
-            // 算出夹角 平行线夹角是一致的 只算出一个即可
-            val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
-            Log.d("drawTypeShape角度", "angle=$angle")
+            linePaint.style = Paint.Style.FILL
+            linePaint.alpha = dataSet.selectAlpha
+            canvas.drawPath(path, linePaint)
+        }
 
-            // 根据cos(angel) = (chartView.right - min(startX, endX)) / 半径 (与边界交叉点的直线距离)
-            val rightRadius = (width - startX) / cos(angle * Math.PI / 180).toFloat()
-            val leftRadius = (startX - 0f) / cos(angle * Math.PI / 180).toFloat()
+        // 画第二条线
+        if (thirdPoint != null) {
+            val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
+            val thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
+            val thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
 
-            // val radius = chartView.right - min(startX, endX)
-            // x1 = x0 + r * cos(a * PI /180 )
-            // y1 = y0 + r * sin(a * PI /180 )
-            val x1 = startX + rightRadius * cos(angle * Math.PI / 180).toFloat()
-            val y1 = startY + rightRadius * sin(angle * Math.PI / 180).toFloat()
+            val sRightRadius = (width - thirdX) / cos(angle * Math.PI / 180).toFloat()
+            val sLeftRadius = (thirdX - 0f) / cos(angle * Math.PI / 180).toFloat()
+            val x3 = thirdX + sRightRadius * cos(angle * Math.PI / 180).toFloat()
+            val y3 = thirdY + sRightRadius * sin(angle * Math.PI / 180).toFloat()
 
-            val x2 = startX - leftRadius * cos(angle * Math.PI / 180).toFloat()
-            val y2 = startY - leftRadius * sin(angle * Math.PI / 180).toFloat()
+            val x4 = thirdX - sLeftRadius * cos(angle * Math.PI / 180).toFloat()
+            val y4 = thirdY - sLeftRadius * sin(angle * Math.PI / 180).toFloat()
 
-            dataSet.leftCrossValue = lMax - y2 / height * (lMax - lMin)
-            dataSet.rightCrossValue = lMax - y1 / height * (lMax - lMin)
-
-            // 画第一条线
+            // 画第二条线
             linePaint.strokeWidth = dataSet.lineSize
             linePaint.alpha = 255
-            canvas.drawLine(x1, y1, x2, y2, linePaint)
+            canvas.drawLine(x3, y3, x4, y4, linePaint)
 
-            // 画第一条线选中背景
-            linePaint.style = Paint.Style.STROKE
-            linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
-            val path = Path()
-            path.moveTo(x1, y1)
-            path.lineTo(x2, y2)
-            path.close()
-            canvas.drawPath(path, linePaint)
-
-            if (thirdPoint != null) {
-                val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
-                val thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
-                val thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
-
-                val sRightRadius = (width - thirdX) / cos(angle * Math.PI / 180).toFloat()
-                val sLeftRadius = (thirdX - 0f) / cos(angle * Math.PI / 180).toFloat()
-                val x3 = thirdX + sRightRadius * cos(angle * Math.PI / 180).toFloat()
-                val y3 = thirdY + sRightRadius * sin(angle * Math.PI / 180).toFloat()
-
-                val x4 = thirdX - sLeftRadius * cos(angle * Math.PI / 180).toFloat()
-                val y4 = thirdY - sLeftRadius * sin(angle * Math.PI / 180).toFloat()
-
-                dataSet.sLeftCrossValue = lMax - y4 / height * (lMax - lMin)
-                dataSet.sRightCrossValue = lMax - y3 / height * (lMax - lMin)
-
-                // 画第二条线
-                linePaint.strokeWidth = dataSet.lineSize
-                linePaint.alpha = 255
-                canvas.drawLine(x3, y3, x4, y4, linePaint)
-
-                // 画第二条线选中背景
-                linePaint.style = Paint.Style.STROKE
-                linePaint.strokeWidth = dataSet.pointOuterR * 2f
-                linePaint.alpha = 10
-                val sPath = Path()
-                sPath.moveTo(x3, y3)
-                sPath.lineTo(x4, y4)
-                sPath.close()
-                canvas.drawPath(sPath, linePaint)
+            val parallelPath = updatePath(dataSet, angle.toFloat(), x3, y3, x4, y4, true)
+            if (dataSet.isSelect) {
+                linePaint.style = Paint.Style.FILL
+                linePaint.alpha = dataSet.selectAlpha
+                canvas.drawPath(parallelPath, linePaint)
             }
-
-        } else {
-            if (thirdPoint != null) {
-                val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
-                val thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
-                val thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
-                thirdPoint.apply { dataIndex = thirdIndex; x = thirdX; y = thirdY }
-            }
-            val leftY = chartView.getScaleY(dataSet.leftCrossValue, lMax, lMin)
-            val rightY = chartView.getScaleY(dataSet.rightCrossValue, lMax, lMin)
-
-            Log.d("onPressDrawLine", "画直线, dataSet.leftCrossValue=${dataSet.leftCrossValue}, dataSet.rightCrossValue=${dataSet.rightCrossValue}, leftY=$leftY, rightY = $rightY")
-            canvas.drawLine(0f, leftY, width, rightY, linePaint)
-
-            val sLeftY = chartView.getScaleY(dataSet.sLeftCrossValue, lMax, lMin)
-            val sRightY = chartView.getScaleY(dataSet.sRightCrossValue, lMax, lMin)
-            canvas.drawLine(0f, sLeftY, width, sRightY, linePaint)
         }
     }
 }

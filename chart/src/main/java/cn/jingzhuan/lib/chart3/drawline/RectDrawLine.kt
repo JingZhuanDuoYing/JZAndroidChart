@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Region
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -25,7 +26,13 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+    override fun drawTypeShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        baseDataSet: AbstractDataSet<*>,
+        lMax: Float,
+        lMin: Float
+    ) {
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
         if (startPoint == null || endPoint == null) return
@@ -53,11 +60,13 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.strokeWidth = dataSet.lineSize
         canvas.drawRect(rect, linePaint)
 
+        dataSet.selectRegion = Region(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
+
         // 画矩形四条边的背景
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.STROKE
             linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
+            linePaint.alpha = dataSet.selectAlpha
             canvas.drawRect(rect, linePaint)
         }
     }

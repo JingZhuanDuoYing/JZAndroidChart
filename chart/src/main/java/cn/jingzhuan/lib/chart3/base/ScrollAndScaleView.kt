@@ -18,7 +18,6 @@ import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
-import cn.jingzhuan.lib.chart3.event.OnDrawLineTouchListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnLoadMoreListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
@@ -65,8 +64,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     private var flagClickListener: OnFlagClickListener? = null
 
     protected var rangeChangeListener: OnRangeChangeListener? = null
-
-    private var drawLineTouchListener: OnDrawLineTouchListener? = null
 
     private val mSurfacePoint = Point()
 
@@ -318,12 +315,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         distanceX: Float,
         distanceY: Float,
     ): Boolean {
-        if (isDrawingLine()) {
-            if (drawLineTouchListener != null) {
-                drawLineTouchListener?.onScroll(e1, e2, distanceX, distanceY)
-            }
-            return false
-        }
+        if (isDrawingLine()) return false
 
         if (!isScrollEnable || !canScroll() || isLongPress || isMultipleTouch || isScaling) {
             finishScroll()
@@ -932,10 +924,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun setOnDrawLineListener(listener: OnDrawLineListener) {
         this.drawLineListener = listener
-    }
-
-    fun addOnDrawLineTouchListener(listener: OnDrawLineTouchListener) {
-        this.drawLineTouchListener = listener
     }
 
     fun onFlagCallback(type: Int, index: Int) {

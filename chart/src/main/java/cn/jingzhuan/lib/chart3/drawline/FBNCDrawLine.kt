@@ -40,7 +40,13 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
     }
 
-    override fun drawTypeShape(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+    override fun drawTypeShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        baseDataSet: AbstractDataSet<*>,
+        lMax: Float,
+        lMin: Float
+    ) {
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
         if (startPoint == null || endPoint == null) return
@@ -76,7 +82,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.FILL
             linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
+            linePaint.alpha = dataSet.selectAlpha
             canvas.drawLine(startX, 0f, startX, bottomY, linePaint)
         }
 
@@ -96,7 +102,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.FILL
             linePaint.strokeWidth = dataSet.pointOuterR * 2f
-            linePaint.alpha = 10
+            linePaint.alpha = dataSet.selectAlpha
             canvas.drawLine(endX, 0f, endX, bottomY, linePaint)
         }
 
