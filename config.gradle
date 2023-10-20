@@ -14,6 +14,7 @@ ext {
 
             androidPluginVersion      : '8.1.2',
             kotlinVersion             : "1.9.10",
+            appcompatVersion          : "1.6.1",
     ]
 
     dependencies = [
