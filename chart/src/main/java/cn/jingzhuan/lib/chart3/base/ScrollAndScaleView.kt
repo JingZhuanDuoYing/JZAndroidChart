@@ -216,8 +216,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
 
-    var isLoadMore = false
-
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -671,7 +669,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     fun setCurrentViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
-        if (!isLoadMore) triggerViewportChange()
+        triggerViewportChange()
     }
 
     fun setStaticCurrentViewport(viewport: RectF) {
