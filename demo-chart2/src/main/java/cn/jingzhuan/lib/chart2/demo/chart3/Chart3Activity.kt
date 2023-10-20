@@ -406,6 +406,50 @@ class Chart3Activity : AppCompatActivity() {
             })
         }
 
+        minuteMain.apply {
+            setOnDrawLineListener(object : OnDrawLineListener {
+                override fun onTouch(state: DrawLineState, point: PointF, type: Int) {
+                    if (state == DrawLineState.first) {
+                        tvStep.visibility = View.VISIBLE
+                        tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
+                    } else if (state == DrawLineState.second) {
+                        if(type == DrawLineType.ltParallelLine.ordinal) {
+                            tvStep.text = "请确第二个点的位置"
+                        }
+                    } else if (state == DrawLineState.complete) {
+                        tvStep.visibility = View.VISIBLE
+                        tvStep.text = "已完成"
+
+                        val timer = Timer()
+                        timer.schedule(object : TimerTask() {
+                            override fun run() {
+                                runOnUiThread {
+                                    tvStep.visibility = View.GONE
+                                    tvStep.text = ""
+                                }
+                            }
+                        }, 1000L)
+                    }
+                }
+
+                override fun onDrag(bitmapPoint: PointF, translatePoint: PointF, state: Int) {
+                    if (state != ChartConstant.DRAW_LINE_NONE) {
+                        ivCap.visibility = View.GONE
+                        val bitmap =  getBitmap(bitmapPoint)
+                        ivCap.visibility = View.VISIBLE
+                        ivCap.setImageBitmap(bitmap)
+                        ivCap.translationX = translatePoint.x - 100f
+                        ivCap.translationY = translatePoint.y - 50f
+                    } else {
+                        ivCap.visibility = View.GONE
+                        ivCap.setImageBitmap(null)
+                    }
+                    Log.d("onPressDrawLine", "正在拖拽 point={${translatePoint.x}, ${translatePoint.y}----state=$state")
+                }
+
+            })
+        }
+
         subCharts.forEach {
             it.apply {
                 addSubChartTouchListener(object : OnSubChartTouchListener{
@@ -463,7 +507,11 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         tvDrawLine.setOnClickListener {
-            klineMain.isOpenDrawLine = true
+            if (rbDay.isChecked) {
+                klineMain.isOpenDrawLine = true
+            } else if (rbMinute.isChecked) {
+                minuteMain.isOpenDrawLine = true
+            }
             llDrawLineTool.visibility = View.VISIBLE
         }
 
@@ -914,14 +962,19 @@ class Chart3Activity : AppCompatActivity() {
     }
 
     private fun setMainMinuteChartData() {
-        val candlestickList = DataConfig.candlestickList.toMutableList()
-
-        candlestickList.addAll(DataConfig.candlestickList)
+        val klineList = DataConfig.candlestickList.toMutableList()
+        val newList = mutableListOf<CandlestickValue>()
+        DataConfig.candlestickList.forEachIndexed { index, value ->
+            val time = 1692322131L - 86400 * (klineList.size + index)
+            newList.add(CandlestickValue(value.high, value.low, value.open, value.close, time))
+        }
+        val list = newList.reversed().toMutableList()
+        list.addAll(klineList)
 
 
         val lineList = ArrayList<LineValue>()
 
-        candlestickList.forEach {value ->
+        list.forEach {value ->
             lineList.add(LineValue(value.close, value.time))
         }
 
