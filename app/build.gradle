@@ -3,14 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    setLibDefaultConfig(android)
+    compileSdkVersion 31
+    buildToolsVersion "28.0.3"
     defaultConfig {
         dataBinding {
             enabled true
         }
         applicationId "cn.jingzhuan.lib.chart.demo"
+        minSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -34,7 +38,7 @@ dependencies {
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
     kapt 'com.airbnb.android:epoxy-processor:4.6.2'
 
-    implementation rootProject.ext.dependencies["kotlinStdlibJdk8"]
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation project(':chart')
 }
