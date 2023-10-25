@@ -37,7 +37,7 @@ class DrawLineDataSet@JvmOverloads constructor(
     /**
      * 自绘线宽度
      */
-    var lineSize = 5f
+    var lineSize = 2f
 
     /**
      * 字体大小

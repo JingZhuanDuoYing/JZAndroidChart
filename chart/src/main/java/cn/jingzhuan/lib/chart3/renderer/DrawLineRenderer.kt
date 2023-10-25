@@ -323,7 +323,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 preDrawLine.isSelect = true
                 preDrawLine.startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
 
-                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                 chartView.postInvalidate()
             }
 
@@ -337,7 +337,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 preDrawLine.isSelect = true
                 preDrawLine.endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
 
-                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                 chartView.postInvalidate()
             }
 
@@ -346,14 +346,14 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     preDrawLine.lineState = DrawLineState.complete
                     preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
                     preDrawLine.isSelect = true
-                    chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType)
+                    chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                     chartView.postInvalidate()
                 }
             }
 
             DrawLineState.complete -> {
                 preDrawLine.isSelect = dragState != ChartConstant.DRAW_LINE_NONE
-                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType, true)
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType, true)
                 chartView.postInvalidate()
             }
         }

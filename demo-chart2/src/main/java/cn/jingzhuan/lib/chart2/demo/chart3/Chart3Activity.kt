@@ -364,7 +364,8 @@ class Chart3Activity : AppCompatActivity() {
             }
 
             setOnDrawLineListener(object : OnDrawLineListener {
-                override fun onTouch(state: DrawLineState, point: PointF, type: Int, reselected: Boolean) {
+                override fun onTouch(state: DrawLineState, lineKey: String, type: Int, reselected: Boolean) {
+                    if (reselected) return
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
                         tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
@@ -408,7 +409,8 @@ class Chart3Activity : AppCompatActivity() {
 
         minuteMain.apply {
             setOnDrawLineListener(object : OnDrawLineListener {
-                override fun onTouch(state: DrawLineState, point: PointF, type: Int, reselected: Boolean) {
+                override fun onTouch(state: DrawLineState, lineKey: String, type: Int, reselected: Boolean) {
+                    if (reselected) return
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
                         tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
