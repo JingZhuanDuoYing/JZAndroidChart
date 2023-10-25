@@ -353,7 +353,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
             DrawLineState.complete -> {
                 preDrawLine.isSelect = dragState != ChartConstant.DRAW_LINE_NONE
-                Log.d("onPressDrawLine", "完成->preDrawLine.isSelect=${preDrawLine.isSelect}")
+                chartView.drawLineListener?.onTouch(preDrawLine.lineState, point, lineType, true)
                 chartView.postInvalidate()
             }
         }

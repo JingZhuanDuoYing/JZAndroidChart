@@ -10,7 +10,7 @@ import cn.jingzhuan.lib.chart3.drawline.DrawLineState
  */
 interface OnDrawLineListener {
 
-    fun onTouch(state: DrawLineState, point: PointF, type: Int)
+    fun onTouch(state: DrawLineState, point: PointF, type: Int, reselected: Boolean = false)
 
     fun onDrag(bitmapPoint: PointF, translatePoint: PointF, state: Int)
 }
