@@ -62,7 +62,7 @@ class DrawLineDataSet@JvmOverloads constructor(
     /**
      * 是否除权
      */
-    var bcap: String? = null
+    var bcap: Int? = null
 
     /**
      * 瞄点起点
