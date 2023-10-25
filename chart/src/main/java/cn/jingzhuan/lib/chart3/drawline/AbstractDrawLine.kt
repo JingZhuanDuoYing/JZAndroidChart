@@ -35,7 +35,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     private fun initPaint() {
         linePaint.isAntiAlias = true
-        linePaint.style = Paint.Style.STROKE
+        linePaint.style = Paint.Style.FILL
         bgPaint.isAntiAlias = true
         bgPaint.style = Paint.Style.FILL
         textPaint.isAntiAlias = true
@@ -53,7 +53,6 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     override fun onDraw(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         setPaint(dataSet)
         if (!dataSet.isSelect) return
-        linePaint.style = Paint.Style.FILL
         when (dataSet.lineState) {
             DrawLineState.prepare -> {
                 Log.d("onPressDrawLine", "准备阶段")
@@ -90,7 +89,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
+        bgPaint.alpha = 255
+        canvas.drawCircle(x, y, dataSet.pointInnerR, bgPaint)
     }
 
     /**
@@ -105,7 +105,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
+        bgPaint.alpha = 255
+        canvas.drawCircle(x, y, dataSet.pointInnerR, bgPaint)
     }
 
     /**
@@ -120,7 +121,8 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
-        canvas.drawCircle(x, y, dataSet.pointInnerR, linePaint)
+        bgPaint.alpha = 255
+        canvas.drawCircle(x, y, dataSet.pointInnerR, bgPaint)
     }
 
     protected fun updatePath(

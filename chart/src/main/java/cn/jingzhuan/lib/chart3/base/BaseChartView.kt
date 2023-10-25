@@ -240,9 +240,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
      * 画线工具
      */
     override fun drawLineTool(canvas: Canvas) {
-        if (isOpenDrawLine) {
-            drawLineRenderer.renderer(canvas)
-        }
+        drawLineRenderer.renderer(canvas)
     }
 
     override fun getEntryIndex(x: Float): Int {

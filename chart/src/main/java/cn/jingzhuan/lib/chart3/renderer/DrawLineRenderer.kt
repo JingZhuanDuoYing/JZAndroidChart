@@ -78,10 +78,11 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     override fun renderer(canvas: Canvas) {
         val chartData = (chart.chartData as CombineData)
-        val drawLineChartData = chartData.drawLineChartData
+        if (chartData.getDrawLineDataSets().isEmpty()) return
+        val drawLineDataSets = chartData.getDrawLineDataSets()
         val baseDataSet = chartData.getTouchDataSet()
         if (baseDataSet != null) {
-            for (dataSet in drawLineChartData.dataSets) {
+            for (dataSet in drawLineDataSets) {
                 if (dataSet.isVisible) {
                     drawDataSet(canvas, dataSet, baseDataSet, chartData.leftMax, chartData.leftMin)
                 }

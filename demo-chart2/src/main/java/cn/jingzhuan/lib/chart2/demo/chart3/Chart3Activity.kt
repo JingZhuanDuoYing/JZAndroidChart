@@ -679,6 +679,18 @@ class Chart3Activity : AppCompatActivity() {
             }
         }
 
+        llDrawLineTool.setOnClickListener {
+            llDrawLineTool.visibility = View.GONE
+            if (rbDay.isChecked) {
+                (klineMain.chartData as CombineData).getDrawLineDataSets().forEach {
+                    it.isSelect = false
+                }
+                klineMain.isOpenDrawLine = false
+            } else if (rbMinute.isChecked) {
+                minuteMain.isOpenDrawLine = false
+            }
+        }
+
     }
 
     private fun getBitmap(point: PointF): Bitmap {
