@@ -51,6 +51,13 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     }
 
     override fun onDraw(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+        if (dataSet.pointInnerR < getLineSizePx(dataSet.lineSize)) {
+            dataSet.pointInnerR = getLineSizePx(dataSet.lineSize) * 0.5f * 1.5f
+            dataSet.pointOuterR = dataSet.pointInnerR * 2
+        } else {
+            dataSet.pointInnerR = 8f
+            dataSet.pointOuterR = 8f * 2
+        }
         setPaint(dataSet)
         if (!dataSet.isSelect) return
         when (dataSet.lineState) {
