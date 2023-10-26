@@ -302,6 +302,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         val lineType = preDrawLine?.lineType ?: 0
 
         if (preDrawLine == null || lineType == 0) {
+            chartView.drawLineListener?.onTouch(DrawLineState.complete, "", lineType)
             return false
         }
 

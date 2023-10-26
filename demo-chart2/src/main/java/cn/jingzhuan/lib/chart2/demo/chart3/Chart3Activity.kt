@@ -365,6 +365,10 @@ class Chart3Activity : AppCompatActivity() {
 
             setOnDrawLineListener(object : OnDrawLineListener {
                 override fun onTouch(state: DrawLineState, lineKey: String, type: Int, reselected: Boolean) {
+                    if (type == 0) {
+//                        Toast.makeText(this@Chart3Activity, "点击了外部", Toast.LENGTH_SHORT).show()
+                        return
+                    }
                     if (reselected) return
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
