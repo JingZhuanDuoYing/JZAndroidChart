@@ -73,7 +73,7 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         val y2 = startY - leftRadius * sin(angle * Math.PI / 180).toFloat()
 
         // 画第一条线
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         canvas.drawLine(x1, y1, x2, y2, linePaint)
 
@@ -101,7 +101,7 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
             val y4 = thirdY - sLeftRadius * sin(angle * Math.PI / 180).toFloat()
 
             // 画第二条线
-            linePaint.strokeWidth = dataSet.lineSize
+            linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
             linePaint.alpha = 255
             canvas.drawLine(x3, y3, x4, y4, linePaint)
 

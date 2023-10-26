@@ -74,7 +74,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画第一条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         canvas.drawLine(startX, 0f, startX, bottomY, linePaint)
 
@@ -94,7 +94,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画第二条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         canvas.drawLine(endX, 0f, endX, bottomY, linePaint)
 
@@ -117,7 +117,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val thirdDrawIndex = (endIndex - startIndex) * 2 + 1
         val thirdX = getEntryX(startIndex + (endIndex - startIndex) * 2, baseDataSet) ?: -1f
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize * 0.5f
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize * 0.5f)
         linePaint.alpha = 255
         canvas.drawLine(thirdX, 0f, thirdX, bottomY, linePaint)
         secondDrawIndex = thirdDrawIndex
@@ -130,7 +130,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         // 画剩余等比数列
         val lastIndex = baseDataSet.values.size - 1
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize * 0.5f
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize * 0.5f)
         linePaint.alpha = 255
 
         // 基准线的差

@@ -44,7 +44,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     private fun setPaint(dataSet: DrawLineDataSet) {
         linePaint.color = dataSet.lineColor
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         bgPaint.color = dataSet.lineColor
         textPaint.textSize = dataSet.fontSize.toFloat()
         textPaint.color = dataSet.lineColor
@@ -193,5 +193,14 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         Log.d("onPressDrawLine", "valueCount=$valueCount, step=$step, pointX= $x, index=$index, pointWidth=$pointWidth,")
 
         return x
+    }
+
+    protected fun getLineSizePx(size: Float): Float {
+        return dp2px(size).toFloat()
+    }
+
+    private fun dp2px(dpValue: Float): Int {
+        val density = chartView.resources.displayMetrics.density
+        return (dpValue * density + 0.5f).toInt()
     }
 }

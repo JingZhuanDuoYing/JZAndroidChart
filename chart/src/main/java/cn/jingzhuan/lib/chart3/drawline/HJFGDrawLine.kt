@@ -66,7 +66,7 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画第一条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         canvas.drawLine(0f, startY, width, startY, linePaint)
 
@@ -88,7 +88,7 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画第二条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = dataSet.lineSize
+        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         canvas.drawLine(0f, endY, width, endY, linePaint)
 
