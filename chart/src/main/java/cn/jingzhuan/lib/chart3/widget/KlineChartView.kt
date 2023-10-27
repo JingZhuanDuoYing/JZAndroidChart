@@ -8,6 +8,7 @@ import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
 import cn.jingzhuan.lib.chart3.formatter.IValueIndexFormatter
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 
 open class KlineChartView(
     context: Context,
@@ -29,7 +30,7 @@ open class KlineChartView(
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
                     if (value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE) return ""
-                    return String.format("%.${decimalDigitsNumber}f", value)
+                    return NumberUtils.keepPrecision(value.toString(), decimalDigitsNumber)
                 }
             }
 

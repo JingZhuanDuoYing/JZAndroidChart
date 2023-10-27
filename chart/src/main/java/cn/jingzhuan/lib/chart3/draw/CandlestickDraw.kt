@@ -273,41 +273,6 @@ class CandlestickDraw(
 
     }
 
-    /**
-     * 画缺口
-     */
-    private fun drawGaps(
-        canvas: Canvas,
-        candlestickDataSet: CandlestickDataSet,
-        xPosition: Float,
-        max: Float,
-        min: Float,
-        index: Int,
-        candleWidth: Float,
-        gapSize: Int
-    ) {
-        if (candlestickDataSet.enableGap && gapSize <= 3) {
-
-            renderPaint.color = candlestickDataSet.gapColor
-            renderPaint.style = Paint.Style.FILL
-
-            // 下跌缺口
-            if (candlestickDataSet.lowGaps.size() > 0) {
-                val gap = candlestickDataSet.lowGaps[index, null]
-                val startX = xPosition + candleWidth * 0.5f
-                drawGap(canvas, gap, startX, max, min, candleWidth, 0)
-            }
-
-            // 上涨缺口
-            if (candlestickDataSet.highGaps.size() > 0) {
-                val gap = candlestickDataSet.highGaps[index, null]
-                val startX = xPosition + candleWidth * 0.5f
-                drawGap(canvas, gap, startX, max, min, candleWidth, 1)
-            }
-
-        }
-    }
-
     private fun drawGap(
         canvas: Canvas,
         gap: Pair<Float, Float>?,
@@ -336,7 +301,7 @@ class CandlestickDraw(
             val rect = Rect()
             textPaint.getTextBounds(text, 0, text.length, rect)
             val textHeight = rect.height()
-            val baseline = (if (type == 0) y2 else y1) + textHeight + 3f
+            val baseline = if (type == 0) y1 - 3f else y1 + textHeight + 3f
 
             val textWidth = textPaint.measureText(text)
 

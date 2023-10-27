@@ -6,7 +6,6 @@ import android.os.Build
 import android.util.AttributeSet
 import androidx.annotation.RequiresApi
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
-import cn.jingzhuan.lib.chart3.data.dataset.MinuteLineDataSet
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.formatter.ILabelColorSetter
@@ -14,6 +13,7 @@ import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
 import cn.jingzhuan.lib.chart3.formatter.IValueIndexFormatter
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_GREEN
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_RED
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 
 open class MinuteChartView(
     context: Context,
@@ -39,7 +39,7 @@ open class MinuteChartView(
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
                     if (index == 1 || index == 3 || value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE) return ""
-                    return String.format("%.${decimalDigitsNumber}f", value)
+                    return NumberUtils.keepPrecision(value.toString(), decimalDigitsNumber)
                 }
             }
 
