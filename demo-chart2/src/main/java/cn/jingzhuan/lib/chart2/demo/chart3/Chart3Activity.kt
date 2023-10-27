@@ -528,6 +528,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltSegment$index"
                 lineType = DrawLineType.ltSegment.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -546,6 +548,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltStraight$index"
                 lineType = DrawLineType.ltStraightLine.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -564,6 +568,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltEndAnchorLine$index"
                 lineType = DrawLineType.ltEndAnchorLine.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -582,6 +588,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltRect$index"
                 lineType = DrawLineType.ltRect.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -600,6 +608,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltHJFG$index"
                 lineType = DrawLineType.ltHJFG.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -618,6 +628,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltFBNC$index"
                 lineType = DrawLineType.ltFBNC.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {
@@ -636,6 +648,8 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltParallelLine$index"
                 lineType = DrawLineType.ltParallelLine.ordinal
                 lineState = DrawLineState.prepare
+                lineSize = 3f
+                dash = "7,2"
             }
 
             if (rbDay.isChecked) {

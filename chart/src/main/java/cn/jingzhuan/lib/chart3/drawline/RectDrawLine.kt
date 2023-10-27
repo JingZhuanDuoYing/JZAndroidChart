@@ -58,7 +58,9 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val rect = RectF(startX, startY, endX, endY)
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
+        setDashPathEffect(dataSet.dash)
         canvas.drawRect(rect, linePaint)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
         dataSet.selectRegion = Region(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
 

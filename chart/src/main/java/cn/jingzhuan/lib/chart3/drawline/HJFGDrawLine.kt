@@ -64,9 +64,13 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         // 直径
         val diam = dataSet.pointOuterR * 2f
 
+        // 黄金分割不适配虚线
+        linePaint.pathEffect = null
+
         // 画第一条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
+        // 黄金分割固定线宽
+        linePaint.strokeWidth = getLineSizePx(2f)
         linePaint.alpha = 255
         canvas.drawLine(0f, startY, width, startY, linePaint)
 
@@ -88,7 +92,8 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画第二条线
         linePaint.style = Paint.Style.FILL
-        linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
+        // 黄金分割固定线宽
+        linePaint.strokeWidth = getLineSizePx(2f)
         linePaint.alpha = 255
         canvas.drawLine(0f, endY, width, endY, linePaint)
 

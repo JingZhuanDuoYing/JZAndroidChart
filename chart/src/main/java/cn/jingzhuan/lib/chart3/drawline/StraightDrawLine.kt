@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.drawline
 
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -72,7 +73,9 @@ class StraightDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         val y2 = startY - leftRadius * sin(angle * Math.PI / 180).toFloat()
 
         // 画线段
+        setDashPathEffect(dataSet.dash)
         canvas.drawLine(x1, y1, x2, y2, linePaint)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
         val path = updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
 

@@ -75,7 +75,9 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         // 画第一条线
         linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
+        setDashPathEffect(dataSet.dash)
         canvas.drawLine(x1, y1, x2, y2, linePaint)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
         val path = updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
 
@@ -103,7 +105,9 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
             // 画第二条线
             linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
             linePaint.alpha = 255
+            setDashPathEffect(dataSet.dash)
             canvas.drawLine(x3, y3, x4, y4, linePaint)
+            if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
             val parallelPath = updatePath(dataSet, angle.toFloat(), x3, y3, x4, y4, true)
             if (dataSet.isSelect) {

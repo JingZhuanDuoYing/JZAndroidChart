@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.drawline
 
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -208,7 +209,24 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         return dp2px(size).toFloat()
     }
 
-    private fun dp2px(dpValue: Float): Int {
+    protected fun setDashPathEffect(dash: String?) {
+        if (dash.isNullOrEmpty()) {
+            linePaint.pathEffect = null
+        } else {
+            if (dash.contains(",")) {
+                val dashArray = dash.split(",")
+                val array = ArrayList<Float>()
+                dashArray.forEach {value ->
+                    array.add(dp2px(value.toFloat()).toFloat())
+                }
+                linePaint.pathEffect =  DashPathEffect(array.toFloatArray(), 0f)
+            } else {
+                linePaint.pathEffect = null
+            }
+        }
+    }
+
+    protected fun dp2px(dpValue: Float): Int {
         val density = chartView.resources.displayMetrics.density
         return (dpValue * density + 0.5f).toInt()
     }

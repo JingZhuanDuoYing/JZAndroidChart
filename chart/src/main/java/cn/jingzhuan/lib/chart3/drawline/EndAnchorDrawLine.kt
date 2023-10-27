@@ -56,7 +56,9 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
         }
 
         // 画线段
+        setDashPathEffect(dataSet.dash)
         canvas.drawLine(startX, startY, endX, endY, linePaint)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
         // 当前起点与终点的夹角
         val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
