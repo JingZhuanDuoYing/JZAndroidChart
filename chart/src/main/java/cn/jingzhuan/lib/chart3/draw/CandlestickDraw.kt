@@ -13,6 +13,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
 import cn.jingzhuan.lib.chart3.utils.NumberUtils
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @since 2023-09-06
@@ -229,9 +230,9 @@ class CandlestickDraw(
             } else {
                 canvas.drawRect(
                     bodyBuffers[0],
-                    bodyBuffers[1],
+                    min(bodyBuffers[1], bodyBuffers[3]),
                     bodyBuffers[2],
-                    bodyBuffers[3],
+                    max(bodyBuffers[1], bodyBuffers[3]),
                     renderPaint
                 )
             }
