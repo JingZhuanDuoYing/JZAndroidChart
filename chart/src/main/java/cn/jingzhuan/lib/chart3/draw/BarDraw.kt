@@ -14,6 +14,8 @@ import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
 import java.lang.Float.NaN
 import java.lang.Float.isNaN
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -167,7 +169,7 @@ class BarDraw(
                             gradientColors[1], Shader.TileMode.MIRROR
                         )
                     }
-                    canvas.drawRect(left, top, right, bottom, renderPaint)
+                    canvas.drawRect(left, min(top, bottom), right, max(top, bottom), renderPaint)
                 }
 
                 var labelLength: Int
