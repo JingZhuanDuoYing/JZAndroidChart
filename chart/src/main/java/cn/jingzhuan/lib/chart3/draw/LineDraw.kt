@@ -227,7 +227,7 @@ class LineDraw(
         var lastIndex = 0
         if (chartAnimator.phaseX > 0) {
             lastIndex =
-                (floor((lineDataSet.values.size * chartAnimator.phaseX).toDouble()) - 1).toInt()
+                (floor((rightIndex * chartAnimator.phaseX).toDouble()) - 1).toInt()
         }
 
         if (lastIndex >= valueCount) lastIndex = valueCount - 1
@@ -255,7 +255,7 @@ class LineDraw(
                         linePath = Path()
                         linePath.moveTo(lastValue.x, lastValue.y)
                     }
-                    if (i == lineDataSet.values.size - 1) {
+                    if (i == rightIndex - 1) {
                         partLineList.add(PartLineData(linePath, value.pathColor))
                     }
                 }
