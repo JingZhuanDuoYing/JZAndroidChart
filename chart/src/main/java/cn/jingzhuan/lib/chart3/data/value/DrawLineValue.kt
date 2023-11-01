@@ -30,10 +30,10 @@ class DrawLineValue : AbstractValue {
         this.isVisible = isVisible
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val that = o as DrawLineValue
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val that = other as DrawLineValue
         return that.value.compareTo(value) == 0 && time == that.time
     }
 

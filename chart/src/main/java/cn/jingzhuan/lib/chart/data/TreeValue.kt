@@ -18,10 +18,10 @@ class TreeValue(var leafs: List<Leaf>?) : Value() {
         get() = leafs?.minBy { it.high }?.high ?: Float.NaN
 
     val leftValue: Float
-        get() = leafs?.sumByDouble { it.leftValue.toDouble() }?.toFloat() ?: Float.NaN
+        get() = leafs?.sumOf { it.leftValue.toDouble() }?.toFloat() ?: Float.NaN
 
     val rightValue: Float
-        get() = leafs?.sumByDouble { it.rightValue.toDouble() }?.toFloat() ?: Float.NaN
+        get() = leafs?.sumOf { it.rightValue.toDouble() }?.toFloat() ?: Float.NaN
 
     val maxLeafValue: Float
         get() = max(leafs?.maxBy { it.leftValue }?.leftValue ?: Float.NaN, leafs?.maxBy { it.rightValue }?.rightValue ?: Float.NaN)
