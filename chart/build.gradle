@@ -12,8 +12,9 @@ android {
   lintOptions {
     abortOnError false
   }
+    namespace 'cn.jingzhuan.lib.chart'
 
-  libraryVariants.all {
+    libraryVariants.all {
     it.generateBuildConfig.enabled = false
   }
 }

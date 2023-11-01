@@ -119,6 +119,8 @@ class LineDraw(
         renderPaint.strokeWidth = lineThickness.toFloat()
         renderPaint.color = lineDataSet.color
 
+        shaderPath?.reset()
+
         shaderPaths.clear()
         shaderPathColors.clear()
 

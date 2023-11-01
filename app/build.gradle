@@ -21,6 +21,7 @@ android {
     lintOptions {
         abortOnError false
     }
+    namespace 'cn.jingzhuan.lib.chart.demo'
 }
 
 dependencies {

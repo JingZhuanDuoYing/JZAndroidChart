@@ -279,7 +279,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             performClick()
         } else {
             // 当前按下的位置有效
-            if (getEntryIndex(e.x) > 0) {
+            if (getEntryIndex(e.x) >= 0) {
                 if (isStatic) {
                     onTouchPoint(e)
                 } else {

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart2.demo
 
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,6 +23,7 @@ import cn.jingzhuan.lib.chart.renderer.CandlestickDataSetArrowDecorator
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
+import java.text.SimpleDateFormat
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -160,14 +162,20 @@ class RangeDemoActivity : AppCompatActivity() {
     }
 
     private fun setLeftRightTime(
-        viewport: Viewport
+        viewport: Viewport,
     ) {
         val candlestickDataSet = combineChart.candlestickDataSet
         if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
             val values = candlestickDataSet.first().getVisiblePoints(viewport)
             if (values.isNotEmpty()) {
-                leftTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
-                rightTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    leftTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
+                    rightTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
+                } else {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    leftTime = sdf.format(values.first().time * 1000L)
+                    rightTime = sdf.format(values.last().time * 1000L)
+                }
             }
         }
     }

@@ -95,11 +95,11 @@ open class CandlestickDataSet @JvmOverloads constructor(
                 if (isInfinite(e.low)) continue
                 if (isInfinite(e.high)) continue
                 if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
-                    if (min - e.high > 0.01f) {
+                    if (min - e.high > 0) {
                         // 上涨缺口
                         highGaps.put(i, Pair(e.high, min))
                     }
-                    if (e.low - max > 0.01f) {
+                    if (e.low - max > 0) {
                         // 下跌缺口
                         lowGaps.put(i, Pair(e.low, max))
                     }
