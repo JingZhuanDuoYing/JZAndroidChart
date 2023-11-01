@@ -289,9 +289,9 @@ class CandlestickDraw(
 
             canvas.drawRect(
                 startX,
-                y1,
+                min(y1, y2),
                 contentRect.right.toFloat(),
-                y2,
+                max(y1, y2),
                 renderPaint
             )
 
