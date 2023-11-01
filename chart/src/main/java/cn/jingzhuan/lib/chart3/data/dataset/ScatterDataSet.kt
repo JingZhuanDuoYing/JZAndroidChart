@@ -49,9 +49,9 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private var mTextValueRenderers: MutableList<TextValueRenderer>? = null
 
-    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, mix: Float) {
+    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
         viewportYMax = max
-        viewportYMin = mix
+        viewportYMin = min
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
