@@ -19,6 +19,8 @@ import java.lang.Float.isNaN
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-10
@@ -145,6 +147,12 @@ class LineDraw(
 
         val startIndexOffset = 0
 
+        val dataSize = lineDataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
+
         // 画带状线
         if (lineDataSet.isDrawBand) {
             try {
@@ -173,12 +181,15 @@ class LineDraw(
                 step,
                 startIndexOffset,
                 max,
-                min
+                min,
+                leftIndex,
+                rightIndex
             )
             return
         }
 
-        var i = 0
+        var i = leftIndex
+
         val headValue: LineValue? = lineDataSet.headPoint
         if (headValue != null && !headValue.isValueNaN) {
             // 垂直方向绘制范围收缩至能容下线条的宽度
@@ -188,7 +199,7 @@ class LineDraw(
             var firstValue: LineValue? = null
             var firstXPosition = startX
 
-            while (i < valuePhaseCount && i < lineDataSet.values.size) {
+            while (i < rightIndex) {
                 val value: LineValue? = lineDataSet.getEntryForIndex(i)
                 if (value != null && !value.isValueNaN) {
                     firstValue = value
@@ -221,7 +232,7 @@ class LineDraw(
 
         var preBaseX = Float.NaN
 
-        while (i < valuePhaseCount && i < lineDataSet.values.size) {
+        while (i < rightIndex) {
             val value: LineValue? = lineDataSet.getEntryForIndex(i)
             if (value == null || value.isValueNaN) {
                 i++
@@ -390,6 +401,8 @@ class LineDraw(
         startIndexOffset: Int,
         max: Float,
         min: Float,
+        leftIndex: Int,
+        rightIndex: Int
     ) {
         val interval: Float = lineDataSet.interval
 
@@ -408,8 +421,9 @@ class LineDraw(
         val candleWidth =
             contentRect.width() / max(visibleRange, lineDataSet.minValueCount.toFloat())
         var isFirst = true
-        var i = 0
-        while (i < valuePhaseCount && i < lineDataSet.values.size) {
+
+        var i = leftIndex
+        while (i < rightIndex) {
             val point = lineDataSet.getEntryForIndex(i)
             if (point == null || point.isValueNaN) {
                 i++
@@ -516,7 +530,7 @@ class LineDraw(
         step: Float,
         startIndexOffset: Int,
         max: Float,
-        min: Float,
+        min: Float
     ) {
         var i = 0
         var cache1 = Path()
