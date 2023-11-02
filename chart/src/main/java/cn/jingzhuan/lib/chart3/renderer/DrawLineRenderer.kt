@@ -372,6 +372,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         // 起点或终点区域 可拖动
         // 起点和终点之前的区域 整体平移
         dataSets.forEach { it.isSelect = false }
+        val drawingDataset = dataSets.findLast { it.lineState != DrawLineState.complete }
+        if (drawingDataset != null) return drawingDataset
         for (dataSet in dataSets) {
             if (dataSet.lineState == DrawLineState.complete) {
                 val inLine = checkIfInLine(
