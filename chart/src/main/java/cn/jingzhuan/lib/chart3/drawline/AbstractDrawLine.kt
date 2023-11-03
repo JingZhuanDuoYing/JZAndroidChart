@@ -63,7 +63,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         if (!dataSet.isSelect) return
         when (dataSet.lineState) {
             DrawLineState.prepare -> {
-                Log.d("onPressDrawLine", "准备阶段")
+//                Log.d("onPressDrawLine", "准备阶段")
             }
             DrawLineState.first -> {
                 // 第一步 画起点
@@ -94,7 +94,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         val x = getEntryX(value.dataIndex, baseDataSet) ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
-        Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
+//        Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         bgPaint.alpha = 255
@@ -110,7 +110,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val x = getEntryX(value.dataIndex, baseDataSet) ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
-        Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
+//        Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         bgPaint.alpha = 255
@@ -126,7 +126,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val x = getEntryX(value.dataIndex, baseDataSet) ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
-        Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
+//        Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
         bgPaint.alpha = 255
@@ -200,7 +200,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         val x = startX + step * index + pointWidth * 0.5f
 
-        Log.d("onPressDrawLine", "valueCount=$valueCount, step=$step, pointX= $x, index=$index, pointWidth=$pointWidth,")
+//        Log.d("onPressDrawLine", "valueCount=$valueCount, step=$step, pointX= $x, index=$index, pointWidth=$pointWidth,")
 
         return x
     }
