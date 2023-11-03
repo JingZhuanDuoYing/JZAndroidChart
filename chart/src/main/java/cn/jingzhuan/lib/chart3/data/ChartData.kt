@@ -67,8 +67,8 @@ open class ChartData<T : AbstractDataSet<*>> {
 
             val rightAxis = axisRenderers?.get(TYPE_AXIS_RIGHT)?.axis as AxisY
             rightAxis.apply {
-                yMin = leftMin
-                yMax = leftMax
+                yMin = rightMin
+                yMax = rightMax
             }
         }
     }
