@@ -104,6 +104,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var isScaling = false
 
+    private var stopScale = false
+
     /**
      * 双击放大
      */
@@ -499,6 +501,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onScale(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
         if (isLongPress) return false
+        if (stopScale) return false
         Log.i(TAG, "onScale")
         isScaling = true
 
@@ -603,6 +606,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onScaleBegin(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
         if (isLongPress) return false
+        if (stopScale) return false
         Log.i(TAG, "onScaleBegin")
         if (scaleListener != null) {
             scaleListener?.onScaleStart(currentViewport)
@@ -612,6 +616,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onScaleEnd(detector: JZScaleGestureDetector) {
         Log.i(TAG, "onScaleEnd")
+        if (stopScale) return
         if (scaleListener != null) {
             scaleListener?.onScaleEnd(currentViewport)
         }
@@ -633,6 +638,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             MotionEvent.ACTION_UP -> {
                 Log.i(TAG, "onTouchEvent->ACTION_UP")
                 if (isTouching) isTouching = false
+                stopScale = false
 
                 if (isScaling) {
                     isScaling = false
@@ -662,7 +668,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
         isMultipleTouch = event.pointerCount > 1
         mDetector.onTouchEvent(event)
-        mScaleDetector.onTouchEvent(event)
+        if (!stopScale) {
+            mScaleDetector.onTouchEvent(event)
+        }
         return true
     }
 
@@ -775,6 +783,13 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     open fun canScroll(): Boolean {
         return totalEntryCount >= currentVisibleEntryCount
+    }
+
+    open fun forceStopScale() {
+        if (mScaleDetector.isInProgress) {
+            stopScale = true
+            isScaling = false
+        }
     }
 
     private fun triggerScale() {
