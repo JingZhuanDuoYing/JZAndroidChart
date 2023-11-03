@@ -162,7 +162,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
                         preDrawLine.startDrawValue = startDrawValue
                         preDrawLine.isSelect = true
-                        Log.d("onPressDrawLine", "移动起点->index=${startDrawValue.dataIndex}, startX= ${startDrawValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
+//                        Log.d("onPressDrawLine", "移动起点->index=${startDrawValue.dataIndex}, startX= ${startDrawValue.x}, startY= $y,endX= ${preDrawLine.endDrawValue?.x},endY= ${preDrawLine.endDrawValue?.y},")
                         chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_LEFT)
                         chartView.postInvalidate()
                     }
@@ -188,7 +188,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         }
                         preDrawLine.endDrawValue = endDrawValue
                         preDrawLine.isSelect = true
-                        Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
+//                        Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
                         chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_RIGHT)
                         chartView.postInvalidate()
                     }
@@ -210,7 +210,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     if (thirdDrawValue != null) {
                         preDrawLine.thirdDrawValue = thirdDrawValue
                         preDrawLine.isSelect = true
-                        Log.d("onPressDrawLine", "移动平行点->index=${thirdDrawValue.dataIndex}, thirdX= ${thirdDrawValue.x}, thirdY= ${thirdDrawValue.y}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y}, endX= ${preDrawLine.endDrawValue?.x}, endY= ${preDrawLine.endDrawValue?.y}")
+//                        Log.d("onPressDrawLine", "移动平行点->index=${thirdDrawValue.dataIndex}, thirdX= ${thirdDrawValue.x}, thirdY= ${thirdDrawValue.y}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y}, endX= ${preDrawLine.endDrawValue?.x}, endY= ${preDrawLine.endDrawValue?.y}")
                         chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_BOTH)
                         chartView.postInvalidate()
                     }
@@ -333,6 +333,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
                     preDrawLine.lineState = DrawLineState.second
                 } else {
+                    dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
                     preDrawLine.lineState = DrawLineState.complete
                 }
                 preDrawLine.isSelect = true
@@ -344,6 +345,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
             DrawLineState.second -> {
                 if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
+                    dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
                     preDrawLine.lineState = DrawLineState.complete
                     preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
                     preDrawLine.isSelect = true
