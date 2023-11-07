@@ -11,7 +11,6 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
-import java.lang.Float.NaN
 import java.lang.Float.isNaN
 import kotlin.math.abs
 import kotlin.math.max
@@ -95,19 +94,32 @@ class BarDraw(
         val step = contentRect.width() * scale / valueCount
         val startX = contentRect.left - viewport.left * contentRect.width() * scale
 
+        val dataSize = dataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
 
-        var i = 0
-        while (i < valueCount && i < dataSet.values.size) {
+        var i = leftIndex
+        while (i < rightIndex) {
             val barValue = dataSet.getEntryForIndex(i)
             if (barValue == null || !barValue.isEnable) {
                 i++
                 continue
             }
 
-            val floatValues = barValue.values
+            var floatValues = barValue.values
             if (floatValues == null || floatValues.isEmpty() || isNaN(floatValues.first())) {
                 i++
                 continue
+            }
+
+            if (dataSet.overlayKline && dataSet.overLayRatio != null) {
+                val overLayValues = FloatArray(floatValues.size)
+                floatValues.forEachIndexed { index, fl ->
+                    overLayValues[index] = fl * (dataSet.overLayRatio ?: 1.0f)
+                }
+                floatValues = overLayValues
             }
 
             if (barValue.color != -2) {

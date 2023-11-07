@@ -13,6 +13,10 @@ interface IDataSet {
 
     fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float)
 
+    fun calcOverlayMinMax(viewport: Viewport, ratio: Float?)
+
+    fun calcOverlayRatio(viewport: Viewport, baseDataSet: AbstractDataSet<*>): Float?
+
     fun getEntryCount(): Int
 
 }
