@@ -949,6 +949,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         this.rangeChangeListener = listener
     }
 
+    fun loadMore() {
+        if (loadMoreListener != null) {
+            loadMoreListener?.onLoadMore()
+        }
+    }
+
     /**
      * viewport改变 光标状态为forever时 光标位置对应更新
      */
