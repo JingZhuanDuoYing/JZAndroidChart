@@ -191,6 +191,7 @@ class LineDraw(
         }
 
         var i = leftIndex
+        var leftX = startX + step * (leftIndex + startIndexOffset)
 
         val headValue: LineValue? = lineDataSet.headPoint
         if (headValue != null && !headValue.isValueNaN) {
@@ -348,9 +349,9 @@ class LineDraw(
                 val lineValue: LineValue? = lineDataSet.getEntryForIndex(i - 1)
                 if (lineValue != null && shaderPath != null) {
                     shaderPath?.lineTo(lineValue.x, contentRect.bottom.toFloat())
-                    shaderPath?.lineTo(startX + startIndexOffset * width, contentRect.bottom.toFloat())
+                    shaderPath?.lineTo(leftX + startIndexOffset * width, contentRect.bottom.toFloat())
                     shaderPath?.lineTo(
-                        startX + startIndexOffset * width,
+                        leftX + startIndexOffset * width,
                         lineDataSet.values[0].y
                     )
                     shaderPath?.close()
