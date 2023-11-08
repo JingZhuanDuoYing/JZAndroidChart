@@ -518,7 +518,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         // 双指距离比上次小，为缩小
         val zoomOut = lastSpanX > spanX
 
-        val canZoom = abs(abs(lastSpanX) - abs(spanX)) > 0f
+        val canZoom = abs(abs(lastSpanX) - abs(spanX)) > 5f
 
         if (!canZoom) return false
 
@@ -732,20 +732,20 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         val curWidth: Float = currentViewport.width()
         val left = max(Viewport.AXIS_X_MIN, min(x, Viewport.AXIS_X_MAX - curWidth))
 
-        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
-            return
-        }
+//        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
+//            return
+//        }
 
-        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
-        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
-
-        if (leftSide && currentViewport.left == left) {
-            return
-        }
-
-        if (rightSide && currentViewport.right == left + curWidth) {
-            return
-        }
+//        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
+//        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
+//
+//        if (leftSide && currentViewport.left == left) {
+//            return
+//        }
+//
+//        if (rightSide && currentViewport.right == left + curWidth) {
+//            return
+//        }
 
         currentViewport.left = left
         currentViewport.right = left + curWidth

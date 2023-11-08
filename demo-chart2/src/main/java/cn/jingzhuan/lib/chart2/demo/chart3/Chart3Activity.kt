@@ -158,15 +158,15 @@ class Chart3Activity : AppCompatActivity() {
         initView()
 
         initListener()
-        val timer = Timer()
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                runOnUiThread {
-                    setMainKlineChartData(update = true)
-                }
-            }
-        }, 0, 1000L)
-
+//        val timer = Timer()
+//        timer.schedule(object : TimerTask() {
+//            override fun run() {
+//                runOnUiThread {
+//                    setMainKlineChartData(update = true)
+//                }
+//            }
+//        }, 0, 1000L)
+        setMainKlineChartData(update = true)
         setSubKlineChartData()
     }
 
