@@ -166,7 +166,7 @@ class Chart3Activity : AppCompatActivity() {
 //                }
 //            }
 //        }, 0, 1000L)
-        setMainKlineChartData(update = true)
+        setMainKlineChartData()
         setSubKlineChartData()
     }
 
@@ -1022,10 +1022,10 @@ class Chart3Activity : AppCompatActivity() {
     private fun setMainMinuteChartData() {
         val klineList = DataConfig.candlestickList.toMutableList()
         val newList = mutableListOf<CandlestickValue>()
-        DataConfig.candlestickList.forEachIndexed { index, value ->
-            val time = 1692322131L - 86400 * (klineList.size + index)
-            newList.add(CandlestickValue(value.high, value.low, value.open, value.close, time))
-        }
+//        DataConfig.candlestickList.forEachIndexed { index, value ->
+//            val time = 1692322131L - 86400 * (klineList.size + index)
+//            newList.add(CandlestickValue(value.high, value.low, value.open, value.close, time))
+//        }
         val list = newList.reversed().toMutableList()
         list.addAll(klineList)
 

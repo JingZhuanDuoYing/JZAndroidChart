@@ -76,10 +76,18 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         linePaint.alpha = 255
         setDashPathEffect(dataSet.dash)
-        canvas.drawLine(x1, y1, x2, y2, linePaint)
-        if (linePaint.pathEffect != null) linePaint.pathEffect = null
+        if (startX == endX) {
+            canvas.drawLine(startX, 0f, endX, chartView.contentRect.height().toFloat(), linePaint)
+        } else {
+            canvas.drawLine(x1, y1, x2, y2, linePaint)
+        }
 
-        val path = updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
+        val path = if (startX == endX) {
+            updatePath(dataSet, angle.toFloat(), startX, 0f, endX, chartView.contentRect.height().toFloat(), true)
+        } else {
+            updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2, true)
+        }
 
         // 画选中背景
         if (dataSet.isSelect) {
@@ -106,10 +114,19 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
             linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
             linePaint.alpha = 255
             setDashPathEffect(dataSet.dash)
-            canvas.drawLine(x3, y3, x4, y4, linePaint)
+            if (startX == endX) {
+                canvas.drawLine(thirdX, 0f, thirdX, chartView.contentRect.height().toFloat(), linePaint)
+            } else {
+                canvas.drawLine(x3, y3, x4, y4, linePaint)
+            }
+
             if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
-            val parallelPath = updatePath(dataSet, angle.toFloat(), x3, y3, x4, y4, true)
+            val parallelPath = if (startX == endX) {
+                updatePath(dataSet, angle.toFloat(), thirdX, 0f, thirdX, chartView.contentRect.height().toFloat(), true)
+            } else {
+                updatePath(dataSet, angle.toFloat(), x3, y3, x4, y4, true)
+            }
             if (dataSet.isSelect) {
                 linePaint.style = Paint.Style.FILL
                 linePaint.alpha = dataSet.selectAlpha

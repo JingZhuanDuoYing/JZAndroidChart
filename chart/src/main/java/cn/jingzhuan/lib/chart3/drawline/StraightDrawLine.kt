@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
+import android.graphics.Path
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -74,10 +75,18 @@ class StraightDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
 
         // 画线段
         setDashPathEffect(dataSet.dash)
-        canvas.drawLine(x1, y1, x2, y2, linePaint)
+        if (startX == endX) {
+            canvas.drawLine(startX, 0f, endX, chartView.contentRect.height().toFloat(), linePaint)
+        } else {
+            canvas.drawLine(x1, y1, x2, y2, linePaint)
+        }
         if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
-        val path = updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
+        val path = if (startX == endX) {
+            updatePath(dataSet, angle.toFloat(), startX, 0f, endX, chartView.contentRect.height().toFloat())
+        } else {
+            updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
+        }
 
         // 画选中背景
         if (dataSet.isSelect) {

@@ -150,16 +150,16 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val diffH = dataSet.pointOuterR * sin((90 + angle) * Math.PI / 180).toFloat()
 
         val x1 = startX + diffW
-        val y1 = startY + diffH
+        val y1 = if (startY == 0f) 0f else startY + diffH
 
         val x2 = startX - diffW
-        val y2 = startY - diffH
+        val y2 = if (startY == 0f) 0f else startY - diffH
 
         val x3 = endX + diffW
-        val y3 = endY + diffH
+        val y3 = if (endY == 0f) 0f else endY + diffH
 
         val x4 = endX - diffW
-        val y4 = endY - diffH
+        val y4 = if (endY == 0f) 0f else endY - diffH
 
         val path = Path()
         path.moveTo(x1, y1)
@@ -188,7 +188,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         if (baseDataSet.values.isEmpty()) return null
 
-        val valueCount = baseDataSet.values.size
+        val valueCount = max(baseDataSet.values.size, baseDataSet.forceValueCount)
 
         val scale = 1.0f / currentViewport.width()
 
