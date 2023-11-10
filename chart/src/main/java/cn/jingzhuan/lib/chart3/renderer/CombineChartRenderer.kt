@@ -143,7 +143,6 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
             // 柱子
             if (dataSet is BarDataSet) {
                 barDraw.drawDataSet(canvas, combineData.barChartData, dataSet, currentViewport)
-
             }
 
             // 标签文本

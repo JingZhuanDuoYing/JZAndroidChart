@@ -64,6 +64,10 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     var forceValueCount = -1
 
+    var overlayKline = false
+
+    var overLayRatio: Float? = null
+
     var isEnable = true
         set(value) {
             this.isVisible = value
@@ -90,6 +94,10 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
     override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
         calcMinMax(viewport)
     }
+
+    override fun calcOverlayMinMax(viewport: Viewport, ratio: Float?) {}
+
+    override fun calcOverlayRatio(viewport: Viewport, baseDataSet: AbstractDataSet<*>): Float? = null
 
     abstract fun addEntry(value: T?): Boolean
 

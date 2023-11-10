@@ -12,6 +12,8 @@ import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_ALIGN_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_LEFT
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_RIGHT
 import java.lang.Float.isNaN
 import kotlin.math.floor
 import kotlin.math.max
@@ -143,22 +145,18 @@ class ScatterTextDraw(
             }
 
             val roundRect = RectF()
-            var right: Float
-            var left: Float
-            when (axisDependency) {
-                AxisY.DEPENDENCY_LEFT -> {
+            var right : Float
+            var left : Float
+
+            when (dataSet.horizontalAlignment) {
+                SCATTER_TEXT_HORIZONTAL_LEFT -> {
                     right = centerX + textPadding
                     left = centerX - textRectWidth - textPadding
                 }
 
-                AxisY.DEPENDENCY_RIGHT -> {
+                SCATTER_TEXT_HORIZONTAL_RIGHT -> {
                     right = centerX + textRectWidth + textPadding
                     left = centerX - textPadding
-                }
-
-                AxisY.DEPENDENCY_BOTH -> {
-                    right = centerX + textRectWidth * 0.5f + textPadding
-                    left = centerX - textRectWidth * 0.5f - textPadding
                 }
 
                 else -> {

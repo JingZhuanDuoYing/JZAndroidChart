@@ -27,6 +27,12 @@ object ChartConstant {
 
     const val SCATTER_TEXT_ALIGN_BOTTOM = 2
 
+    const val SCATTER_TEXT_HORIZONTAL_LEFT = 3
+
+    const val SCATTER_TEXT_HORIZONTAL_CENTER = 4
+
+    const val SCATTER_TEXT_HORIZONTAL_RIGHT = 5
+
     // <editor-fold desc="光标 状态">    -------------------
     /**
      * 初始状态

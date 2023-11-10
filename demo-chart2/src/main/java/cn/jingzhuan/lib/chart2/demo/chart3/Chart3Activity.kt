@@ -158,9 +158,15 @@ class Chart3Activity : AppCompatActivity() {
         initView()
 
         initListener()
-
-        setMainKlineChartData()
-
+//        val timer = Timer()
+//        timer.schedule(object : TimerTask() {
+//            override fun run() {
+//                runOnUiThread {
+//                    setMainKlineChartData(update = true)
+//                }
+//            }
+//        }, 0, 1000L)
+        setMainKlineChartData(update = true)
         setSubKlineChartData()
     }
 
@@ -911,8 +917,12 @@ class Chart3Activity : AppCompatActivity() {
         val lineList = ArrayList<LineValue>()
         val scatterList = ArrayList<ScatterValue>()
         val scatterTextList = ArrayList<ScatterTextValue>()
+        val overLayList = ArrayList<BarValue>()
+        val overLay2List = ArrayList<BarValue>()
         klineList.forEachIndexed { index, value ->
             lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
+            overLayList.add(BarValue(value.open * 1.5f, (value.close) * 1.5f, Color.BLUE))
+            overLay2List.add(BarValue(value.high * 1.5f, (value.low) * 1.5f, Color.RED))
             when (index) {
                 klineList.size - 3 -> {
                     scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1)))
@@ -974,11 +984,27 @@ class Chart3Activity : AppCompatActivity() {
 
         val drawLineDataSet = klineMain.chartData.dataSets.find { it is DrawLineDataSet }
 
+        val overLayDataSet = BarDataSet(overLayList).apply {
+            overlayKline = true
+            isAutoBarWidth = true
+            color = Color.BLUE
+            drawIndex = 888
+        }
+        val overLayDataSet2 = BarDataSet(overLay2List).apply {
+            overlayKline = true
+            isAutoBarWidth = true
+            color = Color.RED
+            drawIndex = 889
+        }
+
+
         val data = CombineData().apply {
             add(candlestickDataSet)
             add(lineDataSet)
             add(scatterDataSet)
             add(drawLineDataSet)
+            add(overLayDataSet)
+            add(overLayDataSet2)
 //            add(scatterTextDataSet)
         }
 

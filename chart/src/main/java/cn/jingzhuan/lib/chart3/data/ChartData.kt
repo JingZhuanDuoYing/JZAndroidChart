@@ -67,8 +67,8 @@ open class ChartData<T : AbstractDataSet<*>> {
 
             val rightAxis = axisRenderers?.get(TYPE_AXIS_RIGHT)?.axis as AxisY
             rightAxis.apply {
-                yMin = leftMin
-                yMax = leftMax
+                yMin = rightMin
+                yMax = rightMax
             }
         }
     }
@@ -83,17 +83,37 @@ open class ChartData<T : AbstractDataSet<*>> {
         rightMin = rMin
         rightMax = rMax
 
+        var overlayRatio: Float? = null
+
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
+                for (t in dataSets) {
+                    if (t.overlayKline) {
+                        val dataSet = getTouchDataSet()
+                        if (dataSet != null) {
+                            overlayRatio = t.calcOverlayRatio(viewport, dataSet)
+                            if (overlayRatio != null) break
+                        }
+                    }
+                }
                 for (t in dataSets) {
                     if (!t.isEnable) continue
 
                     if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                        t.calcMinMax(viewport, content, leftMax, leftMin)
+                        if (t.overlayKline) {
+                            t.calcOverlayMinMax(viewport, overlayRatio)
+                        } else {
+                            t.calcMinMax(viewport, content, leftMax, leftMin)
+                        }
                     }
                     if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                        t.calcMinMax(viewport, content, rightMax, rightMin)
+                        if (t.overlayKline) {
+                            t.calcOverlayMinMax(viewport, overlayRatio)
+                        } else {
+                            t.calcMinMax(viewport, content, rightMax, rightMin)
+                        }
                     }
+
                     if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
                         leftMax = max(leftMax, t.viewportYMax)
                         leftMin = min(leftMin, t.viewportYMin)

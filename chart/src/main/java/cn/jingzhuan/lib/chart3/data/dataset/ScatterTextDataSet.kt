@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.data.dataset
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_ALIGN_TOP
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_CENTER
 import kotlin.math.max
 
 /**
@@ -31,6 +32,8 @@ open class ScatterTextDataSet(scatterTextValues: List<ScatterTextValue>) :
     var lineDashHeight = 40
 
     var align = SCATTER_TEXT_ALIGN_TOP
+
+    var horizontalAlignment = SCATTER_TEXT_HORIZONTAL_CENTER
 
     /**
      * 安全空间

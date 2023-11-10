@@ -104,6 +104,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var isScaling = false
 
+    private var stopScale = false
+
     /**
      * 双击放大
      */
@@ -233,7 +235,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onDown(e: MotionEvent): Boolean {
-//        Log.i(TAG, "onDown")
+        Log.i(TAG, "onDown")
         scrollerStartViewport.set(currentViewport)
 
         finishScroll()
@@ -247,11 +249,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onShowPress(e: MotionEvent) {
-//        Log.i(TAG, "onShowPress")
+        Log.i(TAG, "onShowPress")
     }
 
     override fun onLongPress(e: MotionEvent) {
-//        Log.i(TAG, "onLongPress")
+        Log.i(TAG, "onLongPress")
         if (isOpenRange) return
         if (isDrawingLine()) return
 
@@ -263,7 +265,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-//        Log.i(TAG, "onSingleTapUp")
+        Log.i(TAG, "onSingleTapUp")
         if (isDoubleTapToZoom) return false
         if (isOpenRange) return false
         if (isDrawingLine()) return false
@@ -324,7 +326,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             onHighlightClean()
         }
 
-//        Log.i(TAG, "onScroll")
+        Log.i(TAG, "onScroll")
 
         /**
          * Pixel offset is the offset in screen pixels, while viewport offset is the
@@ -366,11 +368,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 //                needsInvalidate = true
 //            }
             val currXRange = Viewport.AXIS_X_MIN + (Viewport.AXIS_X_MAX - Viewport.AXIS_X_MIN) * currX / mSurfacePoint.x
-//            Log.i(TAG, "computeScroll-> currXRange=${currXRange} mScroller.isFinished=${mScroller.isFinished}")
+            Log.i(TAG, "computeScroll-> currXRange=${currXRange} mScroller.isFinished=${mScroller.isFinished}")
             setViewportBottomLeft(currXRange)
 
             if (currX < pointWidth * 0.5f && leftSide) {
-//                Log.w(TAG, "加载更多")
+                Log.w(TAG, "加载更多")
                 needsInvalidate = false
                 finishScroll()
                 if (loadMoreListener != null) {
@@ -447,7 +449,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
 
         if (needsInvalidate) {
-//            Log.i(TAG, "computeScroll-> needsInvalidate")
+            Log.i(TAG, "computeScroll-> needsInvalidate")
             triggerViewportChange()
         }
     }
@@ -459,7 +461,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         velocityY: Float,
     ): Boolean {
         if (!isTouching && isScrollEnable && canScroll() && !isMultipleTouch && !isScaling) {
-//            Log.i(TAG, "onFling")
+            Log.i(TAG, "onFling")
             val leftSide = currentViewport.left == Viewport.AXIS_X_MIN
             val rightSide = currentViewport.right == Viewport.AXIS_X_MAX
 
@@ -475,7 +477,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             // Flings use math in pixels (as opposed to math based on the viewport).
             computeScrollSurfaceSize(mSurfacePoint)
 
-//            Log.i(TAG, "onFling->mSurfacePoint(x,y)=${mSurfacePoint.x},${mSurfacePoint.y}")
+            Log.i(TAG, "onFling->mSurfacePoint(x,y)=${mSurfacePoint.x},${mSurfacePoint.y}")
 
             scrollerStartViewport.set(currentViewport)
 
@@ -499,7 +501,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onScale(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
         if (isLongPress) return false
-//        Log.i(TAG, "onScale")
+        if (stopScale) return false
+        Log.i(TAG, "onScale")
         isScaling = true
 
         if (highlightState != HIGHLIGHT_STATUS_FOREVER) {
@@ -515,7 +518,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         // 双指距离比上次小，为缩小
         val zoomOut = lastSpanX > spanX
 
-        val canZoom = abs(abs(lastSpanX) - abs(spanX)) > 0f
+        val canZoom = abs(abs(lastSpanX) - abs(spanX)) > 5f
 
         if (!canZoom) return false
 
@@ -603,7 +606,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onScaleBegin(detector: JZScaleGestureDetector): Boolean {
         if (!isScaleEnable) return false
         if (isLongPress) return false
-//        Log.i(TAG, "onScaleBegin")
+        if (stopScale) return false
+        Log.i(TAG, "onScaleBegin")
         if (scaleListener != null) {
             scaleListener?.onScaleStart(currentViewport)
         }
@@ -611,7 +615,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     override fun onScaleEnd(detector: JZScaleGestureDetector) {
-//        Log.i(TAG, "onScaleEnd")
+        Log.i(TAG, "onScaleEnd")
+        if (stopScale) return
         if (scaleListener != null) {
             scaleListener?.onScaleEnd(currentViewport)
         }
@@ -620,19 +625,20 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
-//                Log.i(TAG, "onTouchEvent->ACTION_DOWN")
+                Log.i(TAG, "onTouchEvent->ACTION_DOWN")
                 isTouching = true
             }
 
             MotionEvent.ACTION_MOVE -> {
-//                Log.i(TAG, "onTouchEvent->ACTION_MOVE ")
+                Log.i(TAG, "onTouchEvent->ACTION_MOVE ")
                 //长按之后移动
                 if (isLongPress) onLongPress(event)
             }
 
             MotionEvent.ACTION_UP -> {
-//                Log.i(TAG, "onTouchEvent->ACTION_UP")
+                Log.i(TAG, "onTouchEvent->ACTION_UP")
                 if (isTouching) isTouching = false
+                stopScale = false
 
                 if (isScaling) {
                     isScaling = false
@@ -650,7 +656,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             }
 
             MotionEvent.ACTION_CANCEL -> {
-//                Log.i(TAG, "onTouchEvent->ACTION_CANCEL")
+                Log.i(TAG, "onTouchEvent->ACTION_CANCEL")
                 if (isScaling) isScaling = false
                 if (isLongPress) isLongPress = false
                 if (isTouching) isTouching = false
@@ -662,7 +668,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
         isMultipleTouch = event.pointerCount > 1
         mDetector.onTouchEvent(event)
-        mScaleDetector.onTouchEvent(event)
+        if (!stopScale) {
+            mScaleDetector.onTouchEvent(event)
+        }
         return true
     }
 
@@ -683,7 +691,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 try {
                     internalViewportChangeListener?.onViewportChange(currentViewport)
                 } catch (e: Exception) {
-//                    Log.d(TAG, "OnViewportChangeListener", e)
+                    Log.d(TAG, "OnViewportChangeListener", e)
                 }
             }
         }
@@ -692,7 +700,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 try {
                     viewportChangeListener?.onViewportChange(currentViewport)
                 } catch (e: Exception) {
-//                    Log.d(TAG, "OnViewportChangeListener", e)
+                    Log.d(TAG, "OnViewportChangeListener", e)
                 }
             }
         }
@@ -724,27 +732,27 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         val curWidth: Float = currentViewport.width()
         val left = max(Viewport.AXIS_X_MIN, min(x, Viewport.AXIS_X_MAX - curWidth))
 
-        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
-            return
-        }
+//        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
+//            return
+//        }
 
-        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
-        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
-
-        if (leftSide && currentViewport.left == left) {
-            return
-        }
-
-        if (rightSide && currentViewport.right == left + curWidth) {
-            return
-        }
+//        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
+//        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
+//
+//        if (leftSide && currentViewport.left == left) {
+//            return
+//        }
+//
+//        if (rightSide && currentViewport.right == left + curWidth) {
+//            return
+//        }
 
         currentViewport.left = left
         currentViewport.right = left + curWidth
 
         currentViewport.constrainViewport()
 
-//        Log.i(TAG, "setViewportBottomLeft.left=${currentViewport.left}, currentViewport.right=${currentViewport.right}")
+        Log.i(TAG, "setViewportBottomLeft.left=${currentViewport.left}, currentViewport.right=${currentViewport.right}")
         triggerViewportChange()
     }
 
@@ -775,6 +783,13 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     open fun canScroll(): Boolean {
         return totalEntryCount >= currentVisibleEntryCount
+    }
+
+    open fun forceStopScale() {
+        if (mScaleDetector.isInProgress) {
+            stopScale = true
+            isScaling = false
+        }
     }
 
     private fun triggerScale() {
@@ -932,6 +947,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     fun setOnRangeChangeListener(listener: OnRangeChangeListener) {
         this.rangeChangeListener = listener
+    }
+
+    fun loadMore() {
+        if (loadMoreListener != null) {
+            loadMoreListener?.onLoadMore()
+        }
     }
 
     /**
