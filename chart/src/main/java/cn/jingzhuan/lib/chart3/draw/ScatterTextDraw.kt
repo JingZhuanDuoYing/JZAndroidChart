@@ -17,6 +17,8 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_RIGHT
 import java.lang.Float.isNaN
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-11
@@ -109,9 +111,16 @@ class ScatterTextDraw(
         val dataSetIndex = dataSets.indexOf(dataSet)
 
         val startIndexOffset = 0
-        var i = 0
 
-        while (i < valuePhaseCount && i < dataSet.values.size) {
+        val dataSize = dataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
+
+        var i = leftIndex
+
+        while (i < rightIndex) {
             val value = dataSet.getEntryForIndex(i)
             if (value == null || !value.isVisible || isNaN(value.high) || isNaN(value.low)) {
                 i++

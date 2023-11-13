@@ -18,6 +18,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
 import java.lang.Float.isNaN
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-11
@@ -104,8 +105,15 @@ class ScatterDraw(private val contentRect: Rect) : IDraw<ScatterDataSet> {
 
         val valueCount = dataSet.getEntryCount()
 
-        var i = 0
-        while (i < valueCount && i < dataSet.values.size) {
+        val dataSize = dataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
+
+        var i = leftIndex
+
+        while (i < rightIndex) {
             val value: ScatterValue? = dataSet.getEntryForIndex(i)
             if (!value!!.isVisible) {
                 i++
