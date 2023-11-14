@@ -14,6 +14,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
 import cn.jingzhuan.lib.chart3.utils.NumberUtils
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-06
@@ -94,8 +95,15 @@ class CandlestickDraw(
         val widthPercent = candlestickDataSet.candleWidthPercent
 
         val gapArray = ArrayList<Pair<Float, Float>>()
-        var i = 0
-        while (i < valueCount && i < candlestickDataSet.values.size) {
+
+        val dataSize = candlestickDataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
+
+        var i = leftIndex
+        while (i < rightIndex) {
             val candlestick = candlestickDataSet.getEntryForIndex(i)
             if (!candlestick!!.isVisible) {
                 i++

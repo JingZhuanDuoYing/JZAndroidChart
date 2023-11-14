@@ -112,6 +112,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         val sortedDataSets = combineData?.allDataSet ?: return
 
+        if (sortedDataSets.isEmpty()) return
+
         if (chartView.pointWidth == 0f) setPointWidth()
 
         for (i in sortedDataSets.indices) {
