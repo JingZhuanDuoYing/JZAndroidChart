@@ -37,6 +37,8 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             viewport.left = from / dataSize
             viewport.right = to / dataSize
 
+            this.totalEntryCount = dataSize
+
             handleLoadMoreIndex(dataSize - lastCount)
 
             setCurrentViewport(viewport)
