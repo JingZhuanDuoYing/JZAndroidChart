@@ -7,6 +7,8 @@ import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @since 2023-10-16
@@ -55,13 +57,21 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
-        // 画线段
-        setDashPathEffect(dataSet.dash)
-        canvas.drawLine(startX, startY, endX, endY, linePaint)
-        if (linePaint.pathEffect != null) linePaint.pathEffect = null
-
         // 当前起点与终点的夹角
         val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+
+        // 画线段
+        setDashPathEffect(dataSet.dash)
+
+        val diffW = dataSet.pointOuterR * cos((angle) * Math.PI / 180).toFloat()
+
+        val diffH = dataSet.pointOuterR * sin((angle) * Math.PI / 180).toFloat()
+
+        val rEndX = endX - diffW
+        val rEndY = if (endY == 0f) 0f else endY - diffH
+
+        canvas.drawLine(startX, startY, rEndX, rEndY, linePaint)
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
         // 画选中背景
         val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
