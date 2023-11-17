@@ -794,11 +794,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         currentVisibleEntryCount = (currentViewport.width() * totalEntryCount).roundToInt()
 
         lastScrollViewPortLeft = currentViewport.left
-        Log.i(TAG, "setViewportBottomLeft1 x=${x}, left=$left")
         if (totalEntryCount != 0) {
             val leftIndex = (totalEntryCount * currentViewport.left).roundToInt()
             val trLeft = leftIndex / totalEntryCount.toFloat()
-            Log.i(TAG, "setViewportBottomLeft1 leftIndex=${leftIndex}, trLeft=$trLeft")
 
             currentViewport.left = trLeft
             currentViewport.right = trLeft + currentViewport.width()
