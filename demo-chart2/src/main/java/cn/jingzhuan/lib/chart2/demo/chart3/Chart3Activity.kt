@@ -166,7 +166,7 @@ class Chart3Activity : AppCompatActivity() {
 //                }
 //            }
 //        }, 0, 1000L)
-        setMainKlineChartData(update = true)
+        setMainKlineChartData(update = false)
         setSubKlineChartData()
     }
 

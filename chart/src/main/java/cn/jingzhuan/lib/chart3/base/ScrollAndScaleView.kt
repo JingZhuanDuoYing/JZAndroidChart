@@ -216,6 +216,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     var drawLineListener: OnDrawLineListener? = null
 
+    private var lastScrollViewPortLeft = 0f
+
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
 
     constructor(context: Context?) : super(context)
@@ -258,7 +260,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (isDrawingLine()) return
 
         if (!isLongPress) isLongPress = true
-        if (highlightState != HIGHLIGHT_STATUS_MOVE && highlightState != HIGHLIGHT_STATUS_FOREVER && !isStatic){
+        if (highlightState != HIGHLIGHT_STATUS_MOVE && !isHighlightForever() && !isStatic){
             highlightState = HIGHLIGHT_STATUS_MOVE
         }
         onTouchPoint(e)
@@ -322,11 +324,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             return false
         }
 
-        if (highlightState != HIGHLIGHT_STATUS_FOREVER) {
-            onHighlightClean()
-        }
-
-        Log.i(TAG, "onScroll")
+        if (!isHighlightForever()) onHighlightClean()
 
         /**
          * Pixel offset is the offset in screen pixels, while viewport offset is the
@@ -335,11 +333,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
          * additional information about the viewport, see the comments for
          * [currentViewport].
          */
-        val viewportOffsetX = distanceX.roundToInt() * currentViewport.width() / contentRect.width()
+        val viewportOffsetX = distanceX * currentViewport.width() / contentRect.width()
 
         computeScrollSurfaceSize(mSurfacePoint)
-
-        setViewportBottomLeft(currentViewport.left + viewportOffsetX)
+        Log.i(TAG, "onScroll-> currXRange=${currentViewport.left + viewportOffsetX}}")
+        setViewportBottomLeft(lastScrollViewPortLeft + viewportOffsetX)
         return true
     }
 
@@ -505,12 +503,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         Log.i(TAG, "onScale")
         isScaling = true
 
-        if (highlightState != HIGHLIGHT_STATUS_FOREVER) {
-            onHighlightClean()
-        }
+        if (!isHighlightForever()) onHighlightClean()
 
-        val spanX: Float = mScaleDetector.currentSpan
-        var lastSpanX: Float = mScaleDetector.previousSpan
+        val spanX = mScaleDetector.currentSpan
+        var lastSpanX = mScaleDetector.previousSpan
 
         // 双指距离比上次大，为放大
         val zoomIn = spanX > lastSpanX
@@ -550,7 +546,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             return true
         }
 
-        var focusX: Float = mScaleDetector.focusX
+        var focusX = mScaleDetector.focusX
 
         if (zoomOut) focusX *= scaleSensitivity else if (zoomIn) focusX /= scaleSensitivity
 
@@ -677,6 +673,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     fun setCurrentViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
+        lastScrollViewPortLeft = viewport.left
         triggerViewportChange()
     }
 
@@ -709,7 +706,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             onRangeViewPortChange()
         }
 
-        if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
+        if (isHighlightForever()) {
             onHighlightForever()
         }
 
@@ -731,29 +728,30 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
         val curWidth: Float = currentViewport.width()
         val left = max(Viewport.AXIS_X_MIN, min(x, Viewport.AXIS_X_MAX - curWidth))
+        lastScrollViewPortLeft = left
+        if (left == 0f) {
+            currentViewport.left = left
+            currentViewport.right = left + curWidth
+            currentViewport.constrainViewport()
+            triggerViewportChange()
+            return
+        }
+        if (totalEntryCount != 0) {
+            val leftIndex = (totalEntryCount * left).roundToInt()
+            val rightIndex = min(leftIndex + currentVisibleEntryCount, totalEntryCount)
+            val trRight = rightIndex / totalEntryCount.toFloat()
 
-//        if (currentViewport.left == left && currentViewport.right == left + curWidth) {
-//            return
-//        }
+            val trLeft = trRight - curWidth
 
-//        val leftSide = currentViewport.left <= Viewport.AXIS_X_MIN
-//        val rightSide = currentViewport.right >= Viewport.AXIS_X_MAX
-//
-//        if (leftSide && currentViewport.left == left) {
-//            return
-//        }
-//
-//        if (rightSide && currentViewport.right == left + curWidth) {
-//            return
-//        }
 
-        currentViewport.left = left
-        currentViewport.right = left + curWidth
+            currentViewport.left = trLeft
+            currentViewport.right = trRight
 
-        currentViewport.constrainViewport()
+            currentViewport.constrainViewport()
 
-        Log.i(TAG, "setViewportBottomLeft.left=${currentViewport.left}, currentViewport.right=${currentViewport.right}")
-        triggerViewportChange()
+            Log.i(TAG, "setViewportBottomLeft.left=${currentViewport.left}, currentViewport.right=${currentViewport.right}")
+            triggerViewportChange()
+        }
     }
 
     /**
@@ -793,12 +791,23 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     private fun triggerScale() {
-        currentVisibleEntryCount = ((currentViewport.right - currentViewport.left) * totalEntryCount).roundToInt()
+        currentVisibleEntryCount = (currentViewport.width() * totalEntryCount).roundToInt()
 
-        currentViewport.constrainViewport()
+        lastScrollViewPortLeft = currentViewport.left
+        Log.i(TAG, "setViewportBottomLeft1 x=${x}, left=$left")
+        if (totalEntryCount != 0) {
+            val leftIndex = (totalEntryCount * currentViewport.left).roundToInt()
+            val trLeft = leftIndex / totalEntryCount.toFloat()
+            Log.i(TAG, "setViewportBottomLeft1 leftIndex=${leftIndex}, trLeft=$trLeft")
 
-        if (scaleListener != null) {
-            scaleListener?.onScale(currentViewport)
+            currentViewport.left = trLeft
+            currentViewport.right = trLeft + currentViewport.width()
+
+            currentViewport.constrainViewport()
+
+            if (scaleListener != null) {
+                scaleListener?.onScale(currentViewport)
+            }
         }
     }
 
@@ -953,6 +962,10 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         if (loadMoreListener != null) {
             loadMoreListener?.onLoadMore()
         }
+    }
+
+    fun isHighlightForever(): Boolean {
+        return highlightState == HIGHLIGHT_STATUS_FOREVER
     }
 
     /**

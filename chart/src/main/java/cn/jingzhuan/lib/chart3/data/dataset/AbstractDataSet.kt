@@ -128,7 +128,7 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
     }
 
     fun getVisibleRange(viewport: Viewport): Float {
-        return (viewport.right - viewport.left) * getEntryCount()
+        return ((viewport.right - viewport.left) * getEntryCount()).roundToInt().toFloat()
     }
 
 
