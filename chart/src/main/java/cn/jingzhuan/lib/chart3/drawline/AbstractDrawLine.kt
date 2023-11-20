@@ -91,8 +91,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
      */
     private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.startDrawValue ?: return
+        var x = value.x
+        if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
+            x = getEntryX(value.dataIndex, baseDataSet) ?: return
+        }
 
-        val x = getEntryX(value.dataIndex, baseDataSet) ?: return
         val y = chartView.getScaleY(value.value, lMax, lMin)
 //        Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
@@ -107,7 +110,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     private fun drawEndPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.endDrawValue ?: return
 
-        val x = getEntryX(value.dataIndex, baseDataSet) ?: return
+        var x = value.x
+        if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
+            x = getEntryX(value.dataIndex, baseDataSet) ?: return
+        }
+
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
 //        Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
@@ -123,7 +130,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     private fun drawThirdPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.thirdDrawValue ?: return
 
-        val x = getEntryX(value.dataIndex, baseDataSet) ?: return
+        var x = value.x
+        if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
+            x = getEntryX(value.dataIndex, baseDataSet) ?: return
+        }
+
         val y = chartView.getScaleY(value.value, lMax, lMin)
 
 //        Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")

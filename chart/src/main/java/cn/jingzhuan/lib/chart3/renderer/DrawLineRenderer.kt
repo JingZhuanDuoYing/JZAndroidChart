@@ -126,6 +126,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     PointF(event.x, event.y),
                     ChartConstant.DRAW_LINE_NONE
                 )
+                val chartData = (chart.chartData as CombineData?)
+                val drawLineChartData = chartData?.drawLineChartData
+                val preDrawLine = drawLineChartData?.dataSets?.findLast { it.isSelect } ?: return false
+                preDrawLine.isActionUp = true
+                if (preDrawLine.lineState == DrawLineState.complete)
+                    chartView.postInvalidate()
             }
         }
         return false
@@ -139,6 +145,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         val baseDataSet = chartData?.getTouchDataSet() ?: return false
 
         val preDrawLine = drawLineChartData?.dataSets?.findLast { it.isSelect } ?: return false
+        preDrawLine.isActionUp = false
         when (dragState) {
             ChartConstant.DRAW_LINE_DRAG_LEFT -> {
                 // 移动起点
@@ -307,6 +314,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         (chartView as BaseChartView).cleanHighlight()
+
+        preDrawLine.isActionUp = false
 
         if (lineType == DrawLineType.ltFBNC.ordinal) {
             if (preDrawLine.lineState == DrawLineState.first && point.x < (preDrawLine.startDrawValue?.x ?: -1f)) {
@@ -488,7 +497,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         val index = chartView.getEntryIndex(point.x)
         val baseValue = baseValues.getOrNull(index) ?: return null
         val time = baseValue.time
-        val selectX = baseValue.x
+        val selectX = point.x
         var selectY = point.y
 
         // 如果是K线才有吸附功能

@@ -114,6 +114,8 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var isSelect = false
 
+    var isActionUp = true
+
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false
         calcViewportMinMax(value)

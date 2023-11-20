@@ -40,20 +40,66 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         val thirdPoint = dataSet.thirdDrawValue
         if (startPoint == null || endPoint == null) return
 
+        // 没有吸附并且没有抬起时平顺滑动
+        if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
+            val startX = startPoint.x
+            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+
+            val endX = endPoint.x
+            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+
+            var thirdX: Float? = null
+            var thirdY: Float? = null
+
+            if (thirdPoint != null) {
+                thirdX = thirdPoint.x
+                thirdY = thirdPoint.y
+            }
+
+            drawShape(canvas, dataSet, startX, startY, endX, endY, thirdX, thirdY)
+            return
+        }
+
         val startIndex = baseDataSet.values.indexOfFirst { it.time == startPoint.time }
         val startX = getEntryX(startIndex, baseDataSet) ?: return
         val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
         val endIndex = baseDataSet.values.indexOfFirst { it.time == endPoint.time }
         val endX = getEntryX(endIndex, baseDataSet) ?: return
         val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
+        var thirdX: Float? = null
+        var thirdY: Float? = null
+        if (thirdPoint != null) {
+            val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
+            thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
+            thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
+            if (!dataSet.isSelect || dataSet.isActionUp) {
+                thirdPoint.apply { dataIndex = thirdIndex; x = thirdX; y = thirdY }
+            }
+        }
+
+        drawShape(canvas, dataSet, startX, startY, endX, endY, thirdX, thirdY)
+
+
+    }
+
+    private fun drawShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float,
+        thirdX: Float?,
+        thirdY: Float?
+    ) {
         val width = chartView.contentRect.width().toFloat()
 
         // 当前起点与终点的夹角
@@ -84,9 +130,9 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
 
         if (linePaint.pathEffect != null) linePaint.pathEffect = null
         val path = if (startX == endX) {
-            updatePath(dataSet, angle.toFloat(), startX, 0f, endX, chartView.contentRect.height().toFloat(), true)
+            updatePath(dataSet, angle.toFloat(), startX, 0f, endX, chartView.contentRect.height().toFloat())
         } else {
-            updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2, true)
+            updatePath(dataSet, angle.toFloat(), x1, y1, x2, y2)
         }
 
         // 画选中背景
@@ -97,10 +143,7 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         }
 
         // 画第二条线
-        if (thirdPoint != null) {
-            val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
-            val thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
-            val thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
+        if (thirdX != null && thirdY != null) {
 
             val sRightRadius = (width - thirdX) / cos(angle * Math.PI / 180).toFloat()
             val sLeftRadius = (thirdX - 0f) / cos(angle * Math.PI / 180).toFloat()

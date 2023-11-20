@@ -23,6 +23,36 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
     ) {
         super.onDraw(canvas, dataSet, baseDataSet, lMax, lMin)
         if (dataSet.isSelect) return
+        if (!dataSet.isActionUp) {
+            val startPoint = dataSet.startDrawValue
+            val endPoint = dataSet.endDrawValue
+            if (startPoint == null || endPoint == null) return
+
+            if (startPoint.value > lMax && endPoint.value > lMax) return
+            if (startPoint.value < lMin && endPoint.value < lMin) return
+
+            val startX = startPoint.x
+            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+
+            val endX = endPoint.x
+            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+
+            // 画线段
+            setDashPathEffect(dataSet.dash)
+            canvas.drawLine(startX, startY, endX, endY, linePaint)
+            if (linePaint.pathEffect != null) linePaint.pathEffect = null
+
+            // 当前起点与终点的夹角
+            val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+
+            // 画选中背景
+            val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
+            if (dataSet.isSelect) {
+                linePaint.style = Paint.Style.FILL
+                linePaint.alpha = dataSet.selectAlpha
+                canvas.drawPath(path, linePaint)
+            }
+        }
         drawTypeShape(canvas, dataSet, baseDataSet, lMax, lMin)
     }
 
@@ -40,20 +70,43 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         if (startPoint.value > lMax && endPoint.value > lMax) return
         if (startPoint.value < lMin && endPoint.value < lMin) return
 
+        // 没有吸附并且没有抬起时平顺滑动
+        if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
+            val startX = startPoint.x
+            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+
+            val endX = endPoint.x
+            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+
+            drawShape(canvas, dataSet, startX, startY, endX, endY)
+            return
+        }
+
         val startIndex = baseDataSet.values.indexOfFirst { it.time == startPoint.time }
         val startX = getEntryX(startIndex, baseDataSet) ?: return
         val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
         val endIndex = baseDataSet.values.indexOfFirst { it.time == endPoint.time }
         val endX = getEntryX(endIndex, baseDataSet) ?: return
         val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
+        drawShape(canvas, dataSet, startX, startY, endX, endY)
+    }
+
+    private fun drawShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float
+    ) {
         // 画线段
         setDashPathEffect(dataSet.dash)
         canvas.drawLine(startX, startY, endX, endY, linePaint)
