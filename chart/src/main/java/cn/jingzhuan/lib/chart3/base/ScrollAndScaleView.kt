@@ -668,7 +668,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         }
         isMultipleTouch = event.pointerCount > 1
         mDetector.onTouchEvent(event)
-        if (!stopScale) {
+        if (!stopScale && !isDrawingLine()) {
             mScaleDetector.onTouchEvent(event)
         }
         return true
