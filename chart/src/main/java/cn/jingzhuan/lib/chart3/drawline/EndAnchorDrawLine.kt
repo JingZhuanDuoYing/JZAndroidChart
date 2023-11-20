@@ -91,12 +91,21 @@ class EndAnchorDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : A
     private fun drawArrow(canvas: Canvas, dataSet: DrawLineDataSet, angle: Float, endX: Float, endY: Float) {
         canvas.save()
         // 箭头长度
-        val arrowHeight = dataSet.pointOuterR * 1.8f
+        val maxWidth = dataSet.pointOuterR * 1.8f
+        val minWidth = dataSet.pointOuterR * 0.75f
+        // 以正常显示的40跟为基准算比例
+        val percent = 40f / chartView.currentVisibleEntryCount
+        var normalWidth = dataSet.pointOuterR * percent
+        if (normalWidth > maxWidth) normalWidth = maxWidth
+        if (normalWidth < minWidth) normalWidth = minWidth
+//        val arrowHeight = dataSet.pointOuterR * 1.8f
+        val arrowWidth = normalWidth
+        val arrowHeight = normalWidth * 1.8f
 
-        val x1 = endX - dataSet.pointOuterR
+        val x1 = endX - arrowWidth
         val y1 = endY + arrowHeight
 
-        val x2 = endX + dataSet.pointOuterR
+        val x2 = endX + arrowWidth
         val y2 = endY + arrowHeight
 
         canvas.rotate(angle + 90f, endX, endY)
