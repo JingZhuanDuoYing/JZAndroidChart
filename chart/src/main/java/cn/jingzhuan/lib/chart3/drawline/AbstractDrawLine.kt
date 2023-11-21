@@ -209,11 +209,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val step = contentRect.width() * scale / valueCount
         val startX = contentRect.left - currentViewport.left * contentRect.width() * scale
 
-        val x = startX + step * index + pointWidth * 0.5f
+//        val x = startX + step * index + pointWidth * 0.5f
 
 //        Log.d("onPressDrawLine", "valueCount=$valueCount, step=$step, pointX= $x, index=$index, pointWidth=$pointWidth,")
 
-        return x
+        return startX + step * index + pointWidth * 0.5f
     }
 
     protected fun getLineSizePx(size: Float): Float {
@@ -226,18 +226,15 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         } else {
             if (dash.contains(",")) {
                 val dashArray = dash.split(",")
-                val array = ArrayList<Float>()
-                dashArray.forEach {value ->
-                    array.add(dp2px(value.toFloat()).toFloat())
-                }
-                linePaint.pathEffect =  DashPathEffect(array.toFloatArray(), 0f)
+                val floatArray = dashArray.map { dp2px(it.toFloat()).toFloat() }.toFloatArray()
+                linePaint.pathEffect =  DashPathEffect(floatArray, 0f)
             } else {
                 linePaint.pathEffect = null
             }
         }
     }
 
-    protected fun dp2px(dpValue: Float): Int {
+    private fun dp2px(dpValue: Float): Int {
         val density = chartView.resources.displayMetrics.density
         return (dpValue * density + 0.5f).toInt()
     }
