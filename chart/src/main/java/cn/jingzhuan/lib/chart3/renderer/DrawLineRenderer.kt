@@ -3,7 +3,6 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.Toast
@@ -78,14 +77,13 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     override fun renderer(canvas: Canvas) {
         val chartData = (chart.chartData as CombineData)
-        if (chartData.getDrawLineDataSets().isEmpty()) return
+        val baseDataSet = chartData.getTouchDataSet() ?: return
         val drawLineDataSets = chartData.getDrawLineDataSets()
-        val baseDataSet = chartData.getTouchDataSet()
-        if (baseDataSet != null) {
-            for (dataSet in drawLineDataSets) {
-                if (dataSet.isVisible) {
-                    drawDataSet(canvas, dataSet, baseDataSet, chartData.leftMax, chartData.leftMin)
-                }
+        if (drawLineDataSets.isEmpty()) return
+
+        for (dataSet in drawLineDataSets) {
+            if (dataSet.isVisible) {
+                drawDataSet(canvas, dataSet, baseDataSet, chartData.leftMax, chartData.leftMin)
             }
         }
     }
@@ -112,39 +110,47 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val diffX: Float = abs(event.x - lastPreX)
-                val diffY: Float = abs(event.y - lastPreY)
-                if (diffX <= mTouchSlop && diffY <= mTouchSlop) {
-                    return false
+                if (dragState != ChartConstant.DRAW_LINE_DRAG_BOTH) {
+                    val diffX = abs(event.x - lastPreX)
+                    val diffY = abs(event.y - lastPreY)
+                    if (diffX <= mTouchSlop && diffY <= mTouchSlop) {
+                        return false
+                    }
                 }
                 onMoveDrawLine(event)
             }
 
             MotionEvent.ACTION_UP -> {
-                chartView.drawLineListener?.onDrag(
-                    PointF(event.rawX, event.rawY),
-                    PointF(event.x, event.y),
-                    ChartConstant.DRAW_LINE_NONE
-                )
-                val chartData = (chart.chartData as CombineData?)
-                val drawLineChartData = chartData?.drawLineChartData
-                val preDrawLine = drawLineChartData?.dataSets?.findLast { it.isSelect } ?: return false
-                preDrawLine.isActionUp = true
-                if (preDrawLine.lineState == DrawLineState.complete)
-                    chartView.postInvalidate()
+                onUpDrawLine(event)
             }
         }
         return false
     }
 
+    private fun onUpDrawLine(event: MotionEvent): Boolean {
+        chartView.drawLineListener?.onDrag(
+            PointF(event.rawX, event.rawY),
+            PointF(event.x, event.y),
+            ChartConstant.DRAW_LINE_NONE
+        )
+
+        val chartData = (chart.chartData as CombineData?) ?: return false
+        val drawLineChartData = chartData.drawLineChartData
+        val preDrawLine = drawLineChartData.dataSets.findLast { it.isSelect } ?: return false
+        preDrawLine.isActionUp = true
+        if (preDrawLine.lineState == DrawLineState.complete)
+            chartView.postInvalidate()
+        return true
+    }
+
     private fun onMoveDrawLine(event: MotionEvent): Boolean {
         val x = event.x
         val y = event.y
-        val chartData = (chart.chartData as CombineData?)
-        val drawLineChartData = chartData?.drawLineChartData
-        val baseDataSet = chartData?.getTouchDataSet() ?: return false
+        val chartData = (chart.chartData as CombineData?) ?: return false
+        val drawLineChartData = chartData.drawLineChartData
+        val baseDataSet = chartData.getTouchDataSet() ?: return false
 
-        val preDrawLine = drawLineChartData?.dataSets?.findLast { it.isSelect } ?: return false
+        val preDrawLine = drawLineChartData.dataSets.findLast { it.isSelect } ?: return false
         preDrawLine.isActionUp = false
         when (dragState) {
             ChartConstant.DRAW_LINE_DRAG_LEFT -> {

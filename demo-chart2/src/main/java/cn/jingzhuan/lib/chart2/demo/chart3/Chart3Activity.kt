@@ -39,6 +39,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
+import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterTextValue
 import cn.jingzhuan.lib.chart3.data.value.ScatterValue
@@ -534,7 +535,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltSegment$index"
                 lineType = DrawLineType.ltSegment.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -554,7 +555,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltStraight$index"
                 lineType = DrawLineType.ltStraightLine.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -574,7 +575,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltEndAnchorLine$index"
                 lineType = DrawLineType.ltEndAnchorLine.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -594,7 +595,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltRect$index"
                 lineType = DrawLineType.ltRect.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -614,7 +615,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltHJFG$index"
                 lineType = DrawLineType.ltHJFG.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -634,7 +635,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltFBNC$index"
                 lineType = DrawLineType.ltFBNC.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -654,7 +655,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineKey = "ltParallelLine$index"
                 lineType = DrawLineType.ltParallelLine.ordinal
                 lineState = DrawLineState.prepare
-                lineSize = 3f
+                lineSize = 1f
                 dash = "7,2"
             }
 
@@ -1042,8 +1043,22 @@ class Chart3Activity : AppCompatActivity() {
             forceValueCount = 242
         }
 
+        val value = list.get(26)
+        val startTime = 1692322131L - 86400 * 140
+        val endTime = 1692322131L - 86400 * 180
+
+        val drawLineDataSet = DrawLineDataSet().apply {
+            lineKey = "ltStraightLine20"
+            lineType = DrawLineType.ltStraightLine.ordinal
+            lineSize = 1f
+            dash = "7,2"
+            startDrawValue = DrawLineValue(value.close, startTime).apply { dataIndex = -60 }
+            endDrawValue = DrawLineValue(value.close + 20, endTime).apply { dataIndex = -20 }
+        }
+
         val data = CombineData().apply {
             add(lineDataSet)
+            add(drawLineDataSet)
         }
         minuteMain.setCombineData(data)
     }
