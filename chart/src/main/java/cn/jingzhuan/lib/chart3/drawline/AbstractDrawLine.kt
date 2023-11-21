@@ -10,6 +10,8 @@ import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
+import cn.jingzhuan.lib.chart3.utils.TimeUtils
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -231,6 +233,21 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
             } else {
                 linePaint.pathEffect = null
             }
+        }
+    }
+
+    protected fun getIndexInTime(
+        dataSet: DrawLineDataSet,
+        baseDataSet: AbstractDataSet<*>,
+        time: Long
+    ): Int {
+
+        return if (dataSet.historyTimeList.isNotEmpty()) {
+            val historyCount = dataSet.historyTimeList.size
+            val index = dataSet.historyTimeList.indexOfFirst { it == time }
+            index - historyCount + baseDataSet.values.size
+        } else {
+            baseDataSet.values.indexOfFirst { TimeUtils.isInSameCycle(it.time * 1000L, time * 1000L, dataSet.cycle) }
         }
     }
 

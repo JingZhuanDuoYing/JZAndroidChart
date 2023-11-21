@@ -114,7 +114,20 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var isSelect = false
 
+    /**
+     * 是否抬起
+     */
     var isActionUp = true
+
+    /**
+     * 周期
+     */
+    var cycle: Int = 8
+
+    /**
+     * 历史时间 分时要显示十日内的线
+     */
+    var historyTimeList: List<Long> = emptyList()
 
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false

@@ -60,14 +60,14 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
             return
         }
 
-        val startIndex = baseDataSet.values.indexOfFirst { it.time == startPoint.time }
+        val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
         val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
-        val endIndex = baseDataSet.values.indexOfFirst { it.time == endPoint.time }
+        val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
         val endX = getEntryX(endIndex, baseDataSet) ?: return
         val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
@@ -77,7 +77,7 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         var thirdX: Float? = null
         var thirdY: Float? = null
         if (thirdPoint != null) {
-            val thirdIndex = baseDataSet.values.indexOfFirst { it.time == thirdPoint.time }
+            val thirdIndex = getIndexInTime(dataSet, baseDataSet, thirdPoint.time)
             thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
             thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
             if (!dataSet.isSelect || dataSet.isActionUp) {

@@ -54,20 +54,44 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         if (startPoint.value > lMax && endPoint.value > lMax) return
         if (startPoint.value < lMin && endPoint.value < lMin) return
 
-        val startIndex = baseDataSet.values.indexOfFirst { it.time == startPoint.time }
+        // 没有吸附并且没有抬起时平顺滑动
+        if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
+            val startX = startPoint.x
+            val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
+
+            val endX = endPoint.x
+            val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
+
+            drawShape(canvas, dataSet, startX, endX, startIndex, endIndex, baseDataSet)
+            return
+        }
+
+        val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
         val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
-        val endIndex = baseDataSet.values.indexOfFirst { it.time == endPoint.time }
+        val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
         val endX = getEntryX(endIndex, baseDataSet) ?: return
         val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
-        if (!dataSet.isSelect) {
+        if (!dataSet.isSelect || dataSet.isActionUp) {
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
+        drawShape(canvas, dataSet, startX, endX, startIndex, endIndex, baseDataSet)
+    }
+
+    private fun drawShape(
+        canvas: Canvas,
+        dataSet: DrawLineDataSet,
+        startX: Float,
+        endX: Float,
+        startIndex: Int,
+        endIndex: Int,
+        baseDataSet: AbstractDataSet<*>,
+    ) {
         val height = chartView.contentRect.height().toFloat()
 
         val bottomY = height - textHeight - textTopPadding

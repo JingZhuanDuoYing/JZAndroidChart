@@ -150,6 +150,21 @@ class Chart3Activity : AppCompatActivity() {
 
     private var index = 2
 
+    private val minuteHistoryTimes: List<Long> by lazy {
+        val historyTimes = ArrayList<Long>()
+        val diff = 2420 - 242
+        var i = diff - 1
+
+        while (i > 0) {
+            val time = 1692322131L - 86400 * (242 + i)
+            historyTimes.add(time)
+            i--
+        }
+
+        historyTimes.addAll(DataConfig.candlestickList.map { it.time })
+        historyTimes
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chart3)
@@ -537,6 +552,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -557,6 +573,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -577,6 +594,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -597,6 +615,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -617,6 +636,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -637,6 +657,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -657,6 +678,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"
+                cycle = if (rbDay.isChecked) 8 else -1
             }
 
             if (rbDay.isChecked) {
@@ -1023,6 +1045,7 @@ class Chart3Activity : AppCompatActivity() {
     private fun setMainMinuteChartData() {
         val klineList = DataConfig.candlestickList.toMutableList()
         val newList = mutableListOf<CandlestickValue>()
+
 //        DataConfig.candlestickList.forEachIndexed { index, value ->
 //            val time = 1692322131L - 86400 * (klineList.size + index)
 //            newList.add(CandlestickValue(value.high, value.low, value.open, value.close, time))
@@ -1044,16 +1067,18 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         val value = list.get(26)
-        val startTime = 1692322131L - 86400 * 140
-        val endTime = 1692322131L - 86400 * 180
+        val startTime = 1692322131L - 86400 * (242 + 80)
+        val endTime = 1692322131L - 86400 * (242 + 10)
 
         val drawLineDataSet = DrawLineDataSet().apply {
             lineKey = "ltStraightLine20"
             lineType = DrawLineType.ltStraightLine.ordinal
             lineSize = 1f
             dash = "7,2"
-            startDrawValue = DrawLineValue(value.close, startTime).apply { dataIndex = -60 }
-            endDrawValue = DrawLineValue(value.close + 20, endTime).apply { dataIndex = -20 }
+            startDrawValue = DrawLineValue(value.close, startTime)
+            endDrawValue = DrawLineValue(value.close + 20, endTime)
+            historyTimeList = minuteHistoryTimes
+            cycle = -1
         }
 
         val data = CombineData().apply {

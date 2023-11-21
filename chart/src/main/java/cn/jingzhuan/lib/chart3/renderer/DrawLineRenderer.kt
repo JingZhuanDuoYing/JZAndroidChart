@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.Toast
@@ -162,7 +163,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         baseDataSet.values,
                         chartData.leftMax,
                         chartData.leftMin,
-                        chart.isDrawLineAdsorb
+                        chart.isDrawLineAdsorb,
+                        historyTimes = preDrawLine.historyTimeList
                     )
                     if (startDrawValue != null) {
                         // 斐波那挈 起点不能大于等于终点
@@ -192,7 +194,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         baseDataSet.values,
                         chartData.leftMax,
                         chartData.leftMin,
-                        chart.isDrawLineAdsorb
+                        chart.isDrawLineAdsorb,
+                        historyTimes = preDrawLine.historyTimeList
                     )
                     if (endDrawValue != null) {
                         // 斐波那挈 终点不能小于等于起点
@@ -218,7 +221,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         baseDataSet.values,
                         chartData.leftMax,
                         chartData.leftMin,
-                        chart.isDrawLineAdsorb
+                        chart.isDrawLineAdsorb,
+                        historyTimes = preDrawLine.historyTimeList
                     )
                     if (thirdDrawValue != null) {
                         preDrawLine.thirdDrawValue = thirdDrawValue
@@ -237,12 +241,6 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val deltaX = x - lastPreX
                     val deltaY = y - lastPreY
 
-//                    if (deltaX > 0 && ((preDrawLine.startDrawValue?.dataIndex ?: 0) >= baseDataSet.values.size - 1
-//                        || (preDrawLine.endDrawValue?.dataIndex ?: 0) >= baseDataSet.values.size - 1
-//                        || (preDrawLine.thirdDrawValue?.dataIndex ?: 0) >= baseDataSet.values.size - 1)) {
-//                        return true
-//                    }
-
                     val visibleValues = baseDataSet.getVisiblePoints(currentViewport)
                     if (!visibleValues.isNullOrEmpty()) {
                         val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
@@ -252,7 +250,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                             startPoint,
                             baseDataSet.values,
                             chartData.leftMax,
-                            chartData.leftMin
+                            chartData.leftMin,
+                            historyTimes = preDrawLine.historyTimeList
                         )
                         startDrawValue?.x = nowStartX
 
@@ -265,7 +264,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                             endPoint,
                             baseDataSet.values,
                             chartData.leftMax,
-                            chartData.leftMin
+                            chartData.leftMin,
+                            historyTimes = preDrawLine.historyTimeList
                         )
                         endDrawValue?.x = nowEndX
 
@@ -280,7 +280,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                                 thirdPoint,
                                 baseDataSet.values,
                                 chartData.leftMax,
-                                chartData.leftMin
+                                chartData.leftMin,
+                                historyTimes = preDrawLine.historyTimeList
                             )
                             thirdDrawValue?.x = nowThirdX
                             preDrawLine.thirdDrawValue = thirdDrawValue
@@ -337,7 +338,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 // 第一步
                 preDrawLine.lineState = DrawLineState.first
                 preDrawLine.isSelect = true
-                preDrawLine.startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                preDrawLine.startDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, historyTimes = preDrawLine.historyTimeList)
 
                 chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                 chartView.postInvalidate()
@@ -352,7 +353,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     preDrawLine.lineState = DrawLineState.complete
                 }
                 preDrawLine.isSelect = true
-                preDrawLine.endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                preDrawLine.endDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, historyTimes = preDrawLine.historyTimeList)
 
                 chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                 chartView.postInvalidate()
@@ -362,7 +363,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                 if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
                     dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
                     preDrawLine.lineState = DrawLineState.complete
-                    preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin)
+                    preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, historyTimes = preDrawLine.historyTimeList)
                     preDrawLine.isSelect = true
                     chartView.drawLineListener?.onTouch(preDrawLine.lineState, preDrawLine.lineKey ?: "", lineType)
                     chartView.postInvalidate()
@@ -493,21 +494,37 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         return false
     }
 
+    override fun getEntryIndex(x: Float): Int {
+        val chartData = (chart.chartData as CombineData?) ?: return -1
+
+        val dataSet = chartData.getTouchDataSet() ?: return 0
+
+        val valueCount = max(chartView.totalEntryCount, dataSet.forceValueCount)
+
+        var index = (((x - contentRect.left) * currentViewport.width() / contentRect.width() + currentViewport.left) * valueCount.toFloat()).toInt()
+        if (index >= dataSet.values.size) index = dataSet.values.size - 1
+
+        return index
+    }
+
     private fun getValue(
         point: PointF,
         baseValues: MutableList<out AbstractValue>,
         lMax: Float,
         lMin: Float,
         adsorb: Boolean = false,
+        historyTimes: List<Long>
     ): DrawLineValue? {
-        val index = chartView.getEntryIndex(point.x)
-        val baseValue = baseValues.getOrNull(index) ?: return null
-        val time = baseValue.time
+        val index = getEntryIndex(point.x)
+        val hisIndex = index + historyTimes.size - baseValues.size
+        val baseValue = baseValues.getOrNull(index)
+
+        val time = historyTimes.getOrNull(hisIndex) ?: baseValue?.time ?: 0
         val selectX = point.x
         var selectY = point.y
 
         // 如果是K线才有吸附功能
-        if (adsorb && baseValue is CandlestickValue) {
+        if (adsorb && baseValue != null && baseValue is CandlestickValue) {
             val openY = chartView.getScaleY(baseValue.open, lMax, lMin)
             val closeY = chartView.getScaleY(baseValue.close, lMax, lMin)
             val highY = chartView.getScaleY(baseValue.high, lMax, lMin)
@@ -533,6 +550,14 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         val value = lMax - selectY / contentRect.height() * (lMax - lMin)
+
+        if (index < 0 && hisIndex < 0) {
+
+            val leftIndex = 0
+            val leftTime = baseValues.getOrNull(leftIndex)?.time ?: return null
+            val leftX = getEntryX(leftIndex)
+            return DrawLineValue(value, leftTime).apply { dataIndex = leftIndex; x = leftX; y = selectY }
+        }
 
         return DrawLineValue(value, time).apply { dataIndex = index; x = selectX; y = selectY }
     }
