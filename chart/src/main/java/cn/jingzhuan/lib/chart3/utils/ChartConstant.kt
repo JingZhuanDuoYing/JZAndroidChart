@@ -90,6 +90,11 @@ object ChartConstant {
      */
     const val FLAG_LHB = 5
 
+    /**
+     * 调研明细
+     */
+    const val FLAG_SURVEY_DETAIL = 6
+
     // </editor-fold desc="光标 标签组">    ------------------
 
     const val TYPE_AXIS_LEFT = 10
