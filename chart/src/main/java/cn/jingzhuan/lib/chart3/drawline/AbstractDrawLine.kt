@@ -244,7 +244,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
         return if (dataSet.historyTimeList.isNotEmpty()) {
             val historyCount = dataSet.historyTimeList.size
-            val index = dataSet.historyTimeList.indexOfFirst { it == time }
+            val index = dataSet.historyTimeList.indexOfFirst { TimeUtils.isInSameCycle(it * 1000L, time * 1000L, dataSet.cycle) }
             index - historyCount + baseDataSet.values.size
         } else {
             baseDataSet.values.indexOfFirst { TimeUtils.isInSameCycle(it.time * 1000L, time * 1000L, dataSet.cycle) }
