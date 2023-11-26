@@ -191,7 +191,7 @@ class LineDraw(
         }
 
         var i = leftIndex
-        var leftX = startX + step * (leftIndex + startIndexOffset)
+        val leftX = startX + step * (leftIndex + startIndexOffset)
 
         val headValue: LineValue? = lineDataSet.headPoint
         if (headValue != null && !headValue.isValueNaN) {

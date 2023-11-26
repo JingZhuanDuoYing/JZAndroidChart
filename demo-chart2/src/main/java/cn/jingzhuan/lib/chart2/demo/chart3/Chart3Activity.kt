@@ -182,7 +182,7 @@ class Chart3Activity : AppCompatActivity() {
 //                }
 //            }
 //        }, 0, 1000L)
-        setMainKlineChartData()
+        setMainKlineChartData(update = false)
         setSubKlineChartData()
     }
 
@@ -948,19 +948,19 @@ class Chart3Activity : AppCompatActivity() {
 //            overLay2List.add(BarValue(value.high * 1.5f, (value.low) * 1.5f, Color.RED))
             when (index) {
                 klineList.size - 3 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1)))
+                    scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2, 3, 5, 6)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 klineList.size - 13 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(1, 2)))
+                    scatterList.add(ScatterValue(value.close, true, flags = listOf(1, 2, 6)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 klineList.size - 23 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(2, 3)))
+                    scatterList.add(ScatterValue(value.close, true, flags = listOf(2, 3, 6)))
                     scatterTextList.add(ScatterTextValue(false, value.high,value.low))
                 }
                 klineList.size - 33 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(3, 5)))
+                    scatterList.add(ScatterValue(value.close, true, flags = listOf(3, 5, 6)))
                     scatterTextList.add(ScatterTextValue(true, value.high,value.low))
                 }
                 klineList.size - 43 -> {

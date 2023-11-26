@@ -4,11 +4,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SURVEY_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_HISTORY_MINUTE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LHB
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LIMIT_UP
@@ -37,22 +39,27 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
     private lateinit var bgRect: Rect
 
     // 交易详情flag
-    private lateinit var tradeRect: Rect
+    private val tradeRect by lazy { Rect() }
 
     // 交易详情(模)flag
-    private lateinit var tradeSimulateRect: Rect
+    private val tradeSimulateRect by lazy { Rect() }
 
     // 涨停分析flag
-    private lateinit var limitUpRect: Rect
+    private val limitUpRect by lazy { Rect() }
 
     // 公告flag
-    private lateinit var noticeRect: Rect
+    private val noticeRect: Rect by lazy { Rect() }
 
     // 时间flag
-    private lateinit var dateRect: Rect
+    private val dateRect: Rect by lazy { Rect() }
 
     // 龙虎榜flag
-    private lateinit var lhbRect: Rect
+    private val lhbRect: Rect by lazy { Rect() }
+
+    // 调研明细flag
+    private val surveyRect: Rect by lazy { Rect() }
+
+    private val flagRectMap = ArrayMap<Int, Rect>(7)
 
     init {
         initPaints()
@@ -63,18 +70,10 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             override fun onClick(x: Float, y: Float) {
                 if (highlight == null) return
                 val index = highlight?.dataIndex ?: 0
-                if (tradeRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_TRADE_DETAIL, index)
-                } else if (tradeSimulateRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_SIMULATE_TRADE_DETAIL, index)
-                } else if (limitUpRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_LIMIT_UP, index)
-                } else if (noticeRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_NOTICE, index)
-                } else if (dateRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_HISTORY_MINUTE, index)
-                } else if (lhbRect.contains(x.roundToInt(), y.roundToInt())) {
-                    chart.onFlagCallback(FLAG_LHB, index)
+                flagRectMap.forEach {
+                    if (it.value.contains(x.roundToInt(), y.roundToInt())) {
+                        chart.onFlagCallback(it.key, index)
+                    }
                 }
             }
 
@@ -83,22 +82,20 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
     private fun initRect() {
         bgRect = Rect()
-        tradeRect = Rect()
-        tradeSimulateRect = Rect()
-        limitUpRect = Rect()
-        noticeRect = Rect()
-        dateRect = Rect()
-        lhbRect = Rect()
+
+        flagRectMap[FLAG_TRADE_DETAIL] = tradeRect
+        flagRectMap[FLAG_SIMULATE_TRADE_DETAIL] = tradeSimulateRect
+        flagRectMap[FLAG_LIMIT_UP] = limitUpRect
+        flagRectMap[FLAG_NOTICE] = noticeRect
+        flagRectMap[FLAG_HISTORY_MINUTE] = dateRect
+        flagRectMap[FLAG_LHB] = lhbRect
+        flagRectMap[FLAG_SURVEY_DETAIL] = surveyRect
     }
 
     private fun setRectEmpty() {
         bgRect.setEmpty()
-        tradeRect.setEmpty()
-        tradeSimulateRect.setEmpty()
-        limitUpRect.setEmpty()
-        noticeRect.setEmpty()
-        dateRect.setEmpty()
-        lhbRect.setEmpty()
+
+        flagRectMap.forEach { it.value.setEmpty() }
     }
 
     private fun initPaints() {
@@ -265,8 +262,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
      * 画十字光标底部文本
      */
     private fun drawHighlightBottom(canvas: Canvas) {
-        val highlight = highlight
-        val x = highlight!!.x
+        val highlight = highlight ?: return
+        val x = highlight.x
         if (x.isNaN()) return
         val formatter = chart.axisBottom.valueIndexFormatter
         var text = ""
@@ -287,6 +284,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             if (!flags.isNullOrEmpty()) {
                 var tradeWidth = 0
                 var tradeSimulateWidth = 0
+                var surveyWidth = 0
                 var limitUpWidth = 0
                 var noticeWidth = 0
                 val dateWidth = calculateWidth(text)
@@ -294,6 +292,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
 
                 var tradeText = ""
                 var tradeSimulateText = ""
+                var surveyText = ""
                 var limitUpText = ""
                 var noticeText = ""
                 var lhbText = ""
@@ -314,6 +313,14 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                     sb.append("交易详情(模) >")
                     tradeSimulateText = sb.toString()
                     tradeSimulateWidth = calculateWidth(sb.toString()) + splitSpace
+                }
+
+                if (flags.contains(FLAG_SURVEY_DETAIL)) {
+                    // 调研明细
+                    sb.clear()
+                    sb.append("调研明细 >")
+                    surveyText = sb.toString()
+                    surveyWidth = calculateWidth(sb.toString()) + splitSpace
                 }
 
                 if (flags.contains(FLAG_LIMIT_UP)) {
@@ -340,9 +347,9 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                     lhbWidth = calculateWidth(sb.toString())
                 }
                 val totalWidth = if (lhbWidth == 0) {
-                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth
+                    tradeWidth + tradeSimulateWidth + surveyWidth + limitUpWidth + noticeWidth + dateWidth
                 } else {
-                    tradeWidth + tradeSimulateWidth + limitUpWidth + noticeWidth + dateWidth + splitSpace + lhbWidth
+                    tradeWidth + tradeSimulateWidth + surveyWidth + limitUpWidth + noticeWidth + dateWidth + splitSpace + lhbWidth
                 }
 
                 val bottomRect = chart.bottomRect
@@ -379,6 +386,12 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                     )
                     sortLeft += tradeSimulateWidth
                     drawFlag(canvas, tradeSimulateRect, tradeSimulateText, 0xFFFD263F.toInt())
+                }
+
+                if (surveyWidth != 0) {
+                    surveyRect.set(sortLeft, top, sortLeft + surveyWidth - splitSpace, bottom)
+                    sortLeft += surveyWidth
+                    drawFlag(canvas, surveyRect, surveyText, 0xFf950BFF.toInt())
                 }
 
                 if (limitUpWidth != 0) {

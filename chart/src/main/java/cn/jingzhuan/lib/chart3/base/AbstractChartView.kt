@@ -266,6 +266,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (totalEntryCount > (chartData?.getTouchEntryCount() ?: 0)) return
         // Clips the next few drawing operations to the content area
         val clipRestoreCount = canvas.save()
 
