@@ -167,10 +167,6 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         historyTimes = preDrawLine.historyTimeList
                     )
                     if (startDrawValue != null) {
-                        val rawX = event.rawX
-                        if (rawX > chartView.right || rawX < chartView.left) {
-                            return true
-                        }
                         // 斐波那挈 起点不能大于等于终点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal
                             && preDrawLine.endDrawValue != null
@@ -202,10 +198,6 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         historyTimes = preDrawLine.historyTimeList
                     )
                     if (endDrawValue != null) {
-                        val rawX = event.rawX
-                        if (rawX > chartView.right || rawX < chartView.left) {
-                            return true
-                        }
                         // 斐波那挈 终点不能小于等于起点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
                             return true
@@ -213,8 +205,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         preDrawLine.endDrawValue = endDrawValue
                         preDrawLine.isSelect = true
 //                        Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
-                        Log.d("onPressDrawLine", "rawX=$rawX--${event.rawX} leftX=${chartView.left}, rightX=${chartView.right}")
-                        chartView.drawLineListener?.onDrag(PointF(rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_RIGHT)
+                        chartView.drawLineListener?.onDrag(PointF(event.rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_RIGHT)
                         chartView.postInvalidate()
                     }
                 }
