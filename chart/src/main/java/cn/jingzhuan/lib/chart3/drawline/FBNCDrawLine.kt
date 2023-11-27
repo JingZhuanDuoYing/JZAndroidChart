@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.drawline
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Region
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -142,6 +143,8 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         canvas.drawText(sb.toString(), endX - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
         sb.clear()
 
+        dataSet.fbSelectRegion.clear()
+
         // 画第三条线
         val thirdDrawIndex = (endIndex - startIndex) * 2 + 1
         val thirdX = getEntryX(startIndex + (endIndex - startIndex) * 2, baseDataSet) ?: -1f
@@ -151,6 +154,7 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.alpha = 255
         canvas.drawLine(thirdX, 0f, thirdX, bottomY, linePaint)
         secondDrawIndex = thirdDrawIndex
+        dataSet.fbSelectRegion.add(Region((thirdX - dataSet.pointOuterR).toInt(), 0, (thirdX + dataSet.pointOuterR).toInt(), height.toInt()))
 
         // 画第三条线文本
         sb.append("$thirdDrawIndex")
@@ -180,6 +184,8 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             firstDrawIndex = secondDrawIndex
             secondDrawIndex = currentIndex
             i = secondDrawIndex
+
+            dataSet.fbSelectRegion.add(Region((x - dataSet.pointOuterR).toInt(), 0, (x + dataSet.pointOuterR).toInt(), height.toInt()))
         }
     }
 }

@@ -474,9 +474,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
         // 检查是否能同时拖动
         if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
-            // 斐波那挈 不能同时拖动
-            dragState = ChartConstant.DRAW_LINE_NONE
-            return false
+            // 斐波那挈 能同时拖动
+            val region = dataSet.fbSelectRegion.findLast { it?.contains(point.x.roundToInt(), point.y.roundToInt()) == true }
+            if (region != null) {
+                dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
+                return true
+            }
         } else {
             val region = dataSet.selectRegion
             val parallelRegion = dataSet.parallelSelectRegion

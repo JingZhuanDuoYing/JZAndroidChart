@@ -110,6 +110,11 @@ class DrawLineDataSet@JvmOverloads constructor(
     var parallelSelectRegion: Region? = null
 
     /**
+     * 选中的区域  用于判断斐波那契点击的点是否在此集合任一区域中
+     */
+    var fbSelectRegion = ArrayList<Region?>()
+
+    /**
      * 是否选中
      */
     var isSelect = false
