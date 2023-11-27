@@ -167,6 +167,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         historyTimes = preDrawLine.historyTimeList
                     )
                     if (startDrawValue != null) {
+                        val mx = event.x
+                        if (mx > chartView.width || mx < 0) {
+                            return true
+                        }
                         // 斐波那挈 起点不能大于等于终点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal
                             && preDrawLine.endDrawValue != null
@@ -198,6 +202,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         historyTimes = preDrawLine.historyTimeList
                     )
                     if (endDrawValue != null) {
+                        val mx = event.x
+                        if (mx > chartView.width || mx < 0) {
+                            return true
+                        }
                         // 斐波那挈 终点不能小于等于起点
                         if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal && endDrawValue.dataIndex <= preDrawLine.startDrawValue!!.dataIndex) {
                             return true
@@ -225,6 +233,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         historyTimes = preDrawLine.historyTimeList
                     )
                     if (thirdDrawValue != null) {
+                        val mx = event.x
+                        if (mx > chartView.width || mx < 0) {
+                            return true
+                        }
                         preDrawLine.thirdDrawValue = thirdDrawValue
                         preDrawLine.isSelect = true
 //                        Log.d("onPressDrawLine", "移动平行点->index=${thirdDrawValue.dataIndex}, thirdX= ${thirdDrawValue.x}, thirdY= ${thirdDrawValue.y}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y}, endX= ${preDrawLine.endDrawValue?.x}, endY= ${preDrawLine.endDrawValue?.y}")
