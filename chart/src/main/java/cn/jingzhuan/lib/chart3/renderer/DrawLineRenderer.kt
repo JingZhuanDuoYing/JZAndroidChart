@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.Toast
@@ -212,6 +213,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         preDrawLine.endDrawValue = endDrawValue
                         preDrawLine.isSelect = true
 //                        Log.d("onPressDrawLine", "移动终点->index=${endDrawValue.dataIndex}, startX= ${preDrawLine.startDrawValue?.x}, startY= ${preDrawLine.startDrawValue?.y},endX= ${endDrawValue.x},endY= ${endDrawValue.y},")
+                        Log.d("onPressDrawLine", "rawX=$rawX--${event.rawX} leftX=${chartView.left}, rightX=${chartView.right}")
                         chartView.drawLineListener?.onDrag(PointF(rawX, event.rawY), point, ChartConstant.DRAW_LINE_DRAG_RIGHT)
                         chartView.postInvalidate()
                     }
