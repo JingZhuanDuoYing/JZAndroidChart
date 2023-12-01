@@ -45,7 +45,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     private var dragState = ChartConstant.DRAW_LINE_NONE
 
-    private val mTouchSlop by lazy { ViewConfiguration.get(chart.context).scaledTouchSlop }
+//    private val mTouchSlop by lazy { ViewConfiguration.get(chart.context).scaledTouchSlop }
 
     /**
      * 上一次触摸的x坐标
@@ -111,13 +111,11 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (dragState != ChartConstant.DRAW_LINE_DRAG_BOTH) {
-                    val diffX = abs(event.x - lastPreX)
-                    val diffY = abs(event.y - lastPreY)
-                    if (diffX <= mTouchSlop && diffY <= mTouchSlop) {
-                        return false
-                    }
-                }
+//                val diffX = abs(event.x - lastPreX)
+//                val diffY = abs(event.y - lastPreY)
+//                if (diffX <= mTouchSlop && diffY <= mTouchSlop) {
+//                    return false
+//                }
                 onMoveDrawLine(event)
             }
 
