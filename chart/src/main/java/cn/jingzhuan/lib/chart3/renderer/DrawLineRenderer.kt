@@ -371,7 +371,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
             DrawLineState.second -> {
                 if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
-                    dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
+                    dragState = ChartConstant.DRAW_LINE_DRAG_THIRD
                     preDrawLine.lineState = DrawLineState.complete
                     preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, historyTimes = preDrawLine.historyTimeList)
                     preDrawLine.isSelect = true
