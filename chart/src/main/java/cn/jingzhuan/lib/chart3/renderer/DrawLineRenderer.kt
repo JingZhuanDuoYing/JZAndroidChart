@@ -267,7 +267,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         startDrawValue?.x = nowStartX
 
                         val mx = startDrawValue?.x ?: 0f
-                        if (visibleValues.size < chartView.currentVisibleEntryCount && (mx > chartView.width || mx < 0)) {
+                        if (startDrawValue?.dataIndex == 0 || (chartView.totalEntryCount < chartView.currentVisibleEntryCount && (mx > chartView.width || mx < 0))) {
                             return true
                         }
 
