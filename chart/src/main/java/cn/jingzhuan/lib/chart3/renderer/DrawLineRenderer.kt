@@ -492,9 +492,9 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         // 检查是否能同时拖动
-        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal || dataSet.lineType == DrawLineType.ltRect.ordinal) {
             // 斐波那挈 能同时拖动
-            val region = dataSet.fbSelectRegion.findLast { it?.contains(point.x.roundToInt(), point.y.roundToInt()) == true }
+            val region = dataSet.selectRegions.findLast { it?.contains(point.x.roundToInt(), point.y.roundToInt()) == true }
             if (region != null) {
                 dragState = ChartConstant.DRAW_LINE_DRAG_BOTH
                 return true

@@ -94,7 +94,16 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val top = min(rect.top.toInt() , rect.bottom.toInt())
         val bottom = max(rect.top.toInt() , rect.bottom.toInt())
 
-        dataSet.selectRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
+        val leftRegion = Region(left - radius.toInt(), top - radius.toInt(), left + radius.toInt(), bottom + radius.toInt())
+        val topRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), top + radius.toInt())
+        val rightRegion = Region(right - radius.toInt(), top - radius.toInt(), right + radius.toInt(), top + radius.toInt())
+        val bottomRegion = Region(left - radius.toInt(), bottom - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
+//        dataSet.selectRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
+        dataSet.selectRegions.clear()
+        dataSet.selectRegions.add(leftRegion)
+        dataSet.selectRegions.add(topRegion)
+        dataSet.selectRegions.add(rightRegion)
+        dataSet.selectRegions.add(bottomRegion)
 
         // 画矩形四条边的背景
         if (dataSet.isSelect) {
