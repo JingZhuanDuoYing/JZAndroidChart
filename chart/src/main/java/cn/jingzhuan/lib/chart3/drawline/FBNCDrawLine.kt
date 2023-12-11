@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Region
+import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
@@ -166,26 +167,29 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.style = Paint.Style.FILL
         linePaint.strokeWidth = getLineSizePx(2f) * 0.5f
         linePaint.alpha = 255
+        Log.d("斐波那契", "startIndex=$startIndex, endIndex=$endIndex")
+        if (endIndex > startIndex) {
+            // 基准线的差
+            val diff = endIndex - startIndex - 1
+            var i = startIndex + secondDrawIndex * 2
+            while (i < lastIndex) {
+                val currentIndex = firstDrawIndex + secondDrawIndex + diff
+                Log.d("斐波那契", "currentIndex=$currentIndex, firstDrawIndex=$firstDrawIndex, secondDrawIndex")
+                if (currentIndex + startIndex > lastIndex) break
+                val x = getEntryX(startIndex + currentIndex - 1, baseDataSet) ?: -1f
+                canvas.drawLine(x, 0f, x, bottomY, linePaint)
 
-        // 基准线的差
-        val diff = endIndex - startIndex - 1
-        var i = startIndex + secondDrawIndex * 2
+                sb.append("$currentIndex")
+                canvas.drawText(sb.toString(), x - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
+                sb.clear()
 
-        while (i < lastIndex) {
-            val currentIndex = firstDrawIndex + secondDrawIndex + diff
-            if (currentIndex + startIndex > lastIndex) break
-            val x = getEntryX(startIndex + currentIndex - 1, baseDataSet) ?: -1f
-            canvas.drawLine(x, 0f, x, bottomY, linePaint)
+                firstDrawIndex = secondDrawIndex
+                secondDrawIndex = currentIndex
+                i = secondDrawIndex
 
-            sb.append("$currentIndex")
-            canvas.drawText(sb.toString(), x - textPaint.measureText(sb.toString()) * 0.5f, height - textBottomPadding, textPaint)
-            sb.clear()
-
-            firstDrawIndex = secondDrawIndex
-            secondDrawIndex = currentIndex
-            i = secondDrawIndex
-
-            dataSet.selectRegions.add(Region((x - dataSet.pointOuterR).toInt(), 0, (x + dataSet.pointOuterR).toInt(), height.toInt()))
+                dataSet.selectRegions.add(Region((x - dataSet.pointOuterR).toInt(), 0, (x + dataSet.pointOuterR).toInt(), height.toInt()))
+            }
         }
+
     }
 }

@@ -96,7 +96,7 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         val leftRegion = Region(left - radius.toInt(), top - radius.toInt(), left + radius.toInt(), bottom + radius.toInt())
         val topRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), top + radius.toInt())
-        val rightRegion = Region(right - radius.toInt(), top - radius.toInt(), right + radius.toInt(), top + radius.toInt())
+        val rightRegion = Region(right - radius.toInt(), top - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
         val bottomRegion = Region(left - radius.toInt(), bottom - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
 //        dataSet.selectRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
         dataSet.selectRegions.clear()
