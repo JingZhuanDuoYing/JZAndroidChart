@@ -5,7 +5,6 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import android.widget.Toast
 import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
@@ -27,7 +26,6 @@ import cn.jingzhuan.lib.chart3.drawline.RectDrawLine
 import cn.jingzhuan.lib.chart3.drawline.SegmentDrawLine
 import cn.jingzhuan.lib.chart3.drawline.StraightDrawLine
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -254,7 +252,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val visibleValues = baseDataSet.getVisiblePoints(currentViewport)
                     if (!visibleValues.isNullOrEmpty()) {
                         val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
-                        val nowStartY = preDrawLine.startDrawValue!!.y + deltaY
+                        var nowStartY = preDrawLine.startDrawValue!!.y + deltaY
+                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal) {
+                            nowStartY = preDrawLine.startDrawValue!!.y
+                        }
                         val startPoint = PointF(nowStartX, nowStartY)
                         val startDrawValue = getValue(
                             startPoint,
@@ -265,10 +266,18 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         )
                         startDrawValue?.x = nowStartX
 
+                        val mx = startDrawValue?.x ?: 0f
+                        if (visibleValues.size < chartView.currentVisibleEntryCount && (mx > chartView.width || mx < 0)) {
+                            return true
+                        }
+
                         preDrawLine.startDrawValue = startDrawValue
 
                         val nowEndX = preDrawLine.endDrawValue!!.x + deltaX
-                        val nowEndY = preDrawLine.endDrawValue!!.y + deltaY
+                        var nowEndY = preDrawLine.endDrawValue!!.y + deltaY
+                        if (preDrawLine.lineType == DrawLineType.ltFBNC.ordinal) {
+                            nowEndY = preDrawLine.endDrawValue!!.y
+                        }
                         val endPoint = PointF(nowEndX, nowEndY)
                         val endDrawValue = getValue(
                             endPoint,
