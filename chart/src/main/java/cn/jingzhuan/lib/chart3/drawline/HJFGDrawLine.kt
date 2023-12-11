@@ -157,6 +157,10 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         }
         linePaint.pathEffect = null
 
-        dataSet.selectRegion = Region(0, (startY - diam).toInt(), chartView.contentRect.width(), (endY + diam).toInt())
+        if (startY < endY) {
+            dataSet.selectRegion = Region(0, (startY - diam).toInt(), chartView.contentRect.width(), (endY + diam).toInt())
+        } else {
+            dataSet.selectRegion = Region(0, (endY - diam).toInt(), chartView.contentRect.width(), (startY + diam).toInt())
+        }
     }
 }

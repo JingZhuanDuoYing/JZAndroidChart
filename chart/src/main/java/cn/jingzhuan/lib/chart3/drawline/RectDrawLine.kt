@@ -7,6 +7,8 @@ import android.graphics.Region
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @since 2023-10-16
@@ -87,7 +89,12 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         val radius = (dataSet.pointOuterR * 2f)
 
-        dataSet.selectRegion = Region(rect.left.toInt() - radius.toInt(), rect.top.toInt() - radius.toInt(), rect.right.toInt() + radius.toInt(), rect.bottom.toInt() + radius.toInt())
+        val left = min(rect.left.toInt() , rect.right.toInt())
+        val right = max(rect.left.toInt() , rect.right.toInt())
+        val top = min(rect.top.toInt() , rect.bottom.toInt())
+        val bottom = max(rect.top.toInt() , rect.bottom.toInt())
+
+        dataSet.selectRegion = Region(left - radius.toInt(), top - radius.toInt(), right + radius.toInt(), bottom + radius.toInt())
 
         // 画矩形四条边的背景
         if (dataSet.isSelect) {
