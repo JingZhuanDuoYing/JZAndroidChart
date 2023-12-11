@@ -85,12 +85,14 @@ class RectDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         canvas.drawRect(rect, linePaint)
         if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
-        dataSet.selectRegion = Region(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
+        val radius = (dataSet.pointOuterR * 2f)
+
+        dataSet.selectRegion = Region(rect.left.toInt() - radius.toInt(), rect.top.toInt() - radius.toInt(), rect.right.toInt() + radius.toInt(), rect.bottom.toInt() + radius.toInt())
 
         // 画矩形四条边的背景
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.STROKE
-            linePaint.strokeWidth = dataSet.pointOuterR * 2f
+            linePaint.strokeWidth = radius
             linePaint.alpha = dataSet.selectAlpha
             canvas.drawRect(rect, linePaint)
         }
