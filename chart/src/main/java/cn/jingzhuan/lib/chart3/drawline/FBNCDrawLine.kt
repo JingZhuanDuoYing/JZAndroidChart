@@ -53,8 +53,10 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         val endPoint = dataSet.endDrawValue
         if (startPoint == null || endPoint == null) return
 
-        if (startPoint.value > lMax && endPoint.value > lMax) return
-        if (startPoint.value < lMin && endPoint.value < lMin) return
+//        // 斐波那契 不需要判断Y轴
+//        if (startPoint.value > lMax && endPoint.value > lMax) return
+//
+//        if (startPoint.value < lMin && endPoint.value < lMin) return
 
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
@@ -82,7 +84,9 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
 
-        drawShape(canvas, dataSet, startX, endX, startIndex, endIndex, baseDataSet)
+        if (startIndex != -1 && endIndex != -1) {
+            drawShape(canvas, dataSet, startX, endX, startIndex, endIndex, baseDataSet)
+        }
     }
 
     private fun drawShape(
@@ -167,14 +171,14 @@ class FBNCDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         linePaint.style = Paint.Style.FILL
         linePaint.strokeWidth = getLineSizePx(2f) * 0.5f
         linePaint.alpha = 255
-        Log.d("斐波那契", "startIndex=$startIndex, endIndex=$endIndex")
+//        Log.d("斐波那契", "startIndex=$startIndex, endIndex=$endIndex")
         if (endIndex > startIndex) {
             // 基准线的差
             val diff = endIndex - startIndex - 1
             var i = startIndex + secondDrawIndex * 2
             while (i < lastIndex) {
                 val currentIndex = firstDrawIndex + secondDrawIndex + diff
-                Log.d("斐波那契", "currentIndex=$currentIndex, firstDrawIndex=$firstDrawIndex, secondDrawIndex")
+//                Log.d("斐波那契", "currentIndex=$currentIndex, firstDrawIndex=$firstDrawIndex, secondDrawIndex")
                 if (currentIndex + startIndex > lastIndex) break
                 val x = getEntryX(startIndex + currentIndex - 1, baseDataSet) ?: -1f
                 canvas.drawLine(x, 0f, x, bottomY, linePaint)
