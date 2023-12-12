@@ -84,6 +84,8 @@ open class Axis internal constructor(var axisPosition: Int) : AbstractAxis() {
     var dashedGridPhase = -1f
         private set
 
+    var isGridSlidIndex = -1
+
 
     var labelWidth: Int
         get() = if (isInside) {

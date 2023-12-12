@@ -249,13 +249,19 @@ public class AxisRenderer implements Renderer {
             mGridPaint.setStrokeWidth(mAxis.getGridThickness());
             mGridPaint.setColor(mAxis.getGridColor());
 
+            DashPathEffect pathEffect = null;
             if (mAxis.getDashedGridIntervals() != null && mAxis.getDashedGridPhase() > 0) {
-                mGridPaint.setPathEffect(new DashPathEffect(mAxis.getDashedGridIntervals(), mAxis.getDashedGridPhase()));
+                pathEffect = new DashPathEffect(mAxis.getDashedGridIntervals(), mAxis.getDashedGridPhase());
             }
 
             if (mAxis instanceof AxisX) {
                 final float width = mContentRect.width() / ((float) count);
                 for (int i = 1; i < count; i++) {
+                    if (mAxis.getIsGridSlidIndex() == i) {
+                        mGridPaint.setPathEffect(null);
+                    } else {
+                        mGridPaint.setPathEffect(pathEffect);
+                    }
                     if (mAxis.getGirdLineColorSetter() != null) {
                         mGridPaint.setColor(mAxis.getGirdLineColorSetter().getColorByIndex(mAxis.getGridColor(), i));
                     }
@@ -270,6 +276,11 @@ public class AxisRenderer implements Renderer {
             if (mAxis instanceof AxisY) {
                 final float height = mContentRect.height() / ((float) count);
                 for (int i = 1; i < count; i++) {
+                    if (mAxis.getIsGridSlidIndex() == i) {
+                        mGridPaint.setPathEffect(null);
+                    } else {
+                        mGridPaint.setPathEffect(pathEffect);
+                    }
                     if (mAxis.getGirdLineColorSetter() != null) {
                         mGridPaint.setColor(mAxis.getGirdLineColorSetter().getColorByIndex(mAxis.getGridColor(), i));
                     }

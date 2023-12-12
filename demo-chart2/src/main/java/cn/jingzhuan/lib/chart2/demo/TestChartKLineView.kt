@@ -65,12 +65,13 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
 
 
         axisTop.isGridLineEnable = true
-        axisLeft.gridCount = 1
-        axisTop.gridCount = 1
-        axisRight.gridCount = 3
+        axisLeft.gridCount = 3
+        axisLeft.isGridSlidIndex = 2
+        axisTop.gridCount = 0
+        axisRight.gridCount = 0
         axisBottom.gridCount = 3
+        axisBottom.isGridSlidIndex = 2
         axisLeft.isLabelEnable = true
-        axisRight.isLabelEnable = false
         axisLeft.setLabelValueFormatter { value, index ->
             if (index == 1 || index == 3) "" else String.format("%.2f", value)
         }

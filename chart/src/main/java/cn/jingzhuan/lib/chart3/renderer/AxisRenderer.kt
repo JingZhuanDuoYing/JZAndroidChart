@@ -390,12 +390,18 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         val count = axis.gridCount + 1
         gridPaint.strokeWidth = axis.gridThickness
         gridPaint.color = axis.gridColor
+        var pathEffect: DashPathEffect? = null
         if (axis.dashedGridIntervals != null && axis.dashedGridPhase > 0) {
-            gridPaint.pathEffect = DashPathEffect(axis.dashedGridIntervals, axis.dashedGridPhase)
+            pathEffect = DashPathEffect(axis.dashedGridIntervals, axis.dashedGridPhase)
         }
         if (axis is AxisX) {
             val width = contentRect.width() / count.toFloat()
             for (i in 1 until count) {
+                if (axis.isGridSlidIndex == i) {
+                    gridPaint.pathEffect = null
+                } else {
+                    gridPaint.pathEffect = pathEffect
+                }
                 if (axis.girdLineColorSetter != null) {
                     gridPaint.color = axis.girdLineColorSetter!!.getColorByIndex(axis.gridColor, i)
                 }
@@ -411,6 +417,11 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         if (axis is AxisY) {
             val height = contentRect.height() / count.toFloat()
             for (i in 1 until count) {
+                if (axis.isGridSlidIndex == i) {
+                    gridPaint.pathEffect = null
+                } else {
+                    gridPaint.pathEffect = pathEffect
+                }
                 if (axis.girdLineColorSetter != null) {
                     gridPaint.color = axis.girdLineColorSetter!!.getColorByIndex(axis.gridColor, i)
                 }

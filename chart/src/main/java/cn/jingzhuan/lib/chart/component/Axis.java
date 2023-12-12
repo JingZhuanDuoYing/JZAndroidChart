@@ -49,6 +49,8 @@ public class Axis extends AbstractComponent {
 
     private LabelColorSetter mLabelColorSetter;
 
+    private int isGridSlidIndex = -1;
+
     Axis(int axisPosition) {
         this.mAxisPosition = axisPosition;
     }
@@ -238,5 +240,14 @@ public class Axis extends AbstractComponent {
     public void setLabelColorSetter(LabelColorSetter mLabelColorSetter) {
         this.mLabelColorSetter = mLabelColorSetter;
     }
+
+    public int getIsGridSlidIndex() {
+        return isGridSlidIndex;
+    }
+
+    public void setIsGridSlidIndex(int isGridSlidIndex) {
+        this.isGridSlidIndex = isGridSlidIndex;
+    }
+
 
 }
