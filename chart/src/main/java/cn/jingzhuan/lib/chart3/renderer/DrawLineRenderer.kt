@@ -249,6 +249,30 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val deltaX = x - lastPreX
                     val deltaY = y - lastPreY
 
+                    if (deltaX > 0) {
+                        // 向右
+                        val rightX = drawMap[preDrawLine.lineType]?.getEntryX(baseDataSet.values.size - 1, baseDataSet) ?: chartView.width.toFloat()
+                        Log.d("画线工具","同时滑动-> 向右 rightX = $rightX startX=${preDrawLine.startDrawValue?.x} endX=${preDrawLine.endDrawValue?.x}")
+                        var maxX = max(preDrawLine.startDrawValue?.x ?: 0f, preDrawLine.endDrawValue?.x ?: 0f)
+                        if (preDrawLine.thirdDrawValue != null) {
+                            maxX = max(maxX, (preDrawLine.thirdDrawValue?.x ?: 0f))
+                        }
+                        if (maxX > rightX) {
+                            return true
+                        }
+                    } else {
+                        // 向左
+                        val leftX = drawMap[preDrawLine.lineType]?.getEntryX(0, baseDataSet) ?: 0f
+                        Log.d("画线工具","同时滑动-> 向左 leftX = $leftX startX=${preDrawLine.startDrawValue?.x} endX=${preDrawLine.endDrawValue?.x}")
+                        var minX = min(preDrawLine.startDrawValue?.x ?: 0f, preDrawLine.endDrawValue?.x ?: 0f)
+                        if (preDrawLine.thirdDrawValue != null) {
+                            minX = min(minX, (preDrawLine.thirdDrawValue?.x ?: 0f))
+                        }
+                        if (minX < leftX) {
+                            return true
+                        }
+                    }
+
                     val visibleValues = baseDataSet.getVisiblePoints(currentViewport)
                     if (!visibleValues.isNullOrEmpty()) {
                         val nowStartX = preDrawLine.startDrawValue!!.x + deltaX
