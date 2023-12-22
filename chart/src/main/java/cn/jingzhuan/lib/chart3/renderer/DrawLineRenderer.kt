@@ -249,25 +249,54 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                     val deltaX = x - lastPreX
                     val deltaY = y - lastPreY
 
+                    if (deltaY > 0) {
+                        // 向下
+                        val bottomY = contentRect.bottom - preDrawLine.pointOuterR * 2f
+                        var minY = min(preDrawLine.startDrawValue?.y ?: 0f, preDrawLine.endDrawValue?.y ?: 0f)
+                        if (preDrawLine.thirdDrawValue != null) {
+                            minY = min(minY, preDrawLine.thirdDrawValue?.y ?: 0f)
+                        }
+                        Log.d("画线工具","同时滑动-> 向下 deltaY=$deltaY minY=$minY bottomY=$bottomY")
+                        if (minY > bottomY) {
+                            return true
+                        }
+                    }
+
+                    if (deltaY < 0){
+                        // 向上
+                        val topY = contentRect.top + preDrawLine.pointOuterR * 2f
+                        var maxY = max(preDrawLine.startDrawValue?.y ?: 0f, preDrawLine.endDrawValue?.y ?: 0f)
+                        if (preDrawLine.thirdDrawValue != null) {
+                            maxY = max(maxY, preDrawLine.thirdDrawValue?.y ?: 0f)
+                        }
+                        Log.d("画线工具","同时滑动-> 向上 deltaY=$deltaY maxY=$maxY topY=$topY")
+                        if (maxY < topY) {
+                            return true
+                        }
+
+                    }
+
                     if (deltaX > 0) {
                         // 向右
                         val rightX = drawMap[preDrawLine.lineType]?.getEntryX(baseDataSet.values.size - 1, baseDataSet) ?: chartView.width.toFloat()
-                        Log.d("画线工具","同时滑动-> 向右 rightX = $rightX startX=${preDrawLine.startDrawValue?.x} endX=${preDrawLine.endDrawValue?.x}")
                         var maxX = max(preDrawLine.startDrawValue?.x ?: 0f, preDrawLine.endDrawValue?.x ?: 0f)
                         if (preDrawLine.thirdDrawValue != null) {
                             maxX = max(maxX, (preDrawLine.thirdDrawValue?.x ?: 0f))
                         }
+                        Log.d("画线工具","同时滑动-> 向右 deltaX=$deltaX maxX=$maxX rightX=$rightX")
                         if (maxX > rightX) {
                             return true
                         }
-                    } else {
+                    }
+
+                    if (deltaX < 0) {
                         // 向左
                         val leftX = drawMap[preDrawLine.lineType]?.getEntryX(0, baseDataSet) ?: 0f
-                        Log.d("画线工具","同时滑动-> 向左 leftX = $leftX startX=${preDrawLine.startDrawValue?.x} endX=${preDrawLine.endDrawValue?.x}")
                         var minX = min(preDrawLine.startDrawValue?.x ?: 0f, preDrawLine.endDrawValue?.x ?: 0f)
                         if (preDrawLine.thirdDrawValue != null) {
                             minX = min(minX, (preDrawLine.thirdDrawValue?.x ?: 0f))
                         }
+                        Log.d("画线工具","同时滑动-> 向左 deltaX=$deltaX minX=$minX leftX=$leftX")
                         if (minX < leftX) {
                             return true
                         }
