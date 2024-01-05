@@ -12,6 +12,7 @@ import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
 import cn.jingzhuan.lib.chart3.utils.NumberUtils
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -236,11 +237,20 @@ class CandlestickDraw(
                     renderPaint
                 )
             } else {
+                var top = min(bodyBuffers[1], bodyBuffers[3])
+                var bottom = max(bodyBuffers[1], bodyBuffers[3])
+
+                if ((bottom - top).absoluteValue <= candlestickDataSet.strokeThickness) {
+                    renderPaint.style = Paint.Style.FILL
+                    val center = (bottom + top).times(0.5f)
+                    top = center - candlestickDataSet.strokeThickness.times(0.5f)
+                    bottom = center + candlestickDataSet.strokeThickness.times(0.5f)
+                }
                 canvas.drawRect(
                     bodyBuffers[0],
-                    min(bodyBuffers[1], bodyBuffers[3]),
+                    top,
                     bodyBuffers[2],
-                    max(bodyBuffers[1], bodyBuffers[3]),
+                    bottom,
                     renderPaint
                 )
             }
