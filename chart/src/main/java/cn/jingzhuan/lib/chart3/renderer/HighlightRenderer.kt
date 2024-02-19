@@ -17,6 +17,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_LIMIT_UP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 import java.lang.Float.isNaN
 import kotlin.math.roundToInt
 
@@ -197,7 +198,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val price = getTouchPriceByY(y, leftMax, leftMin)
         val valueFormatter = chart.axisLeft.labelValueFormatter
         val text: String = valueFormatter?.format(price, -1)
-            ?: if (price == -1f) "--" else String.format("%.2f", price)
+            ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price.toString(), 2)
         if (text.isEmpty()) return
 
         val width = calculateWidth(text)
@@ -240,7 +241,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         val price = getTouchPriceByY(y, rightMax, rightMin)
         val valueFormatter = chart.axisRight.labelValueFormatter
         val text: String = valueFormatter?.format(price, -1)
-            ?: if (price == -1f) "--" else String.format("%.2f", price)
+            ?: if (price == -1f) "--" else NumberUtils.keepPrecision(price.toString(), 2)
         if (text.isEmpty()) return
 
         val width = calculateWidth(text)

@@ -74,6 +74,8 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
             field = value
         }
 
+    var isBasis = false
+
     constructor()
 
     constructor(tag: String?) {

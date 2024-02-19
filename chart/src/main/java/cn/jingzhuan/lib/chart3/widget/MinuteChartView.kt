@@ -84,7 +84,7 @@ open class MinuteChartView(
                         val lastClose = lineDataSet.lastClose
                         if (value.isNaN() || lastClose <= 0.0f) return ""
                         val result = (value - lastClose) / lastClose
-                        return String.format("%.2f%%", result / 0.01f)
+                        return "${NumberUtils.keepPrecision((result / 0.01f).toString(), 2)}%"
                     }
                     return ""
                 }

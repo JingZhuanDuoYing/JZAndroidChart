@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.utils
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 
@@ -25,8 +26,8 @@ object NumberUtils {
      */
     fun keepPrecision(number: String, precision: Int): String {
         if (number == "NaN") return "0"
-        val bg = BigDecimal(number)
-        return bg.setScale(precision, BigDecimal.ROUND_HALF_UP).toPlainString()
+        val bd = BigDecimal(number)
+        return bd.setScale(precision, RoundingMode.HALF_UP).toPlainString()
     }
 
     /**
@@ -53,8 +54,8 @@ object NumberUtils {
      * @return double 如果数值较大，则使用科学计数法表示
      */
     fun keepPrecision(number: Double, precision: Int): Double {
-        val bg = BigDecimal(number)
-        return bg.setScale(precision, BigDecimal.ROUND_HALF_UP).toDouble()
+        val bd = BigDecimal(number)
+        return bd.setScale(precision, RoundingMode.HALF_UP).toDouble()
     }
 
     /**
@@ -79,8 +80,8 @@ object NumberUtils {
      * @return
      */
     fun keepHut(number: Float, precision: Int): Float {
-        val bg = BigDecimal(number.toDouble())
-        return bg.setScale(precision, BigDecimal.ROUND_DOWN).toFloat()
+        val bd = BigDecimal(number.toDouble())
+        return bd.setScale(precision, RoundingMode.DOWN).toFloat()
     }
 
     /**
@@ -91,8 +92,8 @@ object NumberUtils {
      * @return
      */
     fun keepAdd(number: Float, precision: Int): Float {
-        val bg = BigDecimal(number.toDouble())
-        return bg.setScale(precision, BigDecimal.ROUND_UP).toFloat()
+        val bd = BigDecimal(number.toDouble())
+        return bd.setScale(precision, RoundingMode.UP).toFloat()
     }
 
     /**
@@ -132,7 +133,7 @@ object NumberUtils {
     fun round(
         value: Double,
         scale: Int,
-        roundingMode: Int
+        roundingMode: RoundingMode
     ): Double {
         var bd = BigDecimal(value)
         bd = bd.setScale(scale, roundingMode)
@@ -190,7 +191,7 @@ object NumberUtils {
         }
         val bd1 = BigDecimal(d1.toString())
         val bd2 = BigDecimal(d2.toString())
-        return bd1.divide(bd2, scale, BigDecimal.ROUND_HALF_UP).toDouble()
+        return bd1.divide(bd2, scale, RoundingMode.HALF_UP).toDouble()
     }
 
     /**

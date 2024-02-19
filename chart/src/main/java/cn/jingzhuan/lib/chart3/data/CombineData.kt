@@ -173,6 +173,8 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
     }
 
     override fun getTouchDataSet(): AbstractDataSet<*>? {
+        val dataSet = getCombineDataSets().findLast { it.isBasis }
+        if (dataSet != null) return dataSet
         return getCombineDataSets().firstOrNull()
     }
 

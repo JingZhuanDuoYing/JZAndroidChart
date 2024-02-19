@@ -1,9 +1,42 @@
 package cn.jingzhuan.lib.chart2.demo.chart3
 
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
+import cn.jingzhuan.lib.chart3.data.value.LineValue
 
 object DataConfig {
 
+    val callAuctionList = listOf(
+        LineValue(3134.57f, 1692322131L - 86400 * 120),
+        LineValue(3140.85f, 1692322131L - 86400 * 120 + 10),
+        LineValue(3152.18f, 1692322131L - 86400 * 120 + 20),
+        LineValue(3195.90f, 1692322131L - 86400 * 120 + 30),
+        LineValue(3061.50f, 1692322131L - 86400 * 120 + 40),
+        LineValue(3090.22f, 1692322131L - 86400 * 120 + 50),
+        LineValue(3237.97f, 1692322131L - 86400 * 120 + 60),
+        LineValue(3272.92f, 1692322131L - 86400 * 120 + 70),
+        LineValue(3154.65f, 1692322131L - 86400 * 120 + 80),
+        LineValue(3075.67f, 1692322131L - 86400 * 120 + 90),
+        LineValue(3134.57f, 1692322131L - 86400 * 120 + 150),
+        LineValue(3140.85f, 1692322131L - 86400 * 120 + 180),
+        LineValue(3152.18f, 1692322131L - 86400 * 120 + 200),
+        LineValue(3195.90f, 1692322131L - 86400 * 120 + 210),
+        LineValue(3061.50f, 1692322131L - 86400 * 120 + 211),
+        LineValue(3090.22f, 1692322131L - 86400 * 120 + 213),
+        LineValue(3237.97f, 1692322131L - 86400 * 120 + 215),
+        LineValue(3272.92f, 1692322131L - 86400 * 120 + 216),
+        LineValue(3154.65f, 1692322131L - 86400 * 120 + 217),
+        LineValue(3075.67f, 1692322131L - 86400 * 120 + 218),
+        LineValue(3134.57f, 1692322131L - 86400 * 120 + 300),
+        LineValue(3140.85f, 1692322131L - 86400 * 120 + 350),
+        LineValue(3152.18f, 1692322131L - 86400 * 120 + 400),
+        LineValue(3195.90f, 1692322131L - 86400 * 120 + 450),
+        LineValue(3061.50f, 1692322131L - 86400 * 120 + 460),
+        LineValue(3090.22f, 1692322131L - 86400 * 120 + 500),
+        LineValue(3237.97f, 1692322131L - 86400 * 120 + 520),
+        LineValue(3272.92f, 1692322131L - 86400 * 120 + 540),
+        LineValue(3154.65f, 1692322131L - 86400 * 120 + 560),
+        LineValue(3075.67f, 1692322131L - 86400 * 120 + 580),
+    )
     val candlestickList = listOf(
         CandlestickValue(3145.27f, 3117.44f, 3123.88f, 3134.57f, 1692322131L - 86400 * 120),
         CandlestickValue(3152.94f, 3131.41f, 3132.91f, 3140.85f, 1692322131L - 86400 * 119),

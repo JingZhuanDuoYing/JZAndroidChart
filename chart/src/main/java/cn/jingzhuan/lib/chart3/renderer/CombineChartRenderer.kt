@@ -13,6 +13,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
+import cn.jingzhuan.lib.chart3.data.value.LineValue
 import cn.jingzhuan.lib.chart3.draw.BarDraw
 import cn.jingzhuan.lib.chart3.draw.CandlestickDraw
 import cn.jingzhuan.lib.chart3.draw.LineDraw
@@ -82,18 +83,28 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val dataSet = combineData?.getTouchDataSet() ?: return
 
                 val valueCount = dataSet.getEntryCount()
-                val xPosition: Float
+                var xPosition: Float
                 val yPosition: Float
                 highlight.touchX = x
                 highlight.touchY = y
 
                 val from = (currentViewport.left * valueCount).roundToInt()
                 val to = (currentViewport.right * valueCount).roundToInt()
-                val index: Int = getEntryIndex(x)
+                var index: Int = getEntryIndex(x)
                 if (index in from until to && index < dataSet.values.size) {
                     val value = dataSet.getEntryForIndex(index) ?: return
 
                     xPosition = value.x
+
+                    if (xPosition == -1f) {
+                        index = dataSet.values.take(index).indexOfLast {
+                            if (it is LineValue) !it.value.isNaN() else false
+                        }
+                        if(index < 0) return
+                        val nextValue = dataSet.getEntryForIndex(index) ?: return
+                        xPosition = nextValue.x
+                    }
+
                     yPosition = if (chart.isFollowFingerY) y else value.y
                     highlight.x = xPosition
                     highlight.y = yPosition

@@ -7,6 +7,7 @@ import android.graphics.Region
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
+import cn.jingzhuan.lib.chart3.utils.NumberUtils
 
 /**
  * @since 2023-10-18
@@ -106,7 +107,7 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画文本
         sb.append("base")
-        val value1 = String.format("%.${chartView.decimalDigitsNumber}f", lMax - startY / height * (lMax - lMin))
+        val value1 = NumberUtils.keepPrecision((lMax - startY / height * (lMax - lMin)).toString(), chartView.decimalDigitsNumber)
         sb.append("  $value1")
         val text1 = sb.toString()
         canvas.drawText(text1, 15f, startY - 5f, textPaint)
@@ -129,7 +130,7 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         // 画文本
         sb.append("100%")
-        val value2 = String.format("%.${chartView.decimalDigitsNumber}f", lMax - endY / height * (lMax - lMin))
+        val value2 = NumberUtils.keepPrecision((lMax - endY / height * (lMax - lMin)).toString(), chartView.decimalDigitsNumber)
         sb.append("  $value2")
         val text2 = sb.toString()
         canvas.drawText(text2, 15f, endY - 5f, textPaint)
@@ -146,9 +147,9 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             canvas.drawLine(0f, y, width, y, linePaint)
 
             // 画文本
-            val ratio = "${String.format("%.1f", it * 100)}%"
+            val ratio = "${NumberUtils.keepPrecision((it * 100).toString(), 1)}%"
             sb.append(ratio)
-            val value = String.format("%.${chartView.decimalDigitsNumber}f", lMax - y / height * (lMax - lMin))
+            val value = NumberUtils.keepPrecision((lMax - y / height * (lMax - lMin)).toString(), chartView.decimalDigitsNumber)
             sb.append("  $value")
             val text = sb.toString()
             canvas.drawText(text, 15f, y - 5f, textPaint)

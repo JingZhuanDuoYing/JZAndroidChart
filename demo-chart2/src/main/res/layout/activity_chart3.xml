@@ -207,8 +207,23 @@
         app:layout_constraintLeft_toLeftOf="@+id/ll_info"
         app:layout_constraintRight_toRightOf="@+id/ll_info"
         app:layout_constraintTop_toBottomOf="@+id/ll_info"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
+
+    <cn.jingzhuan.lib.chart2.demo.chart3.chart.MainCallAuctionChartView
+        android:id="@+id/call_auction_main"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        app:axisColor="#ffe5e5e5"
+        app:axisThickness="0.5dp"
+        app:gridColor="#ffe5e5e5"
+        app:labelTextColor="#A1ABBB"
+        app:labelTextSize="11dp"
+        app:bottomLabelHeight="18dp"
+        app:layout_constraintLeft_toLeftOf="@+id/ll_info"
+        app:layout_constraintRight_toRightOf="@+id/ll_info"
+        app:layout_constraintTop_toBottomOf="@+id/ll_info"
+        android:visibility="gone" />
 
 
     <cn.jingzhuan.lib.chart2.demo.chart3.chart.SubChartView

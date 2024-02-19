@@ -21,6 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart2.demo.R
+import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainCallAuctionChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainKlineChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainMinuteChartView
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.OnSubChartTouchListener
@@ -36,6 +37,7 @@ import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.MinuteLineDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.ZeroCenterBarDataSet
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
@@ -63,6 +65,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import cn.jingzhuan.lib.chart3.widget.KlineTimeRangeView
 import java.util.Timer
 import java.util.TimerTask
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
@@ -105,6 +108,8 @@ class Chart3Activity : AppCompatActivity() {
     private lateinit var tvDelete: TextView
 
     private lateinit var minuteMain: MainMinuteChartView
+
+    private lateinit var callAuctionMain: MainCallAuctionChartView
 
     private lateinit var sub1: SubChartView
 
@@ -206,6 +211,7 @@ class Chart3Activity : AppCompatActivity() {
         tvRevoke = findViewById(R.id.tv_revoke)
         tvDelete = findViewById(R.id.tv_delete)
         minuteMain = findViewById(R.id.minute_main)
+        callAuctionMain = findViewById(R.id.call_auction_main)
         sub1 = findViewById(R.id.kline_sub1)
         sub2 = findViewById(R.id.kline_sub2)
 
@@ -236,6 +242,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbDay.id -> {
                     klineMain.visibility = View.VISIBLE
                     minuteMain.visibility = View.GONE
+                    callAuctionMain.visibility = View.GONE
                     llKlineOp.visibility = View.VISIBLE
                     klineMain.apply {
                         showBottomFlags = true
@@ -260,6 +267,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbYear.id -> {
                     klineMain.visibility = View.VISIBLE
                     minuteMain.visibility = View.GONE
+                    callAuctionMain.visibility = View.GONE
                     llKlineOp.visibility = View.VISIBLE
                     klineMain.apply {
                         showBottomFlags = false
@@ -283,6 +291,7 @@ class Chart3Activity : AppCompatActivity() {
                 rbMinute.id -> {
                     klineMain.visibility = View.GONE
                     minuteMain.visibility = View.VISIBLE
+                    callAuctionMain.visibility = View.GONE
                     llKlineOp.visibility = View.GONE
                     subCharts.forEach {
                         it.visibility = View.GONE
@@ -292,7 +301,14 @@ class Chart3Activity : AppCompatActivity() {
                 }
 
                 rbCallAuction.id -> {
-
+                    klineMain.visibility = View.GONE
+                    minuteMain.visibility = View.GONE
+                    callAuctionMain.visibility = View.VISIBLE
+                    llKlineOp.visibility = View.GONE
+                    subCharts.forEach {
+                        it.visibility = View.GONE
+                    }
+                    setMainCallAuctionChartData()
                 }
             }
         }
@@ -1086,6 +1102,65 @@ class Chart3Activity : AppCompatActivity() {
             add(drawLineDataSet)
         }
         minuteMain.setCombineData(data)
+    }
+
+    private fun setMainCallAuctionChartData() {
+        val callActionList = DataConfig.callAuctionList.toMutableList()
+
+        val lineValues = ArrayList<LineValue>()
+
+        val timeData = convertToTimeData()
+        val scatterFlagEntries = mutableListOf<ScatterTextValue>()
+        timeData.forEach {time ->
+            val foundData = callActionList.findLast {it.time == time}
+            if (foundData != null) {
+                lineValues.add(LineValue(foundData.value, true))
+                val hasFlag = foundData.time == 1692322131L - 86400 * 120 + 500
+                val value = ScatterTextValue(hasFlag, foundData.value, foundData.value)
+                scatterFlagEntries.add(value)
+            } else {
+                lineValues.add(LineValue(if (lineValues.isEmpty()) lastClose else Float.NaN, false))
+                scatterFlagEntries.add(ScatterTextValue(false, Float.NaN, Float.NaN))
+            }
+        }
+
+       val dataSet = MinuteLineDataSet(lineValues, lastClose).apply {
+            isPointLine = true
+            isBasis = true
+            lineThickness = 3
+            color = Color.BLUE
+            radius = 5f
+            interval = 0f
+            forceValueCount = 600
+        }
+
+        val flagDataSet = ScatterTextDataSet(scatterFlagEntries).apply {
+            axisDependency = AxisY.DEPENDENCY_BOTH
+            text = "异"
+            textColor = Color.RED
+            textBgColor = 0x4DFD263F
+            lineColor = Color.RED
+            frameColor = Color.RED
+            textSize = 24
+            isCircle = true
+            forceValueCount = 600
+        }
+
+        val data = CombineData().apply {
+            add(dataSet)
+            add(flagDataSet)
+        }
+        callAuctionMain.setCombineData(data)
+    }
+
+    private fun convertToTimeData(): List<Long> {
+        val values = mutableListOf<Long>()
+        val start = 1692322131L - 86400 * 120
+        for (i in 0 until 599) {
+            val value = start + i
+            values.add(value)
+        }
+        return values
     }
 
     fun dp2px(dpValue: Float): Int {
