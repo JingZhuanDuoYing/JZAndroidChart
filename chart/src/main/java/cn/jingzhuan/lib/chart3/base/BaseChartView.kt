@@ -319,4 +319,6 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     override fun isDrawingLine(): Boolean {
         return super.isDrawingLine() && drawLineRenderer.checkIfHaveDrawing()
     }
+
+    fun getHighlightTextPaint() = highlightRenderer.getTextPaint()
 }

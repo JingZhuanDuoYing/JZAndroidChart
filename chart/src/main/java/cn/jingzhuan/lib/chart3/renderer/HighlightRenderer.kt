@@ -521,4 +521,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         if (highlight == null) return
         highlight = null
     }
+
+    fun getTextPaint(): Paint {
+        return this.labelTextPaint
+    }
 }
