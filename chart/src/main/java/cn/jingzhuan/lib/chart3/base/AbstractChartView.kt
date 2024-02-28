@@ -99,6 +99,23 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
     var isEnableHighlightBottomText = true
 
     /**
+     * 是否需要展示垂直交叉线折线圆点(只有折线有效)-默认不展示
+     */
+    var isEnableHighlightLineRoundDot = false
+
+    /**
+     * 垂直交叉线折线圆点颜色(只有折线有效)
+     */
+    var highlightLineRoundDotOutColor = 0
+
+    /**
+     * 垂直交叉线折线圆点半径(只有折线有效)
+     */
+    var highlightLineRoundDotOutRadius = 0
+
+    var highlightLineRoundDotInRadius = 0
+
+    /**
      * 交叉线文本大小
      */
     var highlightTextSize = 0

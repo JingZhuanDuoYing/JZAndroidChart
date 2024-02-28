@@ -8,6 +8,7 @@ import androidx.collection.ArrayMap
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.Highlight
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
+import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.event.OnBottomAreaClickListener
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SURVEY_DETAIL
@@ -33,6 +34,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
     var highlight: Highlight? = null
 
     private lateinit var highlightLinePaint: Paint
+
+    private val pointPaint  by lazy { Paint() }
 
     private val sb = StringBuilder()
 
@@ -105,6 +108,9 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         highlightLinePaint.strokeWidth = chart.highlightThickness.toFloat()
         highlightLinePaint.color = chart.highlightColor
 
+        pointPaint.isAntiAlias = true
+        pointPaint.style = Paint.Style.FILL
+
         labelTextPaint.textSize = chart.highlightTextSize.toFloat()
         labelTextPaint.color = chart.highlightTextColor
         labelTextPaint.textAlign = Paint.Align.CENTER
@@ -138,7 +144,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
      * 画十字光标垂直线
      */
     private fun drawHighlightVertical(canvas: Canvas) {
-        var x = highlight!!.x
+        var x = highlight?.x ?: return
         if (isNaN(x)) return
         val thickness = chart.highlightThickness
         if (x < contentRect.left + thickness * 0.5f) {
@@ -150,13 +156,36 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         canvas.drawLine(
             x, contentRect.top.toFloat(), x, contentRect.bottom.toFloat(), highlightLinePaint
         )
+        val index = highlight?.dataIndex ?: return
+        if (chart.isEnableHighlightLineRoundDot) {
+            val dataSets = (chart.chartData as CombineData).getLineDataSets()
+            for (dataSet in dataSets) {
+                val value = dataSet.values.getOrNull(index)
+
+                if (value == null || value.y.isNaN()) continue
+                pointPaint.color = chart.highlightLineRoundDotOutColor
+                canvas.drawCircle(
+                    x,
+                    value.y,
+                    15f,
+                    pointPaint
+                )
+                pointPaint.color = dataSet.color
+                canvas.drawCircle(
+                    x,
+                    value.y,
+                    10f,
+                    pointPaint
+                )
+            }
+        }
     }
 
     /**
      * 画十字光标水平线
      */
     private fun drawHighlightHorizontal(canvas: Canvas) {
-        var y = highlight!!.y
+        var y = highlight?.y ?: return
         if (isNaN(y)) return
         val thickness = chart.highlightThickness
         if (y < contentRect.top + thickness * 0.5f) {
