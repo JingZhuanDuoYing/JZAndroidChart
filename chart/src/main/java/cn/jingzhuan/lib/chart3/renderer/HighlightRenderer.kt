@@ -162,19 +162,19 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             for (dataSet in dataSets) {
                 val value = dataSet.values.getOrNull(index)
 
-                if (value == null || value.y.isNaN()) continue
+                if (value == null || value.value.isNaN() || value.y.isNaN()) continue
                 pointPaint.color = chart.highlightLineRoundDotOutColor
                 canvas.drawCircle(
                     x,
                     value.y,
-                    15f,
+                    chart.highlightLineRoundDotOutRadius.toFloat(),
                     pointPaint
                 )
                 pointPaint.color = dataSet.color
                 canvas.drawCircle(
                     x,
                     value.y,
-                    10f,
+                    chart.highlightLineRoundDotInRadius.toFloat(),
                     pointPaint
                 )
             }

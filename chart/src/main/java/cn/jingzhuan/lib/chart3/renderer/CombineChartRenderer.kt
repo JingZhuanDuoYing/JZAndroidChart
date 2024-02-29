@@ -105,11 +105,13 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                         xPosition = nextValue.x
                     }
 
-                    yPosition = if (chart.isFollowFingerY) y else value.y
-                    highlight.x = xPosition
-                    highlight.y = yPosition
-                    highlight.dataIndex = index
-                    chart.highlightValue(highlight)
+                    if (xPosition != -1f) {
+                        yPosition = if (chart.isFollowFingerY) y else value.y
+                        highlight.x = xPosition
+                        highlight.y = yPosition
+                        highlight.dataIndex = index
+                        chart.highlightValue(highlight)
+                    }
                 }
             }
         })
