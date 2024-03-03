@@ -134,6 +134,11 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var historyTimeList: List<Long> = emptyList()
 
+    /**
+     * 操作类型 暂定 1-添加 2-更新 3-删除
+     */
+    var operateType: Int = -1
+
     override fun removeEntry(value: DrawLineValue?): Boolean {
         if (value == null) return false
         calcViewportMinMax(value)
