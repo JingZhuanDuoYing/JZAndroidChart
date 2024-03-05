@@ -10,6 +10,6 @@ import cn.jingzhuan.lib.chart3.Viewport
  */
 interface OnScaleListener {
     fun onScaleStart(viewport: Viewport)
-    fun onScale(viewport: Viewport)
+    fun onScale(viewport: Viewport, isMin: Boolean, isMax: Boolean)
     fun onScaleEnd(viewport: Viewport)
 }

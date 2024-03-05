@@ -2,10 +2,12 @@ package cn.jingzhuan.lib.chart3.data
 
 import android.graphics.Rect
 import android.util.ArrayMap
+import android.util.Log
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
@@ -35,6 +37,8 @@ open class ChartData<T : AbstractDataSet<*>> {
         get() {
             return chartData
         }
+
+    private lateinit var abstractChart: AbstractChartView<T>
 
     open fun add(e: T?): Boolean {
         if (e == null) return false
@@ -87,40 +91,58 @@ open class ChartData<T : AbstractDataSet<*>> {
 
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
-                for (t in dataSets) {
-                    if (t.overlayKline) {
-                        val dataSet = getTouchDataSet()
-                        if (dataSet != null) {
-                            overlayRatio = t.calcOverlayRatio(viewport, dataSet)
-                            if (overlayRatio != null) break
-                        }
+                val basisCandlestickDataSet = dataSets.find { it is CandlestickDataSet && it.isBasis }
+                if (abstractChart.showMineLine() && basisCandlestickDataSet != null) {
+                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_LEFT) {
+                        basisCandlestickDataSet.calcMinMax(viewport, content, leftMax, leftMin)
                     }
-                }
-                for (t in dataSets) {
-                    if (!t.isEnable) continue
-
-                    if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+                        basisCandlestickDataSet.calcMinMax(viewport, content, rightMax, rightMin)
+                    }
+                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_LEFT) {
+                        leftMax = max(leftMax, basisCandlestickDataSet.viewportYMax)
+                        leftMin = min(leftMin, basisCandlestickDataSet.viewportYMin)
+                    }
+                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+                        rightMax = max(rightMax, basisCandlestickDataSet.viewportYMax)
+                        rightMin = min(rightMin, basisCandlestickDataSet.viewportYMin)
+                    }
+                } else {
+                    for (t in dataSets) {
                         if (t.overlayKline) {
-                            t.calcOverlayMinMax(viewport, overlayRatio)
-                        } else {
-                            t.calcMinMax(viewport, content, leftMax, leftMin)
+                            val dataSet = getTouchDataSet()
+                            if (dataSet != null) {
+                                overlayRatio = t.calcOverlayRatio(viewport, dataSet)
+                                if (overlayRatio != null) break
+                            }
                         }
                     }
-                    if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                        if (t.overlayKline) {
-                            t.calcOverlayMinMax(viewport, overlayRatio)
-                        } else {
-                            t.calcMinMax(viewport, content, rightMax, rightMin)
-                        }
-                    }
+                    for (t in dataSets) {
+                        if (!t.isEnable) continue
 
-                    if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                        leftMax = max(leftMax, t.viewportYMax)
-                        leftMin = min(leftMin, t.viewportYMin)
-                    }
-                    if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                        rightMax = max(rightMax, t.viewportYMax)
-                        rightMin = min(rightMin, t.viewportYMin)
+                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+                            if (t.overlayKline) {
+                                t.calcOverlayMinMax(viewport, overlayRatio)
+                            } else {
+                                t.calcMinMax(viewport, content, leftMax, leftMin)
+                            }
+                        }
+                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+                            if (t.overlayKline) {
+                                t.calcOverlayMinMax(viewport, overlayRatio)
+                            } else {
+                                t.calcMinMax(viewport, content, rightMax, rightMin)
+                            }
+                        }
+
+                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+                            leftMax = max(leftMax, t.viewportYMax)
+                            leftMin = min(leftMin, t.viewportYMin)
+                        }
+                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+                            rightMax = max(rightMax, t.viewportYMax)
+                            rightMin = min(rightMin, t.viewportYMin)
+                        }
                     }
                 }
 
@@ -140,6 +162,7 @@ open class ChartData<T : AbstractDataSet<*>> {
     }
 
     fun setChart(chart: AbstractChartView<T>) {
+        abstractChart = chart
         axisRenderers = chart.axisRenderers
     }
 

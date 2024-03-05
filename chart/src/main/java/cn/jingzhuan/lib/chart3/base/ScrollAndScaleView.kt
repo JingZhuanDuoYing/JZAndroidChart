@@ -196,6 +196,12 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var scaleSensitivity = 1.05f
 
+    var showScaleMin = false
+
+    private var isScaleMin = false
+
+    private var isScaleMax = false
+
     /**
      * 是否显示底部标签组
      */
@@ -804,7 +810,25 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             currentViewport.constrainViewport()
 
             if (scaleListener != null) {
-                scaleListener?.onScale(currentViewport)
+                if(currentVisibleEntryCount >= maxVisibleEntryCount) {
+                    // 当前可见size为最大了 不能缩小了
+                    // 更新为折线 并给出提示->已缩小为最小值
+                    if (!isScaleMin) {
+                        isScaleMin = true
+                        scaleListener?.onScale(currentViewport, isMin = true, isMax = false)
+                    }
+                } else if(currentVisibleEntryCount <= minVisibleEntryCount) {
+                    // 当前可见size为最小了 不能放大了
+                    // 给出提示->已放大至最大值
+                    if(!isScaleMax){
+                        isScaleMax = true
+                        scaleListener?.onScale(currentViewport, isMin = false, isMax = true)
+                    }
+                } else {
+                    if(isScaleMax) isScaleMax = false
+                    if(isScaleMin) isScaleMin = false
+                }
+                scaleListener?.onScale(currentViewport, isMin = false, isMax = false)
             }
         }
     }
@@ -965,6 +989,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     fun isHighlightForever(): Boolean {
         return highlightState == HIGHLIGHT_STATUS_FOREVER
     }
+
+    fun showMineLine(): Boolean = showScaleMin && currentVisibleEntryCount >= maxVisibleEntryCount
 
     /**
      * viewport改变 光标状态为forever时 光标位置对应更新

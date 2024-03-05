@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.draw
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.util.Pair
 import androidx.core.util.containsValue
@@ -10,6 +11,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
+import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.COLOR_NONE
 import cn.jingzhuan.lib.chart3.utils.NumberUtils
 import kotlin.math.absoluteValue
@@ -25,7 +27,8 @@ class CandlestickDraw(
     private val contentRect: Rect,
     private val renderPaint: Paint,
     var textPaint: Paint = Paint(),
-    var decimalDigitsNumber: Int = 2
+    var decimalDigitsNumber: Int = 2,
+    var showScaleMin: Boolean = false
 ) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
@@ -33,6 +36,8 @@ class CandlestickDraw(
     private val lowerShadowBuffers = FloatArray(4)
 
     private val bodyBuffers = FloatArray(4)
+
+    private var linePaths: MutableList<Path> = ArrayList()
 
 
     override fun drawDataSet(
@@ -42,11 +47,105 @@ class CandlestickDraw(
         viewport: Viewport,
     ) {
         if (dataSet.isVisible) {
-            drawCandlestick(
-                canvas, dataSet, viewport,
-                chartData.leftMax, chartData.leftMin,
-                chartData.rightMax, chartData.rightMin
-            )
+            if (showScaleMin) {
+                drawCandlestickMinLine(
+                    canvas, dataSet, viewport,
+                    chartData.leftMax, chartData.leftMin,
+                    chartData.rightMax, chartData.rightMin
+                )
+            } else {
+                drawCandlestick(
+                    canvas, dataSet, viewport,
+                    chartData.leftMax, chartData.leftMin,
+                    chartData.rightMax, chartData.rightMin
+                )
+            }
+        }
+    }
+
+    private fun drawCandlestickMinLine(
+        canvas: Canvas,
+        dataSet: CandlestickDataSet,
+        viewport: Viewport,
+        lMax: Float,
+        lMin: Float,
+        rMax: Float,
+        rMin: Float,
+    ) {
+        val min: Float
+        val max: Float
+
+        when (dataSet.axisDependency) {
+            AxisY.DEPENDENCY_RIGHT -> {
+                min = rMin
+                max = rMax
+            }
+
+            else -> {
+                min = lMin
+                max = lMax
+            }
+        }
+
+        val lineThickness: Int = dataSet.lineThickness
+
+        renderPaint.style = Paint.Style.STROKE
+        renderPaint.strokeWidth = lineThickness.toFloat()
+        renderPaint.color = dataSet.lineColor
+
+        linePaths.clear()
+
+        val valueCount = dataSet.getEntryCount()
+
+        val scale = 1.0f / viewport.width()
+
+        val step = contentRect.width() * scale / valueCount
+        contentRect.left - viewport.left * contentRect.width() * scale
+        val startX =
+            contentRect.left + (step * 0.5f) - viewport.left * contentRect.width() * scale
+
+        val linePath = Path()
+
+        val startIndexOffset = 0
+
+        val dataSize = dataSet.values.size
+        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        leftIndex = max(leftIndex, 0)
+        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        rightIndex = min(rightIndex, dataSize)
+
+        var i = leftIndex
+        var isFirst = true
+
+        while (i < rightIndex) {
+            val value: CandlestickValue? = dataSet.getEntryForIndex(i)
+            val close = value?.close
+            if (close == null || close.isNaN()) {
+                i++
+                continue
+            }
+            val xPosition = startX + step * (i + startIndexOffset)
+            val yPosition: Float =
+                (max - close) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
+            value.setCoordinate(xPosition, yPosition)
+
+            if (isFirst) {
+                isFirst = false
+                linePath.moveTo(xPosition, yPosition)
+            } else {
+                linePath.lineTo(xPosition, yPosition)
+            }
+
+            linePath.lineTo(xPosition, yPosition)
+            i++
+        }
+
+        if (!isFirst) {
+            linePaths.add(linePath)
+        }
+
+        for (path in linePaths) {
+            canvas.drawPath(path, renderPaint)
         }
     }
 

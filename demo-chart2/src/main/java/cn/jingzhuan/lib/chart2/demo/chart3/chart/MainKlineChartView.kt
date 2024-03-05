@@ -21,10 +21,11 @@ class MainKlineChartView(ctx: Context, attrs: AttributeSet?) : KlineChartView(ct
         highlightTextSize = 28
     }
     init {
-        currentVisibleEntryCount = 40
+        currentVisibleEntryCount = 250
         decimalDigitsNumber = 3
         axisRight.gridCount = 0
         axisLeft.isGridSlidIndex = 2
+        showScaleMin = true
     }
 
 }

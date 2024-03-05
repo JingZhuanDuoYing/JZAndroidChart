@@ -73,6 +73,10 @@ open class CandlestickDataSet @JvmOverloads constructor(
 
     var candleWidthPercent = 0.8f
 
+    var lineThickness = 2
+
+    var lineColor = Color.GRAY
+
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
         viewportYMax = -Float.MAX_VALUE

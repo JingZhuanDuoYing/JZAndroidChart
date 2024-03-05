@@ -51,6 +51,7 @@ import cn.jingzhuan.lib.chart3.event.OnDrawLineListener
 import cn.jingzhuan.lib.chart3.event.OnFlagClickListener
 import cn.jingzhuan.lib.chart3.event.OnHighlightListener
 import cn.jingzhuan.lib.chart3.event.OnRangeChangeListener
+import cn.jingzhuan.lib.chart3.event.OnScaleListener
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter
 import cn.jingzhuan.lib.chart3.formatter.DateTimeFormatter.formatTime
 import cn.jingzhuan.lib.chart3.utils.ChartConstant
@@ -392,6 +393,25 @@ class Chart3Activity : AppCompatActivity() {
                     Toast.makeText(this@Chart3Activity, "关闭区间统计", Toast.LENGTH_SHORT).show()
                     tvInfo.visibility = View.VISIBLE
                     timeRangeView.visibility = View.GONE
+                }
+
+            })
+
+            setOnScaleListener(object: OnScaleListener {
+                override fun onScaleStart(viewport: Viewport) {
+                }
+
+                override fun onScale(viewport: Viewport, isMin: Boolean, isMax: Boolean) {
+                    if (isMin) {
+                        Toast.makeText(context, "已缩小为最小值", Toast.LENGTH_SHORT).show()
+                    }
+                    if (isMax) {
+                        Toast.makeText(context, "已放大至最大值", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onScaleEnd(viewport: Viewport) {
+
                 }
 
             })
@@ -951,6 +971,7 @@ class Chart3Activity : AppCompatActivity() {
             increasingPaintStyle = Paint.Style.STROKE
             strokeThickness = 3f
             enableGap = true
+            isBasis = true
         }
 
         val lineList = ArrayList<LineValue>()
@@ -959,7 +980,7 @@ class Chart3Activity : AppCompatActivity() {
 //        val overLayList = ArrayList<BarValue>()
 //        val overLay2List = ArrayList<BarValue>()
         klineList.forEachIndexed { index, value ->
-            lineList.add(LineValue((value.high + value.low) * 0.5f, value.time))
+            lineList.add(LineValue((value.high) * 1.1f, value.time))
 //            overLayList.add(BarValue(value.open * 1.5f, (value.close) * 1.5f, Color.BLUE))
 //            overLay2List.add(BarValue(value.high * 1.5f, (value.low) * 1.5f, Color.RED))
             when (index) {
@@ -1001,7 +1022,7 @@ class Chart3Activity : AppCompatActivity() {
         val lineDataSet = LineDataSet(lineList).apply {
             color = Color.RED
             lineThickness = 3
-            isEnable = false
+            isEnable = true
         }
 
 //        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {

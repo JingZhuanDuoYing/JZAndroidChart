@@ -129,46 +129,53 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         if (chartView.pointWidth == 0f) setPointWidth()
 
-        for (i in sortedDataSets.indices) {
-            val dataSet: AbstractDataSet<*> = sortedDataSets[i]
-            if (dataSet is TreeDataSet) {
-                if (chartView.focusIndex == -1) chartView.focusIndex = dataSet.values.size - 1
-                treeDraw.setFocusIndex(chartView.focusIndex)
-                treeDraw.drawDataSet(canvas, combineData.treeChartData, dataSet, currentViewport)
-            }
+        val basisCandlestickDataSet = combineData.candlestickChartData.dataSets.find { it.isBasis }
 
-            // 蜡烛
-            if (dataSet is CandlestickDataSet) {
-                if (dataSet.enableGap) {
-                    candlestickDraw.textPaint = gapsTextPaint
-                    candlestickDraw.decimalDigitsNumber = chartView.decimalDigitsNumber
+        if (chartView.showMineLine() && basisCandlestickDataSet != null) {// 画K线缩放到最小的折线 (没有设置基准K线 还是画蜡烛不画折线)
+            candlestickDraw.showScaleMin = true
+            candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, basisCandlestickDataSet, currentViewport)
+        } else {
+            for (i in sortedDataSets.indices) {
+                val dataSet: AbstractDataSet<*> = sortedDataSets[i]
+                if (dataSet is TreeDataSet) {
+                    if (chartView.focusIndex == -1) chartView.focusIndex = dataSet.values.size - 1
+                    treeDraw.setFocusIndex(chartView.focusIndex)
+                    treeDraw.drawDataSet(canvas, combineData.treeChartData, dataSet, currentViewport)
                 }
-                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, currentViewport)
-            }
 
-            // 线
-            if (dataSet is LineDataSet) {
-                if (dataSet.isHorizontalLine) {
-                    lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
+                // 蜡烛
+                if (dataSet is CandlestickDataSet) {
+                    if (dataSet.enableGap) {
+                        candlestickDraw.textPaint = gapsTextPaint
+                        candlestickDraw.decimalDigitsNumber = chartView.decimalDigitsNumber
+                    }
+                    candlestickDraw.showScaleMin = false
+                    candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, dataSet, currentViewport)
                 }
-                lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
 
+                // 线
+                if (dataSet is LineDataSet) {
+                    if (dataSet.isHorizontalLine) {
+                        lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
+                    }
+                    lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
+
+                }
+
+                // 柱子
+                if (dataSet is BarDataSet) {
+                    barDraw.drawDataSet(canvas, combineData.barChartData, dataSet, currentViewport)
+                }
+
+                // 标签文本
+                if (dataSet is ScatterTextDataSet) {
+                    scatterTextDraw.drawDataSet(canvas, combineData.scatterTextChartData, dataSet, currentViewport)
+                }
             }
 
-            // 柱子
-            if (dataSet is BarDataSet) {
-                barDraw.drawDataSet(canvas, combineData.barChartData, dataSet, currentViewport)
-            }
-
-            // 标签文本
-            if (dataSet is ScatterTextDataSet) {
-                scatterTextDraw.drawDataSet(canvas, combineData.scatterTextChartData, dataSet, currentViewport)
-            }
-
+            // 图标 画在上层
+            scatterDraw.drawDataSet(canvas, combineData.scatterChartData, currentViewport)
         }
-
-        // 图标 画在上层
-        scatterDraw.drawDataSet(canvas, combineData.scatterChartData, currentViewport)
 
         // 画最大最小值
         if (chartView.isShowMaxMinValue) {
