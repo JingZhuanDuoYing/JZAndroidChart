@@ -311,7 +311,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             sb.append(" 分时 >")
             text = sb.toString()
 
-            if (!flags.isNullOrEmpty()) {
+            if (!flags.isNullOrEmpty() && !chartView.showMineLine()) {
                 var tradeWidth = 0
                 var tradeSimulateWidth = 0
                 var surveyWidth = 0
