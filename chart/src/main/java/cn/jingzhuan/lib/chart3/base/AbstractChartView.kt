@@ -176,6 +176,12 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      */
     var lastPriceLineColor = 0
 
+    /**
+     * 是否能够触摸改变区间统计位置
+     */
+    var isTouchRangeEnable = true
+
+
     constructor(context: Context?) : super(context) {
         init(null, 0)
     }
@@ -401,6 +407,13 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      * 打开区间统计
      */
     abstract fun openRange()
+
+    /**
+     * 设置区间统计
+     * [startIndex] - 开始位置
+     * [endIndex] - 结束位置
+     */
+    abstract fun setIntervalRange(startIndex: Int, endIndex: Int)
 
     /**
      * 关闭区间统计

@@ -256,7 +256,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         if (preDrawLine.thirdDrawValue != null) {
                             minY = min(minY, preDrawLine.thirdDrawValue?.y ?: 0f)
                         }
-                        Log.d("画线工具","同时滑动-> 向下 deltaY=$deltaY minY=$minY bottomY=$bottomY")
+//                        Log.d("画线工具","同时滑动-> 向下 deltaY=$deltaY minY=$minY bottomY=$bottomY")
                         if (minY > bottomY) {
                             return true
                         }
@@ -269,7 +269,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         if (preDrawLine.thirdDrawValue != null) {
                             maxY = max(maxY, preDrawLine.thirdDrawValue?.y ?: 0f)
                         }
-                        Log.d("画线工具","同时滑动-> 向上 deltaY=$deltaY maxY=$maxY topY=$topY")
+//                        Log.d("画线工具","同时滑动-> 向上 deltaY=$deltaY maxY=$maxY topY=$topY")
                         if (maxY < topY) {
                             return true
                         }
@@ -283,7 +283,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         if (preDrawLine.thirdDrawValue != null) {
                             maxX = max(maxX, (preDrawLine.thirdDrawValue?.x ?: 0f))
                         }
-                        Log.d("画线工具","同时滑动-> 向右 deltaX=$deltaX maxX=$maxX rightX=$rightX")
+//                        Log.d("画线工具","同时滑动-> 向右 deltaX=$deltaX maxX=$maxX rightX=$rightX")
                         if (maxX > rightX) {
                             return true
                         }
@@ -296,7 +296,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
                         if (preDrawLine.thirdDrawValue != null) {
                             minX = min(minX, (preDrawLine.thirdDrawValue?.x ?: 0f))
                         }
-                        Log.d("画线工具","同时滑动-> 向左 deltaX=$deltaX minX=$minX leftX=$leftX")
+//                        Log.d("画线工具","同时滑动-> 向左 deltaX=$deltaX minX=$minX leftX=$leftX")
                         if (minX < leftX) {
                             return true
                         }

@@ -1,6 +1,7 @@
 package cn.jingzhuan.lib.chart3.base
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -213,6 +214,17 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         invalidate()
     }
 
+    /**
+     * 打开区间统计
+     * [startIndex] - 开始位置
+     * [endIndex] - 结束位置
+     */
+    override fun setIntervalRange(startIndex: Int, endIndex: Int) {
+        if (!isOpenRange) return
+        rangeRenderer.setIntervalRange(startIndex, endIndex)
+        invalidate()
+    }
+
     override fun closeRange() {
         cleanRange()
         invalidate()
@@ -302,7 +314,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (isOpenRange) {
+        if (isOpenRange && isTouchRangeEnable) {
             if (rangeRenderer.onTouchEvent(event)) {
                 return true
             }
@@ -321,4 +333,25 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     }
 
     fun getHighlightTextPaint() = highlightRenderer.getTextPaint()
+
+    fun setRangeTouchBitmap(leftBitmap: Bitmap, rightBitmap: Bitmap) {
+        rangeRenderer.leftTouchBitmap = leftBitmap
+        rangeRenderer.rightTouchBitmap = rightBitmap
+    }
+
+    fun setShowRangeCloseButton(isShow: Boolean) {
+        rangeRenderer.showRangeCloseButton = isShow
+    }
+
+    fun setShowRangeLinen(isShow: Boolean) {
+        rangeRenderer.showRangeLine = isShow
+    }
+
+    fun setRangeHedgeWhole(hedgeWhole: Boolean) {
+        rangeRenderer.isRangeHedgeWhole = hedgeWhole
+    }
+
+    fun setRangeMaxDiffEntry(max: Int) {
+        rangeRenderer.maxDiffEntry = max
+    }
 }

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
@@ -16,6 +17,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_RIGHT
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -30,7 +32,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     /**
      * 最小间隔
      */
-    private val maxDiffEntry = 1
+    var maxDiffEntry = 1
 
     /**
      * 区间起点
@@ -70,12 +72,12 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     /**
      * 区间起点 指示图标
      */
-    private val leftTouchBitmap: Bitmap
+    var leftTouchBitmap: Bitmap
 
     /**
      * 区间终点 指示图标
      */
-    private val rightTouchBitmap: Bitmap
+    var rightTouchBitmap: Bitmap
 
     /**
      * 区间起点 矩形触摸区域
@@ -106,6 +108,21 @@ class RangeRenderer<T : AbstractDataSet<*>>(
      * 上一次触摸的x坐标
      */
     private var lastPreX = 0f
+
+    /**
+     * 是否绘制区间统计关闭按钮（在isOpenRange = true && isTouchRangeEnable = true 时有效）
+     */
+    var showRangeCloseButton = true
+
+    /**
+     * 是否绘制区间统计左右封闭线（在isOpenRange = true 时有效）
+     */
+    var showRangeLine = false
+
+    /**
+     * 是否以当前起点区域的左侧和当前终点区域的右侧微区间范围（不以区域的中心点绘制）（在isOpenRange = true 时有效）
+     */
+    var isRangeHedgeWhole = false
 
     init {
         initPaints()
@@ -140,42 +157,69 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     override fun renderer(canvas: Canvas) {
         if(startX >= endX) startX = endX
 
+        var leftX = startX
+        var rightX = endX
         //绘制区间统计的选择区域
-        bgRect.set(startX, contentRect.top.toFloat(), endX, contentRect.bottom.toFloat())
+        if (isRangeHedgeWhole) {
+            leftX = startX - chart.pointWidth * 0.5f
+            rightX = endX + chart.pointWidth * 0.5f
+        }
+        bgRect.set(leftX, contentRect.top.toFloat(), rightX, contentRect.bottom.toFloat())
         canvas.drawRect(bgRect, bgPaint)
 
-        // 绘制左右touch图标
-        val bitmapSpanX = leftTouchBitmap.width / 2f
-        val bitmapSpanY = leftTouchBitmap.height / 2f
-        canvas.drawBitmap(
-            rightTouchBitmap,
-            endX - bitmapSpanX,
-            contentRect.height() / 2f - bitmapSpanY,
-            btPaint
-        )
-        canvas.drawBitmap(
-            leftTouchBitmap,
-            startX - bitmapSpanX,
-            contentRect.height() / 2f - bitmapSpanY,
-            btPaint
-        )
+        if (showRangeLine) {
+            renderPaint.strokeWidth = 2f
+            canvas.drawLine(
+                max(leftX, contentRect.left + 2f),
+                contentRect.top.toFloat(),
+                max(leftX, contentRect.left + 2f),
+                contentRect.bottom.toFloat(),
+                renderPaint
+            )
+            canvas.drawLine(
+                min(rightX, contentRect.right - 2f),
+                contentRect.top.toFloat(),
+                min(rightX, contentRect.right - 2f),
+                contentRect.bottom.toFloat(),
+                renderPaint
+            )
+        }
+        if (chart.isTouchRangeEnable) {
+            // 绘制左右touch图标
+            val bitmapSpanX = leftTouchBitmap.width / 2f
+            val bitmapSpanY = leftTouchBitmap.height / 2f
+            canvas.drawBitmap(
+                rightTouchBitmap,
+                rightX - bitmapSpanX,
+                contentRect.height() / 2f - bitmapSpanY,
+                btPaint
+            )
+            canvas.drawBitmap(
+                leftTouchBitmap,
+                leftX - bitmapSpanX,
+                contentRect.height() / 2f - bitmapSpanY,
+                btPaint
+            )
 
 
-         leftTouchRect = RectF(
-            startX - bitmapSpanX * 6f,
-             contentRect.top.toFloat(),
-             startX + bitmapSpanX * 6f,
-             contentRect.bottom.toFloat()
-        )
+            leftTouchRect = RectF(
+                leftX - bitmapSpanX * 3f,
+                contentRect.top.toFloat(),
+                leftX + bitmapSpanX * 3f,
+                contentRect.bottom.toFloat()
+            )
 
-        rightTouchRect = RectF(
-            endX - bitmapSpanX * 6f,
-            contentRect.top.toFloat(),
-            endX + bitmapSpanX * 6f,
-            contentRect.bottom.toFloat()
-        )
+            rightTouchRect = RectF(
+                rightX - bitmapSpanX * 3f,
+                contentRect.top.toFloat(),
+                rightX + bitmapSpanX * 3f,
+                contentRect.bottom.toFloat()
+            )
 
-        drawCloseButton(canvas, startX, endX)
+            if (showRangeCloseButton) {
+                drawCloseButton(canvas, leftX, rightX)
+            }
+        }
     }
 
     private fun drawCloseButton(canvas: Canvas, startX: Float, endX: Float) {
@@ -241,6 +285,25 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             endIndex = min(listSize - 1, (currentViewport.right * listSize - 1).roundToInt())
             endX = chart.getEntryX(endIndex)
         }
+        touchType = RANGE_TOUCH_NONE
+
+        onRangeChange()
+    }
+
+    fun setIntervalRange(start: Int, end: Int) {
+        if (start >= end) return
+        if (start < 0) return
+        val dataSet = chart.chartData?.getTouchDataSet() ?: return
+        val listSize = dataSet.values.size
+
+        // 获取区间统计开始坐标
+        startIndex = start
+        startX = chart.getEntryX(start)
+
+        // 获取区间统计结束坐标
+        endIndex = min(listSize - 1, end)
+        endX = chart.getEntryX(end)
+
         touchType = RANGE_TOUCH_NONE
 
         onRangeChange()
@@ -352,6 +415,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun touchToLeft(currentX: Float): Boolean {
+        Log.i("区间统计", "touchToLeft")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val leftIndex = chart.getEntryIndex(currentX)
         val rightIndex = chart.getEntryIndex(endX)
@@ -363,9 +427,18 @@ class RangeRenderer<T : AbstractDataSet<*>>(
         val newStartX = currentX - lastPreX + startX
 
         if (leftIndex != startIndex && leftIndex >= chartLeftIndex && leftIndex < chartRightIndex) {
-            if (rightIndex - leftIndex <= maxDiffEntry && newStartX >= startX) {
-                startIndex = leftIndex
-                endIndex = leftIndex + 1
+            if (rightIndex - leftIndex <= maxDiffEntry) {
+                if (rightIndex == chartRightIndex) {
+                    endIndex = rightIndex
+                    startIndex = rightIndex - maxDiffEntry
+                } else {
+                    if (newStartX >= startX) {
+                        startIndex = leftIndex
+                        endIndex = leftIndex + maxDiffEntry
+                    } else {
+                        return false
+                    }
+                }
             } else {
                 startIndex = leftIndex
                 endIndex = rightIndex
@@ -379,6 +452,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun touchToRight(currentX: Float): Boolean {
+        Log.i("区间统计", "touchToRight")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val leftIndex = chart.getEntryIndex(startX)
         val rightIndex = chart.getEntryIndex(currentX)
@@ -388,14 +462,25 @@ class RangeRenderer<T : AbstractDataSet<*>>(
         var chartRightIndex: Int = min(listSize - 1, (currentViewport.right * listSize - 1).roundToInt())
 
         if (chartRightIndex > listSize - 1) chartRightIndex = listSize - 1
-        val newEndX: Float = currentX - lastPreX + endX
+        val newEndX = currentX - lastPreX + endX
         if (rightIndex != endIndex && rightIndex > chartLeftIndex && rightIndex <= chartRightIndex) {
-            endIndex = rightIndex
-            startIndex = if (rightIndex - leftIndex <= maxDiffEntry && newEndX < endX) {
-                rightIndex - 1
+            if (rightIndex - leftIndex <= maxDiffEntry) {
+                if (leftIndex == chartLeftIndex) {
+                    startIndex = leftIndex
+                    endIndex = leftIndex + maxDiffEntry
+                } else {
+                    if (newEndX < endX) {
+                        startIndex = rightIndex - maxDiffEntry
+                        endIndex = rightIndex
+                    } else {
+                        return false
+                    }
+                }
             } else {
-                leftIndex
+                startIndex = leftIndex
+                endIndex = rightIndex
             }
+
             startX = chart.getEntryX(startIndex)
             endX = chart.getEntryX(endIndex)
             chart.invalidate()
@@ -405,6 +490,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun touchBothToLeftOrRight(currentX: Float): Boolean {
+        Log.i("区间统计", "touchBothToLeftOrRight")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val currentIndex = chart.getEntryIndex(currentX)
         val lastPreIndex = chart.getEntryIndex(lastPreX)
