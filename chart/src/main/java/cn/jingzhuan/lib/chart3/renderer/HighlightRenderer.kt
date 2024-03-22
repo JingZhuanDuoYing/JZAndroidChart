@@ -76,6 +76,9 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
                 val index = highlight?.dataIndex ?: 0
                 flagRectMap.forEach {
                     if (it.value.contains(x.roundToInt(), y.roundToInt())) {
+                        if (it.key == FLAG_HISTORY_MINUTE && chart.hideBottomFlagHistoryMinute) {
+                            return
+                        }
                         chart.onFlagCallback(it.key, index)
                     }
                 }
@@ -308,7 +311,9 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             val flags = chartData?.getFlagDataSet()?.values?.get(highlight.dataIndex)?.flags
             sb.clear()
             sb.append(text)
-            sb.append(" 分时 >")
+            if (!chart.hideBottomFlagHistoryMinute) {
+                sb.append(" 分时 >")
+            }
             text = sb.toString()
 
             if (!flags.isNullOrEmpty() && !chartView.showMineLine()) {

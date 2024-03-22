@@ -235,6 +235,7 @@ class Chart3Activity : AppCompatActivity() {
     private fun initListener() {
         if (rbDay.isChecked) {
             klineMain.showBottomFlags = true
+            klineMain.hideBottomFlagHistoryMinute = true
             klineMain.valueIndexPattern = "yyyy-MM-dd"
         }
         rg.setOnCheckedChangeListener { group, id ->

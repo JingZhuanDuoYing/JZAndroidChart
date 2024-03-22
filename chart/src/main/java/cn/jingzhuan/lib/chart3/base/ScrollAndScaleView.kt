@@ -207,6 +207,11 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      */
     var showBottomFlags = false
 
+    /**
+     * 是否隐藏底部标签组历史分时入口
+     */
+    var hideBottomFlagHistoryMinute = false
+
     var pointWidth = 0f
 
     // <editor-fold desc="画线工具">    ----------------------------------------------------------
