@@ -69,6 +69,7 @@ import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class Chart3Activity : AppCompatActivity() {
 
@@ -235,7 +236,6 @@ class Chart3Activity : AppCompatActivity() {
     private fun initListener() {
         if (rbDay.isChecked) {
             klineMain.showBottomFlags = true
-            klineMain.hideBottomFlagHistoryMinute = true
             klineMain.valueIndexPattern = "yyyy-MM-dd"
         }
         rg.setOnCheckedChangeListener { group, id ->
@@ -318,7 +318,26 @@ class Chart3Activity : AppCompatActivity() {
         klineMain.apply {
             setViewportChangeListener { viewport->
 
-                subCharts.forEach { it.setCurrentViewport(viewport) }
+                subCharts.forEach {
+                    if (it.totalEntryCount != klineMain.totalEntryCount){
+                        it.totalEntryCount = klineMain.totalEntryCount
+                    }
+                    it.setCurrentViewport(viewport)
+                }
+
+                if (isHighlightEnable) {
+                    val entryCount = klineList.size
+                    val index = if (viewport.right > 1f) {
+                        entryCount - 1
+                    } else {
+                        (viewport.right * entryCount - 1).roundToInt()
+                    }
+                    sb.clear()
+                    sb.append("开: ${klineList.getOrNull(index)?.open} 高: ${klineList.getOrNull(index)?.high} 低: ${klineList.getOrNull(index)?.low} 收: ${klineList.getOrNull(index)?.close}")
+                    runOnUiThread {
+                        tvInfo.text = sb.toString()
+                    }
+                }
             }
             setOnHighlightListener(object : OnHighlightListener {
                 override fun onHighlightShow(highlight: Highlight?) {

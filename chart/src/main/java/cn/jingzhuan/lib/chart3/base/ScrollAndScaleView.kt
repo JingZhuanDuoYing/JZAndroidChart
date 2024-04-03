@@ -198,9 +198,9 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     var showScaleMin = false
 
-    private var isScaleMin = false
+    var isScaleMin = false
 
-    private var isScaleMax = false
+    var isScaleMax = false
 
     /**
      * 是否显示底部标签组
