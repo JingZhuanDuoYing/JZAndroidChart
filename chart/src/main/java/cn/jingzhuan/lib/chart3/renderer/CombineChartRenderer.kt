@@ -32,19 +32,33 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     private var combineData: CombineData? = null
 
-    private var maxMinArrowDraw: MaxMinArrowDraw
+    private val maxMinArrowDraw by lazy {
+        MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
+    }
 
-    private var candlestickDraw: CandlestickDraw
+    private val candlestickDraw by lazy {
+        CandlestickDraw(contentRect, renderPaint)
+    }
 
-    private var barDraw: BarDraw
+    private val barDraw by lazy {
+        BarDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
+    }
 
-    private var lineDraw: LineDraw
+    private val lineDraw by lazy {
+        LineDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
+    }
 
-    private var scatterDraw: ScatterDraw
+    private val scatterDraw by lazy {
+        ScatterDraw(contentRect)
+    }
 
-    private var scatterTextDraw: ScatterTextDraw
+    private val scatterTextDraw by lazy {
+        ScatterTextDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator() )
+    }
 
-    private var treeDraw: TreeDraw
+    private val treeDraw by lazy {
+        TreeDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
+    }
 
     private val gapsTextPaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -54,22 +68,8 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
     }
 
     init {
-        maxMinArrowDraw = MaxMinArrowDraw(chart.maxMinValueTextColor, chart.maxMinValueTextSize)
-
-        candlestickDraw = CandlestickDraw(contentRect, renderPaint)
-
-        barDraw = BarDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator())
-
-        lineDraw = LineDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
-
-        scatterDraw = ScatterDraw(contentRect)
-
-        scatterTextDraw = ScatterTextDraw(contentRect, renderPaint, labelTextPaint, chart.getChartAnimator() ?: ChartAnimator() )
-
-        treeDraw = TreeDraw(contentRect, renderPaint, chart.getChartAnimator() ?: ChartAnimator())
 
         chart.addInternalViewportChangeListener { viewport ->
-            setPointWidth()
             currentViewport.set(viewport)
             calcDataSetMinMax()
         }
@@ -127,7 +127,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         if (sortedDataSets.isEmpty()) return
 
-        if (chartView.pointWidth == 0f) setPointWidth()
+        if (chartView.pointWidth == 0f) {
+            chartView.setEntryWidth()
+        }
 
         val basisCandlestickDataSet = combineData.candlestickChartData.dataSets.find { it.isBasis }
 
@@ -222,9 +224,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
     override fun addDataSet(dataSet: AbstractDataSet<*>?) {
         if (dataSet == null) return
-
         super.addDataSet(dataSet)
-
         calcDataSetMinMax()
     }
 
@@ -235,7 +235,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
         super.clearDataSet()
         getChartData()?.clearAllChartData()
         calcDataSetMinMax()
-        chartView.invalidate()
+//        chartView.invalidate()
     }
 
     override fun getChartData(): CombineData? {

@@ -229,6 +229,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     private var lastScrollViewPortLeft = 0f
 
+    var isLoadMore = false
+
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
 
     constructor(context: Context?) : super(context)
@@ -384,7 +386,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 //                Log.w(TAG, "加载更多")
                 needsInvalidate = false
                 finishScroll()
-                if (loadMoreListener != null) {
+                if (loadMoreListener != null && !isLoadMore) {
                     loadMoreListener?.onLoadMore()
                 }
             }
@@ -475,7 +477,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
             val rightSide = currentViewport.right == Viewport.AXIS_X_MAX
 
             if (leftSide && rightSide) {
-                if (loadMoreListener != null) {
+                if (loadMoreListener != null && !isLoadMore) {
                     loadMoreListener?.onLoadMore()
                 }
                 return false
@@ -688,9 +690,47 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         triggerViewportChange()
     }
 
-    fun setStaticCurrentViewport(viewport: RectF) {
+    fun setLinkageViewport(viewport: RectF) {
         currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
         currentViewport.constrainViewport()
+        lastScrollViewPortLeft = viewport.left
+
+        if (internalViewportChangeListener != null) {
+            synchronized(this) {
+                try {
+                    internalViewportChangeListener?.onViewportChange(currentViewport)
+                } catch (e: Exception) {
+                    Log.d(TAG, "OnViewportChangeListener", e)
+                }
+            }
+        }
+    }
+
+    fun setLoadMoreViewport(viewport: RectF) {
+        currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
+        currentViewport.constrainViewport()
+        lastScrollViewPortLeft = viewport.left
+
+        if (internalViewportChangeListener != null) {
+            synchronized(this) {
+                try {
+                    internalViewportChangeListener?.onViewportChange(currentViewport)
+                } catch (e: Exception) {
+                    Log.d(TAG, "OnViewportChangeListener", e)
+                }
+            }
+        }
+        if (viewportChangeListener != null) {
+            synchronized(this) {
+                try {
+                    viewportChangeListener?.onViewportChange(currentViewport)
+                } catch (e: Exception) {
+                    Log.d(TAG, "OnViewportChangeListener", e)
+                }
+            }
+        }
+        postInvalidate()
+        isLoadMore = false
     }
 
     private fun triggerViewportChange() {
@@ -836,6 +876,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
                 scaleListener?.onScale(currentViewport, isMin = false, isMax = false)
             }
         }
+        setEntryWidth()
     }
 
     /**
@@ -1021,6 +1062,8 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
      * 清除十字光标
      */
     abstract fun onHighlightClean()
+
+    abstract fun setEntryWidth()
 
     companion object {
         private const val TAG = "ScrollAndScaleView"

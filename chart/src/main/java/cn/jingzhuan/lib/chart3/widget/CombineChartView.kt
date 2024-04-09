@@ -2,6 +2,7 @@ package cn.jingzhuan.lib.chart3.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.base.BaseChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -41,52 +42,16 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
             handleLoadMoreIndex(dataSize - lastCount)
 
-            setCurrentViewport(viewport)
+            setDataSets(combineData)
 
-            setCombineData(combineData)
+            setLoadMoreViewport(viewport)
         }
     }
 
     fun setCombineData(combineData: CombineData) {
-        var totalEntryCount = 0
+        setDataSets(combineData)
 
-        cleanAllDataSet()
-
-        for (treeDataSet in combineData.getTreeDataSets()) {
-            addDataSet(treeDataSet)
-            totalEntryCount = max(totalEntryCount, treeDataSet.values.size)
-        }
-
-        for (lineDataSet in combineData.getLineDataSets()) {
-            addDataSet(lineDataSet)
-            totalEntryCount = max(totalEntryCount, lineDataSet.values.size)
-        }
-
-        for (barDataSet in combineData.getBarDataSets()) {
-            addDataSet(barDataSet)
-            totalEntryCount = max(totalEntryCount, barDataSet.values.size)
-        }
-
-        for (candlestickDataSet in combineData.getCandlestickDataSets()) {
-            addDataSet(candlestickDataSet)
-            totalEntryCount = max(totalEntryCount, candlestickDataSet.values.size)
-        }
-
-        for (scatterDataSet in combineData.getScatterDataSets()) {
-            addDataSet(scatterDataSet)
-            totalEntryCount = max(totalEntryCount, scatterDataSet.values.size)
-        }
-
-        for (scatterTextDataSet in combineData.getScatterTextDataSets()) {
-            addDataSet(scatterTextDataSet)
-            totalEntryCount = max(totalEntryCount, scatterTextDataSet.values.size)
-        }
-
-        for (drawLineDataSet in combineData.getDrawLineDataSets()) {
-            addDataSet(drawLineDataSet)
-        }
-
-        this.totalEntryCount = totalEntryCount
+        this.totalEntryCount = combineData.getTouchEntryCount()
 
         if (!currentViewport.initialized() && totalEntryCount > 0) {
             // 移动到最新的K线
@@ -105,6 +70,40 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
             }
 
             setCurrentViewport(newViewport)
+        } else {
+            postInvalidate()
+        }
+    }
+
+    private fun setDataSets(combineData: CombineData) {
+        cleanAllDataSet()
+
+        for (treeDataSet in combineData.getTreeDataSets()) {
+            addDataSet(treeDataSet)
+        }
+
+        for (lineDataSet in combineData.getLineDataSets()) {
+            addDataSet(lineDataSet)
+        }
+
+        for (barDataSet in combineData.getBarDataSets()) {
+            addDataSet(barDataSet)
+        }
+
+        for (candlestickDataSet in combineData.getCandlestickDataSets()) {
+            addDataSet(candlestickDataSet)
+        }
+
+        for (scatterDataSet in combineData.getScatterDataSets()) {
+            addDataSet(scatterDataSet)
+        }
+
+        for (scatterTextDataSet in combineData.getScatterTextDataSets()) {
+            addDataSet(scatterTextDataSet)
+        }
+
+        for (drawLineDataSet in combineData.getDrawLineDataSets()) {
+            addDataSet(drawLineDataSet)
         }
     }
 
@@ -114,6 +113,14 @@ open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
 
     fun cleanAllDataSet() {
         getRenderer()?.clearDataSet()
+    }
+
+    fun cleanOff() {
+        cleanAllDataSet()
+        currentViewport = Viewport()
+        isLoadMore = false
+        totalEntryCount = 0
+        pointWidth = 0f
     }
 
     private fun getRenderer(): CombineChartRenderer? {

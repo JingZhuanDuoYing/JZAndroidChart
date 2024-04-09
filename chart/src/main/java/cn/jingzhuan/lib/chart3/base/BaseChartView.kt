@@ -22,6 +22,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_INITIAL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_PRESS
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_BOTTOM
+import kotlin.math.max
 
 /**
  * @since 2023-09-05
@@ -168,7 +169,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
             if (highlightListener != null) {
                 highlightListener?.onHighlightShow(highlight)
             }
-            postInvalidate()
+//            postInvalidate()
         }
     }
 
@@ -311,6 +312,17 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     override fun onSizeChanged(w: Int, h: Int, oldWidth: Int, oldHeight: Int) {
         super.onSizeChanged(w, h, oldWidth, oldHeight)
         chartRenderer?.calcDataSetMinMax()
+        setEntryWidth()
+    }
+
+    override fun setEntryWidth() {
+        val dataSet = chartData.getTouchDataSet()
+        if (dataSet != null && contentRect.width() != 0) {
+            val visibleRange = dataSet.getVisibleRange(currentViewport)
+            val minValueCount = if (currentVisibleEntryCount == -1) dataSet.minValueCount.toFloat() else currentVisibleEntryCount.toFloat()
+            val width = (contentRect.width() / max(visibleRange, minValueCount))
+            pointWidth = width
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

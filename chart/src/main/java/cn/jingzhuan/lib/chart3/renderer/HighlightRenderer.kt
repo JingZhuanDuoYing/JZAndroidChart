@@ -305,8 +305,8 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         }
         if (text.isEmpty()) return
 
-        val chartData = chart.chartData
         if (chart.showBottomFlags) {
+            val chartData = chart.chartData
             // 画标签组 按固定顺序绘制
             val flags = chartData?.getFlagDataSet()?.values?.get(highlight.dataIndex)?.flags
             sb.clear()

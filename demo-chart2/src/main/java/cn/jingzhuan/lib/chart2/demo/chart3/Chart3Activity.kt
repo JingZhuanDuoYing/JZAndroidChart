@@ -1088,7 +1088,7 @@ class Chart3Activity : AppCompatActivity() {
 //            add(scatterTextDataSet)
         }
 
-        if (loadMore) {
+        if (loadMore && klineMain.isLoadMore) {
             klineMain.setCombineDataByLoadMore(data)
         } else {
             klineMain.setCombineData(data)

@@ -89,17 +89,6 @@ abstract class AbstractRenderer<T : AbstractDataSet<*>>(chart: AbstractChartView
         return contentRect.bottom - contentRect.height() * (y - currentViewport.top) / currentViewport.height()
     }
 
-    protected fun setPointWidth() {
-        val dataSet = getChartData()?.getTouchDataSet()
-        if (dataSet != null && contentRect.width() != 0) {
-            val visibleRange = dataSet.getVisibleRange(currentViewport)
-            val minValueCount = if (chartView.currentVisibleEntryCount == -1) dataSet.minValueCount.toFloat()
-                else chartView.currentVisibleEntryCount.toFloat()
-            val width = (contentRect.width() / max(visibleRange, minValueCount))
-            chartView.pointWidth = width
-        }
-    }
-
     open fun setTypeface(tf: Typeface?) {
         labelTextPaint.typeface = tf
     }

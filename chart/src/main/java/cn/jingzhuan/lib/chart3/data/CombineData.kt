@@ -182,13 +182,11 @@ open class CombineData : ChartData<AbstractDataSet<*>>() {
         return getTouchDataSet()?.values?.size ?: 0
     }
 
+    /**
+     * 目前标签 只使用ScatterDataSet图标
+     */
     override fun getFlagDataSet(): AbstractDataSet<*>? {
-        allDataSet.forEach {
-            if (it.tag == FLAG_TAG_NAME) {
-                return it
-            }
-        }
-        return null
+        return getScatterDataSets().find { it.tag == FLAG_TAG_NAME }
     }
 
     fun addAll(dataSets: List<AbstractDataSet<*>>) {
