@@ -707,29 +707,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     }
 
     fun setLoadMoreViewport(viewport: RectF) {
-        currentViewport.set(viewport.left, viewport.top, viewport.right, viewport.bottom)
-        currentViewport.constrainViewport()
-        lastScrollViewPortLeft = viewport.left
-
-        if (internalViewportChangeListener != null) {
-            synchronized(this) {
-                try {
-                    internalViewportChangeListener?.onViewportChange(currentViewport)
-                } catch (e: Exception) {
-                    Log.d(TAG, "OnViewportChangeListener", e)
-                }
-            }
-        }
-        if (viewportChangeListener != null) {
-            synchronized(this) {
-                try {
-                    viewportChangeListener?.onViewportChange(currentViewport)
-                } catch (e: Exception) {
-                    Log.d(TAG, "OnViewportChangeListener", e)
-                }
-            }
-        }
-        postInvalidate()
+        setCurrentViewport(viewport)
         isLoadMore = false
     }
 
