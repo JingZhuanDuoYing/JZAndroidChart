@@ -79,12 +79,20 @@ open class MinuteChartView(
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
                     if (index == 1 || value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE) return ""
+                    var leftValue = when (index) {
+                        0 -> axisLeft.yMin
+                        2 -> axisLeft.yMax
+                        else -> axisLeft.yMax - (getCurrentHighlight()?.y ?: 0f) / contentRect.height() * (axisLeft.yMax - axisLeft.yMin)
+                    }
+                    if (leftValue > axisLeft.yMax) leftValue = axisLeft.yMax
+                    if (leftValue < axisLeft.yMin) leftValue = axisLeft.yMin
+
                     val lineDataSet = chartData.dataSets.find { it is LineDataSet && it.lastClose != -1f } ?: return ""
                     if (lineDataSet is LineDataSet) {
                         val lastClose = lineDataSet.lastClose
-                        if (value.isNaN() || lastClose <= 0.0f) return ""
-                        val result = (value - lastClose) / lastClose
-                        return "${NumberUtils.keepPrecision((result / 0.01f).toString(), 2)}%"
+                        if (leftValue.isNaN() || lastClose <= 0.0f) return ""
+                        val result = (leftValue - lastClose) / lastClose / 0.01f
+                        return "${NumberUtils.keepPrecision(result.toString(), 2)}%"
                     }
                     return ""
                 }

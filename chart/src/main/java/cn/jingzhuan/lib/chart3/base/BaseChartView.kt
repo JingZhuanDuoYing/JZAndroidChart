@@ -189,6 +189,8 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         focusIndex = -1
     }
 
+    protected fun getCurrentHighlight(): Highlight? = highlightRenderer.highlight
+
     /**
      * 画区间统计
      */
