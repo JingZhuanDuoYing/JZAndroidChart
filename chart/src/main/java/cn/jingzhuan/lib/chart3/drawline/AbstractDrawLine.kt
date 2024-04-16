@@ -10,7 +10,6 @@ import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
-import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.utils.TimeUtils
 import kotlin.math.cos
 import kotlin.math.max
@@ -87,11 +86,13 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         }
     }
 
-
     /**
      * 画起点
      */
     private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+        // 2024-04-16 这里加入一个特殊判断 单纯画文本时 不需要画点
+        if (dataSet.lineType == DrawLineType.ltFont.ordinal) return
+
         val value = dataSet.startDrawValue ?: return
         var x = value.x
         if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
@@ -110,6 +111,9 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
      * 画终点
      */
     private fun drawEndPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+        // 2024-04-16 这里加入一个特殊判断 单纯画文本时 不需要画点
+        if (dataSet.lineType == DrawLineType.ltFont.ordinal) return
+
         val value = dataSet.endDrawValue ?: return
 
         var x = value.x
@@ -130,6 +134,9 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
      * 画平行点
      */
     private fun drawThirdPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
+        // 2024-04-16 这里加入一个特殊判断 单纯画文本时 不需要画点
+        if (dataSet.lineType == DrawLineType.ltFont.ordinal) return
+
         val value = dataSet.thirdDrawValue ?: return
 
         var x = value.x

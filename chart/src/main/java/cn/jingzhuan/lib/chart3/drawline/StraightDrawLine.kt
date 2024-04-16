@@ -35,7 +35,7 @@ class StraightDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         lMax: Float,
         lMin: Float
     ) {
-        // 当前形状是直线 先画直线 再画背景 起点在图表在边界，终点在图表右边界
+        // 当前形状是直线 先画直线 再画背景 起点在图表左边界，终点在图表右边界
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
         if (startPoint == null || endPoint == null) return

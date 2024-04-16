@@ -101,7 +101,17 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var tvDrawFBNC: TextView
 
+    private lateinit var tvDrawHorizon: TextView
+
+    private lateinit var tvDrawVertical: TextView
+
     private lateinit var tvDrawParallel: TextView
+
+    private lateinit var tvDrawRay: TextView
+
+    private lateinit var tvDrawPriceLabel: TextView
+
+    private lateinit var tvDrawFont: TextView
 
     private lateinit var tvAdsorb: TextView
 
@@ -208,6 +218,11 @@ class Chart3Activity : AppCompatActivity() {
         tvDrawRect = findViewById(R.id.tv_draw_rect)
         tvDrawHJFG = findViewById(R.id.tv_draw_hjfg)
         tvDrawFBNC = findViewById(R.id.tv_draw_fbnc)
+        tvDrawHorizon = findViewById(R.id.tv_draw_horizon)
+        tvDrawVertical = findViewById(R.id.tv_draw_vertical)
+        tvDrawRay = findViewById(R.id.tv_draw_ray)
+        tvDrawPriceLabel = findViewById(R.id.tv_draw_price_label)
+        tvDrawFont = findViewById(R.id.tv_draw_font)
         tvDrawParallel = findViewById(R.id.tv_draw_parallel)
         tvAdsorb = findViewById(R.id.tv_adsorb)
         tvRevoke = findViewById(R.id.tv_revoke)
@@ -442,6 +457,20 @@ class Chart3Activity : AppCompatActivity() {
             }
 
             setOnDrawLineListener(object : OnDrawLineListener {
+                override fun onTouchText(onSuccess: (String) -> Unit) {
+                    onSuccess("你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？")
+                    tvStep.visibility = View.VISIBLE
+                    tvStep.text = "已完成"
+                    val timer = Timer()
+                    timer.schedule(object : TimerTask() {
+                        override fun run() {
+                            runOnUiThread {
+                                tvStep.visibility = View.GONE
+                                tvStep.text = ""
+                            }
+                        }
+                    }, 1000L)
+                }
                 override fun onTouch(state: DrawLineState, lineKey: String, type: Int, reselected: Boolean) {
                     if (type == 0) {
 //                        Toast.makeText(this@Chart3Activity, "点击了外部", Toast.LENGTH_SHORT).show()
@@ -491,6 +520,22 @@ class Chart3Activity : AppCompatActivity() {
 
         minuteMain.apply {
             setOnDrawLineListener(object : OnDrawLineListener {
+                override fun onTouchText(onSuccess: (String) -> Unit) {
+                    onSuccess("你是谁，在干什么？")
+                    tvStep.visibility = View.VISIBLE
+                    tvStep.text = "已完成"
+                    val timer = Timer()
+                    timer.schedule(object : TimerTask() {
+                        override fun run() {
+                            runOnUiThread {
+                                tvStep.visibility = View.GONE
+                                tvStep.text = ""
+                            }
+                        }
+                    }, 1000L)
+                }
+
+
                 override fun onTouch(state: DrawLineState, lineKey: String, type: Int, reselected: Boolean) {
                     if (reselected) return
                     if (state == DrawLineState.first) {
@@ -744,6 +789,107 @@ class Chart3Activity : AppCompatActivity() {
             }
             tvStep.visibility = View.VISIBLE
             tvStep.text = "请点击放置起点 0/3"
+        }
+
+        tvDrawHorizon.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltHorizon$index"
+                lineType = DrawLineType.ltHorizon.ordinal
+                lineState = DrawLineState.prepare
+                lineSize = 1f
+                cycle = if (rbDay.isChecked) 8 else -1
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置水平线 0/1"
+        }
+
+        tvDrawVertical.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltVerticalLine$index"
+                lineType = DrawLineType.ltVerticalLine.ordinal
+                lineState = DrawLineState.prepare
+                lineSize = 1f
+                cycle = if (rbDay.isChecked) 8 else -1
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置垂直线 0/1"
+        }
+
+        tvDrawRay.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltRaysLine$index"
+                lineType = DrawLineType.ltRaysLine.ordinal
+                lineState = DrawLineState.prepare
+                lineSize = 1f
+                cycle = if (rbDay.isChecked) 8 else -1
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置起点 0/2"
+        }
+
+        tvDrawPriceLabel.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltPriceLabel$index"
+                lineType = DrawLineType.ltPriceLabel.ordinal
+                lineState = DrawLineState.prepare
+                lineSize = 1f
+                cycle = if (rbDay.isChecked) 8 else -1
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置价格标注 0/2"
+        }
+
+        tvDrawFont.setOnClickListener {
+            index ++
+
+            val dataSet = DrawLineDataSet().apply {
+                lineKey = "ltFont$index"
+                lineType = DrawLineType.ltFont.ordinal
+                lineState = DrawLineState.prepare
+                lineSize = 1f
+                fontSize = 35
+                cycle = if (rbDay.isChecked) 8 else -1
+            }
+
+            if (rbDay.isChecked) {
+                klineMain.chartData.add(dataSet)
+            } else if (rbMinute.isChecked) {
+                minuteMain.chartData.add(dataSet)
+            }
+            tvStep.visibility = View.VISIBLE
+            tvStep.text = "请点击放置文字标注 0/1"
         }
 
         if (klineMain.isDrawLineAdsorb) {

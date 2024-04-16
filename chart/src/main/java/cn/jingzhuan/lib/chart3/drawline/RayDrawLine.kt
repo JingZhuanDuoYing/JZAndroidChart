@@ -6,20 +6,21 @@ import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
 import kotlin.math.atan2
-
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * @since 2023-10-09
- * 画线段
+ * @since 2023-10-16
+ * 画射线
  */
-class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
+class RayDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
 
     override fun onDraw(
         canvas: Canvas,
         dataSet: DrawLineDataSet,
         baseDataSet: AbstractDataSet<*>,
         lMax: Float,
-        lMin: Float,
+        lMin: Float
     ) {
         super.onDraw(canvas, dataSet, baseDataSet, lMax, lMin)
         if (dataSet.isSelect) return
@@ -33,6 +34,7 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         lMax: Float,
         lMin: Float
     ) {
+        // 当前形状是射线 先画射线 再画背景
         val startPoint = dataSet.startDrawValue
         val endPoint = dataSet.endDrawValue
         if (startPoint == null || endPoint == null) return
@@ -77,21 +79,33 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         endX: Float,
         endY: Float
     ) {
-        // 画线段
-        setDashPathEffect(dataSet.dash)
-        canvas.drawLine(startX, startY, endX, endY, linePaint)
-        if (linePaint.pathEffect != null) linePaint.pathEffect = null
-
         // 当前起点与终点的夹角
         val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
 
+        // 画射线
+        setDashPathEffect(dataSet.dash)
+        val path = if (startX == endX) {
+            val secondY = if (endY >= startY) chartView.contentRect.height().toFloat() else 0f
+            canvas.drawLine(startX, startY, endX, secondY, linePaint)
+            updatePath(dataSet, angle.toFloat(), startX, startY, endX, secondY)
+        } else {
+            // 根据cos(angel) = (chartView.right - min(startX, endX)) / 半径 (与边界交叉点的直线距离)
+            val rightRadius = (chartView.contentRect.width().toFloat() - startX) / cos(angle * Math.PI / 180).toFloat()
+            val leftRadius = (startX - 0f) / cos(angle * Math.PI / 180).toFloat()
+            val radius = if (startX > endX) -leftRadius else rightRadius
+            val x1 = startX + radius * cos(angle * Math.PI / 180).toFloat()
+            val y1 = startY + radius * sin(angle * Math.PI / 180).toFloat()
+
+            canvas.drawLine(startX, startY, x1, y1, linePaint)
+            updatePath(dataSet, angle.toFloat(), startX, startY, x1, y1)
+        }
+        if (linePaint.pathEffect != null) linePaint.pathEffect = null
+
         // 画选中背景
-        val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.FILL
             linePaint.alpha = dataSet.selectAlpha
             canvas.drawPath(path, linePaint)
         }
     }
-
 }

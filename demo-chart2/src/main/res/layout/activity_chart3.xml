@@ -375,6 +375,76 @@
             android:layout_marginStart="10dp"/>
 
         <TextView
+            android:id="@+id/tv_draw_horizon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画水平线"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_fbnc"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_segment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_draw_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画垂直线"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_horizon"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_segment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_draw_ray"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="画射线"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_segment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_draw_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="价格标注"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_hjfg"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_draw_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="文字标注"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toRightOf="@+id/tv_draw_price_label"
+            app:layout_constraintTop_toBottomOf="@+id/tv_draw_hjfg"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
             android:id="@+id/tv_draw_parallel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

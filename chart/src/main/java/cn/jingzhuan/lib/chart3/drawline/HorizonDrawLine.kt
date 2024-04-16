@@ -5,21 +5,19 @@ import android.graphics.Paint
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.DrawLineDataSet
-import kotlin.math.atan2
-
 
 /**
- * @since 2023-10-09
- * 画线段
+ * @since 2024-04-16
+ * 水平线
  */
-class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
+class HorizonDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : AbstractDrawLine<T>(chart) {
 
     override fun onDraw(
         canvas: Canvas,
         dataSet: DrawLineDataSet,
         baseDataSet: AbstractDataSet<*>,
         lMax: Float,
-        lMin: Float,
+        lMin: Float
     ) {
         super.onDraw(canvas, dataSet, baseDataSet, lMax, lMin)
         if (dataSet.isSelect) return
@@ -31,67 +29,53 @@ class SegmentDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
         dataSet: DrawLineDataSet,
         baseDataSet: AbstractDataSet<*>,
         lMax: Float,
-        lMin: Float
+        lMin: Float,
     ) {
-        val startPoint = dataSet.startDrawValue
-        val endPoint = dataSet.endDrawValue
-        if (startPoint == null || endPoint == null) return
-
-        if (startPoint.value > lMax && endPoint.value > lMax) return
-        if (startPoint.value < lMin && endPoint.value < lMin) return
+        // 当前形状是水平直线 先画直线 再画背景
+        val startPoint = dataSet.startDrawValue ?: return
 
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
-            val startX = startPoint.x
             val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
 
-            val endX = endPoint.x
-            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
-
-            drawShape(canvas, dataSet, startX, startY, endX, endY)
+            drawShape(canvas, dataSet, startY)
             return
         }
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
         val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
-        val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
-        val endX = getEntryX(endIndex, baseDataSet) ?: return
-        val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
-        if (!dataSet.isSelect || dataSet.isActionUp) {
-            endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
-        }
-
-        drawShape(canvas, dataSet, startX, startY, endX, endY)
+        drawShape(canvas, dataSet, startY)
     }
 
     private fun drawShape(
         canvas: Canvas,
         dataSet: DrawLineDataSet,
-        startX: Float,
-        startY: Float,
-        endX: Float,
-        endY: Float
+        startY: Float
     ) {
-        // 画线段
+        // 水平线 Y轴坐标的固定的 起点的X坐标图表左边界 终点X坐标在图表右边界
         setDashPathEffect(dataSet.dash)
-        canvas.drawLine(startX, startY, endX, endY, linePaint)
+
+        val x1 = 0f
+        val x2 = chartView.contentRect.width().toFloat()
+
+        canvas.drawLine(x1, startY, x2, startY, linePaint)
+
         if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
-        // 当前起点与终点的夹角
-        val angle = atan2(endY - startY,  endX - startX) * 180 / Math.PI
+        val path = updatePath(dataSet, 0f, x1, startY, x2, startY)
 
         // 画选中背景
-        val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.FILL
             linePaint.alpha = dataSet.selectAlpha
             canvas.drawPath(path, linePaint)
         }
-    }
 
+    }
 }
