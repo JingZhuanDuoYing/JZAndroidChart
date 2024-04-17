@@ -91,9 +91,6 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
      * 画起点
      */
     private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
-        // 2024-04-16 这里加入一个特殊判断 单纯画文本时 不需要画点
-        if (dataSet.lineType == DrawLineType.ltFont.ordinal) return
-
         val value = dataSet.startDrawValue ?: return
         var x = value.x
         if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {

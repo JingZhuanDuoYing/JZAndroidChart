@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Region
+import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import cn.jingzhuan.lib.chart.R
@@ -77,60 +78,78 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
     ) {
         // 画文本
         if (dataSet.maxTextWidth != null) {
-            val layout = StaticLayout.Builder.obtain(text, 0, text.length, textPaint, dataSet.maxTextWidth ?: 112)
-                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                .setLineSpacing(0f, 1f)
-                .setIncludePad(true)
-                .build()
-//            StaticLayout(text, textPaint, 300,Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.0F, true)
+            val layout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                StaticLayout.Builder.obtain(text, 0, text.length, textPaint, dataSet.maxTextWidth ?: 112)
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .setLineSpacing(0f, 1f)
+                    .setIncludePad(true)
+                    .build()
+            } else {
+                StaticLayout(text, textPaint, dataSet.maxTextWidth ?: 112, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, true)
+            }
             canvas.save()
-            canvas.translate(startX, startY)
+            canvas.translate(startX + padding, startY + padding)
             layout.draw(canvas)
             canvas.restore()
 
             val textHeight = layout.height
             val textWidth = layout.width
 
-            val left = startX - padding
-            val top = startY - padding
-            val right = startX + textWidth + padding
-            val bottom = startY + textHeight + padding
+            val right = startX + textWidth + padding * 2
+            val bottom = startY + textHeight + padding * 2
 
-//            val rect = RectF(left, top, right, bottom)
+            val rect = RectF(startX, startY, right, bottom)
 //            linePaint.style = Paint.Style.STROKE
 //            canvas.drawRect(rect, linePaint)
 
-            dataSet.selectRegion = Region(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+            dataSet.selectRegion = Region(
+                startX.toInt(),
+                startY.toInt(),
+                right.toInt(),
+                bottom.toInt()
+            )
+
+            // 画选中背景
+            if (dataSet.isSelect) {
+                linePaint.style = Paint.Style.FILL
+
+                linePaint.alpha = dataSet.selectAlpha
+                canvas.drawRect(rect, linePaint)
+            }
 
         } else {
-            val fontMetrics = textPaint.fontMetrics
-            val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
-            val baseline = startY + distance
-
             val textWidth = textPaint.measureText(text).roundToInt()
             textPaint.getTextBounds(text, 0, text.length, mTextBounds)
             val textHeight = mTextBounds.height()
 
-            val top = startY - textHeight * 0.5f - padding
-            val right = startX + textWidth
-            val bottom = startY + textHeight * 0.5f + padding
+            val right = startX + textWidth + padding * 2
+            val bottom = startY + textHeight + padding * 2
 
-//            val rect = RectF(startX, top, right, bottom)
+            val rect = RectF(startX, startY, right, bottom)
 //            linePaint.style = Paint.Style.STROKE
 //            canvas.drawRect(rect, linePaint)
 
-            dataSet.selectRegion = Region(startX.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+            dataSet.selectRegion = Region(
+                startX.toInt(),
+                startY.toInt(),
+                right.toInt(),
+                bottom.toInt()
+            )
 
-            canvas.drawText(text, startX, baseline, textPaint)
+            val fontMetrics = textPaint.fontMetrics
+            val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
+            val baseline = rect.centerY() + distance
+
+            canvas.drawText(text, startX + padding, baseline, textPaint)
+
+            // 画选中背景
+            if (dataSet.isSelect) {
+                linePaint.style = Paint.Style.FILL
+
+                linePaint.alpha = dataSet.selectAlpha
+                canvas.drawRect(rect, linePaint)
+            }
         }
-
-//        // 画选中背景
-//        if (dataSet.isSelect) {
-//            linePaint.style = Paint.Style.FILL
-//
-//            linePaint.alpha = dataSet.selectAlpha
-//            canvas.drawRect(rect, linePaint)
-//        }
 
     }
 
