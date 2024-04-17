@@ -49,7 +49,9 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         linePaint.color = dataSet.lineColor
         linePaint.strokeWidth = getLineSizePx(dataSet.lineSize)
         bgPaint.color = dataSet.lineColor
-        textPaint.textSize = dataSet.fontSize.toFloat()
+        textPaint.textSize = if (dataSet.lineType == DrawLineType.ltHJFG.ordinal || dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
+            24f
+        } else dp2px(dataSet.appFontSize.toFloat()).toFloat()
         textPaint.color = dataSet.lineColor
     }
 

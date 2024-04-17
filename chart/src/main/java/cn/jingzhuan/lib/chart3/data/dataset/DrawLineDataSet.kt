@@ -42,7 +42,9 @@ class DrawLineDataSet@JvmOverloads constructor(
     /**
      * 字体大小
      */
-    var fontSize = 24
+    var fontSize = 14
+
+    var appFontSize = 14
 
     /**
      * 字体类型

@@ -879,7 +879,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineType = DrawLineType.ltFont.ordinal
                 lineState = DrawLineState.prepare
                 lineSize = 1f
-                fontSize = 35
+                appFontSize = 14
                 maxTextWidth = dp2px(112f)
                 cycle = if (rbDay.isChecked) 8 else -1
             }
