@@ -458,7 +458,7 @@ class Chart3Activity : AppCompatActivity() {
 
             setOnDrawLineListener(object : OnDrawLineListener {
                 override fun onTouchText(onSuccess: (String) -> Unit) {
-                    onSuccess("你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？")
+                    onSuccess("你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁，在干什么？你是谁")
                     tvStep.visibility = View.VISIBLE
                     tvStep.text = "已完成"
                     val timer = Timer()
@@ -880,6 +880,7 @@ class Chart3Activity : AppCompatActivity() {
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 fontSize = 35
+                maxTextWidth = dp2px(112f)
                 cycle = if (rbDay.isChecked) 8 else -1
             }
 

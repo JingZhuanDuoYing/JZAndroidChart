@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Region
+import android.text.TextPaint
 import android.util.Log
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -27,7 +28,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
 
     private val bgPaint by lazy { Paint() }
 
-    protected val textPaint by lazy { Paint() }
+    protected val textPaint by lazy { TextPaint() }
 
 
     init {

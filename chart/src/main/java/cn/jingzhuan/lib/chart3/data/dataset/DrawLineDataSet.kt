@@ -54,6 +54,8 @@ class DrawLineDataSet@JvmOverloads constructor(
      */
     var text: String? = null
 
+    var maxTextWidth: Int? = null
+
     /**
      * 线形
      */
