@@ -71,7 +71,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
     private fun initDraw(chart: AbstractChartView<T>) {
         drawMap[DrawLineType.ltSegment.ordinal] = SegmentDrawLine(chart)
-        drawMap[DrawLineType.ltParallelLine2.ordinal] = StraightDrawLine(chart)
+        drawMap[DrawLineType.ltStraightLine.ordinal] = StraightDrawLine(chart)
         drawMap[DrawLineType.ltEndAnchorLine.ordinal] = EndAnchorDrawLine(chart)
         drawMap[DrawLineType.ltRect.ordinal] = RectDrawLine(chart)
         drawMap[DrawLineType.ltParallelLine.ordinal] = ParallelDrawLine(chart)
