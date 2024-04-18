@@ -74,7 +74,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         drawMap[DrawLineType.ltStraightLine.ordinal] = StraightDrawLine(chart)
         drawMap[DrawLineType.ltEndAnchorLine.ordinal] = EndAnchorDrawLine(chart)
         drawMap[DrawLineType.ltRect.ordinal] = RectDrawLine(chart)
-        drawMap[DrawLineType.ltParallelLine.ordinal] = ParallelDrawLine(chart)
+        drawMap[DrawLineType.ltParallelLine2.ordinal] = ParallelDrawLine(chart)
         drawMap[DrawLineType.ltHJFG.ordinal] = HJFGDrawLine(chart)
         drawMap[DrawLineType.ltFBNC.ordinal] = FBNCDrawLine(chart)
         drawMap[DrawLineType.ltHorizon.ordinal] = HorizonDrawLine(chart)
