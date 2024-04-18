@@ -479,9 +479,9 @@ class Chart3Activity : AppCompatActivity() {
                     if (reselected) return
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
-                        tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
+                        tvStep.text = if(type == DrawLineType.ltParallelLine2.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
                     } else if (state == DrawLineState.second) {
-                        if(type == DrawLineType.ltParallelLine.ordinal) {
+                        if(type == DrawLineType.ltParallelLine2.ordinal) {
                             tvStep.text = "请确第二个点的位置"
                         }
                     } else if (state == DrawLineState.complete) {
@@ -540,9 +540,9 @@ class Chart3Activity : AppCompatActivity() {
                     if (reselected) return
                     if (state == DrawLineState.first) {
                         tvStep.visibility = View.VISIBLE
-                        tvStep.text = if(type == DrawLineType.ltParallelLine.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
+                        tvStep.text = if(type == DrawLineType.ltParallelLine2.ordinal) "请确第一个点的位置" else "请点击放置终点 1/2"
                     } else if (state == DrawLineState.second) {
-                        if(type == DrawLineType.ltParallelLine.ordinal) {
+                        if(type == DrawLineType.ltParallelLine2.ordinal) {
                             tvStep.text = "请确第二个点的位置"
                         }
                     } else if (state == DrawLineState.complete) {
@@ -774,8 +774,8 @@ class Chart3Activity : AppCompatActivity() {
             index ++
 
             val dataSet = DrawLineDataSet().apply {
-                lineKey = "ltParallelLine$index"
-                lineType = DrawLineType.ltParallelLine.ordinal
+                lineKey = "ltParallelLine2$index"
+                lineType = DrawLineType.ltParallelLine2.ordinal
                 lineState = DrawLineState.prepare
                 lineSize = 1f
                 dash = "7,2"

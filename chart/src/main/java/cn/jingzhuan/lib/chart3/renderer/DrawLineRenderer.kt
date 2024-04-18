@@ -488,7 +488,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
             DrawLineState.first -> {
                 // 第二步
-                if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
+                if (preDrawLine.lineType == DrawLineType.ltParallelLine2.ordinal) {
                     preDrawLine.lineState = DrawLineState.second
                 } else {
                     dragState = ChartConstant.DRAW_LINE_DRAG_RIGHT
@@ -502,7 +502,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
             }
 
             DrawLineState.second -> {
-                if (preDrawLine.lineType == DrawLineType.ltParallelLine.ordinal) {
+                if (preDrawLine.lineType == DrawLineType.ltParallelLine2.ordinal) {
                     dragState = ChartConstant.DRAW_LINE_DRAG_THIRD
                     preDrawLine.lineState = DrawLineState.complete
                     preDrawLine.thirdDrawValue = getValue(point, baseDataSet.values, chartData.leftMax, chartData.leftMin, historyTimes = preDrawLine.historyTimeList)
