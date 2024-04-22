@@ -617,7 +617,9 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         }
 
         // 检查是否能同时拖动
-        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal || dataSet.lineType == DrawLineType.ltRect.ordinal) {
+        if (dataSet.lineType == DrawLineType.ltFBNC.ordinal
+            || dataSet.lineType == DrawLineType.ltRect.ordinal
+            || dataSet.lineType == DrawLineType.ltPriceLabel.ordinal) {
             // 斐波那挈 能同时拖动
             val region = dataSet.selectRegions.findLast { it?.contains(point.x.roundToInt(), point.y.roundToInt()) == true }
             if (region != null) {

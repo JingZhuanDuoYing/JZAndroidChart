@@ -95,6 +95,10 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
     private fun drawStartPoint(canvas: Canvas, dataSet: DrawLineDataSet, baseDataSet: AbstractDataSet<*>, lMax: Float, lMin: Float) {
         val value = dataSet.startDrawValue ?: return
         var x = value.x
+        if (x == -1f) {
+            val dataIndex = getIndexInTime(dataSet, baseDataSet, value.time)
+            x = getEntryX(dataIndex, baseDataSet) ?: return
+        }
         if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }
@@ -117,6 +121,11 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val value = dataSet.endDrawValue ?: return
 
         var x = value.x
+        if (x == -1f) {
+            val dataIndex = getIndexInTime(dataSet, baseDataSet, value.time)
+            x = getEntryX(dataIndex, baseDataSet) ?: return
+        }
+
         if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }
@@ -140,6 +149,12 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
         val value = dataSet.thirdDrawValue ?: return
 
         var x = value.x
+
+        if (x == -1f) {
+            val dataIndex = getIndexInTime(dataSet, baseDataSet, value.time)
+            x = getEntryX(dataIndex, baseDataSet) ?: return
+        }
+
         if (chartView.isDrawLineAdsorb || dataSet.isActionUp) {
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }

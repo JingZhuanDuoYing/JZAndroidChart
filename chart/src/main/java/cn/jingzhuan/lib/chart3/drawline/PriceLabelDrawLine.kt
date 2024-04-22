@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Region
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
@@ -90,8 +91,10 @@ class PriceLabelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : 
         endY: Float,
         textValue: Float
     ) {
-        // 画线段
-        setDashPathEffect(dataSet.dash)
+        // 画线段 固定虚线"5,3,5,4"
+        setDashPathEffect("5,3,5,4")
+        // 线的厚度也固定1
+//        linePaint.strokeWidth = getLineSizePx(1f)
         canvas.drawLine(startX, startY, endX, endY, linePaint)
         if (linePaint.pathEffect != null) linePaint.pathEffect = null
 
@@ -122,6 +125,12 @@ class PriceLabelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : 
 
         // 画选中背景
         val path = updatePath(dataSet, angle.toFloat(), startX, startY, endX, endY)
+
+        dataSet.selectRegions.clear()
+        dataSet.selectRegions.add(dataSet.selectRegion)
+        val rectRegion = Region(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
+        dataSet.selectRegions.add(rectRegion)
+
         if (dataSet.isSelect) {
             linePaint.style = Paint.Style.FILL
             linePaint.alpha = dataSet.selectAlpha
