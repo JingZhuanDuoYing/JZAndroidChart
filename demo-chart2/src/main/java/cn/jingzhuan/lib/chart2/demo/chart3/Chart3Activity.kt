@@ -452,6 +452,7 @@ class Chart3Activity : AppCompatActivity() {
             })
 
             setOnLoadMoreListener {
+                isLoadMore = true
                 setMainKlineChartData(loadMore = true)
                 setSubKlineChartData()
             }
