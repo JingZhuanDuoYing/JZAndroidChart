@@ -95,14 +95,14 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             var right = startX + measureTextWidth + padding * 2
             val bottom = startY + textHeight + padding * 2
 
-            val rect = RectF(startX, startY, right, bottom)
-//            linePaint.style = Paint.Style.STROKE
-//            canvas.drawRect(rect, linePaint)
-
-            if (rightSpace < measureTextWidth && dataSet.isActionUp) {// 此时需向左
+            if (rightSpace < measureTextWidth + padding * 2) {// 此时需向左
                 left = startX - (measureTextWidth + padding * 2)
                 right = startX
             }
+
+            val rect = RectF(left, startY, right, bottom)
+//            linePaint.style = Paint.Style.STROKE
+//            canvas.drawRect(rect, linePaint)
 
             dataSet.selectRegion = Region(
                 left.toInt(),
@@ -123,6 +123,11 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
                 linePaint.alpha = dataSet.selectAlpha
                 canvas.drawRect(rect, linePaint)
+            }else {
+                linePaint.alpha = dataSet.selectAlpha
+                canvas.drawCircle(startX, startY, dataSet.pointOuterR, linePaint)
+                linePaint.alpha = dataSet.selectAlpha * 4
+                canvas.drawCircle(startX, startY, dataSet.pointInnerR, linePaint)
             }
             return
         }
@@ -173,7 +178,6 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
             linePaint.alpha = dataSet.selectAlpha
             canvas.drawRect(rect, linePaint)
         } else {
-
             linePaint.alpha = dataSet.selectAlpha
             canvas.drawCircle(startX, startY, dataSet.pointOuterR, linePaint)
             linePaint.alpha = dataSet.selectAlpha * 4
