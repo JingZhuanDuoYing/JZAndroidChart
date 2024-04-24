@@ -8,6 +8,7 @@ import cn.jingzhuan.lib.chart3.data.value.LineValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @since 2023-09-05
@@ -99,15 +100,19 @@ open class LineDataSet @JvmOverloads constructor(
 
     private fun calcViewportMinMax(value: LineValue?) {
         if (isNaN(value!!.value) || isInfinite(value.value)) return
-        if (value.value < viewportYMin) viewportYMin = value.value
-        if (value.value > viewportYMax) viewportYMax = value.value
+        viewportYMin = min(value.value, viewportYMin)
+        viewportYMax = max(value.value, viewportYMax)
+//        if (value.value < viewportYMin) viewportYMin = value.value
+//        if (value.value > viewportYMax) viewportYMax = value.value
         if (isDrawBand) {
-            if (value.secondValue < value.value) {
-                if (value.secondValue < viewportYMin) viewportYMin = value.secondValue
-            }
-            if (value.secondValue > value.value) {
-                if (value.secondValue > viewportYMax) viewportYMax = value.secondValue
-            }
+            viewportYMin = min(value.secondValue, viewportYMin)
+            viewportYMax = max(value.secondValue, viewportYMax)
+//            if (value.secondValue < value.value) {
+//                if (value.secondValue < viewportYMin) viewportYMin = value.secondValue
+//            }
+//            if (value.secondValue > value.value) {
+//                if (value.secondValue > viewportYMax) viewportYMax = value.secondValue
+//            }
         }
     }
 

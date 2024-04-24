@@ -51,6 +51,8 @@ class LineDraw(
 
     private var isHighLight = false
 
+    private var maxVisibleCount = 0
+
     init {
         shaderPath = Path()
         shaderPaths = ArrayList()
@@ -72,6 +74,10 @@ class LineDraw(
 
     fun setHighLightState(isHighLight: Boolean) {
         this.isHighLight = isHighLight
+    }
+
+    fun setMaxVisibleCount(count: Int) {
+        this.maxVisibleCount = count
     }
 
     override fun drawDataSet(
@@ -143,7 +149,7 @@ class LineDraw(
         val startX =
             contentRect.left + (if (isLineChart) 0f else step * 0.5f) - viewport.left * contentRect.width() * scale
 
-        val valuePhaseCount = floor((valueCount * chartAnimator.phaseX).toDouble()).toInt()
+//        val valuePhaseCount = floor((valueCount * chartAnimator.phaseX).toDouble()).toInt()
 
         var linePath = Path()
 
@@ -159,7 +165,11 @@ class LineDraw(
         if (lineDataSet.isDrawBand) {
             try {
                 // 这里有潜在的崩溃问题，先catch，后续重写
-                drawBand(canvas, lineDataSet, valuePhaseCount, startX, step, startIndexOffset, max, min)
+                rightIndex = lineDataSet.values.take(rightIndex).indexOfLast {
+                    !it.value.isNaN()
+                } + 1
+                leftIndex = max(rightIndex - maxVisibleCount, 0)
+                drawBand(canvas, lineDataSet, startX, step, startIndexOffset, max, min, leftIndex, rightIndex)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -178,7 +188,6 @@ class LineDraw(
                 canvas,
                 lineDataSet,
                 visibleRange,
-                valuePhaseCount,
                 startX,
                 step,
                 startIndexOffset,
@@ -398,7 +407,6 @@ class LineDraw(
         canvas: Canvas,
         lineDataSet: LineDataSet,
         visibleRange: Float,
-        valuePhaseCount: Int,
         startX: Float,
         step: Float,
         startIndexOffset: Int,
@@ -528,14 +536,14 @@ class LineDraw(
     private fun drawBand(
         canvas: Canvas,
         lineDataSet: LineDataSet,
-        valuePhaseCount: Int,
         startX: Float,
         step: Float,
         startIndexOffset: Int,
         max: Float,
-        min: Float
+        min: Float,
+        leftIndex: Int,
+        rightIndex: Int
     ) {
-        var i = 0
         var cache1 = Path()
         var cache2 = Path()
         //当数据1 > 数据2 将cache1连接控件底部形成不规则封闭图形 cache2连接控件顶部 取交集部分绘制
@@ -544,7 +552,9 @@ class LineDraw(
         var newPath = true
         var pathStartX = 0f
         val paths = ArrayList<PartLineData>()
-        while (i < valuePhaseCount && i < lineDataSet.values.size) {
+
+        var i = leftIndex
+        while (i < rightIndex) {
             val point = lineDataSet.getEntryForIndex(i)
             if (point == null || point.isValueNaN) {
                 i++
@@ -569,7 +579,7 @@ class LineDraw(
                 cache1.lineTo(xPosition, yPosition)
                 cache2.lineTo(xPosition, secondYPosition)
             }
-            if (i > 0 && i == lineDataSet.values.size - 1) { //结尾部分
+            if (i > 0 && i == rightIndex - 1) { //结尾部分
 
                 //找到上一个点 做为起点
                 val prePoint = lineDataSet.getEntryForIndex(i - 1) ?: return
