@@ -160,6 +160,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                     if (dataSet.isHorizontalLine) {
                         lineDraw.setHighLightState(chartView.highlightState != ChartConstant.HIGHLIGHT_STATUS_INITIAL)
                     }
+                    if (dataSet.isDrawBand) {
+                        lineDraw.setMaxVisibleCount(chartView.maxVisibleEntryCount)
+                    }
                     lineDraw.drawDataSet(canvas, combineData.lineChartData, dataSet, currentViewport)
 
                 }

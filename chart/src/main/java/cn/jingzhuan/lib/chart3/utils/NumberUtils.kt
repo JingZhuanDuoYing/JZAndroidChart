@@ -26,8 +26,13 @@ object NumberUtils {
      */
     fun keepPrecision(number: String, precision: Int): String {
         if (number == "NaN") return "0"
-        val bd = BigDecimal(number)
-        return bd.setScale(precision, RoundingMode.HALF_UP).toPlainString()
+        return try {
+            val bd = BigDecimal(number)
+            bd.setScale(precision, RoundingMode.HALF_UP).toPlainString()
+        } catch (e: NumberFormatException) {
+            // 不是 BigDecimal 的有效表示形式
+            "0"
+        }
     }
 
     /**

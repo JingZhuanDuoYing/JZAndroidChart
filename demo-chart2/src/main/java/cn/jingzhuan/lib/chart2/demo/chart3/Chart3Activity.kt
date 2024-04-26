@@ -1142,12 +1142,22 @@ class Chart3Activity : AppCompatActivity() {
             isBasis = true
         }
 
+        val bandList = ArrayList<LineValue>()
         val lineList = ArrayList<LineValue>()
         val scatterList = ArrayList<ScatterValue>()
         val scatterTextList = ArrayList<ScatterTextValue>()
 //        val overLayList = ArrayList<BarValue>()
 //        val overLay2List = ArrayList<BarValue>()
         klineList.forEachIndexed { index, value ->
+            if (index == klineList.size - 1 || index == klineList.size - 2 || index == klineList.size - 7 || index == klineList.size - 8) {
+                bandList.add(LineValue(Float.NaN, Float.NaN).apply {
+                    pathColor = Color.BLUE
+                })
+            } else {
+                bandList.add(LineValue((value.high) * 1f, (value.low) * 1.2f).apply {
+                    pathColor = Color.BLUE
+                })
+            }
             lineList.add(LineValue((value.high) * 1.1f, value.time))
 //            overLayList.add(BarValue(value.open * 1.5f, (value.close) * 1.5f, Color.BLUE))
 //            overLay2List.add(BarValue(value.high * 1.5f, (value.low) * 1.5f, Color.RED))
@@ -1225,12 +1235,18 @@ class Chart3Activity : AppCompatActivity() {
 //            drawIndex = 889
 //        }
 
+        val bandLineDataSet = LineDataSet(bandList).apply {
+            lineThickness = 2
+            isDrawBand = true
+        }
+
 
         val data = CombineData().apply {
             add(candlestickDataSet)
             add(lineDataSet)
             add(scatterDataSet)
-            add(drawLineDataSet)
+//            add(drawLineDataSet)
+            add(bandLineDataSet)
 //            add(overLayDataSet)
 //            add(overLayDataSet2)
 //            add(scatterTextDataSet)
