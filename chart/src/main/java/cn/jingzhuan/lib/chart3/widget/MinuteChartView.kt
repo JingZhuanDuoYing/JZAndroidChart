@@ -78,12 +78,13 @@ open class MinuteChartView(
 
             labelValueFormatter = object : IValueFormatter {
                 override fun format(value: Float, index: Int): String {
-                    if (index == 1 || value >= Int.MAX_VALUE || value <= -Int.MAX_VALUE) return ""
+                    if (index == 1) return ""
                     var leftValue = when (index) {
                         0 -> axisLeft.yMin
                         2 -> axisLeft.yMax
                         else -> axisLeft.yMax - (getCurrentHighlight()?.y ?: 0f) / contentRect.height() * (axisLeft.yMax - axisLeft.yMin)
                     }
+                    if (leftValue >= Int.MAX_VALUE || leftValue <= -Int.MAX_VALUE) return ""
                     if (leftValue > axisLeft.yMax) leftValue = axisLeft.yMax
                     if (leftValue < axisLeft.yMin) leftValue = axisLeft.yMin
 

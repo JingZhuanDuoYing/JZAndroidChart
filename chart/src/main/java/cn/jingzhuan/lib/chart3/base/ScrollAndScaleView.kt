@@ -281,6 +281,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
 //        Log.i(TAG, "onSingleTapUp")
+        if (pointWidth <= 0) return false
         if (isDoubleTapToZoom) return false
         if (isOpenRange) return false
         if (isDrawingLine()) return false
