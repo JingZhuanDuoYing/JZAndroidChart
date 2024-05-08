@@ -146,6 +146,10 @@ class AxisRenderer<T : AbstractDataSet<*>>(
     private fun computeAxisStopsY(axis: AxisY) {
         val min = axis.yMin.toDouble()
         val max = axis.yMax.toDouble()
+        if (min > max) {
+            axis.labelEntries = floatArrayOf()
+            return
+        }
         val count = axis.gridCount + 1
         val interval = (max - min) / count
         axis.labelEntries = FloatArray(count + 1)
