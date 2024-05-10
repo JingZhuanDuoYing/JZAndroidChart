@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import cn.jingzhuan.lib.chart.R
 import cn.jingzhuan.lib.chart3.data.TimeRange
@@ -15,7 +14,6 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_NONE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_RIGHT
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class KlineTimeRangeView : View {
     /**
@@ -155,6 +153,9 @@ class KlineTimeRangeView : View {
         val endX = timeRange?.endX ?: 0f
         val centerX = (startX + endX) * 0.5f
 
+        val left = 0
+        val right = width
+
         var transLeftX = max(startX - leftTextWidth * 0.5f, left.toFloat())
         var transRightX = min(endX + rightTextWidth * 0.5f, right.toFloat())
 
@@ -209,7 +210,6 @@ class KlineTimeRangeView : View {
 
         // 画结束时间
         drawText(canvas, rightRect, endTime)
-
     }
 
     private fun setTouchPaint(touchType: Int, targetType: Int) {
