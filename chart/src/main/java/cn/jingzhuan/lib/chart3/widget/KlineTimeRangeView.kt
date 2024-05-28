@@ -15,7 +15,12 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.RANGE_TOUCH_RIGHT
 import kotlin.math.max
 import kotlin.math.min
 
-class KlineTimeRangeView : View {
+class KlineTimeRangeView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
+
     /**
      * 字体颜色
      */
@@ -52,11 +57,11 @@ class KlineTimeRangeView : View {
 
     private lateinit var linePaint: Paint
 
-    private lateinit var leftRect: RectF
+    private val leftRect = RectF()
+    private val rightRect = RectF()
+    private val centerRect = RectF()
 
-    private lateinit var rightRect: RectF
-
-    private lateinit var centerRect: RectF
+    private var padding = 0
 
     var timeRange: TimeRange? = null
         set(data) {
@@ -67,52 +72,20 @@ class KlineTimeRangeView : View {
             postInvalidate()
         }
 
-    constructor(context: Context?) : super(context) {
-        init(null, 0)
-    }
+    init {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.KlineTimeRangeView, defStyleAttr, defStyleAttr).apply {
+            textColor = getColor(R.styleable.KlineTimeRangeView_textColor, Color.TRANSPARENT)
+            textSize = getDimensionPixelSize(R.styleable.KlineTimeRangeView_textSize, 28)
+            textBackgroundColor = getColor(R.styleable.KlineTimeRangeView_textBackgroundColor, Color.TRANSPARENT)
+            textBackgroundRadius = getDimensionPixelSize(R.styleable.KlineTimeRangeView_textBackgroundRadius, 0)
+            lineColor = getColor(R.styleable.KlineTimeRangeView_lineColor, Color.TRANSPARENT)
+            lineThickness = getDimensionPixelSize(R.styleable.KlineTimeRangeView_lineThickness, 2)
+            recycle()
+        }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        init(attrs, 0)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(attrs, defStyleAttr)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
-        init(attrs, defStyleAttr)
-    }
-
-    private fun init(attrs: AttributeSet?, defStyleAttr: Int) {
-        val ta = context.theme.obtainStyledAttributes(attrs, R.styleable.KlineTimeRangeView, defStyleAttr, defStyleAttr)
-
-        val textColor = ta.getColor(R.styleable.KlineTimeRangeView_textColor, Color.TRANSPARENT)
-        this.textColor = textColor
-
-        val textSize = ta.getDimensionPixelSize(R.styleable.KlineTimeRangeView_textSize, 28)
-        this.textSize = textSize
-
-        val textBackgroundColor = ta.getColor(R.styleable.KlineTimeRangeView_textBackgroundColor, Color.TRANSPARENT)
-        this.textBackgroundColor = textBackgroundColor
-
-        val textBackgroundRadius = ta.getDimensionPixelSize(R.styleable.KlineTimeRangeView_textBackgroundRadius, 0)
-        this.textBackgroundRadius = textBackgroundRadius
-
-        val lineColor = ta.getColor(R.styleable.KlineTimeRangeView_lineColor, Color.TRANSPARENT)
-        this.lineColor = lineColor
-
-        val lineThickness = ta.getDimensionPixelSize(R.styleable.KlineTimeRangeView_lineThickness, 2)
-        this.lineThickness = lineThickness
+        padding = resources.getDimensionPixelSize(R.dimen.jz_range_time_text_padding)
 
         initPaints()
-
-        initRect()
-    }
-
-    private fun initRect() {
-        leftRect = RectF()
-        rightRect = RectF()
-        centerRect = RectF()
     }
 
     private fun initPaints() {
@@ -134,7 +107,6 @@ class KlineTimeRangeView : View {
 
     override fun onDraw(canvas: Canvas) {
         if (timeRange == null) return
-        val padding = resources.getDimensionPixelSize(R.dimen.jz_range_time_text_padding)
 
         val touchType = timeRange?.touchType ?: RANGE_TOUCH_NONE
 
