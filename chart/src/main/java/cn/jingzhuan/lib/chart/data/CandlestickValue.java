@@ -156,12 +156,7 @@ public class CandlestickValue extends Value {
 
   @Override
   public int hashCode() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       return Objects.hash(high, low, open, close, time, mPaintStyle, color, getX(), getY());
-    } else {
-      return Arrays.asList(high, low, open, close, time, color, getX(), getY()).hashCode()
-              + mPaintStyle.hashCode() * 31;
-    }
   }
 
   public void setFillBackgroundColor(int fillBackgroundColor) {

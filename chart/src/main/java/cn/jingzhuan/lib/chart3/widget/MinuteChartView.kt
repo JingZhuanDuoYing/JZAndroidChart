@@ -105,7 +105,6 @@ open class MinuteChartView(
             isLabelEnable = true
             enableGridDashPathEffect(floatArrayOf(10f, 10f), 8f)
             valueIndexFormatter = object : IValueIndexFormatter {
-                @RequiresApi(Build.VERSION_CODES.O)
                 override fun format(index: Int): String {
                     val values = chartData.getTouchDataSet()?.values
                     val time = values?.getOrNull(index)?.time
@@ -113,11 +112,9 @@ open class MinuteChartView(
                         DateTimeFormatter.ofPattern(valueIndexPattern).formatTime(time * 1000L)
                     } else ""
                 }
-
             }
 
             labelValueFormatter = object : IValueFormatter {
-                @RequiresApi(Build.VERSION_CODES.O)
                 override fun format(value: Float, index: Int): String {
                     val values = chartData.getTouchDataSet()?.getVisiblePoints(currentViewport)
                     return if (values.isNullOrEmpty()) "" else {

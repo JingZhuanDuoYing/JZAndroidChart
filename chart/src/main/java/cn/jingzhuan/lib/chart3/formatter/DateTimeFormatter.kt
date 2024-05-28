@@ -1,7 +1,5 @@
 package cn.jingzhuan.lib.chart3.formatter
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,7 +12,6 @@ object DateTimeFormatter {
 
     private val dateFormatters = mutableMapOf<String, DateTimeFormatter>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun ofPattern(pattern: String): DateTimeFormatter {
         return dateFormatters[pattern] ?: DateTimeFormatter.ofPattern(pattern, Locale.CHINA)
     }
@@ -22,7 +19,6 @@ object DateTimeFormatter {
     /**
      * 仅支持精确到日期（不支持时分秒，性能比[formatTime]稍高）
      */
-    @RequiresApi(Build.VERSION_CODES.O)
     fun DateTimeFormatter.formatDate(mill: Long): String {
         return format(LocalDate.ofEpochDay(TimeUnit.MILLISECONDS.toDays(mill)))
     }
@@ -30,7 +26,6 @@ object DateTimeFormatter {
     /**
      * 精确到秒
      */
-    @RequiresApi(Build.VERSION_CODES.O)
     fun DateTimeFormatter.formatTime(mill: Long): String {
         return format(LocalDateTime.ofInstant(Instant.ofEpochMilli(mill), ZoneId.of("UTC+8")))
     }

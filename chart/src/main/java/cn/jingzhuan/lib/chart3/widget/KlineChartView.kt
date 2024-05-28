@@ -52,7 +52,6 @@ open class KlineChartView(
             isGridLineEnable = false
 
             valueIndexFormatter = object : IValueIndexFormatter {
-                @RequiresApi(Build.VERSION_CODES.O)
                 override fun format(index: Int): String {
                     val values = chartData.getTouchDataSet()?.values
                     val time = values?.getOrNull(index)?.time
@@ -64,7 +63,6 @@ open class KlineChartView(
             }
 
             labelValueFormatter = object : IValueFormatter {
-                @RequiresApi(Build.VERSION_CODES.O)
                 override fun format(value: Float, index: Int): String {
                     val values = chartData.getTouchDataSet()?.getVisiblePoints(currentViewport)
                     return if (values.isNullOrEmpty()) "" else {

@@ -168,14 +168,8 @@ class RangeDemoActivity : AppCompatActivity() {
         if (candlestickDataSet != null && candlestickDataSet.firstOrNull() != null) {
             val values = candlestickDataSet.first().getVisiblePoints(viewport)
             if (values.isNotEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    leftTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
-                    rightTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
-                } else {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd")
-                    leftTime = sdf.format(values.first().time * 1000L)
-                    rightTime = sdf.format(values.last().time * 1000L)
-                }
+                leftTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.first().time * 1000L)
+                rightTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").formatTime(values.last().time * 1000L)
             }
         }
     }
