@@ -259,11 +259,18 @@ class LineDraw(
             if (i > 1 && lineDataSet.isPartLine) {
                 val lastValue: LineValue? = lineDataSet.getEntryForIndex(i - 1)
                 if (lastValue != null) {
-                    val split = value.pathColor != lastValue.pathColor
-                    if (split) {
+                    if (value.isPathEnd) {
+                        linePath.lineTo(xPosition, yPosition)
                         partLineList.add(PartLineData(linePath, lastValue.pathColor))
                         linePath = Path()
-                        linePath.moveTo(lastValue.x, lastValue.y)
+                        isFirst = true
+                    } else {
+                        val split = value.pathColor != lastValue.pathColor
+                        if (split) {
+                            partLineList.add(PartLineData(linePath, lastValue.pathColor))
+                            linePath = Path()
+                            linePath.moveTo(lastValue.x, lastValue.y)
+                        }
                     }
                     if (i == rightIndex - 1) {
                         partLineList.add(PartLineData(linePath, value.pathColor))
