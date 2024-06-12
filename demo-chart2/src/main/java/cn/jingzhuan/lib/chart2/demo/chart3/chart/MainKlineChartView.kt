@@ -23,13 +23,14 @@ class MainKlineChartView(ctx: Context, attrs: AttributeSet?) : KlineChartView(ct
         highlightTextSize = 28
 
         setRangeTouchBitmap(BitmapFactory.decodeResource(context.resources, R.drawable.ico_red_dot), BitmapFactory.decodeResource(context.resources, R.drawable.ico_red_dot))
-        setShowRangeLinen(true)
+        setShowRangeLine(true)
         setRangeHedgeWhole(true)
         setRangeMaxDiffEntry(5)
 
     }
     init {
         currentVisibleEntryCount = 250
+        minVisibleEntryCount = 10
         decimalDigitsNumber = 3
         axisRight.gridCount = 0
         axisLeft.isGridSlidIndex = 2

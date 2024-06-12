@@ -92,7 +92,7 @@ open class ChartData<T : AbstractDataSet<*>> {
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
                 val basisCandlestickDataSet = dataSets.find { it is CandlestickDataSet && it.isBasis }
-                if (abstractChart.showMineLine() && basisCandlestickDataSet != null) {
+                if (abstractChart.showMinLine() && basisCandlestickDataSet != null) {
                     if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_LEFT) {
                         basisCandlestickDataSet.calcMinMax(viewport, content, leftMax, leftMin)
                     }

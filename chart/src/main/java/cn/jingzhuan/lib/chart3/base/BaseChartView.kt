@@ -357,7 +357,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
         rangeRenderer.showRangeCloseButton = isShow
     }
 
-    fun setShowRangeLinen(isShow: Boolean) {
+    fun setShowRangeLine(isShow: Boolean) {
         rangeRenderer.showRangeLine = isShow
     }
 

@@ -133,7 +133,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
         val basisCandlestickDataSet = combineData.candlestickChartData.dataSets.find { it.isBasis }
 
-        if (chartView.showMineLine() && basisCandlestickDataSet != null) {// 画K线缩放到最小的折线 (没有设置基准K线 还是画蜡烛不画折线)
+        if (chartView.showMinLine() && basisCandlestickDataSet != null) {// 画K线缩放到最小的折线 (没有设置基准K线 还是画蜡烛不画折线)
             candlestickDraw.showScaleMin = true
             candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, basisCandlestickDataSet, currentViewport)
         } else {

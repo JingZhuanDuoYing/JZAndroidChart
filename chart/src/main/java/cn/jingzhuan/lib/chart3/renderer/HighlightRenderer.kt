@@ -316,7 +316,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
             }
             text = sb.toString()
 
-            if (!flags.isNullOrEmpty() && !chartView.showMineLine()) {
+            if (!flags.isNullOrEmpty() && !chartView.showMinLine()) {
                 var tradeWidth = 0
                 var tradeSimulateWidth = 0
                 var surveyWidth = 0

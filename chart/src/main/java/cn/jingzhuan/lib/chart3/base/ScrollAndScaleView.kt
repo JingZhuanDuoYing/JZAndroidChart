@@ -1015,7 +1015,7 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
         return highlightState == HIGHLIGHT_STATUS_FOREVER
     }
 
-    fun showMineLine(): Boolean = showScaleMin && currentVisibleEntryCount >= maxVisibleEntryCount
+    fun showMinLine(): Boolean = showScaleMin && currentVisibleEntryCount >= maxVisibleEntryCount
 
     /**
      * viewport改变 光标状态为forever时 光标位置对应更新

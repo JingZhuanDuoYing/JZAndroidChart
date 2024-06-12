@@ -1089,7 +1089,7 @@ class Chart3Activity : AppCompatActivity() {
 
     private fun setMainKlineYearChartData() {
         var klineList = DataConfig.candlestickList
-        klineList = klineList.subList(0, 30)
+        klineList = klineList.subList(0, 9)
 
         val candlestickDataSet = CandlestickDataSet(klineList).apply {
             increasingPaintStyle = Paint.Style.STROKE
