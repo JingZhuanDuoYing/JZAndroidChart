@@ -150,7 +150,7 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     fun handleLoadMoreIndex(dataSize: Int) {
         if (highlightState == HIGHLIGHT_STATUS_FOREVER) {
             val highlight = highlightRenderer.highlight ?: return
-            highlight.dataIndex = highlight.dataIndex + dataSize
+            highlight.dataIndex += dataSize
             highlight.x = getEntryX(highlight.dataIndex)
 
             if (highlight.x > contentRect.right - pointWidth * 0.5f) {

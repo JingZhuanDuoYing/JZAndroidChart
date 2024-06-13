@@ -154,9 +154,8 @@ class BarDraw(
                     continue
                 }
 
-                val roundBottom = bottom.roundToInt()
-                if (roundBottom == contentRect.height()) {
-                    bottom = contentRect.height() - strokeThickness
+                if (bottom == contentRect.height().toFloat()) {
+                    bottom = contentRect.height().toFloat() - strokeThickness
                     if (style == Paint.Style.FILL) {
                         bottom += strokeThickness / 2
                     }

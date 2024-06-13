@@ -509,7 +509,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
     }
 
     private fun getTouchPriceByY(touchY: Float, viewportMax: Float, viewportMin: Float): Float {
-        if (viewportMax > viewportMin && viewportMax > 0) {
+        if (viewportMax > viewportMin) {
             val contentRect = chart.contentRect
             var price =
                 viewportMin + (viewportMax - viewportMin) / contentRect.height() * (contentRect.height() - touchY)
