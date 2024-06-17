@@ -519,7 +519,7 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         } else if (viewportMax == viewportMin) {
             return viewportMax
         }
-        return -1f
+        return Float.NaN
     }
 
     fun highlightValue(highlight: Highlight?) {
