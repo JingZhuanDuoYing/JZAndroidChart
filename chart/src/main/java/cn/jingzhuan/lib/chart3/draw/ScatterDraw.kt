@@ -129,6 +129,8 @@ class ScatterDraw(private val contentRect: Rect) : IDraw<ScatterDataSet> {
             val xPosition = dataSet.startXOffset + width * 0.5f + drawX - shapeWidth * 0.5f
             var yPosition: Float
             val heightIndexKey = i.toString()
+
+            var shouldTurn = false
             if (dataSet.shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
 
                 var offset = shapeHeight
@@ -154,6 +156,10 @@ class ScatterDraw(private val contentRect: Rect) : IDraw<ScatterDataSet> {
                     bottomHeights[heightIndexKey] = offset
                 }
                 yPosition = (max - value.value) / (max - min) * contentRect.height() - offset
+                if (yPosition < 0f && dataSet.isAutoTurn && dataSet.isAutoTurnShape != null) {
+                    shouldTurn = true
+                    yPosition = (max - value.value) / (max - min) * contentRect.height()
+                }
             } else if (dataSet.shapeAlign == SHAPE_ALIGN_TOP) {
 
                 val offset = topHeights[heightIndexKey] ?: 0f
@@ -161,12 +167,20 @@ class ScatterDraw(private val contentRect: Rect) : IDraw<ScatterDataSet> {
                 if (!isNaN(value.value)) {
                     topHeights[heightIndexKey] = offset + shapeHeight
                 }
+                if (yPosition > (contentRect.height() - shapeHeight) && dataSet.isAutoTurn && dataSet.isAutoTurnShape != null) {
+                    shouldTurn = true
+                    yPosition = (max - value.value) / (max - min) * contentRect.height() - (offset + shapeHeight)
+                }
             } else {
                 yPosition = (max - value.value) / (max - min) * contentRect.height() - yOffset
             }
 
             if (value.shape != null) {
                 shape = value.shape
+            }
+
+            if (shouldTurn) {
+                shape = dataSet.isAutoTurnShape
             }
 
             value.setCoordinate(xPosition, yPosition)

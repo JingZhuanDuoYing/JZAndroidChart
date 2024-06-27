@@ -47,6 +47,10 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     var isAutoExpand = true
 
+    var isAutoTurn = false
+
+    var isAutoTurnShape: Drawable? = null
+
     private var mTextValueRenderers: MutableList<TextValueRenderer>? = null
 
     override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
