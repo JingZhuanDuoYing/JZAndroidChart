@@ -42,7 +42,7 @@ apply plugin: 'com.vanniktech.maven.publish'
 publishing {
   repositories {
     maven {
-      def releasesRepoUrl = "http://192.168.0.251:8081/repository/maven-releases"
+      def releasesRepoUrl = "http://192.168.0.165:8811/repository/maven-releases"
       def snapshotsRepoUrl = "http://192.168.0.251:8081/repository/maven-snapshots"
       url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
       allowInsecureProtocol = true
