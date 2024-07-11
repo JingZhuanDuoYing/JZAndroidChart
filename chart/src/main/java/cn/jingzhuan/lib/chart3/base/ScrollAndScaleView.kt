@@ -40,8 +40,11 @@ import kotlin.math.roundToInt
  * created by lei
  * 可以滑动和放大的ChartView
  */
-abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
-    JZScaleGestureDetector.OnScaleGestureListener {
+abstract class ScrollAndScaleView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : View(context, attrs, defStyleAttr), GestureDetector.OnGestureListener, JZScaleGestureDetector.OnScaleGestureListener {
 
     private lateinit var mScroller: OverScroller
 
@@ -232,14 +235,6 @@ abstract class ScrollAndScaleView : View, GestureDetector.OnGestureListener,
     var isLoadMore = false
 
     // </editor-fold desc="画线工具">    ---------------------------------------------------------
-
-    constructor(context: Context?) : super(context)
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     protected open fun init(attrs: AttributeSet?, defStyleAttr: Int) {
         setWillNotDraw(false)

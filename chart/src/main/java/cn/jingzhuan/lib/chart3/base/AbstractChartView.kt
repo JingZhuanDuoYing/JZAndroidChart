@@ -30,7 +30,11 @@ import kotlin.math.max
  * @since 2023-09-05
  * created by lei
  */
-abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, IChartView {
+abstract class AbstractChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : ScrollAndScaleView(context, attrs, defStyleAttr), IChartView {
 
     val axisLeft = AxisY(AxisY.LEFT_INSIDE)
 
@@ -181,20 +185,7 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> : ScrollAndScaleView, I
      */
     var isTouchRangeEnable = true
 
-
-    constructor(context: Context?) : super(context) {
-        init(null, 0)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        init(attrs, 0)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(attrs, defStyleAttr)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+    init {
         init(attrs, defStyleAttr)
     }
 

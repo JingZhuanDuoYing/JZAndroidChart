@@ -7,21 +7,16 @@ import cn.jingzhuan.lib.chart3.base.BaseChartView
 import cn.jingzhuan.lib.chart3.data.CombineData
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.renderer.CombineChartRenderer
-import kotlin.math.max
 
 /**
  * @since 2023-09-06
  * 综合ChartView
  */
-open class CombineChartView : BaseChartView<AbstractDataSet<*>> {
-
-    constructor(context: Context?) : super(context)
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs,defStyleAttr)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
+open class CombineChartView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : BaseChartView<AbstractDataSet<*>>(context, attrs, defStyleAttr) {
 
     override fun initChart() {
         super.initChart()

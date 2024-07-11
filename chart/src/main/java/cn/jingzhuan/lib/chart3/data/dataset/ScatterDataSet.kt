@@ -47,9 +47,15 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     var isAutoExpand = true
 
+    /**
+     * 是否自动转向 只支持 SHAPE_ALIGN_TOP、SHAPE_ALIGN_BOTTOM
+     */
     var isAutoTurn = false
 
-    var isAutoTurnShape: Drawable? = null
+    /**
+     * 自动转向指示器图标 仅当 [isAutoTurn] = true 有效
+     */
+    var autoTurnPointShape: Drawable? = null
 
     private var mTextValueRenderers: MutableList<TextValueRenderer>? = null
 

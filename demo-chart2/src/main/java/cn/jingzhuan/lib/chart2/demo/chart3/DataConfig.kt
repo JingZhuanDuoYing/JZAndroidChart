@@ -38,7 +38,7 @@ object DataConfig {
         LineValue(3075.67f, 1692322131L - 86400 * 120 + 580),
     )
     val candlestickList = listOf(
-        CandlestickValue(3145.27f, 3117.44f, 3123.88f, 3134.57f, 1692322131L - 86400 * 120),
+        CandlestickValue(3145.27f, 3117.44f, 3123.88f, 2940.74f, 1692322131L - 86400 * 120),
         CandlestickValue(3152.94f, 3131.41f, 3132.91f, 3140.85f, 1692322131L - 86400 * 119),
         CandlestickValue(3155.00f, 3097.33f, 3131.35f, 3152.18f, 1692322131L - 86400 * 118),
         CandlestickValue(3154.72f, 3136.58f, 3144.02f, 3154.65f, 1692322131L - 86400 * 117),
@@ -60,7 +60,7 @@ object DataConfig {
         CandlestickValue(3103.93f, 3063.14f, 3087.16f, 3075.67f, 1692322131L - 86400 * 102),
         CandlestickValue(3084.23f, 3050.84f, 3069.38f, 3061.94f, 1692322131L - 86400 * 101),
 
-        CandlestickValue(3010.81f, 3005.30f, 3006.57f, 3009.08f, 1692322131L - 86400 * 100),
+        CandlestickValue(3010.81f, 3005.30f, 3006.57f, 2940.74f, 1692322131L - 86400 * 100),
         CandlestickValue(3114.65f, 3052.83f, 3055.34f, 3107.83f, 1692322131L - 86400 * 99),
         CandlestickValue(3120.65f, 3100.38f, 3101.29f, 3110.06f, 1692322131L - 86400 * 98),
         CandlestickValue(3143.28f, 3111.56f, 3125.33f, 3117.17f, 1692322131L - 86400 * 97),

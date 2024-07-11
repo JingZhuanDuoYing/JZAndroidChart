@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -62,7 +63,10 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_NOTICE
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_SIMULATE_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.FLAG_TRADE_DETAIL
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.HIGHLIGHT_STATUS_FOREVER
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_CENTER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
 import cn.jingzhuan.lib.chart3.widget.KlineTimeRangeView
 import java.util.Timer
 import java.util.TimerTask
@@ -153,11 +157,11 @@ class Chart3Activity : AppCompatActivity() {
 
     private val subCharts by lazy { mutableListOf(sub1, sub2) }
 
-    private val lastClose = 3188.98f
+    private val lastClose = 3152.98f
 
-    private val highPrice = 3388.98f
+    private val highPrice = 3365.22f
 
-    private val lowPrice = 3018.98f
+    private val lowPrice = 2940.74f
 
     private var klineList = mutableListOf<CandlestickValue>()
 
@@ -1273,12 +1277,38 @@ class Chart3Activity : AppCompatActivity() {
 //        }
         val list = newList.reversed().toMutableList()
         list.addAll(klineList)
+        list.addAll(klineList)
 
 
         val lineList = ArrayList<LineValue>()
+        val scatterTopValues = ArrayList<ScatterValue>()
+        val scatterBottomValues = ArrayList<ScatterValue>()
+        val circleScatters = ArrayList<ScatterValue>()
 
-        list.forEach {value ->
+        list.forEachIndexed { index, value ->
             lineList.add(LineValue(value.close, value.time))
+            if (index == 0) {
+                scatterTopValues.add(ScatterValue(value.close, true))
+                scatterBottomValues.add(ScatterValue(value.close, false))
+                circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
+            } else if (index == list.size - 2) {
+                scatterTopValues.add(ScatterValue(value.close, false))
+                scatterBottomValues.add(ScatterValue(value.close, true))
+                circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
+            } else if (value.close == 2940.74f) {
+                scatterTopValues.add(ScatterValue(value.close, true))
+                scatterBottomValues.add(ScatterValue(value.close, false))
+                circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
+            } else if (value.close == 3365.22f) {
+                scatterTopValues.add(ScatterValue(value.close, false))
+                scatterBottomValues.add(ScatterValue(value.close, true))
+                circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
+            } else {
+                scatterTopValues.add(ScatterValue(Float.NaN, false))
+                scatterBottomValues.add(ScatterValue(Float.NaN, false))
+                circleScatters.add(ScatterValue(Float.NaN, false))
+            }
+
         }
 
         val lineDataSet = MinuteLineDataSet(lineList, lastClose, highPrice, lowPrice).apply {
@@ -1302,9 +1332,48 @@ class Chart3Activity : AppCompatActivity() {
             cycle = -1
         }
 
+        val drawable = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_left)
+        val pointShape = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_left)
+        val scatterTopDataSet = ScatterDataSet(scatterTopValues)
+            .apply {
+                isAutoWidth = false
+                isAutoExpand = false
+                shapeAlign = SHAPE_ALIGN_TOP
+                shape = drawable
+                isAutoTurn = true
+                autoTurnPointShape = pointShape
+                forceValueCount = 242
+            }
+
+        val scatterBottomDataSet = ScatterDataSet(scatterBottomValues)
+            .apply {
+                isAutoWidth = false
+                isAutoExpand = false
+                shapeAlign = SHAPE_ALIGN_BOTTOM
+                shape = drawable
+                isAutoTurn = true
+                autoTurnPointShape = pointShape
+                forceValueCount = 242
+            }
+
+
+        val circleDataSet = ScatterDataSet(circleScatters).apply {
+            shape = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setSize(10, 10) }
+            isAutoWidth = false
+            shapeAlign = SHAPE_ALIGN_CENTER
+            drawOffsetY = 0f
+            isAutoExpand = false
+            forceValueCount = 242
+        }
+
         val data = CombineData().apply {
             add(lineDataSet)
-            add(drawLineDataSet)
+//            add(drawLineDataSet)
+            add(scatterTopDataSet)
+            add(scatterBottomDataSet)
+            add(circleDataSet)
         }
         minuteMain.setCombineData(data)
     }

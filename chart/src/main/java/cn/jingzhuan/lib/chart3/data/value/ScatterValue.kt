@@ -16,6 +16,8 @@ class ScatterValue : AbstractValue {
 
     var shape: Drawable? = null
 
+    var infos: List<String> = emptyList()
+
     constructor(value: Float) {
         this.value = value
     }
@@ -35,5 +37,11 @@ class ScatterValue : AbstractValue {
         this.value = value
         this.isVisible = visible
         this.color = color
+    }
+
+    constructor(value: Float, infos: List<String>, visible: Boolean) {
+        this.value = value
+        this.infos = infos
+        this.isVisible = visible
     }
 }

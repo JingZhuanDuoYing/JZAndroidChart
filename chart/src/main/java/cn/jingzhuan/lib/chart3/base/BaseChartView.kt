@@ -28,7 +28,11 @@ import kotlin.math.max
  * @since 2023-09-05
  * created by lei
  */
-open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
+open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : AbstractChartView<T>(context, attrs, defStyleAttr) {
 
     protected var chartRenderer: AbstractRenderer<T>? = null
 
@@ -37,14 +41,6 @@ open class BaseChartView<T : AbstractDataSet<*>> : AbstractChartView<T> {
     private lateinit var animator: ChartAnimator
 
     private var highlightListener: OnHighlightListener? = null
-
-    constructor(context: Context?) : super(context)
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun initChart() {
         animator = ChartAnimator { postInvalidate() }
