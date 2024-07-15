@@ -1332,14 +1332,15 @@ class Chart3Activity : AppCompatActivity() {
             cycle = -1
         }
 
-        val drawable = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_left)
-        val pointShape = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_left)
+        val topDrawable = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_left)
+        val bottomDrawable = ContextCompat.getDrawable(this, cn.jingzhuan.lib.chart.R.drawable.ico_range_touch_right)
+        val pointShape = ContextCompat.getDrawable(this, R.drawable.ic_signal_minute_point_b)
         val scatterTopDataSet = ScatterDataSet(scatterTopValues)
             .apply {
                 isAutoWidth = false
                 isAutoExpand = false
                 shapeAlign = SHAPE_ALIGN_TOP
-                shape = drawable
+                shape = topDrawable
                 isAutoTurn = true
                 autoTurnPointShape = pointShape
                 forceValueCount = 242
@@ -1350,7 +1351,7 @@ class Chart3Activity : AppCompatActivity() {
                 isAutoWidth = false
                 isAutoExpand = false
                 shapeAlign = SHAPE_ALIGN_BOTTOM
-                shape = drawable
+                shape = bottomDrawable
                 isAutoTurn = true
                 autoTurnPointShape = pointShape
                 forceValueCount = 242
@@ -1372,6 +1373,8 @@ class Chart3Activity : AppCompatActivity() {
             add(lineDataSet)
 //            add(drawLineDataSet)
             add(scatterTopDataSet)
+            add(scatterTopDataSet)
+            add(scatterBottomDataSet)
             add(scatterBottomDataSet)
             add(circleDataSet)
         }

@@ -169,6 +169,6 @@ object DataConfig {
         CandlestickValue(3180.10f, 3160.71f, 3170.66f, 3177.45f, 1692322131L - 86400 * 3),
         CandlestickValue(3200.47f, 3188.65f, 3198.18f, 3191.87f, 1692322131L - 86400 * 2),
         CandlestickValue(3250.10f, 3210.71f, 3233.66f, 3248.45f, 1692322131L - 86400),
-        CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3281.87f, 1692322131L),
+        CandlestickValue(3285.47f, 3269.65f, 3277.18f, 3365.22f, 1692322131L),
     )
 }
