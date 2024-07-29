@@ -95,9 +95,9 @@ class BarDraw(
         val startX = contentRect.left - viewport.left * contentRect.width() * scale
 
         val dataSize = dataSet.values.size
-        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        var leftIndex = (dataSize * viewport.left).roundToInt()
         leftIndex = max(leftIndex, 0)
-        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
 
         var i = leftIndex

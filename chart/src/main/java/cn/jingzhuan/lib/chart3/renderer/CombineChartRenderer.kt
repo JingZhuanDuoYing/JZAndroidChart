@@ -96,9 +96,9 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
                     xPosition = value.x
 
-                    if (xPosition == -1f) {
+                    if (xPosition == -1f && dataSet is LineDataSet) {
                         index = dataSet.values.take(index).indexOfLast {
-                            if (it is LineValue) !it.value.isNaN() else false
+                            !it.value.isNaN()
                         }
                         if(index < 0) return
                         val nextValue = dataSet.getEntryForIndex(index) ?: return

@@ -109,9 +109,9 @@ class CandlestickDraw(
         val startIndexOffset = 0
 
         val dataSize = dataSet.values.size
-        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        var leftIndex = (dataSize * viewport.left).roundToInt()
         leftIndex = max(leftIndex, 0)
-        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
 
         var i = leftIndex
