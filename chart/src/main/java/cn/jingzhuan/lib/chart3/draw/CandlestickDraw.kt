@@ -100,7 +100,7 @@ class CandlestickDraw(
         val scale = 1.0f / viewport.width()
 
         val step = contentRect.width() * scale / valueCount
-        contentRect.left - viewport.left * contentRect.width() * scale
+//        contentRect.left - viewport.left * contentRect.width() * scale
         val startX =
             contentRect.left + (step * 0.5f) - viewport.left * contentRect.width() * scale
 
@@ -178,8 +178,8 @@ class CandlestickDraw(
 
         val valueCount = candlestickDataSet.getEntryCount()
 
-        val visibleValues = candlestickDataSet.getVisiblePoints(viewport)
-        if (visibleValues.isNullOrEmpty()) return
+//        val visibleValues = candlestickDataSet.getVisiblePoints(viewport)
+//        if (visibleValues.isNullOrEmpty()) return
 
         val visibleRange = candlestickDataSet.getVisibleRange(viewport)
 
@@ -197,22 +197,22 @@ class CandlestickDraw(
         val gapArray = ArrayList<Pair<Float, Float>>()
 
         val dataSize = candlestickDataSet.values.size
-        var leftIndex = (dataSize * viewport.left).roundToInt() - 1
+        var leftIndex = (dataSize * viewport.left).roundToInt()
         leftIndex = max(leftIndex, 0)
-        var rightIndex = (dataSize * viewport.right).roundToInt() + 1
+        var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
 
         var i = leftIndex
         while (i < rightIndex) {
             val candlestick = candlestickDataSet.getEntryForIndex(i)
-            if (!candlestick!!.isVisible) {
+            if (candlestick == null || !candlestick.isVisible) {
                 i++
                 continue
             }
-            if (!visibleValues.contains(candlestick)) {
-                i++
-                continue
-            }
+//            if (!visibleValues.contains(candlestick)) {
+//                i++
+//                continue
+//            }
 
             val xPosition = startX + step * i
             val candlestickCenterX = xPosition + candleWidth * 0.5

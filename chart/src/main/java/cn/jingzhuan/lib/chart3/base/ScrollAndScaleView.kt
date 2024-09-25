@@ -1000,6 +1000,10 @@ abstract class ScrollAndScaleView @JvmOverloads constructor(
         this.rangeChangeListener = listener
     }
 
+    fun getOnRangeChangeListener(): OnRangeChangeListener? {
+        return this.rangeChangeListener
+    }
+
     fun loadMore() {
         if (loadMoreListener != null) {
             loadMoreListener?.onLoadMore()

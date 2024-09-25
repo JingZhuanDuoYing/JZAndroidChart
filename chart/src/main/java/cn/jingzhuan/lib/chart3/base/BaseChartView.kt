@@ -229,12 +229,6 @@ open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
         invalidate()
     }
 
-    override fun changeRange(startIndex: Int, endIndex: Int, touchType: Int) {
-        if (rangeChangeListener != null){
-            rangeChangeListener?.onRange(startIndex, endIndex, touchType)
-        }
-    }
-
     fun cleanRange() {
         isOpenRange = false
         rangeRenderer.cleanRange()

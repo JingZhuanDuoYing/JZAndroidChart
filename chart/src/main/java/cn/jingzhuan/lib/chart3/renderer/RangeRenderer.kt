@@ -287,7 +287,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
         }
         touchType = RANGE_TOUCH_NONE
 
-        onRangeChange()
+        onChange()
     }
 
     fun setIntervalRange(start: Int, end: Int) {
@@ -306,7 +306,7 @@ class RangeRenderer<T : AbstractDataSet<*>>(
 
         touchType = RANGE_TOUCH_NONE
 
-        onRangeChange()
+        onChange()
     }
 
     fun onViewportChange() {
@@ -332,13 +332,13 @@ class RangeRenderer<T : AbstractDataSet<*>>(
                 startX = chart.getEntryX(startIndex)
                 endX = chart.getEntryX(endIndex)
                 touchType = RANGE_TOUCH_NONE
-                onRangeChange()
+                onChange()
             } else {
                 if (start != 0 && end != 0 && startIndex != start && endIndex != end) {
                     startIndex = start
                     endIndex = end
                     touchType = RANGE_TOUCH_NONE
-                    onRangeChange()
+                    onChange()
                 }
             }
         }
@@ -385,13 +385,13 @@ class RangeRenderer<T : AbstractDataSet<*>>(
                 try {
                     when (touchType) {
                         RANGE_TOUCH_BOTH -> {
-                            touchBothToLeftOrRight(currentX)
+                            touchBoth(currentX)
                         }
                         RANGE_TOUCH_LEFT -> {
-                            touchToLeft(currentX)
+                            touchLeft(currentX)
                         }
                         RANGE_TOUCH_RIGHT -> {
-                            touchToRight(currentX)
+                            touchRight(currentX)
                         }
                         else -> return false
                     }
@@ -404,17 +404,17 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             MotionEvent.ACTION_UP -> {
                 val isBottom = chart.bottomRect.contains(event.x.roundToInt(), event.y.roundToInt())
                 if (isBottom) {
-                    onCloseClick(event.x, event.y)
+                    onClose(event.x, event.y)
                     return false
                 }
                 touchType = RANGE_TOUCH_NONE
-                onRangeChange()
+                onChange()
             }
         }
         return false
     }
 
-    private fun touchToLeft(currentX: Float): Boolean {
+    private fun touchLeft(currentX: Float): Boolean {
         Log.i("区间统计", "touchToLeft")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val leftIndex = chart.getEntryIndex(currentX)
@@ -447,11 +447,11 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             endX = chart.getEntryX(endIndex)
             chart.invalidate()
         }
-        onRangeChange()
+        onChange()
         return true
     }
 
-    private fun touchToRight(currentX: Float): Boolean {
+    private fun touchRight(currentX: Float): Boolean {
         Log.i("区间统计", "touchToRight")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val leftIndex = chart.getEntryIndex(startX)
@@ -485,11 +485,11 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             endX = chart.getEntryX(endIndex)
             chart.invalidate()
         }
-        onRangeChange()
+        onChange()
         return true
     }
 
-    private fun touchBothToLeftOrRight(currentX: Float): Boolean {
+    private fun touchBoth(currentX: Float): Boolean {
         Log.i("区间统计", "touchBothToLeftOrRight")
         val touchDataSet = chart.chartData?.getTouchDataSet() ?: return false
         val currentIndex = chart.getEntryIndex(currentX)
@@ -511,15 +511,17 @@ class RangeRenderer<T : AbstractDataSet<*>>(
             endX = chart.getEntryX(endIndex)
             chart.invalidate()
         }
-        onRangeChange()
+        onChange()
         return true
     }
 
-    private fun onRangeChange() {
-        chart.changeRange(startIndex, endIndex, touchType)
+    private fun onChange() {
+        if (chart.getOnRangeChangeListener() != null){
+            chart.getOnRangeChangeListener()?.onRange(startIndex, endIndex, touchType)
+        }
     }
 
-    private fun onCloseClick(x: Float, y: Float) {
+    private fun onClose(x: Float, y: Float) {
         if (closeRect.contains(x, y)) {
             chart.closeRange()
         }

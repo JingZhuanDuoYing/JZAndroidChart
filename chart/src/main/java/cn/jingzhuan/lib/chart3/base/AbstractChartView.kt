@@ -410,9 +410,4 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> @JvmOverloads construct
      * 关闭区间统计
      */
     abstract fun closeRange()
-
-    /**
-     * 区间统计位置更新
-     */
-    abstract fun changeRange(startIndex: Int, endIndex: Int, touchType: Int)
 }

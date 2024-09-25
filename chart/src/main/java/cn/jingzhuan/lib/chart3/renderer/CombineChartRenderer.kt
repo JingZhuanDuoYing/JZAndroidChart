@@ -131,11 +131,12 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
             chartView.setEntryWidth()
         }
 
-        val basisCandlestickDataSet = combineData.candlestickChartData.dataSets.find { it.isBasis }
-
-        if (chartView.showMinLine() && basisCandlestickDataSet != null) {// 画K线缩放到最小的折线 (没有设置基准K线 还是画蜡烛不画折线)
-            candlestickDraw.showScaleMin = true
-            candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, basisCandlestickDataSet, currentViewport)
+        if (chartView.showMinLine()) {// 画K线缩放到最小的折线 (没有设置基准K线 还是画蜡烛不画折线)
+            val basisCandlestickDataSet = combineData.candlestickChartData.dataSets.find { it.isBasis }
+            if (basisCandlestickDataSet != null) {
+                candlestickDraw.showScaleMin = true
+                candlestickDraw.drawDataSet(canvas, combineData.candlestickChartData, basisCandlestickDataSet, currentViewport)
+            }
         } else {
             for (i in sortedDataSets.indices) {
                 val dataSet: AbstractDataSet<*> = sortedDataSets[i]

@@ -31,6 +31,7 @@ class MainKlineChartView(ctx: Context, attrs: AttributeSet?) : KlineChartView(ct
     init {
         currentVisibleEntryCount = 250
         minVisibleEntryCount = 10
+        currentVisibleEntryCount = 40
         decimalDigitsNumber = 3
         axisRight.gridCount = 0
         axisLeft.isGridSlidIndex = 2

@@ -11,6 +11,7 @@ import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @since 2023-09-05
@@ -92,20 +93,24 @@ open class CandlestickDataSet @JvmOverloads constructor(
         if (enableGap) {
             var max = -Float.MAX_VALUE
             var min = Float.MAX_VALUE
-            for (i in values.indices.reversed()) {
-                val e = values[i]
+            highGaps.clear()
+            lowGaps.clear()
+            for (i in visiblePoints.indices.reversed()) {
+                val e = visiblePoints[i]
                 if (isNaN(e.low)) continue
                 if (isNaN(e.high)) continue
                 if (isInfinite(e.low)) continue
                 if (isInfinite(e.high)) continue
                 if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
+                    val leftIndex = (values.size * viewport.left).roundToInt()
+                    val index = leftIndex + i
                     if (min - e.high > 0) {
                         // 上涨缺口
-                        highGaps.put(i, Pair(e.high, min))
+                        highGaps.put(index, Pair(e.high, min))
                     }
                     if (e.low - max > 0) {
                         // 下跌缺口
-                        lowGaps.put(i, Pair(e.low, max))
+                        lowGaps.put(index, Pair(e.low, max))
                     }
                 }
                 if (e.low < min) min = e.low

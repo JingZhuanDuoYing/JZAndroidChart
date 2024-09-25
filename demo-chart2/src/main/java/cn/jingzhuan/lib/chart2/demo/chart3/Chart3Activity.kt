@@ -1247,10 +1247,10 @@ class Chart3Activity : AppCompatActivity() {
 
         val data = CombineData().apply {
             add(candlestickDataSet)
-            add(lineDataSet)
+//            add(lineDataSet)
             add(scatterDataSet)
 //            add(drawLineDataSet)
-            add(bandLineDataSet)
+//            add(bandLineDataSet)
 //            add(overLayDataSet)
 //            add(overLayDataSet2)
 //            add(scatterTextDataSet)
