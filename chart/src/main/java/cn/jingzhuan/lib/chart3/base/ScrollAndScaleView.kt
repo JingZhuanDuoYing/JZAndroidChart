@@ -250,10 +250,12 @@ abstract class ScrollAndScaleView @JvmOverloads constructor(
 
         finishScroll()
 
-        val isBottom = bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())
+        if (!e.x.isNaN() || !e.y.isNaN()) {
+            val isBottom = bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())
 
-        if (showBottomFlags && bottomFlagsClickListener != null && isBottom && highlightState != HIGHLIGHT_STATUS_INITIAL) {
-            bottomFlagsClickListener?.onClick(e.x, e.y)
+            if (showBottomFlags && bottomFlagsClickListener != null && isBottom && highlightState != HIGHLIGHT_STATUS_INITIAL) {
+                bottomFlagsClickListener?.onClick(e.x, e.y)
+            }
         }
         return true
     }
@@ -280,6 +282,8 @@ abstract class ScrollAndScaleView @JvmOverloads constructor(
         if (isDoubleTapToZoom) return false
         if (isOpenRange) return false
         if (isDrawingLine()) return false
+
+        if (e.x.isNaN() || e.y.isNaN()) return false
 
         if (bottomRect.contains(e.x.roundToInt(), e.y.roundToInt())) {
             return false

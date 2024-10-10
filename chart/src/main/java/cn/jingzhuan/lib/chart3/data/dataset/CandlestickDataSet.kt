@@ -95,6 +95,7 @@ open class CandlestickDataSet @JvmOverloads constructor(
             var min = Float.MAX_VALUE
             highGaps.clear()
             lowGaps.clear()
+            val leftIndex = (values.size * viewport.left).roundToInt()
             for (i in visiblePoints.indices.reversed()) {
                 val e = visiblePoints[i]
                 if (isNaN(e.low)) continue
@@ -102,7 +103,6 @@ open class CandlestickDataSet @JvmOverloads constructor(
                 if (isInfinite(e.low)) continue
                 if (isInfinite(e.high)) continue
                 if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
-                    val leftIndex = (values.size * viewport.left).roundToInt()
                     val index = leftIndex + i
                     if (min - e.high > 0) {
                         // 上涨缺口
