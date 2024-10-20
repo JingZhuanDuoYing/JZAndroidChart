@@ -493,8 +493,14 @@ class LineDraw(
 
         val value = lineDataSet.getEntryForIndex(lineDataSet.values.size - 1) ?: return
 
+        val text: String = if (isHighLight) value.value.toString() else lineDataSet.tag ?: ""
+        val textBound = Rect()
+        renderPaint.getTextBounds(text, 0, text.length, textBound)
+        val padding = 10
+
+        var left = if (lineDataSet.horizontalLeft) textBound.width() + padding * 2 else 0
         val yPosition: Float = (max - value.value) / (max - min) * contentRect.height()
-        linePath.moveTo(0f, yPosition)
+        linePath.moveTo(left.toFloat(), yPosition)
         linePath.lineTo(contentRect.width().toFloat(), yPosition)
         canvas.drawPath(linePath, renderPaint)
         linePath.close()
@@ -503,16 +509,14 @@ class LineDraw(
         renderPaint.style = Paint.Style.FILL
         renderPaint.strokeWidth = 2f
         renderPaint.textSize = 25f
-        val text: String = if (isHighLight) value.value.toString() else lineDataSet.tag ?: ""
-        val textBound = Rect()
-        renderPaint.getTextBounds(text, 0, text.length, textBound)
-        val padding = 10
+
         val textRect = Rect()
         textRect.left = 0
         textRect.top = (yPosition - textBound.height()).toInt()
         textRect.right = textBound.width() + padding * 2
         textRect.bottom = (yPosition + textBound.height()).toInt()
-        if (TimeUtil.isInTime()) {
+
+        if (!lineDataSet.horizontalLeft && TimeUtil.isInTime()) {
             textRect.left = contentRect.width() - textBound.width() - padding * 2
             textRect.right = contentRect.width()
         }
@@ -526,13 +530,16 @@ class LineDraw(
             textRect.bottom = contentRect.height()
             textRect.top = contentRect.height() - height
         }
-        if (value.value in min..max) {
+        if (!lineDataSet.horizontalLeft && value.value in min..max) {
             canvas.drawRect(textRect, renderPaint)
         }
         val fontMetrics: Paint.FontMetrics = textPaint.fontMetrics
         val distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom
         val baseline = textRect.centerY() + distance
         if (value.value in min..max) {
+            if (lineDataSet.horizontalLeft) {
+                textPaint.color = lineDataSet.color
+            }
             canvas.drawText(text, textRect.centerX().toFloat(), baseline, textPaint)
         }
     }

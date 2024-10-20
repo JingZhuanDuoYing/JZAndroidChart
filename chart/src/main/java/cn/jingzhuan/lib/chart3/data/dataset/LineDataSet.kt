@@ -50,6 +50,8 @@ open class LineDataSet @JvmOverloads constructor(
      */
     var isHorizontalLine = false
 
+    var horizontalLeft = false
+
     /**
      * 点状线
      */

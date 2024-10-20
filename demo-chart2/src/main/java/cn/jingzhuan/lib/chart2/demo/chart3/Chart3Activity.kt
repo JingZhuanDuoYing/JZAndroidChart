@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import cn.jingzhuan.lib.chart.utils.ForceAlign
 import cn.jingzhuan.lib.chart2.demo.R
 import cn.jingzhuan.lib.chart2.demo.chart3.chart.MainCallAuctionChartView
@@ -1317,6 +1318,16 @@ class Chart3Activity : AppCompatActivity() {
             forceValueCount = 242
         }
 
+        val pointValues = ArrayList<LineValue>()
+
+        pointValues.add(LineValue(3253.98f))
+
+        val hLineDataSet = LineDataSet(pointValues)
+        hLineDataSet.tag = "盈亏成本价 3253.98"
+        hLineDataSet.color = Color.RED
+        hLineDataSet.isHorizontalLine = true
+        hLineDataSet.horizontalLeft = true
+
         val value = list.get(26)
         val startTime = 1692322131L - 86400 * (242 + 80)
         val endTime = 1692322131L - 86400 * (242 + 10)
@@ -1377,6 +1388,7 @@ class Chart3Activity : AppCompatActivity() {
             add(scatterBottomDataSet)
             add(scatterBottomDataSet)
             add(circleDataSet)
+            add(hLineDataSet)
         }
         minuteMain.setCombineData(data)
     }

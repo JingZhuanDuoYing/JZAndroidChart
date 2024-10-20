@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import cn.jingzhuan.lib.chart.data.LineDataSet;
 import cn.jingzhuan.lib.chart.data.PointValue;
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
 import com.airbnb.epoxy.DataBindingEpoxyModel;
 import com.airbnb.epoxy.EpoxyModelClass;
 

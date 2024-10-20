@@ -9,7 +9,7 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import cn.jingzhuan.lib.chart.Viewport;;
+import cn.jingzhuan.lib.chart.Viewport;
 import cn.jingzhuan.lib.chart.data.AbstractDataSet;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
 import cn.jingzhuan.lib.chart.renderer.Renderer;
