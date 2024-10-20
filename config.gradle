@@ -9,8 +9,8 @@ ext {
     ]
 
     ver = [
-            sourceCompatibilityVersion: JavaVersion.VERSION_21,
-            targetCompatibilityVersion: JavaVersion.VERSION_21,
+            sourceCompatibilityVersion: JavaVersion.VERSION_17,
+            targetCompatibilityVersion: JavaVersion.VERSION_17,
 
             androidPluginVersion      : '8.6.1',
             kotlinVersion             : "2.0.20",
