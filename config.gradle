@@ -28,6 +28,9 @@ ext {
         androidLib.compileSdk = android.compileSdkVersion
         androidLib.compileSdkVersion = android.compileSdkVersion
         androidLib.buildToolsVersion = android.buildToolsVersion
+        androidLib.kotlinOptions {
+            jvmTarget = "17"
+        }
         androidLib.compileOptions {
             // Sets Java compatibility to Java 11
             sourceCompatibility ver.sourceCompatibilityVersion

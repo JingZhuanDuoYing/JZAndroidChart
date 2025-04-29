@@ -13,10 +13,6 @@ android {
     abortOnError false
   }
 
-  kotlinOptions {
-    jvmTarget = "17"
-  }
-
   namespace 'cn.jingzhuan.lib.chart'
 
   compileOptions.coreLibraryDesugaringEnabled true
