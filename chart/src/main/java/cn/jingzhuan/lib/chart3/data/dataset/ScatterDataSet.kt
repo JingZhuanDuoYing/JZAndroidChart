@@ -39,10 +39,6 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     var shapeAlign: Int = SHAPE_ALIGN_CENTER
 
-    private var originalViewportYMin = Float.MAX_VALUE
-
-    private var originalViewportYMax = -Float.MAX_VALUE
-
     var isAutoWidth = true
 
     var isAutoExpand = true
@@ -61,22 +57,29 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private var mTextValueRenderers: MutableList<TextValueRenderer>? = null
 
-    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
+    fun calcMinMaxInner(
+        viewport: Viewport,
+        content: Rect,
+        max: Float,
+        min: Float,
+        originYMax: Float,
+        originYMin: Float,
+        offsetsMapper: MutableMap<String, MutableMap<String, Float>>
+    ) {
         viewportYMax = max
         viewportYMin = min
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
 
-        for (value in visiblePoints) {
-            calcViewportMinMax(value)
-        }
-
-        originalViewportYMax = viewportYMax
-        originalViewportYMin = viewportYMin
         if (isAutoExpand) {
+            for (index in 0 until visiblePoints.size) {
+                val value = visiblePoints[index]
+                calcViewportMinMaxExpansion(index, value, content, originYMax, originYMin, offsetsMapper)
+            }
+        } else {
             for (value in visiblePoints) {
-                calcViewportMinMaxExpansion(value, viewport, content)
+                calcViewportMinMax(value)
             }
         }
 
@@ -100,51 +103,76 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         }
     }
 
-    private fun calcViewportMinMaxExpansion(value: ScatterValue?, viewport: Viewport, content: Rect) {
+    private fun calcViewportMinMaxExpansion(
+        index: Int,
+        value: ScatterValue?,
+        content: Rect,
+        originYMax: Float,
+        originYMin: Float,
+        offsetsMapper: MutableMap<String, MutableMap<String, Float>>,
+    ) {
         if (value == null || !value.isVisible) return
         if (isNaN(value.value)) return
         if (shape == null) return
 
-        val range: Float = viewportYMax - viewportYMin
-        if (range <= 0f) return
+        val originRange = originYMax - originYMin
+        if (originRange <= 0.0) return
 
-        val width = (content.width() - startXOffset - endXOffset) / getVisibleRange(viewport) + 1
-        var shapeHeight = shape!!.intrinsicHeight.toFloat()
-        if (isAutoWidth) {
-            var shapeWidth = max(width * 0.8f, shapeMinWidth)
-            if (!isNaN(shapeMaxWidth)) {
-                shapeWidth = min(shapeWidth, shapeMaxWidth)
+        val shapeHeight = shape!!.intrinsicHeight.toFloat()
+        if (shapeHeight <= 0.0) return
+
+        var offset = 0f
+        if (shapeAlign != SHAPE_ALIGN_CENTER) {
+            val indexKey = index.toString()
+            val offsets = offsetsMapper[this.shapeAlign.toString()] ?: mutableMapOf<String, Float>()
+            if (offsets.contains(indexKey)) {
+                offset = offsets[indexKey] ?: 0f
             }
-            shapeHeight *= (shapeWidth / shape!!.intrinsicWidth.toFloat())
-            shapeHeight += 4f
+            if (!value.value.isNaN()) {
+                offsets[indexKey] = offset + shapeHeight
+                offsetsMapper[this.shapeAlign.toString()] = offsets
+            }
         }
-        val percent = shapeHeight / content.height().toFloat()
-        val expand = range * percent
-        if (expand <= 0f) return
-        val anchor = when (shapeAlign) {
+
+        val percent = (offset + shapeHeight) / content.height()
+        val expandHeight = originRange * percent
+        if (expandHeight <= 0.0) return
+
+        val anchor: Float = when (this.shapeAlign) {
             SHAPE_ALIGN_PARENT_TOP -> {
-                originalViewportYMax
+                originYMax;
             }
             SHAPE_ALIGN_PARENT_BOTTOM -> {
-                originalViewportYMin
+                originYMin
             }
             else -> {
                 value.value
             }
         }
-        val newValue: Float
-        if (shapeAlign == SHAPE_ALIGN_BOTTOM || shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
-            newValue = anchor + expand
-            viewportYMax = max(newValue, viewportYMax)
-        } else if (shapeAlign == SHAPE_ALIGN_TOP || shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
-            newValue = anchor - expand
-            viewportYMin = min(newValue, viewportYMin)
-        } else {
-            // shapeAlign == SHAPE_ALIGN_CENTER
-            val newMaxValue = anchor + expand / 2
-            val newMinValue = anchor - expand / 2
-            viewportYMax = max(newMaxValue, viewportYMax)
-            viewportYMin = min(newMinValue, viewportYMin)
+
+        when (this.shapeAlign) {
+            SHAPE_ALIGN_PARENT_TOP -> {
+                viewportYMax = (anchor + expandHeight).coerceAtLeast(viewportYMax)
+            }
+            SHAPE_ALIGN_PARENT_BOTTOM -> {
+                viewportYMin = (anchor - expandHeight).coerceAtMost(viewportYMin)
+            }
+            SHAPE_ALIGN_BOTTOM -> {
+                val max = (anchor + expandHeight * 2).coerceAtLeast(viewportYMax)
+                val range = max - viewportYMin
+                viewportYMax = (anchor + range * percent).coerceAtLeast(viewportYMax)
+            }
+            SHAPE_ALIGN_TOP -> {
+                val min = (anchor - expandHeight * 2).coerceAtMost(viewportYMin)
+                val range = viewportYMax - min
+                viewportYMax = (anchor - range * percent).coerceAtMost(viewportYMax)
+            }
+            else -> {
+                val newMaxValue = anchor + expandHeight / 2
+                val newMinValue = anchor - expandHeight / 2
+                viewportYMax = newMaxValue.coerceAtLeast(viewportYMax)
+                viewportYMin = newMinValue.coerceAtMost(viewportYMin)
+            }
         }
     }
 

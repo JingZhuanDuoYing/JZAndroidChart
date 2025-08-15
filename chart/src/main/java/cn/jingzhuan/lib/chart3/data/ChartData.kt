@@ -2,16 +2,21 @@ package cn.jingzhuan.lib.chart3.data
 
 import android.graphics.Rect
 import android.util.ArrayMap
-import android.util.Log
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.base.AbstractChartView
 import cn.jingzhuan.lib.chart3.data.dataset.AbstractDataSet
 import cn.jingzhuan.lib.chart3.data.dataset.CandlestickDataSet
+import cn.jingzhuan.lib.chart3.data.dataset.ScatterDataSet
 import cn.jingzhuan.lib.chart3.renderer.AxisRenderer
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_TOP
+import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.TYPE_AXIS_RIGHT
 import java.util.Collections
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,6 +37,8 @@ open class ChartData<T : AbstractDataSet<*>> {
     var rightMax = -Float.MAX_VALUE
 
     private var axisRenderers: ArrayMap<Int, AxisRenderer<T>>? = null
+
+    private var offsetsMapper: MutableMap<String, MutableMap<String, Float>> = mutableMapOf()
 
     val dataSets: MutableList<T>
         get() {
@@ -87,63 +94,15 @@ open class ChartData<T : AbstractDataSet<*>> {
         rightMin = rMin
         rightMax = rMax
 
-        var overlayRatio: Float? = null
-
         if (dataSets.isNotEmpty()) {
             synchronized(this) {
-                val basisCandlestickDataSet = dataSets.find { it is CandlestickDataSet && it.isBasis }
-                if (abstractChart.showMinLine() && basisCandlestickDataSet != null) {
-                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                        basisCandlestickDataSet.calcMinMax(viewport, content, leftMax, leftMin)
-                    }
-                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                        basisCandlestickDataSet.calcMinMax(viewport, content, rightMax, rightMin)
-                    }
-                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                        leftMax = max(leftMax, basisCandlestickDataSet.viewportYMax)
-                        leftMin = min(leftMin, basisCandlestickDataSet.viewportYMin)
-                    }
-                    if (basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_BOTH || basisCandlestickDataSet.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                        rightMax = max(rightMax, basisCandlestickDataSet.viewportYMax)
-                        rightMin = min(rightMin, basisCandlestickDataSet.viewportYMin)
-                    }
+                val basisDataSet = dataSets.find { it is CandlestickDataSet && it.isBasis }
+                if (abstractChart.showMinLine() && basisDataSet != null) {
+                    calcMinMaxDataSet(basisDataSet, viewport, content, null)
                 } else {
-                    for (t in dataSets) {
-                        if (t.overlayKline) {
-                            val dataSet = getTouchDataSet()
-                            if (dataSet != null) {
-                                overlayRatio = t.calcOverlayRatio(viewport, dataSet)
-                                if (overlayRatio != null) break
-                            }
-                        }
-                    }
-                    for (t in dataSets) {
-                        if (!t.isEnable) continue
-
-                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                            if (t.overlayKline) {
-                                t.calcOverlayMinMax(viewport, overlayRatio)
-                            } else {
-                                t.calcMinMax(viewport, content, leftMax, leftMin)
-                            }
-                        }
-                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                            if (t.overlayKline) {
-                                t.calcOverlayMinMax(viewport, overlayRatio)
-                            } else {
-                                t.calcMinMax(viewport, content, rightMax, rightMin)
-                            }
-                        }
-
-                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-                            leftMax = max(leftMax, t.viewportYMax)
-                            leftMin = min(leftMin, t.viewportYMin)
-                        }
-                        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-                            rightMax = max(rightMax, t.viewportYMax)
-                            rightMin = min(rightMin, t.viewportYMin)
-                        }
-                    }
+                    val (normalList, scatterList) = dataSets.partition { it !is ScatterDataSet }
+                    calcMinMaxInner(normalList, viewport, content)
+                    calcMinMaxScatters(scatterList, viewport, content)
                 }
 
                 if (offsetPercent != 0f) {
@@ -159,6 +118,100 @@ open class ChartData<T : AbstractDataSet<*>> {
             }
         }
         setAxisMinMax()
+    }
+
+    private fun calcMinMaxScatters(dataSets: List<T>, viewport: Viewport, content: Rect) {
+        if (abs(leftMin) != Float.MAX_VALUE && abs(leftMax) != Float.MAX_VALUE
+            || abs(rightMin) != Float.MAX_VALUE && abs(rightMax) != Float.MAX_VALUE) {
+            this.offsetsMapper.clear()
+            val originYLeftMax = leftMax
+            val originYLeftMin = leftMin
+            val originYRightMax = rightMax
+            val originYRightMin = rightMin
+
+            val scatters = dataSets.filter { it is ScatterDataSet && it.isEnable
+                    && (it.shapeAlign == SHAPE_ALIGN_TOP || it.shapeAlign == SHAPE_ALIGN_BOTTOM) }
+            for (t in scatters) {
+                if (t !is ScatterDataSet) continue
+                calcMinMaxScatterDataSet(t, viewport, content, originYLeftMax, originYLeftMin, originYRightMax, originYRightMin, offsetsMapper)
+            }
+
+            val parentsScatters = dataSets.filter { it is ScatterDataSet && it.isEnable
+                    && (it.shapeAlign == SHAPE_ALIGN_PARENT_TOP || it.shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) }
+            for (t in parentsScatters) {
+                if (t !is ScatterDataSet) continue
+                calcMinMaxScatterDataSet(t, viewport, content, leftMax, leftMin, rightMax, rightMin, offsetsMapper)
+            }
+        }
+    }
+
+    private fun calcMinMaxInner(dataSets: List<T>, viewport: Viewport, content: Rect) {
+        var overlayRatio: Float? = null
+        for (t in dataSets) {
+            if (t.overlayKline) {
+                val dataSet = getTouchDataSet()
+                if (dataSet != null) {
+                    overlayRatio = t.calcOverlayRatio(viewport, dataSet)
+                    if (overlayRatio != null) break
+                }
+            }
+        }
+        for (t in dataSets) {
+            if (!t.isEnable) continue
+            calcMinMaxDataSet(t, viewport, content, overlayRatio)
+        }
+    }
+
+    private fun calcMinMaxScatterDataSet(
+        t: ScatterDataSet,
+        viewport: Viewport,
+        content: Rect,
+        originYLeftMax: Float,
+        originYLeftMin: Float,
+        originYRightMax: Float,
+        originYRightMin: Float,
+        offsetsMapper: MutableMap<String, MutableMap<String, Float>>
+    ) {
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+            t.calcMinMaxInner(viewport, content, leftMax, leftMin, originYLeftMax, originYLeftMin, offsetsMapper)
+        }
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+            t.calcMinMaxInner(viewport, content, rightMax, rightMin, originYRightMax, originYRightMin, offsetsMapper)
+        }
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+            leftMax = max(leftMax, t.viewportYMax)
+            leftMin = min(leftMin, t.viewportYMin)
+        }
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+            rightMax = max(rightMax, t.viewportYMax)
+            rightMin = min(rightMin, t.viewportYMin)
+        }
+    }
+
+    private fun calcMinMaxDataSet(t: T, viewport: Viewport, content: Rect, overlayRatio: Float?) {
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+            if (t.overlayKline) {
+                t.calcOverlayMinMax(viewport, overlayRatio)
+            } else {
+                t.calcMinMax(viewport, content, leftMax, leftMin)
+            }
+        }
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+            if (t.overlayKline) {
+                t.calcOverlayMinMax(viewport, overlayRatio)
+            } else {
+                t.calcMinMax(viewport, content, rightMax, rightMin)
+            }
+        }
+
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
+            leftMax = max(leftMax, t.viewportYMax)
+            leftMin = min(leftMin, t.viewportYMin)
+        }
+        if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
+            rightMax = max(rightMax, t.viewportYMax)
+            rightMin = min(rightMin, t.viewportYMin)
+        }
     }
 
     fun setChart(chart: AbstractChartView<T>) {

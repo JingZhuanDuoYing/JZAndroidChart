@@ -154,7 +154,7 @@ class Chart3Activity : AppCompatActivity() {
 
     private lateinit var ivCap: ImageView
 
-    private val scatterDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_left) }
+    private val annDrawable by lazy { ContextCompat.getDrawable(this@Chart3Activity, R.drawable.ico_range_touch_right) }
 
     private val subCharts by lazy { mutableListOf(sub1, sub2) }
 
@@ -1148,8 +1148,11 @@ class Chart3Activity : AppCompatActivity() {
         }
 
         val bandList = ArrayList<LineValue>()
-        val lineList = ArrayList<LineValue>()
-        val scatterList = ArrayList<ScatterValue>()
+        val scatterFlagValues = ArrayList<ScatterValue>()
+        val scatterBValues = ArrayList<ScatterValue>()
+        val scatterB1Values = ArrayList<ScatterValue>()
+        val scatterSValues = ArrayList<ScatterValue>()
+        val scatterS1Values = ArrayList<ScatterValue>()
         val scatterTextList = ArrayList<ScatterTextValue>()
 //        val overLayList = ArrayList<BarValue>()
 //        val overLay2List = ArrayList<BarValue>()
@@ -1163,65 +1166,73 @@ class Chart3Activity : AppCompatActivity() {
                     pathColor = Color.BLUE
                 })
             }
-            lineList.add(LineValue((value.high) * 1.1f, value.time))
+            if (index == klineList.size - 18 || index == klineList.size - 28) {
+                scatterFlagValues.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2, 3, 5, 6)))
+            } else {
+                scatterFlagValues.add(ScatterValue(value.close, false))
+            }
+            if (index == klineList.size - 38) {
+                scatterTextList.add(ScatterTextValue(true, value.high,value.low))
+            } else {
+                scatterTextList.add(ScatterTextValue(false, value.high,value.low))
+            }
+            if (index == klineList.size - 8 || index == klineList.size - 18) {
+                scatterBValues.add(ScatterValue(value.low, true))
+                scatterB1Values.add(ScatterValue(value.low, true))
+            } else {
+                scatterBValues.add(ScatterValue(value.low, false))
+                scatterB1Values.add(ScatterValue(value.low, false))
+            }
+
+            if (index == klineList.size - 7 || index == klineList.size - 17) {
+                scatterSValues.add(ScatterValue(value.high, true))
+                scatterS1Values.add(ScatterValue(value.high, true))
+            } else {
+                scatterSValues.add(ScatterValue(value.high, false))
+                scatterS1Values.add(ScatterValue(value.high, false))
+            }
 //            overLayList.add(BarValue(value.open * 1.5f, (value.close) * 1.5f, Color.BLUE))
 //            overLay2List.add(BarValue(value.high * 1.5f, (value.low) * 1.5f, Color.RED))
-            when (index) {
-                klineList.size - 3 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2, 3, 5, 6)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                klineList.size - 13 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(1, 2, 6)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                klineList.size - 23 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(2, 3, 6)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                klineList.size - 33 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(3, 5, 6)))
-                    scatterTextList.add(ScatterTextValue(true, value.high,value.low))
-                }
-                klineList.size - 43 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(0, 1, 2)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                klineList.size - 53 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(2)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                klineList.size - 63 -> {
-                    scatterList.add(ScatterValue(value.close, true, flags = listOf(5)))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-                else -> {
-                    scatterList.add(ScatterValue(value.close, false))
-                    scatterTextList.add(ScatterTextValue(false, value.high,value.low))
-                }
-            }
         }
 
-        val lineDataSet = LineDataSet(lineList).apply {
-            color = Color.RED
-            lineThickness = 3
-            isEnable = true
+        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
+            axisDependency = AxisY.DEPENDENCY_BOTH
+            text = "自"
+            textColor = 0xffFD263F.toInt()
+            textBgColor = 0xB3FFFFFF.toInt()
+            lineColor = 0xffFD263F.toInt()
+            frameColor = 0xffFD263F.toInt()
+            textSize = 30
         }
 
-//        val scatterTextDataSet = ScatterTextDataSet(scatterTextList).apply {
-//            axisDependency = AxisY.DEPENDENCY_BOTH
-//            text = "自"
-//            textColor = 0xffFD263F.toInt()
-//            textBgColor = 0xB3FFFFFF.toInt()
-//            lineColor = 0xffFD263F.toInt()
-//            frameColor = 0xffFD263F.toInt()
-//            textSize = 30
-//        }
-
-        val scatterDataSet = ScatterDataSet(scatterList).apply {
+        val scatterFlagDataSet = ScatterDataSet(scatterFlagValues).apply {
             tag = ChartConstant.FLAG_TAG_NAME
-            shape = scatterDrawable
+            shape = annDrawable
             shapeAlign = SHAPE_ALIGN_PARENT_BOTTOM
+            isAutoWidth = false
+        }
+
+        val scatterBDataSet = ScatterDataSet(scatterBValues).apply {
+            shape = annDrawable
+            shapeAlign = SHAPE_ALIGN_TOP
+            isAutoWidth = false
+        }
+
+        val scatterB1DataSet = ScatterDataSet(scatterBValues).apply {
+            shape = annDrawable
+            shapeAlign = SHAPE_ALIGN_TOP
+            isAutoWidth = false
+        }
+
+        val scatterSDataSet = ScatterDataSet(scatterSValues).apply {
+            shape = annDrawable
+            shapeAlign = SHAPE_ALIGN_BOTTOM
+            isAutoWidth = false
+        }
+
+        val scatterS1DataSet = ScatterDataSet(scatterS1Values).apply {
+            shape = annDrawable
+            shapeAlign = SHAPE_ALIGN_BOTTOM
             isAutoWidth = false
         }
 
@@ -1249,12 +1260,16 @@ class Chart3Activity : AppCompatActivity() {
         val data = CombineData().apply {
             add(candlestickDataSet)
 //            add(lineDataSet)
-            add(scatterDataSet)
+            add(scatterFlagDataSet)
+            add(scatterBDataSet)
+            add(scatterB1DataSet)
+            add(scatterSDataSet)
+            add(scatterS1DataSet)
 //            add(drawLineDataSet)
 //            add(bandLineDataSet)
 //            add(overLayDataSet)
 //            add(overLayDataSet2)
-//            add(scatterTextDataSet)
+            add(scatterTextDataSet)
         }
 
         if (loadMore && klineMain.isLoadMore) {
