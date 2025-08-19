@@ -121,7 +121,7 @@ open class ChartData<T : AbstractDataSet<*>> {
     }
 
     private fun calcMinMaxScatters(dataSets: List<T>, viewport: Viewport, content: Rect) {
-        if (abs(leftMin) != Float.MAX_VALUE && abs(leftMax) != Float.MAX_VALUE
+        if (dataSets.isNotEmpty() && abs(leftMin) != Float.MAX_VALUE && abs(leftMax) != Float.MAX_VALUE
             || abs(rightMin) != Float.MAX_VALUE && abs(rightMax) != Float.MAX_VALUE) {
             this.offsetsMapper.clear()
             val originYLeftMax = leftMax

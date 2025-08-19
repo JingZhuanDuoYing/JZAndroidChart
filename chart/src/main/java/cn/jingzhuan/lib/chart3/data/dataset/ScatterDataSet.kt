@@ -165,7 +165,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
             SHAPE_ALIGN_TOP -> {
                 val min = (anchor - expandHeight * 2).coerceAtMost(viewportYMin)
                 val range = viewportYMax - min
-                viewportYMax = (anchor - range * percent).coerceAtMost(viewportYMax)
+                viewportYMin = (anchor - range * percent).coerceAtMost(viewportYMin)
             }
             else -> {
                 val newMaxValue = anchor + expandHeight / 2
