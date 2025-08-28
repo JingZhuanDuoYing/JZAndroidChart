@@ -18,6 +18,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import androidx.core.util.isNotEmpty
 
 /**
  * @since 2023-09-06
@@ -28,7 +29,7 @@ class CandlestickDraw(
     private val renderPaint: Paint,
     var textPaint: Paint = Paint(),
     var decimalDigitsNumber: Int = 2,
-    var showScaleMin: Boolean = false
+    var showScaleMin: Boolean = false,
 ) : IDraw<CandlestickDataSet> {
 
     private val upperShadowBuffers = FloatArray(4)
@@ -39,6 +40,7 @@ class CandlestickDraw(
 
     private var linePaths: MutableList<Path> = ArrayList()
 
+    private var gapDrawCount = 0;
 
     override fun drawDataSet(
         canvas: Canvas,
@@ -194,19 +196,19 @@ class CandlestickDraw(
 
         val widthPercent = candlestickDataSet.candleWidthPercent
 
-        val gapArray = ArrayList<Pair<Float, Float>>()
+//        val gapArray = ArrayList<Pair<Float, Float>>()
 
         val dataSize = candlestickDataSet.values.size
         var leftIndex = (dataSize * viewport.left).roundToInt()
         leftIndex = max(leftIndex, 0)
         var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
-
-        var i = leftIndex
-        while (i < rightIndex) {
+        gapDrawCount = 0
+        var i = rightIndex - 1
+        while (i >= leftIndex) {
             val candlestick = candlestickDataSet.getEntryForIndex(i)
             if (candlestick == null || !candlestick.isVisible) {
-                i++
+                i--
                 continue
             }
 //            if (!visibleValues.contains(candlestick)) {
@@ -218,12 +220,13 @@ class CandlestickDraw(
             val candlestickCenterX = xPosition + candleWidth * 0.5
 
             // 画缺口
-            if (candlestickDataSet.enableGap) {
-                val lowGap = candlestickDataSet.lowGaps[i, null]
-                if (lowGap != null) gapArray.add(lowGap)
-                val highGap = candlestickDataSet.highGaps[i, null]
-                if (highGap != null) gapArray.add(highGap)
-            }
+            drawGaps(canvas, candlestickDataSet, xPosition, max, min, i, candleWidth)
+//            if (candlestickDataSet.enableGap) {
+//                val lowGap = candlestickDataSet.lowGaps[i, null]
+//                if (lowGap != null) gapArray.add(lowGap)
+//                val highGap = candlestickDataSet.highGaps[i, null]
+//                if (highGap != null) gapArray.add(highGap)
+//            }
 
             // 画背景
             if (candlestick.fillBackgroundColor != COLOR_NONE) {
@@ -254,7 +257,7 @@ class CandlestickDraw(
             lowerShadowBuffers[2] = candlestickCenterX.toFloat()
             candlestick.setCoordinate(candlestickCenterX.toFloat(), closeY)
 
-            if (candlestick.open.compareTo(candlestick.close) > 0) {
+            if (candlestick.open > candlestick.close) {
                 // 阴线
                 upperShadowBuffers[1] = highY
                 upperShadowBuffers[3] = openY
@@ -272,7 +275,7 @@ class CandlestickDraw(
                 } else {
                     renderPaint.style = candlestickDataSet.decreasingPaintStyle
                 }
-            } else if (candlestick.open.compareTo(candlestick.close) < 0) {
+            } else if (candlestick.open < candlestick.close) {
                 // 阳线
                 upperShadowBuffers[1] = highY
                 upperShadowBuffers[3] = closeY
@@ -306,10 +309,10 @@ class CandlestickDraw(
             if (i > 0) {
                 val previousValue = candlestickDataSet.getEntryForIndex(i - 1)
                 val isLimitUp20 =
-                    candlestick.close.compareTo(previousValue!!.close * 1.2f - 0.01f) > 0
+                    candlestick.close > previousValue!!.close * 1.2f - 0.01f
                             && candlestick.close == candlestick.high
 
-                val isLimitUp = candlestick.close.compareTo(previousValue.close * 1.1f - 0.01f) > 0
+                val isLimitUp = candlestick.close > previousValue.close * 1.1f - 0.01f
                         && candlestick.close == candlestick.high
 
                 if (candlestickDataSet.limitUpColor != Color.TRANSPARENT) {
@@ -356,39 +359,76 @@ class CandlestickDraw(
 
             canvas.drawLines(upperShadowBuffers, renderPaint)
             canvas.drawLines(lowerShadowBuffers, renderPaint)
-            i++
+            i--
         }
 
-        if (gapArray.isNotEmpty()) {
+//        if (gapArray.isNotEmpty()) {
+//            renderPaint.color = candlestickDataSet.gapColor
+//            renderPaint.style = Paint.Style.FILL
+//            var gaps = gapArray.toList()
+//            val size = gapArray.size
+//            val maxSize = candlestickDataSet.gapMaxSize
+//            if (size > maxSize) {
+//                gaps = gapArray.subList(size - maxSize, size)
+//            }
+//            gaps.forEach { value ->
+//                if (candlestickDataSet.lowGaps.containsValue(value)) {
+//                    val index = candlestickDataSet.lowGaps.indexOfValue(value)
+//                    val lowIndex = candlestickDataSet.lowGaps.keyAt(index)
+//                    val xPosition = startX + step * lowIndex
+//                    val delX = xPosition + candleWidth * 0.5f
+//                    drawGap(canvas, value, delX, max, min, candleWidth, 0)
+//                }
+//
+//                if (candlestickDataSet.highGaps.containsValue(value)) {
+//                    val index = candlestickDataSet.highGaps.indexOfValue(value)
+//                    val highIndex = candlestickDataSet.highGaps.keyAt(index)
+//                    val xPosition = startX + step * highIndex
+//                    val delX = xPosition + candleWidth * 0.5f
+//                    drawGap(canvas, value, delX, max, min, candleWidth, 1)
+//                }
+//
+//            }
+//
+//        }
+
+    }
+
+    private fun drawGaps(
+        canvas: Canvas,
+        candlestickDataSet: CandlestickDataSet,
+        xPosition: Float,
+        max: Float,
+        min: Float,
+        index: Int,
+        candleWidth: Float,
+    ) {
+        if (candlestickDataSet.enableGap && gapDrawCount < candlestickDataSet.gapMaxSize) {
+
             renderPaint.color = candlestickDataSet.gapColor
             renderPaint.style = Paint.Style.FILL
-            var gaps = gapArray.toList()
-            val size = gapArray.size
-            val maxSize = candlestickDataSet.gapMaxSize
-            if (size > maxSize) {
-                gaps = gapArray.subList(size - maxSize, size)
+
+            // 下跌缺口
+            if (candlestickDataSet.lowGaps.isNotEmpty()) {
+                val gap = candlestickDataSet.lowGaps[index, null]
+                if (gap != null) {
+                    gapDrawCount++
+                    val startX = xPosition + candleWidth * 0.5f
+                    drawGap(canvas, gap, startX, max, min, candleWidth, 0)
+                }
             }
-            gaps.forEach { value ->
-                if (candlestickDataSet.lowGaps.containsValue(value)) {
-                    val index = candlestickDataSet.lowGaps.indexOfValue(value)
-                    val lowIndex = candlestickDataSet.lowGaps.keyAt(index)
-                    val xPosition = startX + step * lowIndex
-                    val delX = xPosition + candleWidth * 0.5f
-                    drawGap(canvas, value, delX, max, min, candleWidth, 0)
-                }
 
-                if (candlestickDataSet.highGaps.containsValue(value)) {
-                    val index = candlestickDataSet.highGaps.indexOfValue(value)
-                    val highIndex = candlestickDataSet.highGaps.keyAt(index)
-                    val xPosition = startX + step * highIndex
-                    val delX = xPosition + candleWidth * 0.5f
-                    drawGap(canvas, value, delX, max, min, candleWidth, 1)
+            // 上涨缺口
+            if (candlestickDataSet.highGaps.isNotEmpty()) {
+                val gap = candlestickDataSet.highGaps[index, null]
+                if (gap != null) {
+                    gapDrawCount++
+                    val startX = xPosition + candleWidth * 0.5f
+                    drawGap(canvas, gap, startX, max, min, candleWidth, 1)
                 }
-
             }
 
         }
-
     }
 
     private fun drawGap(
@@ -398,7 +438,7 @@ class CandlestickDraw(
         max: Float,
         min: Float,
         candleWidth: Float,
-        type: Int
+        type: Int,
     ) {
         if (gap != null) {
             val y1: Float = (max - gap.first) / (max - min) * contentRect.height()

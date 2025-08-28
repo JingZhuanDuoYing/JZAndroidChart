@@ -161,6 +161,17 @@ class LineDraw(
         var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
 
+        val lastValue = lineDataSet.values.lastOrNull()
+        if (lastValue == null || lastValue.isValueNaN) {
+            for (i in (rightIndex - 1) downTo (leftIndex + 1)) {
+                val lineEntry = lineDataSet.getEntryForIndex(i)
+                if (lineEntry != null && !isNaN(lineEntry.value)) {
+                    rightIndex = i + 1
+                    break
+                }
+            }
+        }
+
         // 画带状线
         if (lineDataSet.isDrawBand) {
             try {
