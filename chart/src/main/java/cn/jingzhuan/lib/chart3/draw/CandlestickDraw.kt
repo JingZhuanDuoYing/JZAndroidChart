@@ -204,11 +204,20 @@ class CandlestickDraw(
         var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
         gapDrawCount = 0
-        var i = rightIndex - 1
-        while (i >= leftIndex) {
+
+        for (i in rightIndex - 1 downTo leftIndex) {
+            if (this.gapDrawCount < candlestickDataSet.gapMaxSize) {
+                drawGaps(canvas, candlestickDataSet, startX + step * i, max, min, i, candleWidth)
+            } else {
+                break
+            }
+        }
+
+        var i = leftIndex
+        while (i < rightIndex) {
             val candlestick = candlestickDataSet.getEntryForIndex(i)
             if (candlestick == null || !candlestick.isVisible) {
-                i--
+                i++
                 continue
             }
 //            if (!visibleValues.contains(candlestick)) {
@@ -219,8 +228,8 @@ class CandlestickDraw(
             val xPosition = startX + step * i
             val candlestickCenterX = xPosition + candleWidth * 0.5
 
-            // 画缺口
-            drawGaps(canvas, candlestickDataSet, xPosition, max, min, i, candleWidth)
+//            // 画缺口
+//            drawGaps(canvas, candlestickDataSet, xPosition, max, min, i, candleWidth)
 //            if (candlestickDataSet.enableGap) {
 //                val lowGap = candlestickDataSet.lowGaps[i, null]
 //                if (lowGap != null) gapArray.add(lowGap)
@@ -359,7 +368,7 @@ class CandlestickDraw(
 
             canvas.drawLines(upperShadowBuffers, renderPaint)
             canvas.drawLines(lowerShadowBuffers, renderPaint)
-            i--
+            i++
         }
 
 //        if (gapArray.isNotEmpty()) {
