@@ -509,12 +509,14 @@ class LineDraw(
         renderPaint.getTextBounds(text, 0, text.length, textBound)
         val padding = 10
 
-        var left = if (lineDataSet.horizontalLeft) textBound.width() + padding * 2 else 0
+        val left = if (lineDataSet.horizontalLeft) textBound.width() + padding * 2 else 0
         val yPosition: Float = (max - value.value) / (max - min) * contentRect.height()
         linePath.moveTo(left.toFloat(), yPosition)
         linePath.lineTo(contentRect.width().toFloat(), yPosition)
         canvas.drawPath(linePath, renderPaint)
         linePath.close()
+
+        textPaint.color = Color.WHITE
 
         renderPaint.pathEffect = null
         renderPaint.style = Paint.Style.FILL
