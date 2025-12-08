@@ -5,7 +5,7 @@ package cn.jingzhuan.lib.chart3.data.value
  * created by lei
  */
 class LineValue : AbstractValue {
-    var value = 0f
+    var value = 0.0
 
     var isPathEnd = false
 
@@ -17,7 +17,7 @@ class LineValue : AbstractValue {
     /**
      * 第二条数据 应用于: 指标 高抛低吸
      */
-    var secondValue = 0f
+    var secondValue = 0.0
 
     /**
      * 第二条数据: y轴坐标
@@ -33,47 +33,93 @@ class LineValue : AbstractValue {
 
     constructor()
 
-    constructor(value: Float) {
+    constructor(value: Double) {
         this.value = value
     }
 
-    constructor(value: Float, color: Int) {
+    constructor(value: Double, color: Int) {
         this.value = value
         this.color = color
     }
 
-    constructor(value: Float, secondValue: Float) {
+    constructor(value: Double, secondValue: Double) {
         this.value = value
         this.secondValue = secondValue
     }
 
-    constructor(value: Float, drawCircle: Boolean) {
+    constructor(value: Double, drawCircle: Boolean) {
         this.value = value
         this.isDrawCircle = drawCircle
     }
 
-    constructor(value: Float, time: Long) {
+    constructor(value: Double, time: Long) {
         this.value = value
         this.time = time
     }
 
-    constructor(value: Float, color: Int, time: Long) {
+    constructor(value: Double, color: Int, time: Long) {
         this.value = value
+        this.color = color
+        this.time = time
+    }
+
+    constructor(value: Double, secondValue: Double, time: Long) {
+        this.value = value
+        this.secondValue = secondValue
+        this.time = time
+    }
+
+    constructor(value: Double, drawCircle: Boolean, time: Long) {
+        this.value = value
+        this.isDrawCircle = drawCircle
+        this.time = time
+    }
+
+    // ------ Float Compatibility Constructors ------
+
+    constructor(value: Float) {
+        this.value = value.toDouble()
+    }
+
+    constructor(value: Float, color: Int) {
+        this.value = value.toDouble()
+        this.color = color
+    }
+
+    constructor(value: Float, secondValue: Float) {
+        this.value = value.toDouble()
+        this.secondValue = secondValue.toDouble()
+    }
+
+    constructor(value: Float, drawCircle: Boolean) {
+        this.value = value.toDouble()
+        this.isDrawCircle = drawCircle
+    }
+
+    constructor(value: Float, time: Long) {
+        this.value = value.toDouble()
+        this.time = time
+    }
+
+    constructor(value: Float, color: Int, time: Long) {
+        this.value = value.toDouble()
         this.color = color
         this.time = time
     }
 
     constructor(value: Float, secondValue: Float, time: Long) {
-        this.value = value
-        this.secondValue = secondValue
+        this.value = value.toDouble()
+        this.secondValue = secondValue.toDouble()
         this.time = time
     }
 
     constructor(value: Float, drawCircle: Boolean, time: Long) {
-        this.value = value
+        this.value = value.toDouble()
         this.isDrawCircle = drawCircle
         this.time = time
     }
+
+    // ---------------------------------------------
 
     val isValueNaN: Boolean
         get() = value.isNaN()

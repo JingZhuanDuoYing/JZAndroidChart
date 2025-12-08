@@ -88,11 +88,11 @@ open class MinuteChartView(
                     if (leftValue > axisLeft.yMax) leftValue = axisLeft.yMax
                     if (leftValue < axisLeft.yMin) leftValue = axisLeft.yMin
 
-                    val lineDataSet = chartData.dataSets.find { it is LineDataSet && it.lastClose != -1f } ?: return ""
+                    val lineDataSet = chartData.dataSets.find { it is LineDataSet && it.lastClose != -1.0 } ?: return ""
                     if (lineDataSet is LineDataSet) {
                         val lastClose = lineDataSet.lastClose
-                        if (leftValue.isNaN() || lastClose <= 0.0f) return ""
-                        val result = (leftValue - lastClose) / lastClose / 0.01f
+                        if (leftValue.isNaN() || lastClose <= 0.0) return ""
+                        val result = (leftValue - lastClose) / lastClose / 0.01
                         return "${NumberUtils.keepPrecision(result.toString(), 2)}%"
                     }
                     return ""

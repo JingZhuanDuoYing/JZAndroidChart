@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
  * created by lei
  */
 class ScatterValue : AbstractValue {
-    var value: Float
+    var value: Double
 
     var isVisible = true
 
@@ -18,30 +18,61 @@ class ScatterValue : AbstractValue {
 
     var infos: List<String> = emptyList()
 
-    constructor(value: Float) {
+    constructor(value: Double) {
         this.value = value
     }
 
-    constructor(value: Float, visible: Boolean) {
+    constructor(value: Double, visible: Boolean) {
         this.value = value
         this.isVisible = visible
     }
 
-    constructor(value: Float, visible: Boolean, flags: List<Int>) {
+    constructor(value: Double, visible: Boolean, flags: List<Int>) {
         this.value = value
         this.isVisible = visible
         this.flags = flags
     }
 
-    constructor(value: Float, visible: Boolean, color: Int) {
+    constructor(value: Double, visible: Boolean, color: Int) {
         this.value = value
         this.isVisible = visible
         this.color = color
     }
 
-    constructor(value: Float, infos: List<String>, visible: Boolean) {
+    constructor(value: Double, infos: List<String>, visible: Boolean) {
         this.value = value
         this.infos = infos
         this.isVisible = visible
     }
+
+    // ------ Float Compatibility Constructors ------
+
+    constructor(value: Float) {
+        this.value = value.toDouble()
+    }
+
+    constructor(value: Float, visible: Boolean) {
+        this.value = value.toDouble()
+        this.isVisible = visible
+    }
+
+    constructor(value: Float, visible: Boolean, flags: List<Int>) {
+        this.value = value.toDouble()
+        this.isVisible = visible
+        this.flags = flags
+    }
+
+    constructor(value: Float, visible: Boolean, color: Int) {
+        this.value = value.toDouble()
+        this.isVisible = visible
+        this.color = color
+    }
+
+    constructor(value: Float, infos: List<String>, visible: Boolean) {
+        this.value = value.toDouble()
+        this.infos = infos
+        this.isVisible = visible
+    }
+
+    // ---------------------------------------------
 }

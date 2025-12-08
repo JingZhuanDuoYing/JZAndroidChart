@@ -11,7 +11,6 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.BarDataSet
-import java.lang.Float.isNaN
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -109,13 +108,13 @@ class BarDraw(
             }
 
             var floatValues = barValue.values
-            if (floatValues == null || floatValues.isEmpty() || isNaN(floatValues.first())) {
+            if (floatValues == null || floatValues.isEmpty() || floatValues.first().isNaN()) {
                 i++
                 continue
             }
 
             if (dataSet.overlayKline && dataSet.overLayRatio != null) {
-                val overLayValues = FloatArray(floatValues.size)
+                val overLayValues = DoubleArray(floatValues.size)
                 floatValues.forEachIndexed { index, fl ->
                     overLayValues[index] = fl * (dataSet.overLayRatio ?: 1.0f)
                 }
@@ -137,7 +136,7 @@ class BarDraw(
             if (barValue.valueCount > 0) {
                 val value = floatValues[0] * chartAnimator.phaseY
                 var style = barValue.paintStyle
-                top = calcHeight(value, max, min)
+                top = calcHeight(value.toFloat(), max, min)
 
                 if (top == 0f && style == Paint.Style.STROKE) {
                     top += strokeThickness
@@ -147,7 +146,7 @@ class BarDraw(
                     style = Paint.Style.FILL
                 }
 
-                if (barValue.valueCount > 1) bottom = calcHeight(floatValues[1], max, min)
+                if (barValue.valueCount > 1) bottom = calcHeight(floatValues[1].toFloat(), max, min)
 
                 if (bottom.isNaN()) {
                     i++
@@ -188,9 +187,9 @@ class BarDraw(
                 if (dataSet.isDrawValueEnable) {
                     val valueFormatter = dataSet.valueFormatter
                     if (valueFormatter == null) {
-                        labelLength = FloatUtils.formatFloatValue(labelBuffer, value, 2)
+                        labelLength = FloatUtils.formatFloatValue(labelBuffer, value.toFloat(), 2)
                     } else {
-                        val labelCharArray = valueFormatter.format(floatValues[0], i).toCharArray()
+                        val labelCharArray = valueFormatter.format(floatValues[0].toFloat(), i).toCharArray()
                         labelLength = labelCharArray.size
                         System.arraycopy(
                             labelCharArray,

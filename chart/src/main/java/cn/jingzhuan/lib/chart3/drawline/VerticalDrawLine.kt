@@ -44,7 +44,7 @@ class VerticalDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
-        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }

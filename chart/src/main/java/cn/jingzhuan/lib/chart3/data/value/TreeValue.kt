@@ -11,27 +11,30 @@ class TreeValue(var leafs: List<Leaf>?) : AbstractValue() {
 
     var isEnable = true
 
-    fun getLeaf(high: Float): Leaf? {
+    fun getLeaf(high: Double): Leaf? {
         if (high.isNaN()) return null
 
         // 精确到小数点后2位
-        return leafs?.findLast { (it.high * 100.0f).roundToInt() == (high * 100.0f).roundToInt() }
+        return leafs?.findLast { (it.high * 100.0).roundToInt() == (high * 100.0).roundToInt() }
     }
 
-    val high: Float
-        get() = leafs?.maxBy { it.high }?.high ?: Float.NaN
+    // Float compatibility
+    fun getLeaf(high: Float): Leaf? = getLeaf(high.toDouble())
 
-    val low: Float
-        get() = leafs?.minBy { it.high }?.high ?: Float.NaN
+    val high: Double
+        get() = leafs?.maxBy { it.high }?.high ?: Double.NaN
 
-    val leftValue: Float
-        get() = leafs?.sumOf { it.leftValue.toDouble() }?.toFloat() ?: Float.NaN
+    val low: Double
+        get() = leafs?.minBy { it.high }?.high ?: Double.NaN
 
-    val rightValue: Float
-        get() = leafs?.sumOf { it.rightValue.toDouble() }?.toFloat() ?: Float.NaN
+    val leftValue: Double
+        get() = leafs?.sumOf { it.leftValue } ?: Double.NaN
 
-    val maxLeafValue: Float
-        get() = max(leafs?.maxBy { it.leftValue }?.leftValue ?: Float.NaN, leafs?.maxBy { it.rightValue }?.rightValue ?: Float.NaN)
+    val rightValue: Double
+        get() = leafs?.sumOf { it.rightValue } ?: Double.NaN
+
+    val maxLeafValue: Double
+        get() = max(leafs?.maxBy { it.leftValue }?.leftValue ?: Double.NaN, leafs?.maxBy { it.rightValue }?.rightValue ?: Double.NaN)
 
     val leafCount: Int
         get() = leafs?.size ?: 0

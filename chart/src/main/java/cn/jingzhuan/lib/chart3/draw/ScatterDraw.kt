@@ -15,7 +15,6 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_CENTER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_TOP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
-import java.lang.Float.isNaN
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -98,7 +97,7 @@ class ScatterDraw(
         var shapeHeight = shape?.intrinsicHeight?.toFloat() ?: 0f
         if (dataSet.isAutoWidth) {
             shapeWidth = max(width * 0.8f, dataSet.shapeMinWidth)
-            if (!isNaN(dataSet.shapeMaxWidth)) {
+            if (!dataSet.shapeMaxWidth.isNaN()) {
                 shapeWidth = min(shapeWidth, dataSet.shapeMaxWidth)
             }
             shapeHeight =
@@ -144,7 +143,7 @@ class ScatterDraw(
             if (dataSet.shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
 
                 var offset = shapeHeight
-                if (!isNaN(value.value)) {
+                if (!value.value.isNaN()) {
                     val lastOffset = parentBottomHeights.getOrDefault(heightIndexKey, 0f)
                     offset += lastOffset
                     parentBottomHeights[heightIndexKey] = offset
@@ -154,39 +153,39 @@ class ScatterDraw(
 
                 val offset = parentTopHeights.getOrDefault(heightIndexKey, 0f)
                 yPosition = contentRect.top + offset
-                if (!isNaN(value.value)) {
+                if (!value.value.isNaN()) {
                     parentTopHeights[heightIndexKey] = offset + shapeHeight
                 }
             } else if (dataSet.shapeAlign == SHAPE_ALIGN_BOTTOM) {
 
                 var offset = shapeHeight
-                if (!isNaN(value.value)) {
+                if (!value.value.isNaN()) {
                     val lastOffset = bottomHeights.getOrDefault(heightIndexKey, 0f)
                     offset += lastOffset
                     bottomHeights[heightIndexKey] = offset
                 }
-                yPosition = (max - value.value) / (max - min) * contentRect.height() - offset
+                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - offset
                 if (dataSet.isAutoTurn) {
                     if (yPosition < 0f) {
                         shouldTurn = true
-                        yPosition = (max - value.value) / (max - min) * contentRect.height() + offset - shapeHeight
+                        yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() + offset - shapeHeight
                     }
                 }
             } else if (dataSet.shapeAlign == SHAPE_ALIGN_TOP) {
 
                 val offset = topHeights.getOrDefault(heightIndexKey, 0f)
-                yPosition = (max - value.value) / (max - min) * contentRect.height() + offset
-                if (!isNaN(value.value)) {
+                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() + offset
+                if (!value.value.isNaN()) {
                     topHeights[heightIndexKey] = offset + shapeHeight
                 }
                 if (dataSet.isAutoTurn) {
                     if (yPosition > (contentRect.height() - shapeHeight - pointShapeHeight)) {
                         shouldTurn = true
-                        yPosition = (max - value.value) / (max - min) * contentRect.height() - offset - shapeHeight
+                        yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - offset - shapeHeight
                     }
                 }
             } else {
-                yPosition = (max - value.value) / (max - min) * contentRect.height() - yOffset
+                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - yOffset
             }
 
             if (value.shape != null) {

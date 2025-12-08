@@ -1311,11 +1311,11 @@ class Chart3Activity : AppCompatActivity() {
                 scatterTopValues.add(ScatterValue(value.close, false))
                 scatterBottomValues.add(ScatterValue(value.close, true))
                 circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
-            } else if (value.close == 2940.74f) {
+            } else if (value.close == 2940.74) {
                 scatterTopValues.add(ScatterValue(value.close, true))
                 scatterBottomValues.add(ScatterValue(value.close, false))
                 circleScatters.add(ScatterValue(value.close, true, Color.GREEN))
-            } else if (value.close == 3365.22f) {
+            } else if (value.close == 3365.22) {
                 scatterTopValues.add(ScatterValue(value.close, false))
                 scatterBottomValues.add(ScatterValue(value.close, true))
                 circleScatters.add(ScatterValue(value.close, true, Color.GREEN))

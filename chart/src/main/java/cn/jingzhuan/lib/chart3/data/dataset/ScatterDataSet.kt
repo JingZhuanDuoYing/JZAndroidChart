@@ -10,7 +10,7 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_CENTER
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_BOTTOM
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_PARENT_TOP
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
-import java.lang.Float.isNaN
+
 import java.util.Collections
 import kotlin.math.max
 import kotlin.math.min
@@ -94,12 +94,12 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
     private fun calcViewportMinMax(value: ScatterValue?) {
         if (value == null || !value.isVisible) return
-        if (isNaN(value.value)) return
+        if (value.value.isNaN()) return
         if (value.value < viewportYMin) {
-            viewportYMin = value.value
+            viewportYMin = value.value.toFloat()
         }
         if (value.value > viewportYMax) {
-            viewportYMax = value.value
+            viewportYMax = value.value.toFloat()
         }
     }
 
@@ -112,7 +112,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         offsetsMapper: MutableMap<String, MutableMap<String, Float>>,
     ) {
         if (value == null || !value.isVisible) return
-        if (isNaN(value.value)) return
+        if (value.value.isNaN()) return
         if (shape == null) return
 
         val originRange = originYMax - originYMin
@@ -146,7 +146,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
                 originYMin
             }
             else -> {
-                value.value
+                value.value.toFloat()
             }
         }
 

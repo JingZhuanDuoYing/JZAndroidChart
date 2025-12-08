@@ -48,10 +48,10 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
 //            val startX = startPoint.x
-            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+            val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
 //            val endX = endPoint.x
-            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+            val endY = chartView.getScaleY(endPoint.value.toFloat(), lMax, lMin)
 
             drawShape(canvas, dataSet, startY, endY, lMax, lMin)
             return
@@ -59,14 +59,14 @@ class HJFGDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
-        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
         val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
         val endX = getEntryX(endIndex, baseDataSet) ?: return
-        val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+        val endY = chartView.getScaleY(endPoint.value.toFloat(), lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }

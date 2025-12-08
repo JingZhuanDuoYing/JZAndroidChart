@@ -54,7 +54,7 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
             val startX = startPoint.x
-            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+            val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
             val startIndex = startPoint.dataIndex
             Log.i("drawShape1", "startX=$startX startIndex=$startIndex ")
             drawShape(canvas, dataSet, startX, startY, startIndex, text)
@@ -63,7 +63,7 @@ class FontDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abstra
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
-        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }

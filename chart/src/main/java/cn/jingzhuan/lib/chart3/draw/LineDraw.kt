@@ -15,7 +15,6 @@ import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.LineDataSet
 import cn.jingzhuan.lib.chart3.data.value.LineValue
-import java.lang.Float.isNaN
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
@@ -165,7 +164,7 @@ class LineDraw(
         if (lastValue == null || lastValue.isValueNaN) {
             for (i in (rightIndex - 1) downTo (leftIndex + 1)) {
                 val lineEntry = lineDataSet.getEntryForIndex(i)
-                if (lineEntry != null && !isNaN(lineEntry.value)) {
+                if (lineEntry != null && !lineEntry.value.isNaN()) {
                     rightIndex = i + 1
                     break
                 }
@@ -217,7 +216,7 @@ class LineDraw(
         if (headValue != null && !headValue.isValueNaN) {
             // 垂直方向绘制范围收缩至能容下线条的宽度
             val headYPosition: Float =
-                (max - headValue.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
+                (max - headValue.value.toFloat()) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
             linePath.moveTo(startX, headYPosition)
             var firstValue: LineValue? = null
             var firstXPosition = startX
@@ -234,7 +233,7 @@ class LineDraw(
 
             if (firstValue != null) {
                 val firstYPosition =
-                    (max - firstValue.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
+                    (max - firstValue.value.toFloat()) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
                 linePath.lineTo(firstXPosition, firstYPosition)
             }
         }
@@ -243,7 +242,7 @@ class LineDraw(
         var prevValue: LineValue? = null
 
         val shaderSplit =
-            !isNaN(lineDataSet.shaderBaseValue) && lineDataSet.shaderBaseValue < max && lineDataSet.shaderBaseValue > min
+            !lineDataSet.shaderBaseValue.isNaN() && lineDataSet.shaderBaseValue < max && lineDataSet.shaderBaseValue > min
 
         var lastIndex = 0
         if (chartAnimator.phaseX > 0) {
@@ -263,7 +262,7 @@ class LineDraw(
             }
             val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float =
-                (max - value.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
+                (max - value.value.toFloat()) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
             value.setCoordinate(xPosition, yPosition)
 
             //分段线条
@@ -306,7 +305,7 @@ class LineDraw(
 
             //阴影
             if (shaderSplit) {
-                val baseValue: Float = lineDataSet.shaderBaseValue
+                val baseValue: Float = lineDataSet.shaderBaseValue.toFloat()
                 val baseValueY: Float = contentRect.height() / (max - min) * (max - baseValue)
                 if (prevValue == null) {
                     preBaseX = value.x
@@ -459,7 +458,7 @@ class LineDraw(
                 continue
             }
             val xPosition = startX + step * (i + startIndexOffset)
-            var yPosition = (max - point.value) / (max - min) * contentRect.height()
+            var yPosition = (max - point.value.toFloat()) / (max - min) * contentRect.height()
             val candlestickCenterX = xPosition + candleWidth * 0.5f
             point.setCoordinate(candlestickCenterX, yPosition)
             if (yPosition + lineDataSet.radius > contentRect.bottom) {
@@ -510,7 +509,7 @@ class LineDraw(
         val padding = 10
 
         val left = if (lineDataSet.horizontalLeft) textBound.width() + padding * 2 else 0
-        val yPosition: Float = (max - value.value) / (max - min) * contentRect.height()
+        val yPosition: Float = (max - value.value.toFloat()) / (max - min) * contentRect.height()
         linePath.moveTo(left.toFloat(), yPosition)
         linePath.lineTo(contentRect.width().toFloat(), yPosition)
         canvas.drawPath(linePath, renderPaint)
@@ -591,9 +590,9 @@ class LineDraw(
             isCloseToBottom = point.value > point.secondValue
             //
             val xPosition = startX + step * (i + startIndexOffset)
-            val yPosition: Float = (max - point.value) / (max - min) * contentRect.height()
+            val yPosition: Float = (max - point.value.toFloat()) / (max - min) * contentRect.height()
             val secondYPosition: Float =
-                (max - point.secondValue) / (max - min) * contentRect.height()
+                (max - point.secondValue.toFloat()) / (max - min) * contentRect.height()
 
             point.setCoordinate(xPosition, yPosition)
             point.secondY = secondYPosition

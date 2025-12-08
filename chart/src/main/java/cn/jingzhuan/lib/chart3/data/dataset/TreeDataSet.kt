@@ -5,8 +5,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.TreeValue
-import java.lang.Float.isInfinite
-import java.lang.Float.isNaN
+
 import kotlin.math.max
 import kotlin.math.min
 
@@ -69,9 +68,9 @@ open class TreeDataSet : AbstractDataSet<TreeValue> {
         if (value == null || !value.isEnable) return
         val high = value.high
         val low = value.low
-        if (!isNaN(high) && !isInfinite(high)) {
-            viewportYMin = min(viewportYMin, low)
-            viewportYMax = max(viewportYMax, high)
+        if (!high.isNaN() && !high.isInfinite()) {
+            viewportYMin = min(viewportYMin, low.toFloat())
+            viewportYMax = max(viewportYMax, high.toFloat())
         }
     }
 

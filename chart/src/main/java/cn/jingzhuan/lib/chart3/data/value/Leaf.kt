@@ -6,8 +6,21 @@ package cn.jingzhuan.lib.chart3.data.value
  * created by lei
  */
 data class Leaf(
-    val high: Float,
-    val leftValue: Float,
-    val rightValue: Float,
-    val sumValue: Float
-)
+    val high: Double,
+    val leftValue: Double,
+    val rightValue: Double,
+    val sumValue: Double
+) {
+    // ------ Float Compatibility Constructors ------
+    constructor(
+        high: Float,
+        leftValue: Float,
+        rightValue: Float,
+        sumValue: Float
+    ) : this(
+        high.toDouble(),
+        leftValue.toDouble(),
+        rightValue.toDouble(),
+        sumValue.toDouble()
+    )
+}

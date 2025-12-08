@@ -5,8 +5,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.LineValue
-import java.lang.Float.isInfinite
-import java.lang.Float.isNaN
+
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,7 +18,7 @@ open class LineDataSet @JvmOverloads constructor(
     @AxisDependency axisDependency: Int = AxisY.DEPENDENCY_BOTH
 ) : AbstractDataSet<LineValue>(lineValues, axisDependency) {
 
-    open var lastClose = -1f
+    open var lastClose = -1.0
 
     var lineThickness = 2
 
@@ -31,7 +30,7 @@ open class LineDataSet @JvmOverloads constructor(
 
     var shaderBottom: Shader? = null
 
-    var shaderBaseValue = Float.NaN
+    var shaderBaseValue = Double.NaN
 
     var isLineVisible = true
 
@@ -101,14 +100,14 @@ open class LineDataSet @JvmOverloads constructor(
     }
 
     private fun calcViewportMinMax(value: LineValue?) {
-        if (isNaN(value!!.value) || isInfinite(value.value)) return
-        viewportYMin = min(value.value, viewportYMin)
-        viewportYMax = max(value.value, viewportYMax)
+        if (value == null || value.value.isNaN() || value.value.isInfinite()) return
+        viewportYMin = min(value.value.toFloat(), viewportYMin)
+        viewportYMax = max(value.value.toFloat(), viewportYMax)
 //        if (value.value < viewportYMin) viewportYMin = value.value
 //        if (value.value > viewportYMax) viewportYMax = value.value
         if (isDrawBand) {
-            viewportYMin = min(value.secondValue, viewportYMin)
-            viewportYMax = max(value.secondValue, viewportYMax)
+            viewportYMin = min(value.secondValue.toFloat(), viewportYMin)
+            viewportYMax = max(value.secondValue.toFloat(), viewportYMax)
 //            if (value.secondValue < value.value) {
 //                if (value.secondValue < viewportYMin) viewportYMin = value.secondValue
 //            }
@@ -135,7 +134,7 @@ open class LineDataSet @JvmOverloads constructor(
     val lines: List<LineValue>
         get() = values
 
-    fun setShaderBaseValue(shaderBaseValue: Float, shaderTop: Shader?, shaderBottom: Shader?) {
+    fun setShaderBaseValue(shaderBaseValue: Double, shaderTop: Shader?, shaderBottom: Shader?) {
         this.shaderBaseValue = shaderBaseValue
         this.shaderTop = shaderTop
         this.shaderBottom = shaderBottom

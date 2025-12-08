@@ -8,8 +8,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.CandlestickValue
-import java.lang.Float.isInfinite
-import java.lang.Float.isNaN
+
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -91,26 +90,26 @@ open class CandlestickDataSet @JvmOverloads constructor(
         }
 
         if (enableGap) {
-            var max = -Float.MAX_VALUE
-            var min = Float.MAX_VALUE
+            var max = -Double.MAX_VALUE
+            var min = Double.MAX_VALUE
             highGaps.clear()
             lowGaps.clear()
             val leftIndex = (values.size * viewport.left).roundToInt()
             for (i in visiblePoints.indices.reversed()) {
                 val e = visiblePoints[i]
-                if (isNaN(e.low)) continue
-                if (isNaN(e.high)) continue
-                if (isInfinite(e.low)) continue
-                if (isInfinite(e.high)) continue
-                if (min != Float.MAX_VALUE && max != -Float.MAX_VALUE) {
+                if (e.low.isNaN()) continue
+                if (e.high.isNaN()) continue
+                if (e.low.isInfinite()) continue
+                if (e.high.isInfinite()) continue
+                if (min != Double.MAX_VALUE && max != -Double.MAX_VALUE) {
                     val index = leftIndex + i
                     if (min - e.high > 0) {
                         // 上涨缺口
-                        highGaps.put(index, Pair(e.high, min))
+                        highGaps.put(index, Pair(e.high.toFloat(), min.toFloat()))
                     }
                     if (e.low - max > 0) {
                         // 下跌缺口
-                        lowGaps.put(index, Pair(e.low, max))
+                        lowGaps.put(index, Pair(e.low.toFloat(), max.toFloat()))
                     }
                 }
                 if (e.low < min) min = e.low
@@ -128,16 +127,16 @@ open class CandlestickDataSet @JvmOverloads constructor(
 
     private fun calcViewportMinMax(value: CandlestickValue?) {
         if (value == null || !value.isVisible) return
-        if (isNaN(value.low)) return
-        if (isNaN(value.high)) return
-        if (isInfinite(value.low)) return
-        if (isInfinite(value.high)) return
+        if (value.low.isNaN()) return
+        if (value.high.isNaN()) return
+        if (value.low.isInfinite()) return
+        if (value.high.isInfinite()) return
         if (value.low < viewportYMin) {
-            viewportYMin = value.low
+            viewportYMin = value.low.toFloat()
             minIndex = values.indexOf(value)
         }
         if (value.high > viewportYMax) {
-            viewportYMax = value.high
+            viewportYMax = value.high.toFloat()
             maxIndex = values.indexOf(value)
         }
     }

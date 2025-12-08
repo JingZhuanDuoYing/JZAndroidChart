@@ -194,15 +194,15 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
                 val maxData = dataSet.values[maxIndex]
                 val maxX = maxData.x
                 val maxValue = maxData.high
-                val maxY = (max - maxValue) / (max - min) * contentRect.height()
+                val maxY = (max - maxValue).toFloat() / (max - min) * contentRect.height()
 
                 val minIndex = dataSet.minIndex
                 val minData = dataSet.values[minIndex]
                 val minX = dataSet.values[minIndex].x
                 val minValue = minData.low
-                val minY = (max - minValue) / (max - min) * contentRect.height()
+                val minY = (max - minValue).toFloat() / (max - min) * contentRect.height()
 
-                maxMinArrowDraw.drawMaxMin(canvas, contentRect.width(), maxX, minX, maxY, minY, maxValue, minValue, chartView.decimalDigitsNumber)
+                maxMinArrowDraw.drawMaxMin(canvas, contentRect.width(), maxX, minX, maxY, minY, maxValue.toFloat(), minValue.toFloat(), chartView.decimalDigitsNumber)
             }
         }
 
@@ -215,7 +215,7 @@ class CombineChartRenderer(chart: AbstractChartView<AbstractDataSet<*>>) : Abstr
 
                 renderPaint.strokeWidth = chartView.highlightThickness.toFloat()
                 val lastPrice = dataSet.values.toList().lastOrNull()?.close ?: return
-                val yPosition: Float = (max - lastPrice) / (max - min) * contentRect.height()
+                val yPosition: Float = (max - lastPrice.toFloat()) / (max - min) * contentRect.height()
 
                 renderPaint.pathEffect = DashPathEffect(floatArrayOf(5f, 5f, 5f, 5f), 0f)
                 renderPaint.color = chartView.lastPriceLineColor

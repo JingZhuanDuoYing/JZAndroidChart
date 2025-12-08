@@ -9,7 +9,6 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
 import cn.jingzhuan.lib.chart3.data.dataset.TreeDataSet
-import java.lang.Float.isNaN
 
 /**
  * @since 2023-09-13
@@ -82,23 +81,23 @@ class TreeDraw(
 
         for (i in 0 until leafCount) {
             val leaf = treeValue.leafs?.get(i)
-            if (leaf == null || isNaN(leaf.high)) continue
+            if (leaf == null || leaf.high.isNaN()) continue
 
             val leftValue = leaf.leftValue
             val rightValue = leaf.rightValue
             val high = leaf.high * chartAnimator.phaseY
 
-            val y: Float = calcHeight(high, max, min)
+            val y: Float = calcHeight(high.toFloat(), max, min)
 
             treeValue.setCoordinate(contentRect.width() / 2f, y)
 
-            val left = zeroX - leftValue / maxLeafValue * maxLeafSpace
+            val left = zeroX - leftValue.toFloat() / maxLeafValue.toFloat() * maxLeafSpace
             val positiveColor =
                 ColorUtils.setAlphaComponent(dataSet.positiveColor, dataSet.colorAlpha)
             renderPaint.color = positiveColor
             canvas.drawLine(left, y, zeroX, y, renderPaint)
 
-            val right = zeroX + rightValue / maxLeafValue * maxLeafSpace
+            val right = zeroX + rightValue.toFloat() / maxLeafValue.toFloat() * maxLeafSpace
             val negativeColor =
                 ColorUtils.setAlphaComponent(dataSet.negativeColor, dataSet.colorAlpha)
             renderPaint.color = negativeColor

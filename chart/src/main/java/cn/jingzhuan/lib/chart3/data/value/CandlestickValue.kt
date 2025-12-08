@@ -9,23 +9,23 @@ import java.util.Objects
  * created by lei
  */
 class CandlestickValue : AbstractValue {
-    var high: Float
-    var low: Float
-    var open: Float
-    var close: Float
+    var high: Double
+    var low: Double
+    var open: Double
+    var close: Double
     var isVisible = true
     var paintStyle: Paint.Style? = null
     var color = ChartConstant.COLOR_NONE
     var fillBackgroundColor = ChartConstant.COLOR_NONE
 
-    constructor(high: Float, low: Float, open: Float, close: Float) {
+    constructor(high: Double, low: Double, open: Double, close: Double) {
         this.high = high
         this.low = low
         this.open = open
         this.close = close
     }
 
-    constructor(high: Float, low: Float, open: Float, close: Float, time: Long) {
+    constructor(high: Double, low: Double, open: Double, close: Double, time: Long) {
         this.high = high
         this.low = low
         this.open = open
@@ -33,7 +33,7 @@ class CandlestickValue : AbstractValue {
         this.time = time
     }
 
-    constructor(high: Float, low: Float, open: Float, close: Float, color: Int) {
+    constructor(high: Double, low: Double, open: Double, close: Double, color: Int) {
         this.high = high
         this.low = low
         this.open = open
@@ -41,11 +41,69 @@ class CandlestickValue : AbstractValue {
         this.color = color
     }
 
-    constructor(high: Float, low: Float, open: Float, close: Float, time: Long, color: Int) {
+    constructor(high: Double, low: Double, open: Double, close: Double, time: Long, color: Int) {
         this.high = high
         this.low = low
         this.open = open
         this.close = close
+        this.color = color
+        this.time = time
+    }
+
+    constructor(
+        high: Double,
+        low: Double,
+        open: Double,
+        close: Double,
+        mPaintStyle: Paint.Style?,
+        color: Int
+    ) {
+        this.high = high
+        this.low = low
+        this.open = open
+        this.close = close
+        paintStyle = mPaintStyle
+        this.color = color
+    }
+
+    constructor(high: Double, low: Double, open: Double, close: Double, mPaintStyle: Paint.Style?) {
+        this.high = high
+        this.low = low
+        this.open = open
+        this.close = close
+        paintStyle = mPaintStyle
+    }
+
+    // ------ Float Compatibility Constructors ------
+
+    constructor(high: Float, low: Float, open: Float, close: Float) {
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
+    }
+
+    constructor(high: Float, low: Float, open: Float, close: Float, time: Long) {
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
+        this.time = time
+    }
+
+    constructor(high: Float, low: Float, open: Float, close: Float, color: Int) {
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
+        this.color = color
+    }
+
+    constructor(high: Float, low: Float, open: Float, close: Float, time: Long, color: Int) {
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
         this.color = color
         this.time = time
     }
@@ -58,21 +116,23 @@ class CandlestickValue : AbstractValue {
         mPaintStyle: Paint.Style?,
         color: Int
     ) {
-        this.high = high
-        this.low = low
-        this.open = open
-        this.close = close
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
         paintStyle = mPaintStyle
         this.color = color
     }
 
     constructor(high: Float, low: Float, open: Float, close: Float, mPaintStyle: Paint.Style?) {
-        this.high = high
-        this.low = low
-        this.open = open
-        this.close = close
+        this.high = high.toDouble()
+        this.low = low.toDouble()
+        this.open = open.toDouble()
+        this.close = close.toDouble()
         paintStyle = mPaintStyle
     }
+
+    // ---------------------------------------------
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

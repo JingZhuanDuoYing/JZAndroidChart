@@ -14,7 +14,6 @@ import cn.jingzhuan.lib.chart3.data.dataset.ScatterTextDataSet
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_ALIGN_BOTTOM
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_LEFT
 import cn.jingzhuan.lib.chart3.utils.ChartConstant.SCATTER_TEXT_HORIZONTAL_RIGHT
-import java.lang.Float.isNaN
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -122,7 +121,7 @@ class ScatterTextDraw(
 
         while (i < rightIndex) {
             val value = dataSet.getEntryForIndex(i)
-            if (value == null || !value.isVisible || isNaN(value.high) || isNaN(value.low)) {
+            if (value == null || !value.isVisible || value.high.isNaN() || value.low.isNaN()) {
                 i++
                 continue
             }
@@ -133,8 +132,8 @@ class ScatterTextDraw(
 
 
             val xPosition = startX + step * (i + startIndexOffset)
-            val yHighPosition = (max - value.high) / (max - min) * contentRect.height()
-            val yLowPosition = (max - value.low) / (max - min) * contentRect.height()
+            val yHighPosition = (max - value.high.toFloat()) / (max - min) * contentRect.height()
+            val yLowPosition = (max - value.low.toFloat()) / (max - min) * contentRect.height()
             var anchor = yHighPosition
 
 
@@ -329,7 +328,7 @@ class ScatterTextDraw(
             }
 
             val value = dataSet.getEntryForIndex(i)
-            if (value == null || !value.isVisible || isNaN(value.high) || isNaN(value.low)) {
+            if (value == null || !value.isVisible || value.high.isNaN() || value.low.isNaN()) {
                 invalidTime++
                 continue
             }

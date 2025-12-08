@@ -7,7 +7,7 @@ import java.util.Objects
  * created by lei
  */
 class DrawLineValue : AbstractValue {
-    var value = 0f
+    var value = 0.0
 
     var dataIndex = -1
 
@@ -15,20 +15,39 @@ class DrawLineValue : AbstractValue {
 
     constructor()
 
-    constructor(value: Float) {
+    constructor(value: Double) {
         this.value = value
     }
 
-    constructor(value: Float, time: Long) {
+    constructor(value: Double, time: Long) {
         this.value = value
         this.time = time
     }
 
-    constructor(value: Float, time: Long, isVisible: Boolean) {
+    constructor(value: Double, time: Long, isVisible: Boolean) {
         this.value = value
         this.time = time
         this.isVisible = isVisible
     }
+
+    // ------ Float Compatibility Constructors ------
+
+    constructor(value: Float) {
+        this.value = value.toDouble()
+    }
+
+    constructor(value: Float, time: Long) {
+        this.value = value.toDouble()
+        this.time = time
+    }
+
+    constructor(value: Float, time: Long, isVisible: Boolean) {
+        this.value = value.toDouble()
+        this.time = time
+        this.isVisible = isVisible
+    }
+
+    // ---------------------------------------------
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

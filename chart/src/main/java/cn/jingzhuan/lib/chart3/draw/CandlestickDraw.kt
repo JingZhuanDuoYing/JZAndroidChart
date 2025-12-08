@@ -128,7 +128,7 @@ class CandlestickDraw(
             }
             val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float =
-                (max - close) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
+                (max - close.toFloat()) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f
             value.setCoordinate(xPosition, yPosition)
 
             if (isFirst) {
@@ -250,10 +250,10 @@ class CandlestickDraw(
                 )
             }
 
-            val highY: Float = (max - candlestick.high) / (max - min) * contentRect.height()
-            val lowY: Float = (max - candlestick.low) / (max - min) * contentRect.height()
-            val openY: Float = (max - candlestick.open) / (max - min) * contentRect.height()
-            val closeY: Float = (max - candlestick.close) / (max - min) * contentRect.height()
+            val highY: Float = (max - candlestick.high.toFloat()) / (max - min) * contentRect.height()
+            val lowY: Float = (max - candlestick.low.toFloat()) / (max - min) * contentRect.height()
+            val openY: Float = (max - candlestick.open.toFloat()) / (max - min) * contentRect.height()
+            val closeY: Float = (max - candlestick.close.toFloat()) / (max - min) * contentRect.height()
 
             bodyBuffers[0] = (xPosition + (1 - widthPercent) * 0.5 * candleWidth).toFloat()
             bodyBuffers[1] = closeY

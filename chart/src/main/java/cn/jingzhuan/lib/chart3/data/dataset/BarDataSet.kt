@@ -6,8 +6,7 @@ import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.axis.AxisY.AxisDependency
 import cn.jingzhuan.lib.chart3.data.value.BarValue
 import cn.jingzhuan.lib.chart3.formatter.IValueFormatter
-import java.lang.Float.isInfinite
-import java.lang.Float.isNaN
+
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -77,8 +76,8 @@ open class BarDataSet @JvmOverloads constructor(
             val startIndex = max((dataSize * viewport.left).roundToInt(), 0)
             //k线在当前屏幕内的起点
             val fbOpen = baseDataSet.values.getOrNull(startIndex)?.open ?: return null
-            if (!isNaN(foOpen) && foOpen != 0f) {
-                overLayRatio = fbOpen / foOpen
+            if (!foOpen.isNaN() && foOpen != 0.0) {
+                overLayRatio = (fbOpen / foOpen).toFloat()
                 return overLayRatio
             }
         }
@@ -114,9 +113,9 @@ open class BarDataSet @JvmOverloads constructor(
         if (value == null || !value.isEnable) return
         if (value.values == null) return
         for (v in value.values!!) {
-            if (!isNaN(v) && !isInfinite(v)) {
-                viewportYMin = min(viewportYMin, v * (overLayRatio ?: 1.0f))
-                viewportYMax = max(viewportYMax, v * (overLayRatio ?: 1.0f))
+            if (!v.isNaN() && !v.isInfinite()) {
+                viewportYMin = min(viewportYMin, (v * (overLayRatio ?: 1.0f)).toFloat())
+                viewportYMax = max(viewportYMax, (v * (overLayRatio ?: 1.0f)).toFloat())
             }
         }
     }

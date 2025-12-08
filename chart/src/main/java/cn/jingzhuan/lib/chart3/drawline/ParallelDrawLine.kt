@@ -43,10 +43,10 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
             val startX = startPoint.x
-            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+            val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
             val endX = endPoint.x
-            val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+            val endY = chartView.getScaleY(endPoint.value.toFloat(), lMax, lMin)
 
             var thirdX: Float? = null
             var thirdY: Float? = null
@@ -62,14 +62,14 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
-        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }
         }
 
         val endIndex = getIndexInTime(dataSet, baseDataSet, endPoint.time)
         val endX = getEntryX(endIndex, baseDataSet) ?: return
-        val endY = chartView.getScaleY(endPoint.value, lMax, lMin)
+        val endY = chartView.getScaleY(endPoint.value.toFloat(), lMax, lMin)
         if (!dataSet.isSelect || dataSet.isActionUp) {
             endPoint.apply { dataIndex = endIndex; x = endX; y = endY }
         }
@@ -79,7 +79,7 @@ class ParallelDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Ab
         if (thirdPoint != null) {
             val thirdIndex = getIndexInTime(dataSet, baseDataSet, thirdPoint.time)
             thirdX = getEntryX(thirdIndex, baseDataSet) ?: return
-            thirdY = chartView.getScaleY(thirdPoint.value, lMax, lMin)
+            thirdY = chartView.getScaleY(thirdPoint.value.toFloat(), lMax, lMin)
             if (!dataSet.isSelect || dataSet.isActionUp) {
                 thirdPoint.apply { dataIndex = thirdIndex; x = thirdX; y = thirdY }
             }

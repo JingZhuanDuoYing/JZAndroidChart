@@ -36,7 +36,7 @@ class HorizonDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
 
         // 没有吸附并且没有抬起时平顺滑动
         if (!chartView.isDrawLineAdsorb && !dataSet.isActionUp) {
-            val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+            val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
             drawShape(canvas, dataSet, startY)
             return
@@ -44,7 +44,7 @@ class HorizonDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView<T>) : Abs
 
         val startIndex = getIndexInTime(dataSet, baseDataSet, startPoint.time)
         val startX = getEntryX(startIndex, baseDataSet) ?: return
-        val startY = chartView.getScaleY(startPoint.value, lMax, lMin)
+        val startY = chartView.getScaleY(startPoint.value.toFloat(), lMax, lMin)
 
         if (!dataSet.isSelect || dataSet.isActionUp) {
             startPoint.apply { dataIndex = startIndex; x = startX; y = startY }

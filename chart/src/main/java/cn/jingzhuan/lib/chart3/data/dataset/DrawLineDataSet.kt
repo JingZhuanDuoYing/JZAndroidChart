@@ -6,8 +6,7 @@ import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.value.DrawLineValue
 import cn.jingzhuan.lib.chart3.drawline.DrawLineState
-import java.lang.Float.isInfinite
-import java.lang.Float.isNaN
+
 import kotlin.math.max
 
 /**
@@ -185,13 +184,13 @@ class DrawLineDataSet@JvmOverloads constructor(
 
     private fun calcViewportMinMax(e: DrawLineValue?) {
         if (e == null || !e.isVisible) return
-        if (isNaN(e.value)) return
-        if (isInfinite(e.value)) return
+        if (e.value.isNaN()) return
+        if (e.value.isInfinite()) return
         if (e.value < viewportYMin) {
-            viewportYMin = e.value
+            viewportYMin = e.value.toFloat()
         }
         if (e.value > viewportYMax) {
-            viewportYMax = e.value
+            viewportYMax = e.value.toFloat()
         }
     }
 

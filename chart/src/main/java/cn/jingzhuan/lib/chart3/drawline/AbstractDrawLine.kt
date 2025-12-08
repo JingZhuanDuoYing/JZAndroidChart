@@ -103,7 +103,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }
 
-        val y = chartView.getScaleY(value.value, lMax, lMin)
+        val y = chartView.getScaleY(value.value.toFloat(), lMax, lMin)
 //        Log.d("onPressDrawLine", "画起点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
         canvas.drawCircle(x, y, dataSet.pointOuterR, bgPaint)
@@ -130,7 +130,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }
 
-        val y = chartView.getScaleY(value.value, lMax, lMin)
+        val y = chartView.getScaleY(value.value.toFloat(), lMax, lMin)
 
 //        Log.d("onPressDrawLine", "画终点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
@@ -159,7 +159,7 @@ abstract class AbstractDrawLine<T : AbstractDataSet<*>>(chart: AbstractChartView
             x = getEntryX(value.dataIndex, baseDataSet) ?: return
         }
 
-        val y = chartView.getScaleY(value.value, lMax, lMin)
+        val y = chartView.getScaleY(value.value.toFloat(), lMax, lMin)
 
 //        Log.d("onPressDrawLine", "画平行点, dataIndex=${value.dataIndex}, x=$x, y=$y")
         bgPaint.alpha = dataSet.selectAlpha * 4
