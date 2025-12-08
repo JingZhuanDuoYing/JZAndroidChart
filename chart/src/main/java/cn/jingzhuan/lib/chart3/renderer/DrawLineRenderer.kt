@@ -101,12 +101,12 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         canvas: Canvas,
         dataSet: DrawLineDataSet,
         baseDataSet: AbstractDataSet<*>,
-        leftMax: Float,
-        leftMin: Float,
+        leftMax: Double,
+        leftMin: Double,
     ) {
         val type = dataSet.lineType
         val draw = drawMap[type]
-        draw?.onDraw(canvas, dataSet, baseDataSet, leftMax, leftMin)
+        draw?.onDraw(canvas, dataSet, baseDataSet, leftMax.toFloat(), leftMin.toFloat())
     }
 
 
@@ -566,8 +566,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         dataSet: DrawLineDataSet,
         point: PointF,
         baseDataSet: AbstractDataSet<*>,
-        lMax: Float,
-        lMin: Float,
+        lMax: Double,
+        lMin: Double,
     ): Boolean {
         val visibleValues = baseDataSet.getVisiblePoints(chartView.currentViewport)
         if (visibleValues.isNullOrEmpty()) return false
@@ -581,7 +581,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
         // 检查是否能拖动起点
         val startX = drawMap[dataSet.lineType]?.getEntryX(startValue?.dataIndex ?: -1, baseDataSet) ?: -1f
-        val startY = chartView.getScaleY(startValue?.value?.toFloat() ?: 0f, lMax, lMin)
+        val startY = chartView.getScaleY(startValue?.value ?: 0.0, lMax, lMin)
         var startRect = RectF(startX - radius, startY - radius, startX + radius, startY + radius)
         if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
             startRect = RectF(startX - radius, 0f, startX + radius, contentRect.height().toFloat())
@@ -594,7 +594,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
         // 检查是否能拖动终点
         val endX = drawMap[dataSet.lineType]?.getEntryX(endValue?.dataIndex ?: -1, baseDataSet) ?: -1f
-        val endY = chartView.getScaleY(endValue?.value?.toFloat() ?: 0f, lMax, lMin)
+        val endY = chartView.getScaleY(endValue?.value ?: 0.0, lMax, lMin)
         var endRect = RectF(endX - radius, endY - radius, endX + radius, endY + radius)
         if (dataSet.lineType == DrawLineType.ltFBNC.ordinal) {
             endRect = RectF(endX - radius, 0f, endX + radius, contentRect.height().toFloat())
@@ -608,7 +608,7 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
         // 检查是否能拖动平行点
         if (thirdValue != null) {
             val x = drawMap[dataSet.lineType]?.getEntryX(thirdValue.dataIndex, baseDataSet) ?: -1f
-            val y = chartView.getScaleY(thirdValue.value.toFloat(), lMax, lMin)
+            val y = chartView.getScaleY(thirdValue.value, lMax, lMin)
             val rectF = RectF(x - radius, y - radius, x + radius, y + radius)
             if (checkInRect(point, rectF)) {
                 dragState = ChartConstant.DRAW_LINE_DRAG_THIRD
@@ -659,8 +659,8 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
     private fun getValue(
         point: PointF,
         baseValues: MutableList<out AbstractValue>,
-        lMax: Float,
-        lMin: Float,
+        lMax: Double,
+        lMin: Double,
         adsorb: Boolean = false,
         historyTimes: List<Long>
     ): DrawLineValue? {
@@ -674,10 +674,10 @@ class DrawLineRenderer<T : AbstractDataSet<*>>(
 
         // 如果是K线才有吸附功能
         if (adsorb && baseValue != null && baseValue is CandlestickValue) {
-            val openY = chartView.getScaleY(baseValue.open.toFloat(), lMax, lMin)
-            val closeY = chartView.getScaleY(baseValue.close.toFloat(), lMax, lMin)
-            val highY = chartView.getScaleY(baseValue.high.toFloat(), lMax, lMin)
-            val lowY = chartView.getScaleY(baseValue.low.toFloat(), lMax, lMin)
+            val openY = chartView.getScaleY(baseValue.open, lMax, lMin)
+            val closeY = chartView.getScaleY(baseValue.close, lMax, lMin)
+            val highY = chartView.getScaleY(baseValue.high, lMax, lMin)
+            val lowY = chartView.getScaleY(baseValue.low, lMax, lMin)
 
             when (selectY) {
                 in highY - lessDistanceY..highY -> {

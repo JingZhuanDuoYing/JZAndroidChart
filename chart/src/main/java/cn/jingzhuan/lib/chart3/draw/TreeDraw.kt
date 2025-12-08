@@ -44,14 +44,14 @@ class TreeDraw(
     private fun drawTree(
         canvas: Canvas,
         dataSet: TreeDataSet,
-        lMax: Float,
-        lMin: Float,
-        rMax: Float,
-        rMin: Float,
+        lMax: Double,
+        lMin: Double,
+        rMax: Double,
+        rMin: Double,
     ) {
 
-        val min: Float
-        val max: Float
+        val min: Double
+        val max: Double
 
         when (dataSet.axisDependency) {
             AxisY.DEPENDENCY_RIGHT -> {
@@ -87,7 +87,7 @@ class TreeDraw(
             val rightValue = leaf.rightValue
             val high = leaf.high * chartAnimator.phaseY
 
-            val y: Float = calcHeight(high.toFloat(), max, min)
+            val y: Float = calcHeight(high, max, min)
 
             treeValue.setCoordinate(contentRect.width() / 2f, y)
 
@@ -106,8 +106,8 @@ class TreeDraw(
 
     }
 
-    private fun calcHeight(value: Float, max: Float, min: Float): Float {
-        return if (max.compareTo(min) == 0) 0f else (max - value) / (max - min) * contentRect.height()
+    private fun calcHeight(value: Double, max: Double, min: Double): Float {
+        return if (max.compareTo(min) == 0) 0f else ((max - value) / (max - min) * contentRect.height()).toFloat()
     }
 
 }

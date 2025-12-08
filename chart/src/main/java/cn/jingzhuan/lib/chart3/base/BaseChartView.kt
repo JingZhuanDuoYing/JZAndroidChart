@@ -317,6 +317,8 @@ open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
         }
     }
 
+
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isOpenRange && isTouchRangeEnable) {
             if (rangeRenderer.onTouchEvent(event)) {

@@ -508,16 +508,16 @@ class HighlightRenderer<T : AbstractDataSet<*>>(
         return labelTextPaint.measureText(text).roundToInt() + padding * 2
     }
 
-    private fun getTouchPriceByY(touchY: Float, viewportMax: Float, viewportMin: Float): Float {
+    private fun getTouchPriceByY(touchY: Float, viewportMax: Double, viewportMin: Double): Float {
         if (viewportMax > viewportMin) {
             val contentRect = chart.contentRect
             var price =
                 viewportMin + (viewportMax - viewportMin) / contentRect.height() * (contentRect.height() - touchY)
             if (price > viewportMax) price = viewportMax
             if (price < viewportMin) price = viewportMin
-            return price
+            return price.toFloat()
         } else if (viewportMax == viewportMin) {
-            return viewportMax
+            return viewportMax.toFloat()
         }
         return Float.NaN
     }

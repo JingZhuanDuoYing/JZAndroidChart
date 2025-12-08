@@ -48,13 +48,13 @@ class BarDraw(
         canvas: Canvas,
         dataSet: BarDataSet,
         viewport: Viewport,
-        lMax: Float,
-        lMin: Float,
-        rMax: Float,
-        rMin: Float,
+        lMax: Double,
+        lMin: Double,
+        rMax: Double,
+        rMin: Double,
     ) {
-        val min: Float
-        val max: Float
+        val min: Double
+        val max: Double
 
         when (dataSet.axisDependency) {
             AxisY.DEPENDENCY_RIGHT -> {
@@ -131,12 +131,12 @@ class BarDraw(
 
             val x = startX + step * (i + startIndexOffset)
             var top: Float
-            var bottom: Float = calcHeight(0f, max, min)
+            var bottom: Float = calcHeight(0.0, max, min)
 
             if (barValue.valueCount > 0) {
                 val value = floatValues[0] * chartAnimator.phaseY
                 var style = barValue.paintStyle
-                top = calcHeight(value.toFloat(), max, min)
+                top = calcHeight(value, max, min)
 
                 if (top == 0f && style == Paint.Style.STROKE) {
                     top += strokeThickness
@@ -146,7 +146,7 @@ class BarDraw(
                     style = Paint.Style.FILL
                 }
 
-                if (barValue.valueCount > 1) bottom = calcHeight(floatValues[1].toFloat(), max, min)
+                if (barValue.valueCount > 1) bottom = calcHeight(floatValues[1], max, min)
 
                 if (bottom.isNaN()) {
                     i++
@@ -214,8 +214,8 @@ class BarDraw(
 
     }
 
-    private fun calcHeight(value: Float, max: Float, min: Float): Float {
-        return if (max.compareTo(min) == 0) 0f else (max - value) / (max - min) * contentRect.height()
+    private fun calcHeight(value: Double, max: Double, min: Double): Float {
+        return if (max.compareTo(min) == 0) 0f else ((max - value) / (max - min) * contentRect.height()).toFloat()
     }
 
 }

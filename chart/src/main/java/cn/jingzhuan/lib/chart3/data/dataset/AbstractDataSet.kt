@@ -22,9 +22,9 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var isVisible = true
 
-    var minVisibleY = Float.MAX_VALUE
+    var minVisibleY = Double.MAX_VALUE
 
-    var maxVisibleY = -Float.MAX_VALUE
+    var maxVisibleY = -Double.MAX_VALUE
 
     var minValueOffsetPercent = 0f
 
@@ -93,7 +93,7 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
 
     override fun calcMinMax(viewport: Viewport) {}
 
-    override fun calcMinMax(viewport: Viewport, content: Rect, max: Float, min: Float) {
+    override fun calcMinMax(viewport: Viewport, content: Rect, max: Double, min: Double) {
         calcMinMax(viewport)
     }
 

@@ -28,13 +28,13 @@ open class ChartData<T : AbstractDataSet<*>> {
 
     private var chartData: MutableList<T> = Collections.synchronizedList(ArrayList())
 
-    var leftMin = Float.MAX_VALUE
+    var leftMin = Double.MAX_VALUE
 
-    var leftMax = -Float.MAX_VALUE
+    var leftMax = -Double.MAX_VALUE
 
-    var rightMin = Float.MAX_VALUE
+    var rightMin = Double.MAX_VALUE
 
-    var rightMax = -Float.MAX_VALUE
+    var rightMax = -Double.MAX_VALUE
 
     private var axisRenderers: ArrayMap<Int, AxisRenderer<T>>? = null
 
@@ -62,33 +62,33 @@ open class ChartData<T : AbstractDataSet<*>> {
 
     fun clear() {
         synchronized(this) { dataSets.clear() }
-        leftMin = Float.MAX_VALUE
-        leftMax = -Float.MAX_VALUE
-        rightMin = Float.MAX_VALUE
-        rightMax = -Float.MAX_VALUE
+        leftMin = Double.MAX_VALUE
+        leftMax = -Double.MAX_VALUE
+        rightMin = Double.MAX_VALUE
+        rightMax = -Double.MAX_VALUE
     }
 
     private fun setAxisMinMax() {
         if (axisRenderers != null) {
             val leftAxis = axisRenderers?.get(TYPE_AXIS_LEFT)?.axis as AxisY
             leftAxis.apply {
-                yMin = leftMin
-                yMax = leftMax
+                yMin = leftMin.toFloat()
+                yMax = leftMax.toFloat()
             }
 
             val rightAxis = axisRenderers?.get(TYPE_AXIS_RIGHT)?.axis as AxisY
             rightAxis.apply {
-                yMin = rightMin
-                yMax = rightMax
+                yMin = rightMin.toFloat()
+                yMax = rightMax.toFloat()
             }
         }
     }
 
     open fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float) {
-        calcMaxMin(viewport, content, offsetPercent, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE)
+        calcMaxMin(viewport, content, offsetPercent, -Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Double.MAX_VALUE)
     }
 
-    open fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float, lMax: Float, lMin: Float, rMax: Float, rMin: Float) {
+    open fun calcMaxMin(viewport: Viewport, content: Rect, offsetPercent: Float, lMax: Double, lMin: Double, rMax: Double, rMin: Double) {
         leftMin = lMin
         leftMax = lMax
         rightMin = rMin
@@ -121,8 +121,8 @@ open class ChartData<T : AbstractDataSet<*>> {
     }
 
     private fun calcMinMaxScatters(dataSets: List<T>, viewport: Viewport, content: Rect) {
-        if (dataSets.isNotEmpty() && abs(leftMin) != Float.MAX_VALUE && abs(leftMax) != Float.MAX_VALUE
-            || abs(rightMin) != Float.MAX_VALUE && abs(rightMax) != Float.MAX_VALUE) {
+        if (dataSets.isNotEmpty() && abs(leftMin) != Double.MAX_VALUE && abs(leftMax) != Double.MAX_VALUE
+            || abs(rightMin) != Double.MAX_VALUE && abs(rightMax) != Double.MAX_VALUE) {
             this.offsetsMapper.clear()
             val originYLeftMax = leftMax
             val originYLeftMin = leftMin
@@ -166,10 +166,10 @@ open class ChartData<T : AbstractDataSet<*>> {
         t: ScatterDataSet,
         viewport: Viewport,
         content: Rect,
-        originYLeftMax: Float,
-        originYLeftMin: Float,
-        originYRightMax: Float,
-        originYRightMin: Float,
+        originYLeftMax: Double,
+        originYLeftMin: Double,
+        originYRightMax: Double,
+        originYRightMin: Double,
         offsetsMapper: MutableMap<String, MutableMap<String, Float>>
     ) {
         if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {

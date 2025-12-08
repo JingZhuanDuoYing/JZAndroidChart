@@ -72,8 +72,8 @@ open class LineDataSet @JvmOverloads constructor(
     }
 
     private fun calcViewportY(viewport: Viewport) {
-        maxVisibleY = -Float.MAX_VALUE
-        minVisibleY = Float.MAX_VALUE
+        maxVisibleY = -Double.MAX_VALUE
+        minVisibleY = Double.MAX_VALUE
 
         if (headPoint != null) {
             calcViewportMinMax(headPoint)
@@ -93,21 +93,21 @@ open class LineDataSet @JvmOverloads constructor(
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
             maxVisibleY += range * maxValueOffsetPercent
         }
-        if (maxVisibleY == 0f && minVisibleY == 0f) {
-            maxVisibleY = 0.01f
-            minVisibleY = -0.01f
+        if (maxVisibleY == 0.0 && minVisibleY == 0.0) {
+            maxVisibleY = 0.01
+            minVisibleY = -0.01
         }
     }
 
     private fun calcViewportMinMax(value: LineValue?) {
         if (value == null || value.value.isNaN() || value.value.isInfinite()) return
-        minVisibleY = min(value.value.toFloat(), minVisibleY)
-        maxVisibleY = max(value.value.toFloat(), maxVisibleY)
+        minVisibleY = min(value.value, minVisibleY)
+        maxVisibleY = max(value.value, maxVisibleY)
 //        if (value.value < minVisibleY) minVisibleY = value.value
 //        if (value.value > maxVisibleY) maxVisibleY = value.value
         if (isDrawBand) {
-            minVisibleY = min(value.secondValue.toFloat(), minVisibleY)
-            maxVisibleY = max(value.secondValue.toFloat(), maxVisibleY)
+            minVisibleY = min(value.secondValue, minVisibleY)
+            maxVisibleY = max(value.secondValue, maxVisibleY)
 //            if (value.secondValue < value.value) {
 //                if (value.secondValue < minVisibleY) minVisibleY = value.secondValue
 //            }

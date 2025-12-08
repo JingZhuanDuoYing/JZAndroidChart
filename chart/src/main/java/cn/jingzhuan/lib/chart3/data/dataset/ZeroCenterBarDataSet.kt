@@ -20,30 +20,22 @@ class ZeroCenterBarDataSet constructor(
         super.calcMinMax(viewport)
 
             if (values.isNotEmpty()) {
-                maxVisibleY = -Float.MAX_VALUE
-                minVisibleY = Float.MAX_VALUE
+                maxVisibleY = -Double.MAX_VALUE
+                minVisibleY = Double.MAX_VALUE
                 val barValues = getVisiblePoints(viewport) ?: emptyList()
                 for (e in barValues) {
                     calcMinMaxY(e)
                 }
-                val middleValue = 0f
+                val middleValue = 0.0
                 val maxDiff = max(
                     abs(maxVisibleY - middleValue),
                     abs(minVisibleY - middleValue),
                 )
                 // 重新设置最大最小值
-                val maxDiffWithOffset = maxDiff * (1f + minValueOffsetPercent + maxValueOffsetPercent)
+                val maxDiffWithOffset = maxDiff * (1.0 + minValueOffsetPercent + maxValueOffsetPercent)
                 minVisibleY = middleValue - maxDiffWithOffset
                 maxVisibleY = middleValue + maxDiffWithOffset
             }
-            val middleValue = 0f
-            val maxDiff = max(
-                abs(maxVisibleY - middleValue),
-                abs(minVisibleY - middleValue),
-            )
-            // 重新设置最大最小值
-            val maxDiffWithOffset = maxDiff * (1f + minValueOffsetPercent + maxValueOffsetPercent)
-            minVisibleY = middleValue - maxDiffWithOffset
-            maxVisibleY = middleValue + maxDiffWithOffset
+
     }
 }

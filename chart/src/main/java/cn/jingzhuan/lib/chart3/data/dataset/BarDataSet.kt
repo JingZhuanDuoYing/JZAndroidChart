@@ -44,8 +44,8 @@ open class BarDataSet @JvmOverloads constructor(
 
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
-        maxVisibleY = -Float.MAX_VALUE
-        minVisibleY = Float.MAX_VALUE
+        maxVisibleY = -Double.MAX_VALUE
+        minVisibleY = Double.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -89,8 +89,8 @@ open class BarDataSet @JvmOverloads constructor(
         ratio: Float?
     ) {
         if (values.isEmpty()) return
-        maxVisibleY = -Float.MAX_VALUE
-        minVisibleY = Float.MAX_VALUE
+        maxVisibleY = -Double.MAX_VALUE
+        minVisibleY = Double.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -111,11 +111,16 @@ open class BarDataSet @JvmOverloads constructor(
 
     protected fun calcMinMaxY(value: BarValue?) {
         if (value == null || !value.isEnable) return
-        if (value.values == null) return
-        for (v in value.values!!) {
-            if (!v.isNaN() && !v.isInfinite()) {
-                minVisibleY = min(minVisibleY, (v * (overLayRatio ?: 1.0f)).toFloat())
-                maxVisibleY = max(maxVisibleY, (v * (overLayRatio ?: 1.0f)).toFloat())
+        val values = value.values
+        if (values != null && values.isNotEmpty()) {
+            for (v in values) {
+                if (v.isNaN()) continue
+                if (v < minVisibleY) {
+                    minVisibleY = v
+                }
+                if (v > maxVisibleY) {
+                    maxVisibleY = v
+                }
             }
         }
     }

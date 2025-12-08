@@ -161,8 +161,8 @@ class DrawLineDataSet@JvmOverloads constructor(
 
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
-        maxVisibleY = -Float.MAX_VALUE
-        minVisibleY = Float.MAX_VALUE
+        maxVisibleY = -Double.MAX_VALUE
+        minVisibleY = Double.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -187,10 +187,10 @@ class DrawLineDataSet@JvmOverloads constructor(
         if (e.value.isNaN()) return
         if (e.value.isInfinite()) return
         if (e.value < minVisibleY) {
-            minVisibleY = e.value.toFloat()
+            minVisibleY = e.value
         }
         if (e.value > maxVisibleY) {
-            maxVisibleY = e.value.toFloat()
+            maxVisibleY = e.value
         }
     }
 

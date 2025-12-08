@@ -376,11 +376,15 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> @JvmOverloads construct
         axisRenderers.values.forEach { it.setTypeface(tf) }
     }
 
-    fun getScaleY(value: Float, viewportMax: Float, viewportMin: Float): Float {
+    fun getScaleY(value: Double, viewportMax: Double, viewportMin: Double): Float {
         if (viewportMax > viewportMin && viewportMax > 0) {
-            return (viewportMax - value) / (viewportMax - viewportMin) * contentRect.height()
+            return ((viewportMax - value) / (viewportMax - viewportMin) * contentRect.height()).toFloat()
         }
         return -1f
+    }
+
+    fun getScaleY(value: Float, viewportMax: Float, viewportMin: Float): Float {
+        return getScaleY(value.toDouble(), viewportMax.toDouble(), viewportMin.toDouble())
     }
 
     abstract val chartData: ChartData<T>?

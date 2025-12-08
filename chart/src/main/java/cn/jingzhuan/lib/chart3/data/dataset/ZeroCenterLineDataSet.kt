@@ -19,13 +19,16 @@ class ZeroCenterLineDataSet constructor(
     private val middleValue = 0f
 
     override fun calcMinMax(viewport: Viewport) {
-        super.calcMinMax(viewport)
-        val maxDiff = max(
-            abs(this.maxVisibleY - this.middleValue),
-            abs(this.minVisibleY - this.middleValue),
-        )
-        // 重新设置最大最小值
-        this.minVisibleY = this.middleValue - maxDiff
-        this.maxVisibleY = this.middleValue + maxDiff
+        if (values.isNotEmpty()) {
+            super.calcMinMax(viewport)
+            val middleValue = 0.0
+            val maxDiff = max(
+                abs(maxVisibleY - middleValue),
+                abs(minVisibleY - middleValue),
+            )
+            // 重新设置最大最小值
+            minVisibleY = middleValue - maxDiff
+            maxVisibleY = middleValue + maxDiff
+        }
     }
 }

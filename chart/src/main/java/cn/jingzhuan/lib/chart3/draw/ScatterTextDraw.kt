@@ -54,14 +54,14 @@ class ScatterTextDraw(
         dataSet: ScatterTextDataSet,
         dataSets: List<ScatterTextDataSet>,
         viewport: Viewport,
-        lMax: Float,
-        lMin: Float,
-        rMax: Float,
-        rMin: Float,
+        lMax: Double,
+        lMin: Double,
+        rMax: Double,
+        rMin: Double,
     ) {
 
-        val min: Float
-        val max: Float
+        val min: Double
+        val max: Double
 
         when (dataSet.axisDependency) {
             AxisY.DEPENDENCY_RIGHT -> {
@@ -132,8 +132,8 @@ class ScatterTextDraw(
 
 
             val xPosition = startX + step * (i + startIndexOffset)
-            val yHighPosition = (max - value.high.toFloat()) / (max - min) * contentRect.height()
-            val yLowPosition = (max - value.low.toFloat()) / (max - min) * contentRect.height()
+            val yHighPosition = ((max - value.high) / (max - min) * contentRect.height()).toFloat()
+            val yLowPosition = ((max - value.low) / (max - min) * contentRect.height()).toFloat()
             var anchor = yHighPosition
 
 

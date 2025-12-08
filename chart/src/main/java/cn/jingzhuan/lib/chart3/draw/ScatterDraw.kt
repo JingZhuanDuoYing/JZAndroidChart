@@ -65,14 +65,14 @@ class ScatterDraw(
         canvas: Canvas,
         dataSet: ScatterDataSet,
         viewport: Viewport,
-        lMax: Float,
-        lMin: Float,
-        rMax: Float,
-        rMin: Float,
+        lMax: Double,
+        lMin: Double,
+        rMax: Double,
+        rMin: Double,
     ) {
 
-        val min: Float
-        val max: Float
+        val min: Double
+        val max: Double
 
         when (dataSet.axisDependency) {
             AxisY.DEPENDENCY_RIGHT -> {
@@ -164,28 +164,28 @@ class ScatterDraw(
                     offset += lastOffset
                     bottomHeights[heightIndexKey] = offset
                 }
-                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - offset
+                yPosition = ((max - value.value) / (max - min) * contentRect.height() - offset).toFloat()
                 if (dataSet.isAutoTurn) {
                     if (yPosition < 0f) {
                         shouldTurn = true
-                        yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() + offset - shapeHeight
+                        yPosition = ((max - value.value) / (max - min) * contentRect.height() + offset - shapeHeight).toFloat()
                     }
                 }
             } else if (dataSet.shapeAlign == SHAPE_ALIGN_TOP) {
 
                 val offset = topHeights.getOrDefault(heightIndexKey, 0f)
-                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() + offset
+                yPosition = ((max - value.value) / (max - min) * contentRect.height() + offset).toFloat()
                 if (!value.value.isNaN()) {
                     topHeights[heightIndexKey] = offset + shapeHeight
                 }
                 if (dataSet.isAutoTurn) {
                     if (yPosition > (contentRect.height() - shapeHeight - pointShapeHeight)) {
                         shouldTurn = true
-                        yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - offset - shapeHeight
+                        yPosition = ((max - value.value) / (max - min) * contentRect.height() - offset - shapeHeight).toFloat()
                     }
                 }
             } else {
-                yPosition = (max - value.value.toFloat()) / (max - min) * contentRect.height() - yOffset
+                yPosition = ((max - value.value) / (max - min) * contentRect.height() - yOffset).toFloat()
             }
 
             if (value.shape != null) {

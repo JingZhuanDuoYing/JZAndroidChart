@@ -60,10 +60,10 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
     fun calcMinMaxInner(
         viewport: Viewport,
         content: Rect,
-        max: Float,
-        min: Float,
-        originYMax: Float,
-        originYMin: Float,
+        max: Double,
+        min: Double,
+        originYMax: Double,
+        originYMin: Double,
         offsetsMapper: MutableMap<String, MutableMap<String, Float>>
     ) {
         maxVisibleY = max
@@ -83,7 +83,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
             }
         }
 
-        val range: Float = maxVisibleY - minVisibleY
+        val range: Double = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
             minVisibleY -= range * minValueOffsetPercent
         }
@@ -96,10 +96,10 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         if (value == null || !value.isVisible) return
         if (value.value.isNaN()) return
         if (value.value < minVisibleY) {
-            minVisibleY = value.value.toFloat()
+            minVisibleY = value.value
         }
         if (value.value > maxVisibleY) {
-            maxVisibleY = value.value.toFloat()
+            maxVisibleY = value.value
         }
     }
 
@@ -107,8 +107,8 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         index: Int,
         value: ScatterValue?,
         content: Rect,
-        originYMax: Float,
-        originYMin: Float,
+        originYMax: Double,
+        originYMin: Double,
         offsetsMapper: MutableMap<String, MutableMap<String, Float>>,
     ) {
         if (value == null || !value.isVisible) return
@@ -138,7 +138,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         val expandHeight = originRange * percent
         if (expandHeight <= 0.0) return
 
-        val anchor: Float = when (this.shapeAlign) {
+        val anchor: Double = when (this.shapeAlign) {
             SHAPE_ALIGN_PARENT_TOP -> {
                 originYMax;
             }
@@ -146,7 +146,7 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
                 originYMin
             }
             else -> {
-                value.value.toFloat()
+                value.value
             }
         }
 
