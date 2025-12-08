@@ -17,22 +17,33 @@ class ZeroCenterBarDataSet constructor(
 ) : BarDataSet(barValues, axisDependency) {
 
     override fun calcMinMax(viewport: Viewport) {
-        if (values.isNotEmpty()) {
-            viewportYMax = -Float.MAX_VALUE
-            viewportYMin = Float.MAX_VALUE
-            val barValues = getVisiblePoints(viewport) ?: emptyList()
-            for (e in barValues) {
-                calcMinMaxY(e)
+        super.calcMinMax(viewport)
+
+            if (values.isNotEmpty()) {
+                maxVisibleY = -Float.MAX_VALUE
+                minVisibleY = Float.MAX_VALUE
+                val barValues = getVisiblePoints(viewport) ?: emptyList()
+                for (e in barValues) {
+                    calcMinMaxY(e)
+                }
+                val middleValue = 0f
+                val maxDiff = max(
+                    abs(maxVisibleY - middleValue),
+                    abs(minVisibleY - middleValue),
+                )
+                // 重新设置最大最小值
+                val maxDiffWithOffset = maxDiff * (1f + minValueOffsetPercent + maxValueOffsetPercent)
+                minVisibleY = middleValue - maxDiffWithOffset
+                maxVisibleY = middleValue + maxDiffWithOffset
             }
             val middleValue = 0f
             val maxDiff = max(
-                abs(viewportYMin - middleValue),
-                abs(viewportYMax - middleValue)
+                abs(maxVisibleY - middleValue),
+                abs(minVisibleY - middleValue),
             )
-            val maxDiffWithOffset =
-                if (maxValueOffsetPercent == 0f) maxDiff else maxDiff / (1 - maxValueOffsetPercent)
-            viewportYMin = middleValue - maxDiffWithOffset
-            viewportYMax = middleValue + maxDiffWithOffset
-        }
+            // 重新设置最大最小值
+            val maxDiffWithOffset = maxDiff * (1f + minValueOffsetPercent + maxValueOffsetPercent)
+            minVisibleY = middleValue - maxDiffWithOffset
+            maxVisibleY = middleValue + maxDiffWithOffset
     }
 }

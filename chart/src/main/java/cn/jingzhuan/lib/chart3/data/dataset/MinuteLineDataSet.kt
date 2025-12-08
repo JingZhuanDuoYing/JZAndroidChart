@@ -26,18 +26,18 @@ class MinuteLineDataSet(
         if (lastClose > 0) {
             if (values.isNotEmpty()) {
                 if (!highPrice.isNaN() && !lowPrice.isNaN() && highPrice > 0.1 && lowPrice > 0.1) {
-                    viewportYMax = maxOf(highPrice.toFloat(), viewportYMax)
-                    viewportYMin = minOf(lowPrice.toFloat(), viewportYMin)
+                    maxVisibleY = maxOf(highPrice.toFloat(), maxVisibleY)
+                    minVisibleY = minOf(lowPrice.toFloat(), minVisibleY)
                 }
 
-                var maxDiff = max(abs(viewportYMin - lastClose), abs(viewportYMax - lastClose)).toFloat()
+                var maxDiff = max(abs(minVisibleY - lastClose), abs(maxVisibleY - lastClose)).toFloat()
                 maxDiff = max((lastClose * 0.01).toFloat(), maxDiff)
 
-                viewportYMin = (lastClose - maxDiff).toFloat()
-                viewportYMax = (lastClose + maxDiff).toFloat()
+                minVisibleY = (lastClose - maxDiff).toFloat()
+                maxVisibleY = (lastClose + maxDiff).toFloat()
             } else {
-                viewportYMin = (lastClose * 0.99).toFloat()
-                viewportYMax = (lastClose * 1.01).toFloat()
+                minVisibleY = (lastClose * 0.99).toFloat()
+                maxVisibleY = (lastClose * 1.01).toFloat()
             }
 
         }

@@ -44,8 +44,8 @@ open class TreeDataSet : AbstractDataSet<TreeValue> {
 
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
 
@@ -55,12 +55,12 @@ open class TreeDataSet : AbstractDataSet<TreeValue> {
             calcMinMaxY(value)
         }
 
-        val range = viewportYMax - viewportYMin
+        val range = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
     }
 
@@ -69,8 +69,8 @@ open class TreeDataSet : AbstractDataSet<TreeValue> {
         val high = value.high
         val low = value.low
         if (!high.isNaN() && !high.isInfinite()) {
-            viewportYMin = min(viewportYMin, low.toFloat())
-            viewportYMax = max(viewportYMax, high.toFloat())
+            minVisibleY = min(minVisibleY, low.toFloat())
+            maxVisibleY = max(maxVisibleY, high.toFloat())
         }
     }
 

@@ -72,8 +72,8 @@ open class LineDataSet @JvmOverloads constructor(
     }
 
     private fun calcViewportY(viewport: Viewport) {
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         if (headPoint != null) {
             calcViewportMinMax(headPoint)
@@ -86,33 +86,33 @@ open class LineDataSet @JvmOverloads constructor(
             calcViewportMinMax(value)
         }
 
-        val range = viewportYMax - viewportYMin
+        val range = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
-        if (viewportYMax == 0f && viewportYMin == 0f) {
-            viewportYMax = 0.01f
-            viewportYMin = -0.01f
+        if (maxVisibleY == 0f && minVisibleY == 0f) {
+            maxVisibleY = 0.01f
+            minVisibleY = -0.01f
         }
     }
 
     private fun calcViewportMinMax(value: LineValue?) {
         if (value == null || value.value.isNaN() || value.value.isInfinite()) return
-        viewportYMin = min(value.value.toFloat(), viewportYMin)
-        viewportYMax = max(value.value.toFloat(), viewportYMax)
-//        if (value.value < viewportYMin) viewportYMin = value.value
-//        if (value.value > viewportYMax) viewportYMax = value.value
+        minVisibleY = min(value.value.toFloat(), minVisibleY)
+        maxVisibleY = max(value.value.toFloat(), maxVisibleY)
+//        if (value.value < minVisibleY) minVisibleY = value.value
+//        if (value.value > maxVisibleY) maxVisibleY = value.value
         if (isDrawBand) {
-            viewportYMin = min(value.secondValue.toFloat(), viewportYMin)
-            viewportYMax = max(value.secondValue.toFloat(), viewportYMax)
+            minVisibleY = min(value.secondValue.toFloat(), minVisibleY)
+            maxVisibleY = max(value.secondValue.toFloat(), maxVisibleY)
 //            if (value.secondValue < value.value) {
-//                if (value.secondValue < viewportYMin) viewportYMin = value.secondValue
+//                if (value.secondValue < minVisibleY) minVisibleY = value.secondValue
 //            }
 //            if (value.secondValue > value.value) {
-//                if (value.secondValue > viewportYMax) viewportYMax = value.secondValue
+//                if (value.secondValue > maxVisibleY) maxVisibleY = value.secondValue
 //            }
         }
     }

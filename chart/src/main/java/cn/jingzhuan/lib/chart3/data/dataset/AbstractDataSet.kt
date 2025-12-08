@@ -22,9 +22,9 @@ abstract class AbstractDataSet<T : AbstractValue> : IDataSet {
      */
     var isVisible = true
 
-    var viewportYMin = Float.MAX_VALUE
+    var minVisibleY = Float.MAX_VALUE
 
-    var viewportYMax = -Float.MAX_VALUE
+    var maxVisibleY = -Float.MAX_VALUE
 
     var minValueOffsetPercent = 0f
 

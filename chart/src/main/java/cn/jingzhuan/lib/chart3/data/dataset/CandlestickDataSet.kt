@@ -79,8 +79,8 @@ open class CandlestickDataSet @JvmOverloads constructor(
 
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -116,12 +116,12 @@ open class CandlestickDataSet @JvmOverloads constructor(
                 if (e.high > max) max = e.high
             }
         }
-        val range: Float = viewportYMax - viewportYMin
+        val range: Float = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
     }
 
@@ -131,12 +131,12 @@ open class CandlestickDataSet @JvmOverloads constructor(
         if (value.high.isNaN()) return
         if (value.low.isInfinite()) return
         if (value.high.isInfinite()) return
-        if (value.low < viewportYMin) {
-            viewportYMin = value.low.toFloat()
+        if (value.low < minVisibleY) {
+            minVisibleY = value.low.toFloat()
             minIndex = values.indexOf(value)
         }
-        if (value.high > viewportYMax) {
-            viewportYMax = value.high.toFloat()
+        if (value.high > maxVisibleY) {
+            maxVisibleY = value.high.toFloat()
             maxIndex = values.indexOf(value)
         }
     }

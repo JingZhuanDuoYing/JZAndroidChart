@@ -179,12 +179,12 @@ open class ChartData<T : AbstractDataSet<*>> {
             t.calcMinMaxInner(viewport, content, rightMax, rightMin, originYRightMax, originYRightMin, offsetsMapper)
         }
         if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-            leftMax = max(leftMax, t.viewportYMax)
-            leftMin = min(leftMin, t.viewportYMin)
+            leftMax = max(leftMax, t.maxVisibleY)
+            leftMin = min(leftMin, t.minVisibleY)
         }
         if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-            rightMax = max(rightMax, t.viewportYMax)
-            rightMin = min(rightMin, t.viewportYMin)
+            rightMax = max(rightMax, t.maxVisibleY)
+            rightMin = min(rightMin, t.minVisibleY)
         }
     }
 
@@ -205,12 +205,12 @@ open class ChartData<T : AbstractDataSet<*>> {
         }
 
         if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_LEFT) {
-            leftMax = max(leftMax, t.viewportYMax)
-            leftMin = min(leftMin, t.viewportYMin)
+            leftMax = max(leftMax, t.maxVisibleY)
+            leftMin = min(leftMin, t.minVisibleY)
         }
         if (t.axisDependency == AxisY.DEPENDENCY_BOTH || t.axisDependency == AxisY.DEPENDENCY_RIGHT) {
-            rightMax = max(rightMax, t.viewportYMax)
-            rightMin = min(rightMin, t.viewportYMin)
+            rightMax = max(rightMax, t.maxVisibleY)
+            rightMin = min(rightMin, t.minVisibleY)
         }
     }
 

@@ -60,16 +60,16 @@ open class ScatterTextDataSet(scatterTextValues: List<ScatterTextValue>) :
     }
 
     override fun calcMinMax(viewport: Viewport) {
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         val list = getVisiblePoints(viewport) ?: return
 
         if (list.size == 1) {
-            viewportYMin = list[0].low.toFloat()
-            viewportYMax = list[0].high.toFloat()
-            val range: Float = viewportYMax - viewportYMin
-            viewportYMin -= range * 0.2f
+            minVisibleY = list[0].low.toFloat()
+            maxVisibleY = list[0].high.toFloat()
+            val range: Float = maxVisibleY - minVisibleY
+            minVisibleY -= range * 0.2f
             return
         }
     }

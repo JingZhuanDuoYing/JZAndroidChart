@@ -44,8 +44,8 @@ open class BarDataSet @JvmOverloads constructor(
 
     override fun calcMinMax(viewport: Viewport) {
         if (values.isEmpty()) return
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -54,12 +54,12 @@ open class BarDataSet @JvmOverloads constructor(
             calcMinMaxY(value)
         }
 
-        val range = viewportYMax - viewportYMin
+        val range = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
     }
 
@@ -89,8 +89,8 @@ open class BarDataSet @JvmOverloads constructor(
         ratio: Float?
     ) {
         if (values.isEmpty()) return
-        viewportYMax = -Float.MAX_VALUE
-        viewportYMin = Float.MAX_VALUE
+        maxVisibleY = -Float.MAX_VALUE
+        minVisibleY = Float.MAX_VALUE
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -100,12 +100,12 @@ open class BarDataSet @JvmOverloads constructor(
             calcMinMaxY(value)
         }
 
-        val range = viewportYMax - viewportYMin
+        val range = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
     }
 
@@ -114,8 +114,8 @@ open class BarDataSet @JvmOverloads constructor(
         if (value.values == null) return
         for (v in value.values!!) {
             if (!v.isNaN() && !v.isInfinite()) {
-                viewportYMin = min(viewportYMin, (v * (overLayRatio ?: 1.0f)).toFloat())
-                viewportYMax = max(viewportYMax, (v * (overLayRatio ?: 1.0f)).toFloat())
+                minVisibleY = min(minVisibleY, (v * (overLayRatio ?: 1.0f)).toFloat())
+                maxVisibleY = max(maxVisibleY, (v * (overLayRatio ?: 1.0f)).toFloat())
             }
         }
     }

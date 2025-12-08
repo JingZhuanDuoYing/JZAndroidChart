@@ -66,8 +66,8 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
         originYMin: Float,
         offsetsMapper: MutableMap<String, MutableMap<String, Float>>
     ) {
-        viewportYMax = max
-        viewportYMin = min
+        maxVisibleY = max
+        minVisibleY = min
 
         val visiblePoints = getVisiblePoints(viewport)
         if (visiblePoints.isNullOrEmpty()) return
@@ -83,23 +83,23 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
             }
         }
 
-        val range: Float = viewportYMax - viewportYMin
+        val range: Float = maxVisibleY - minVisibleY
         if (minValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMin -= range * minValueOffsetPercent
+            minVisibleY -= range * minValueOffsetPercent
         }
         if (maxValueOffsetPercent.compareTo(0f) > 0f) {
-            viewportYMax += range * maxValueOffsetPercent
+            maxVisibleY += range * maxValueOffsetPercent
         }
     }
 
     private fun calcViewportMinMax(value: ScatterValue?) {
         if (value == null || !value.isVisible) return
         if (value.value.isNaN()) return
-        if (value.value < viewportYMin) {
-            viewportYMin = value.value.toFloat()
+        if (value.value < minVisibleY) {
+            minVisibleY = value.value.toFloat()
         }
-        if (value.value > viewportYMax) {
-            viewportYMax = value.value.toFloat()
+        if (value.value > maxVisibleY) {
+            maxVisibleY = value.value.toFloat()
         }
     }
 
@@ -152,26 +152,26 @@ open class ScatterDataSet(scatterValues: List<ScatterValue>) :
 
         when (this.shapeAlign) {
             SHAPE_ALIGN_PARENT_TOP -> {
-                viewportYMax = (anchor + expandHeight).coerceAtLeast(viewportYMax)
+                maxVisibleY = (anchor + expandHeight).coerceAtLeast(maxVisibleY)
             }
             SHAPE_ALIGN_PARENT_BOTTOM -> {
-                viewportYMin = (anchor - expandHeight).coerceAtMost(viewportYMin)
+                minVisibleY = (anchor - expandHeight).coerceAtMost(minVisibleY)
             }
             SHAPE_ALIGN_BOTTOM -> {
-                val max = (anchor + expandHeight * 2).coerceAtLeast(viewportYMax)
-                val range = max - viewportYMin
-                viewportYMax = (anchor + range * percent).coerceAtLeast(viewportYMax)
+                val max = (anchor + expandHeight * 2).coerceAtLeast(maxVisibleY)
+                val range = max - minVisibleY
+                maxVisibleY = (anchor + range * percent).coerceAtLeast(maxVisibleY)
             }
             SHAPE_ALIGN_TOP -> {
-                val min = (anchor - expandHeight * 2).coerceAtMost(viewportYMin)
-                val range = viewportYMax - min
-                viewportYMin = (anchor - range * percent).coerceAtMost(viewportYMin)
+                val min = (anchor - expandHeight * 2).coerceAtMost(minVisibleY)
+                val range = maxVisibleY - min
+                minVisibleY = (anchor - range * percent).coerceAtMost(minVisibleY)
             }
             else -> {
                 val newMaxValue = anchor + expandHeight / 2
                 val newMinValue = anchor - expandHeight / 2
-                viewportYMax = newMaxValue.coerceAtLeast(viewportYMax)
-                viewportYMin = newMinValue.coerceAtMost(viewportYMin)
+                maxVisibleY = newMaxValue.coerceAtLeast(maxVisibleY)
+                minVisibleY = newMinValue.coerceAtMost(minVisibleY)
             }
         }
     }
