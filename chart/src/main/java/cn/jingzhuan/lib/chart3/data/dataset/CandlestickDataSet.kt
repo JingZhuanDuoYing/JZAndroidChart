@@ -45,6 +45,11 @@ open class CandlestickDataSet @JvmOverloads constructor(
     var limitUpColor20 = Color.TRANSPARENT
 
     /**
+     * 创业板或科创板
+     */
+    var isDoubleCreation: Boolean = false
+
+    /**
      * 缺口 颜色
      */
     var gapColor = Color.LTGRAY

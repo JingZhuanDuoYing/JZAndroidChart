@@ -321,7 +321,7 @@ class CandlestickDraw(
                     candlestick.close > previousValue!!.close * 1.2f - 0.01f
                             && candlestick.close == candlestick.high
 
-                val isLimitUp = candlestick.close > previousValue.close * 1.1f - 0.01f
+                val isLimitUp = !candlestickDataSet.isDoubleCreation && candlestick.close > previousValue.close * 1.1f - 0.01f
                         && candlestick.close == candlestick.high
 
                 if (candlestickDataSet.limitUpColor != Color.TRANSPARENT) {
