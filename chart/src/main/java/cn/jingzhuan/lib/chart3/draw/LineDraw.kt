@@ -119,6 +119,7 @@ class LineDraw(
         }
 
         val lineThickness: Int = lineDataSet.lineThickness
+        val heightScale = contentRect.height() - lineThickness + lineThickness * 0.5f
 
         renderPaint.style = Paint.Style.STROKE
         renderPaint.strokeWidth = lineThickness.toFloat()
@@ -216,7 +217,7 @@ class LineDraw(
         if (headValue != null && !headValue.isValueNaN) {
             // 垂直方向绘制范围收缩至能容下线条的宽度
             val headYPosition: Float =
-                ((max - headValue.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f).toFloat()
+                ((max - headValue.value) / (max - min) * heightScale).toFloat()
             linePath.moveTo(startX, headYPosition)
             var firstValue: LineValue? = null
             var firstXPosition = startX
@@ -233,7 +234,7 @@ class LineDraw(
 
             if (firstValue != null) {
                 val firstYPosition =
-                    ((max - firstValue.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f).toFloat()
+                    ((max - firstValue.value) / (max - min) * heightScale).toFloat()
                 linePath.lineTo(firstXPosition, firstYPosition)
             }
         }
@@ -262,7 +263,7 @@ class LineDraw(
             }
             val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float =
-                ((max - value.value) / (max - min) * (contentRect.height() - 2 * lineThickness) + lineThickness * 0.5f).toFloat()
+                ((max - value.value) / (max - min) * heightScale).toFloat()
             value.setCoordinate(xPosition, yPosition)
 
             //分段线条
