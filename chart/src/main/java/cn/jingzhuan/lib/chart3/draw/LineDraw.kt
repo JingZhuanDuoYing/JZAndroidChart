@@ -119,7 +119,7 @@ class LineDraw(
         }
 
         val lineThickness: Int = lineDataSet.lineThickness
-        val heightScale = contentRect.height() - lineThickness + lineThickness * 0.5f
+        val heightScale = contentRect.height().toFloat()
 
         renderPaint.style = Paint.Style.STROKE
         renderPaint.strokeWidth = lineThickness.toFloat()
@@ -216,8 +216,7 @@ class LineDraw(
         val headValue: LineValue? = lineDataSet.headPoint
         if (headValue != null && !headValue.isValueNaN) {
             // 垂直方向绘制范围收缩至能容下线条的宽度
-            val headYPosition: Float =
-                ((max - headValue.value) / (max - min) * heightScale).toFloat()
+            val headYPosition: Float = getYPosition(max, min, headValue.value, heightScale, lineThickness)
             linePath.moveTo(startX, headYPosition)
             var firstValue: LineValue? = null
             var firstXPosition = startX
@@ -233,8 +232,7 @@ class LineDraw(
             }
 
             if (firstValue != null) {
-                val firstYPosition =
-                    ((max - firstValue.value) / (max - min) * heightScale).toFloat()
+                val firstYPosition = getYPosition(max, min, firstValue.value, heightScale, lineThickness)
                 linePath.lineTo(firstXPosition, firstYPosition)
             }
         }
@@ -262,8 +260,7 @@ class LineDraw(
                 continue
             }
             val xPosition = startX + step * (i + startIndexOffset)
-            val yPosition: Float =
-                ((max - value.value) / (max - min) * heightScale).toFloat()
+            val yPosition: Float = getYPosition(max, min, value.value, heightScale, lineThickness)
             value.setCoordinate(xPosition, yPosition)
 
             //分段线条
@@ -705,6 +702,18 @@ class LineDraw(
         val y1 = abs(p1.y - baseY)
         val y2 = abs(p2.y - baseY)
         return (y1 * x2 + x1 * y2) / (y2 + y1)
+    }
+
+    private fun getYPosition(max : Double, min : Double, value: Double, heightScale: Float, lineThickness: Int): Float {
+        var yPosition: Float =
+            ((max - value) / (max - min) * heightScale).toFloat()
+        if (yPosition < contentRect.top + lineThickness * 0.5f) {
+            yPosition = contentRect.top + lineThickness * 0.5f
+        }
+        if (yPosition > contentRect.bottom - lineThickness * 0.5f) {
+            yPosition = contentRect.bottom - lineThickness * 0.5f
+        }
+        return yPosition
     }
 
 }
