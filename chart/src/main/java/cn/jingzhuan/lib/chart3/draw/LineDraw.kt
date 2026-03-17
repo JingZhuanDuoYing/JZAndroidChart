@@ -198,7 +198,6 @@ class LineDraw(
             drawPointLine(
                 canvas,
                 lineDataSet,
-                visibleRange,
                 startX,
                 step,
                 startIndexOffset,
@@ -421,7 +420,6 @@ class LineDraw(
     private fun drawPointLine(
         canvas: Canvas,
         lineDataSet: LineDataSet,
-        visibleRange: Float,
         startX: Float,
         step: Float,
         startIndexOffset: Int,
@@ -444,8 +442,6 @@ class LineDraw(
 
         pointLinePath.reset()
 
-        val candleWidth =
-            contentRect.width() / max(visibleRange, lineDataSet.minValueCount.toFloat())
         var isFirst = true
 
         var i = leftIndex
@@ -457,21 +453,20 @@ class LineDraw(
             }
             val xPosition = startX + step * (i + startIndexOffset)
             var yPosition = ((max - point.value) / (max - min) * contentRect.height()).toFloat()
-            val candlestickCenterX = xPosition + candleWidth * 0.5f
-            point.setCoordinate(candlestickCenterX, yPosition)
+            point.setCoordinate(xPosition, yPosition)
             if (yPosition + lineDataSet.radius > contentRect.bottom) {
                 yPosition -= lineDataSet.radius
             }
             if (yPosition - lineDataSet.radius < contentRect.top) yPosition += lineDataSet.radius
             if (isFirst) {
                 isFirst = false
-                pointLinePath.moveTo(candlestickCenterX, yPosition)
+                pointLinePath.moveTo(xPosition, yPosition)
             } else {
-                pointLinePath.lineTo(candlestickCenterX, yPosition)
+                pointLinePath.lineTo(xPosition, yPosition)
             }
             if (point.isDrawCircle) {
                 canvas.drawCircle(
-                    candlestickCenterX,
+                    xPosition,
                     yPosition,
                     lineDataSet.radius,
                     pointPaint
