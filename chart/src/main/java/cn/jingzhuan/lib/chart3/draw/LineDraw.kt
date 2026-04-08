@@ -149,8 +149,6 @@ class LineDraw(
         val startX =
             contentRect.left + (if (isLineChart) 0f else step * 0.5f) - viewport.left * contentRect.width() * scale
 
-//        val valuePhaseCount = floor((valueCount * chartAnimator.phaseX).toDouble()).toInt()
-
         var linePath = Path()
 
         val startIndexOffset = 0
@@ -493,6 +491,7 @@ class LineDraw(
 
         renderPaint.pathEffect = DashPathEffect(floatArrayOf(5f, 5f, 5f, 5f), 0f)
         renderPaint.color = lineDataSet.color
+        renderPaint.textSize = 25f
 
         val value = lineDataSet.getEntryForIndex(lineDataSet.values.size - 1) ?: return
 
@@ -513,7 +512,6 @@ class LineDraw(
         renderPaint.pathEffect = null
         renderPaint.style = Paint.Style.FILL
         renderPaint.strokeWidth = 2f
-        renderPaint.textSize = 25f
 
         val textRect = Rect()
         textRect.left = 0
