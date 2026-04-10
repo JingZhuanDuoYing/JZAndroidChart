@@ -114,13 +114,9 @@ open class BarDataSet @JvmOverloads constructor(
         val values = value.values
         if (values != null && values.isNotEmpty()) {
             for (v in values) {
-                if (v.isNaN()) continue
-                if (v < minVisibleY) {
-                    minVisibleY = v
-                }
-                if (v > maxVisibleY) {
-                    maxVisibleY = v
-                }
+                if (v.isNaN() || v.isInfinite()) continue
+                minVisibleY = min(minVisibleY, (v * (overLayRatio ?: 1.0).toDouble()))
+                maxVisibleY = max(maxVisibleY, (v * (overLayRatio ?: 1.0).toDouble()))
             }
         }
     }
