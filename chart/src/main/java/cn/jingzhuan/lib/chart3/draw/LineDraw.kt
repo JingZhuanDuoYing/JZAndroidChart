@@ -178,7 +178,7 @@ class LineDraw(
                     !it.value.isNaN()
                 } + 1
                 leftIndex = max(rightIndex - maxVisibleCount, 0)
-                drawBand(canvas, lineDataSet, startX, step, startIndexOffset, max, min, leftIndex, rightIndex)
+                drawBand(canvas, lineDataSet, startX, step, max, min, leftIndex, rightIndex)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -193,17 +193,7 @@ class LineDraw(
 
         // 画点状线
         if (lineDataSet.isPointLine) {
-            drawPointLine(
-                canvas,
-                lineDataSet,
-                startX,
-                step,
-                startIndexOffset,
-                max,
-                min,
-                leftIndex,
-                rightIndex
-            )
+            drawPointLine(canvas, lineDataSet, startX, step, max, min, leftIndex, rightIndex)
             return
         }
 
@@ -259,6 +249,13 @@ class LineDraw(
             val xPosition = startX + step * (i + startIndexOffset)
             val yPosition: Float = getYPosition(max, min, value.value, heightScale, lineThickness)
             value.setCoordinate(xPosition, yPosition)
+
+            if (lineDataSet.showVerticalStick) {
+                val stickPath = Path()
+                stickPath.moveTo(xPosition, yPosition)
+                stickPath.lineTo(xPosition, contentRect.bottom.toFloat())
+                canvas.drawPath(stickPath, renderPaint)
+            }
 
             //分段线条
             if (i > 1 && lineDataSet.isPartLine) {
@@ -360,7 +357,7 @@ class LineDraw(
         if (!shaderSplit) {
             // 不区分颜色分段
             // draw shader area
-            if (i > 0 && lineDataSet.shader != null && lineDataSet.values.size > 0) {
+            if (i > 0 && lineDataSet.shader != null && lineDataSet.values.isNotEmpty()) {
                 renderPaint.style = Paint.Style.FILL
                 if (shaderPath == null) {
                     shaderPath = Path(linePath)
@@ -420,7 +417,6 @@ class LineDraw(
         lineDataSet: LineDataSet,
         startX: Float,
         step: Float,
-        startIndexOffset: Int,
         max: Double,
         min: Double,
         leftIndex: Int,
@@ -449,7 +445,7 @@ class LineDraw(
                 i++
                 continue
             }
-            val xPosition = startX + step * (i + startIndexOffset)
+            val xPosition = startX + step * i
             var yPosition = ((max - point.value) / (max - min) * contentRect.height()).toFloat()
             point.setCoordinate(xPosition, yPosition)
             if (yPosition + lineDataSet.radius > contentRect.bottom) {
@@ -555,7 +551,6 @@ class LineDraw(
         lineDataSet: LineDataSet,
         startX: Float,
         step: Float,
-        startIndexOffset: Int,
         max: Double,
         min: Double,
         leftIndex: Int,
@@ -580,7 +575,7 @@ class LineDraw(
 
             isCloseToBottom = point.value > point.secondValue
             //
-            val xPosition = startX + step * (i + startIndexOffset)
+            val xPosition = startX + step * i
             val yPosition: Float = ((max - point.value) / (max - min) * contentRect.height()).toFloat()
             val secondYPosition: Float =
                 ((max - point.secondValue) / (max - min) * contentRect.height()).toFloat()

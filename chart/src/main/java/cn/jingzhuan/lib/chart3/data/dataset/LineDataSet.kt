@@ -56,6 +56,11 @@ open class LineDataSet @JvmOverloads constructor(
      */
     var isPointLine = false
 
+    /**
+     * 是否绘制连接底部的柱线
+     */
+    var showVerticalStick = false
+
     var interval = 2f
 
     var phase = 0f
