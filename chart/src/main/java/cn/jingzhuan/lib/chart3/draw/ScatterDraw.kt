@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
-import androidx.collection.ArrayMap
+import android.util.ArrayMap
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
@@ -18,6 +18,8 @@ import cn.jingzhuan.lib.chart3.utils.ChartConstant.SHAPE_ALIGN_TOP
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import androidx.core.graphics.withSave
+import androidx.core.graphics.withRotation
 
 /**
  * @since 2023-09-11
@@ -25,16 +27,10 @@ import kotlin.math.roundToInt
  */
 
 class ScatterDraw(
-    private val contentRect: Rect
+    private val contentRect: Rect,
 ) : IDraw<ScatterDataSet> {
 
-    private val topHeights = ArrayMap<String, Float>()
-
-    private val bottomHeights = ArrayMap<String, Float>()
-
-    private val parentTopHeights = ArrayMap<String, Float>()
-
-    private val parentBottomHeights = ArrayMap<String, Float>()
+    private val offsetsMapper = ArrayMap<String, ArrayMap<String, Float>>()
 
     private var leftBoundCountMap = ArrayMap<String, Int>()
     private var rightBoundCountMap = ArrayMap<String, Int>()
@@ -88,8 +84,7 @@ class ScatterDraw(
 
         val visibleRange = dataSet.getVisibleRange(viewport)
 
-        val width =
-            (contentRect.width() - dataSet.startXOffset - dataSet.endXOffset) / visibleRange + 1
+        val width = (contentRect.width() - dataSet.startXOffset - dataSet.endXOffset) / visibleRange + 1
 
         var shape = dataSet.shape
 
@@ -106,12 +101,17 @@ class ScatterDraw(
         }
 
         // 指示器图标
-        val pointShapeWidth = dataSet.autoTurnPointShape?.intrinsicWidth?.toFloat() ?: 0f
-        val pointShapeHeight = dataSet.autoTurnPointShape?.intrinsicHeight?.toFloat() ?: 0f
+        val pointShape = dataSet.autoTurnPointShape
+        val pointShapeWidth = pointShape?.intrinsicWidth?.toFloat() ?: 0f
+        val pointShapeHeight = pointShape?.intrinsicHeight?.toFloat() ?: 0f
 
-        val yOffset = if (dataSet.shapeAlign == SHAPE_ALIGN_CENTER) shapeHeight * 0.5f else 0f
+        val shapeAlign = dataSet.shapeAlign
+
+        val yOffset = if (shapeAlign == SHAPE_ALIGN_CENTER) shapeHeight * 0.5f else 0f
 
         val valueCount = dataSet.getEntryCount()
+
+        val offsets = this.offsetsMapper[shapeAlign.toString()] ?: ArrayMap<String, Float>()
 
         val dataSize = dataSet.values.size
         var leftIndex = (dataSize * viewport.left).roundToInt()
@@ -136,52 +136,56 @@ class ScatterDraw(
 
             val xPosition = dataSet.startXOffset + width * 0.5f + drawX - shapeWidth * 0.5f
             var yPosition: Float
-            val heightIndexKey = i.toString()
+            val indexKey = i.toString()
 
             var shouldTurn = false
 
-            if (dataSet.shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
-
+            if (shapeAlign == SHAPE_ALIGN_PARENT_BOTTOM) {
                 var offset = shapeHeight
                 if (!value.value.isNaN()) {
-                    val lastOffset = parentBottomHeights.getOrDefault(heightIndexKey, 0f)
+                    val lastOffset = offsets.getOrDefault(indexKey, 0f) ?: 0f
                     offset += lastOffset
-                    parentBottomHeights[heightIndexKey] = offset
+                    offsets[indexKey] = offset
+                    this.offsetsMapper[shapeAlign.toString()] = offsets
                 }
                 yPosition = contentRect.height() - offset
-            } else if (dataSet.shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
-
-                val offset = parentTopHeights.getOrDefault(heightIndexKey, 0f)
+            } else if (shapeAlign == SHAPE_ALIGN_PARENT_TOP) {
+                val offset = offsets.getOrDefault(indexKey, 0f) ?: 0f
                 yPosition = contentRect.top + offset
                 if (!value.value.isNaN()) {
-                    parentTopHeights[heightIndexKey] = offset + shapeHeight
+                    offsets[indexKey] = offset + shapeHeight
+                    this.offsetsMapper[shapeAlign.toString()] = offsets
                 }
-            } else if (dataSet.shapeAlign == SHAPE_ALIGN_BOTTOM) {
-
+            } else if (shapeAlign == SHAPE_ALIGN_BOTTOM) {
                 var offset = shapeHeight
                 if (!value.value.isNaN()) {
-                    val lastOffset = bottomHeights.getOrDefault(heightIndexKey, 0f)
+                    val lastOffset = offsets.getOrDefault(indexKey, 0f) ?: 0f
                     offset += lastOffset
-                    bottomHeights[heightIndexKey] = offset
+                    offsets[indexKey] = offset
+                    this.offsetsMapper[shapeAlign.toString()] = offsets
                 }
                 yPosition = ((max - value.value) / (max - min) * contentRect.height() - offset).toFloat()
                 if (dataSet.isAutoTurn) {
                     if (yPosition < 0f) {
                         shouldTurn = true
-                        yPosition = ((max - value.value) / (max - min) * contentRect.height() + offset - shapeHeight).toFloat()
+                        val offsets = this.offsetsMapper[SHAPE_ALIGN_TOP.toString()] ?: ArrayMap<String, Float>()
+                        val offset = offsets.getOrDefault(indexKey, 0f) ?: 0f
+                        yPosition = ((max - value.value) / (max - min) * contentRect.height() + offset).toFloat()
                     }
                 }
-            } else if (dataSet.shapeAlign == SHAPE_ALIGN_TOP) {
-
-                val offset = topHeights.getOrDefault(heightIndexKey, 0f)
+            } else if (shapeAlign == SHAPE_ALIGN_TOP) {
+                val offset = offsets.getOrDefault(indexKey, 0f) ?: 0f
                 yPosition = ((max - value.value) / (max - min) * contentRect.height() + offset).toFloat()
                 if (!value.value.isNaN()) {
-                    topHeights[heightIndexKey] = offset + shapeHeight
+                    offsets[indexKey] = offset + shapeHeight
+                    this.offsetsMapper[shapeAlign.toString()] = offsets
                 }
                 if (dataSet.isAutoTurn) {
                     if (yPosition > (contentRect.height() - shapeHeight - pointShapeHeight)) {
                         shouldTurn = true
-                        yPosition = ((max - value.value) / (max - min) * contentRect.height() - offset - shapeHeight).toFloat()
+                        val offsets = this.offsetsMapper[SHAPE_ALIGN_BOTTOM.toString()] ?: ArrayMap<String, Float>()
+                        val offset = offsets.getOrDefault(indexKey, 0f) ?: 0f
+                        yPosition = ((max - value.value) / (max - min) * contentRect.height() - offset).toFloat()
                     }
                 }
             } else {
@@ -202,9 +206,8 @@ class ScatterDraw(
             if (dataSet.isAutoTurn && drawX < contentRect.left + (shape?.intrinsicWidth ?: 0) * 0.5f) { // 左边界
                 val turnY = ((max - value.value) / (max - min) * contentRect.height() - yOffset + dataSet.drawOffsetY).toInt()
                 // 如果设置了 先画指示器 并且需要旋转90度
-                val leftBoundCount = leftBoundCountMap.getOrDefault(heightIndexKey, 0)
+                val leftBoundCount = leftBoundCountMap.getOrDefault(indexKey, 0)
                 val pointLeft = drawX.toInt() + dataSet.autoTurnShapePadding * leftBoundCount + shapeWidth.toInt() * leftBoundCount
-                val pointShape = dataSet.autoTurnPointShape
                 if (pointShape != null && leftBoundCount == 0) {
                     var pointTop = turnY - pointShapeHeight.toInt()
                     var pointBottom = turnY
@@ -213,10 +216,9 @@ class ScatterDraw(
                         pointTop = pointBottom - pointShapeHeight.toInt()
                     }
                     pointShape.setBounds(pointLeft, pointTop, pointLeft + pointShapeWidth.toInt(), pointBottom)
-                    val pointSaveCount = canvas.save()
-                    canvas.rotate(90f, drawX, pointBottom.toFloat())
-                    pointShape.draw(canvas)
-                    canvas.restoreToCount(pointSaveCount)
+                    canvas.withRotation(90f, drawX, pointBottom.toFloat()) {
+                        pointShape.draw(canvas)
+                    }
                 }
 
                 // 再画图标
@@ -243,16 +245,15 @@ class ScatterDraw(
                         turnY + halfShapeHeight.toInt(),
                     )
                 }
-                val shapeSaveCount = canvas.save()
-                shape?.draw(canvas)
-                canvas.restoreToCount(shapeSaveCount)
-                leftBoundCountMap[heightIndexKey] = leftBoundCount + 1
+                canvas.withSave {
+                    shape?.draw(canvas)
+                }
+                leftBoundCountMap[indexKey] = leftBoundCount + 1
             } else if (dataSet.isAutoTurn && drawX > contentRect.right - (shape?.intrinsicWidth ?: 0) * 0.5f) { // 右边界
                 val turnY = ((max - value.value) / (max - min) * contentRect.height() - yOffset + dataSet.drawOffsetY).toInt()
                 // 如果设置了 先画指示器 并且需要旋转90度
-                val rightBoundCount = rightBoundCountMap.getOrDefault(heightIndexKey, 0)
+                val rightBoundCount = rightBoundCountMap.getOrDefault(indexKey, 0)
                 val pointLeft = drawX.toInt() - dataSet.autoTurnShapePadding * rightBoundCount - shapeWidth.toInt() * rightBoundCount
-                val pointShape = dataSet.autoTurnPointShape
                 if (pointShape != null && rightBoundCount == 0) {
                     var pointTop = turnY - pointShapeHeight.toInt()
                     var pointBottom = turnY
@@ -266,10 +267,9 @@ class ScatterDraw(
                     }
 
                     pointShape.setBounds(pointLeft, pointTop, pointLeft + pointShapeWidth.toInt(), pointBottom)
-                    val pointSaveCount = canvas.save()
-                    canvas.rotate(-90f, drawX, pointBottom.toFloat())
-                    pointShape.draw(canvas)
-                    canvas.restoreToCount(pointSaveCount)
+                    canvas.withRotation(-90f, drawX, pointBottom.toFloat()) {
+                        pointShape.draw(canvas)
+                    }
                 }
 
                 // 再画图标
@@ -296,16 +296,16 @@ class ScatterDraw(
                         turnY + halfShapeHeight.toInt(),
                     )
                 }
-                val shapeSaveCount = canvas.save()
-                shape?.draw(canvas)
-                canvas.restoreToCount(shapeSaveCount)
+                canvas.withSave {
+                    shape?.draw(canvas)
+                }
 
-                rightBoundCountMap[heightIndexKey] = rightBoundCount + 1
+                rightBoundCountMap[indexKey] = rightBoundCount + 1
             } else {
-                if (dataSet.isAutoTurn && dataSet.shapeAlign == SHAPE_ALIGN_TOP) { //顶部对齐
+                if (dataSet.isAutoTurn && shapeAlign == SHAPE_ALIGN_TOP) { //顶部对齐
                     // 先画指示器 如果设置了
-                    val pointShape = dataSet.autoTurnPointShape
-                    val showPointShape = topHeights.getOrDefault(heightIndexKey, 0f) == shapeHeight
+                    val topOffset = offsets.getOrDefault(indexKey, 0f) ?: 0f
+                    val showPointShape = topOffset == shapeHeight
                     if (pointShape != null && showPointShape) {
                         val centerX = x + shapeWidth * 0.5f
                         val left =  (centerX - pointShapeWidth * 0.5f).toInt()
@@ -315,25 +315,26 @@ class ScatterDraw(
                             top = y - pointShapeHeight.toInt() + shapeHeight.toInt()
                         }
                         pointShape.setBounds(left, top, right, top + pointShapeHeight.toInt())
-                        val pointSaveCount = canvas.save()
-                        pointShape.draw(canvas)
-                        canvas.restoreToCount(pointSaveCount)
+                        canvas.withSave {
+                            pointShape.draw(canvas)
+                        }
                     }
 
                     // 画图标
                     val shapeSplitSpace =  if (!showPointShape) dataSet.autoTurnShapePadding else 0
-                    var shapeTop = y + pointShapeHeight.toInt() + shapeSplitSpace
+                    val pointHeight = if (showPointShape) pointShapeHeight.toInt() else 0
+                    var shapeTop = y + pointHeight + shapeSplitSpace
                     if (shouldTurn) { // 如果需要转向
-                        shapeTop = y - pointShapeHeight.toInt() - shapeSplitSpace
+                        shapeTop = y - pointHeight - shapeSplitSpace
                     }
                     shape?.setBounds(x, shapeTop, (x + shapeWidth).toInt(), (shapeTop + shapeHeight).toInt())
-                    val shapeSaveCount = canvas.save()
-                    shape?.draw(canvas)
-                    canvas.restoreToCount(shapeSaveCount)
-                } else if (dataSet.isAutoTurn && dataSet.shapeAlign == SHAPE_ALIGN_BOTTOM) { //底部对齐
+                    canvas.withSave {
+                        shape?.draw(canvas)
+                    }
+                } else if (dataSet.isAutoTurn && shapeAlign == SHAPE_ALIGN_BOTTOM) { //底部对齐
                     // 先画指示器 如果设置了
-                    val pointShape = dataSet.autoTurnPointShape
-                    val showPointShape = bottomHeights.getOrDefault(heightIndexKey, 0f) == shapeHeight
+                    val bottomOffset = offsets.getOrDefault(indexKey, 0f) ?: 0f
+                    val showPointShape = bottomOffset == shapeHeight
                     if (pointShape != null && showPointShape) {
                         val centerX = x + shapeWidth * 0.5f
                         val left =  (centerX - pointShapeWidth * 0.5f).toInt()
@@ -343,29 +344,30 @@ class ScatterDraw(
                             top = y
                         }
                         pointShape.setBounds(left, top, right, top + pointShapeHeight.toInt())
-                        val pointSaveCount = canvas.save()
-                        pointShape.draw(canvas)
-                        canvas.restoreToCount(pointSaveCount)
+                        canvas.withSave {
+                            pointShape.draw(canvas)
+                        }
                     }
 
                     // 画图标
                     val shapeSplitSpace =  if (!showPointShape) dataSet.autoTurnShapePadding else 0
-                    var shapeTop = y + shapeHeight.toInt() - pointShapeHeight.toInt() - shapeHeight.toInt() - shapeSplitSpace
+                    val pointHeight = if (showPointShape) pointShapeHeight.toInt() else 0
+                    var shapeTop = y + shapeHeight.toInt() - pointHeight - shapeHeight.toInt() - shapeSplitSpace
                     if (shouldTurn) { // 如果需要转向
-                        shapeTop = y + pointShapeHeight.toInt() + shapeSplitSpace
+                        shapeTop = y + pointHeight + shapeSplitSpace
                     }
                     shape?.setBounds(x, shapeTop, (x + shapeWidth).toInt(), (shapeTop + shapeHeight).toInt())
-                    val shapeSaveCount = canvas.save()
-                    shape?.draw(canvas)
-                    canvas.restoreToCount(shapeSaveCount)
+                    canvas.withSave {
+                        shape?.draw(canvas)
+                    }
                 } else {
                     shape?.setBounds(
                         x,
                         y, (x + shapeWidth).toInt(), (y + shapeHeight).toInt()
                     )
-                    val saveId = canvas.save()
-                    shape?.draw(canvas)
-                    canvas.restoreToCount(saveId)
+                    canvas.withSave {
+                        shape?.draw(canvas)
+                    }
                 }
             }
 
@@ -383,10 +385,7 @@ class ScatterDraw(
     }
 
     private fun clearTemporaryData() {
-        topHeights.clear()
-        bottomHeights.clear()
-        parentTopHeights.clear()
-        parentBottomHeights.clear()
+        offsetsMapper.clear()
         leftBoundCountMap.clear()
         rightBoundCountMap.clear()
     }
