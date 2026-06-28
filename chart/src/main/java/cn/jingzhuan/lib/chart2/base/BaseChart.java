@@ -136,11 +136,11 @@ public class BaseChart extends Chart {
     @Override
     public void drawWaterMark(Canvas canvas) {
         if (isShowWaterMark()) {
-            int padding = getResources().getDimensionPixelSize(R.dimen.jz_chart_water_mark_padding);
             Bitmap waterMarkBitmap = BitmapFactory.decodeResource(
-                    this.getResources(), isNightMode() ? R.drawable.ico_water_mark_night : R.drawable.ico_water_mark);
-            int left = getWidth() - padding - waterMarkBitmap.getWidth() - getPaddingRight();
-            canvas.drawBitmap(waterMarkBitmap, (float) left, (float) padding, waterMarkPaint);
+                    this.getResources(), isNightMode() ? R.drawable.ic_water_mark_night : R.drawable.ic_water_mark);
+            float left = getContentRect().centerX() - waterMarkBitmap.getWidth() * 0.5f;
+            float top = getContentRect().centerY() - waterMarkBitmap.getHeight() * 0.5f;
+            canvas.drawBitmap(waterMarkBitmap, left, top, waterMarkPaint);
         }
     }
 

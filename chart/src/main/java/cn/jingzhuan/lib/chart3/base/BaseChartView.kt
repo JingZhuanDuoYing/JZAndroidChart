@@ -64,13 +64,14 @@ open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
      * 画水印
      */
     override fun drawWaterMark(canvas: Canvas) {
-        val padding = resources.getDimensionPixelSize(R.dimen.jz_chart_water_mark_padding)
+//        val padding = resources.getDimensionPixelSize(R.dimen.jz_chart_water_mark_padding)
         val waterMarkBitmap = BitmapFactory.decodeResource(
             this.resources,
-            if (isNightMode) R.drawable.ico_water_mark_night else R.drawable.ico_water_mark
+            if (isNightMode) R.drawable.ic_water_mark_night else R.drawable.ic_water_mark
         )
-        val left = width - padding - waterMarkBitmap.width - paddingRight
-        canvas.drawBitmap(waterMarkBitmap, left.toFloat(), padding.toFloat(), waterMarkPaint)
+        val left = contentRect.centerX() - waterMarkBitmap.width * 0.5f
+        val top = contentRect.centerY() - waterMarkBitmap.height * 0.5f
+        canvas.drawBitmap(waterMarkBitmap, left, top, waterMarkPaint)
     }
 
     /**
