@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import android.util.Pair
-import androidx.core.util.containsValue
 import cn.jingzhuan.lib.chart3.Viewport
 import cn.jingzhuan.lib.chart3.axis.AxisY
 import cn.jingzhuan.lib.chart3.data.ChartData
@@ -40,7 +39,13 @@ class CandlestickDraw(
 
     private var linePaths: MutableList<Path> = ArrayList()
 
-    private var gapDrawCount = 0;
+    private var gapDrawCount = 0
+
+    private data class GapText(
+        val text: String,
+        val x: Float,
+        val baseline: Float,
+    )
 
     override fun drawDataSet(
         canvas: Canvas,
@@ -204,13 +209,27 @@ class CandlestickDraw(
         var rightIndex = (dataSize * viewport.right).roundToInt()
         rightIndex = min(rightIndex, dataSize)
         gapDrawCount = 0
+        val gapTexts = ArrayList<GapText>()
 
         for (i in rightIndex - 1 downTo leftIndex) {
             if (this.gapDrawCount < candlestickDataSet.gapMaxSize) {
-                drawGaps(canvas, candlestickDataSet, startX + step * i, max, min, i, candleWidth)
+                drawGaps(
+                    canvas,
+                    candlestickDataSet,
+                    startX + step * i,
+                    max,
+                    min,
+                    i,
+                    candleWidth,
+                    gapTexts
+                )
             } else {
                 break
             }
+        }
+
+        gapTexts.forEach { gapText ->
+            canvas.drawText(gapText.text, gapText.x, gapText.baseline, textPaint)
         }
 
         var i = leftIndex
@@ -411,6 +430,7 @@ class CandlestickDraw(
         min: Double,
         index: Int,
         candleWidth: Float,
+        gapTexts: MutableList<GapText>,
     ) {
         if (candlestickDataSet.enableGap && gapDrawCount < candlestickDataSet.gapMaxSize) {
 
@@ -423,7 +443,7 @@ class CandlestickDraw(
                 if (gap != null) {
                     gapDrawCount++
                     val startX = xPosition + candleWidth * 0.5f
-                    drawGap(canvas, gap, startX, max, min, candleWidth, 0)
+                    drawGap(canvas, gap, startX, max, min, candleWidth, 0, gapTexts)
                 }
             }
 
@@ -433,7 +453,7 @@ class CandlestickDraw(
                 if (gap != null) {
                     gapDrawCount++
                     val startX = xPosition + candleWidth * 0.5f
-                    drawGap(canvas, gap, startX, max, min, candleWidth, 1)
+                    drawGap(canvas, gap, startX, max, min, candleWidth, 1, gapTexts)
                 }
             }
 
@@ -448,6 +468,7 @@ class CandlestickDraw(
         min: Double,
         candleWidth: Float,
         type: Int,
+        gapTexts: MutableList<GapText>,
     ) {
         if (gap != null) {
             val y1: Float = ((max - gap.first) / (max - min) * contentRect.height()).toFloat()
@@ -480,9 +501,9 @@ class CandlestickDraw(
                 var leaveIndex = text.length - (leaveSpace / singleWidth).toInt()
                 leaveIndex = max(0, leaveIndex - 3)
                 val newText = text.removeRange(leaveIndex, text.length).plus("...")
-                canvas.drawText(newText, startX + candleWidth * 0.5f, baseline, textPaint)
+                gapTexts.add(GapText(newText, startX + candleWidth * 0.5f, baseline))
             } else {
-                canvas.drawText(text, startX + candleWidth * 0.5f, baseline, textPaint)
+                gapTexts.add(GapText(text, startX + candleWidth * 0.5f, baseline))
             }
 
         }
