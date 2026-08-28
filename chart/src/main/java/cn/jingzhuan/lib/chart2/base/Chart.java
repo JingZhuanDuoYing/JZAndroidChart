@@ -130,6 +130,12 @@ public abstract class Chart extends BitmapCachedChart {
      */
     private boolean isNightMode = false;
 
+    /** 是否将四条坐标轴统一绘制为圆角矩形边框 */
+    private boolean isAxisRoundRectEnable = false;
+
+    /** 圆角坐标轴边框的圆角半径 */
+    private float axisRoundRectRadius = 8f;
+
     private boolean mMultipleTouch = false;
 
     public Chart(Context context) {
@@ -982,6 +988,24 @@ public abstract class Chart extends BitmapCachedChart {
         return mAxisBottom;
     }
 
+    public boolean isAxisRoundRectEnable() {
+        return isAxisRoundRectEnable;
+    }
+
+    public void setAxisRoundRectEnable(boolean axisRoundRectEnable) {
+        isAxisRoundRectEnable = axisRoundRectEnable;
+        invalidate();
+    }
+
+    public float getAxisRoundRectRadius() {
+        return axisRoundRectRadius;
+    }
+
+    public void setAxisRoundRectRadius(float axisRoundRectRadius) {
+        this.axisRoundRectRadius = Math.max(0f, axisRoundRectRadius);
+        invalidate();
+    }
+
     public void addOnViewportChangeListener(OnViewportChangeListener onViewportChangeListener) {
         synchronized (this) {
             this.mOnViewportChangeListeners.add(onViewportChangeListener);
@@ -1449,5 +1473,4 @@ public abstract class Chart extends BitmapCachedChart {
         this.mTouchPointEnable = mTouchPointEnable;
     }
 }
-
 

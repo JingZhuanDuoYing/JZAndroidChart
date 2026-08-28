@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 
@@ -19,6 +20,7 @@ import android.view.MotionEvent;
 
 import cn.jingzhuan.lib.chart.R;
 import cn.jingzhuan.lib.chart.animation.ChartAnimator;
+import cn.jingzhuan.lib.chart.component.Axis;
 import cn.jingzhuan.lib.chart.component.Highlight;
 import cn.jingzhuan.lib.chart.data.ChartData;
 import cn.jingzhuan.lib.chart.data.ValueFormatter;
@@ -49,6 +51,8 @@ public class BaseChart extends Chart {
     private ChartAnimator mChartAnimator;
 
     private final Paint waterMarkPaint = new Paint();
+
+    private final Paint axisRoundRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     protected Paint mHighlightTextPaint;
 
@@ -115,7 +119,34 @@ public class BaseChart extends Chart {
     @Override
     public void drawAxis(Canvas canvas) {
         for (AxisRenderer axisRenderer : mAxisRenderers) {
-            axisRenderer.renderer(canvas);
+            axisRenderer.renderer(canvas, !isAxisRoundRectEnable());
+        }
+
+        if (isAxisRoundRectEnable()) {
+            Axis borderAxis = null;
+            Axis[] axes = {mAxisTop, mAxisBottom, mAxisLeft, mAxisRight};
+            for (Axis axis : axes) {
+                if (axis.isEnable()) {
+                    borderAxis = axis;
+                    break;
+                }
+            }
+            if (borderAxis == null) return;
+
+            float halfThickness = borderAxis.getAxisThickness() * .5f;
+            Rect contentRect = getContentRect();
+            RectF borderRect = new RectF(
+                    contentRect.left + halfThickness,
+                    contentRect.top + halfThickness,
+                    contentRect.right - halfThickness,
+                    contentRect.bottom - halfThickness);
+            float maxRadius = Math.min(borderRect.width(), borderRect.height()) * .5f;
+            float radius = Math.min(getAxisRoundRectRadius(), maxRadius);
+
+            axisRoundRectPaint.setStyle(Paint.Style.STROKE);
+            axisRoundRectPaint.setStrokeWidth(borderAxis.getAxisThickness());
+            axisRoundRectPaint.setColor(borderAxis.getAxisColor());
+            canvas.drawRoundRect(borderRect, radius, radius, axisRoundRectPaint);
         }
     }
 
@@ -565,4 +596,3 @@ public class BaseChart extends Chart {
         mChartAnimator.animateXY(durationMillisX, durationMillisY);
     }
 }
-

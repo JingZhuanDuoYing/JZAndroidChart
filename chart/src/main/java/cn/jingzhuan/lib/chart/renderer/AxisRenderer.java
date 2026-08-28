@@ -73,6 +73,10 @@ public class AxisRenderer implements Renderer {
 
     @Override
     public void renderer(Canvas canvas) {
+        renderer(canvas, true);
+    }
+
+    public void renderer(Canvas canvas, boolean drawAxisLine) {
         if (mAxis.getLabels() == null) {
             if (mAxis instanceof AxisX) {
 
@@ -85,7 +89,9 @@ public class AxisRenderer implements Renderer {
             }
         }
         // Draws lib container
-        drawAxisLine(canvas);
+        if (drawAxisLine) {
+            drawAxisLine(canvas);
+        }
     }
 
 

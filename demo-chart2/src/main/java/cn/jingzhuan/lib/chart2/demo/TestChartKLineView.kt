@@ -25,6 +25,8 @@ class TestChartKLineView(ctx: Context, attrs: AttributeSet?) : CombineChart(ctx,
     private var viewportMax: Float = 0f
 
     override fun initChart() {
+        isAxisRoundRectEnable = true
+        axisRoundRectRadius = 16f
         isEnableVerticalHighlight = true
         isEnableHorizontalHighlight = true
         isEnableHighlightLeftText = true
