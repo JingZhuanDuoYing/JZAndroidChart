@@ -54,6 +54,10 @@ class AxisRenderer<T : AbstractDataSet<*>>(
      * 画坐标轴
      */
     override fun renderer(canvas: Canvas) {
+        renderer(canvas, drawAxisLine = true)
+    }
+
+    fun renderer(canvas: Canvas, drawAxisLine: Boolean) {
         if (axis.labels == null) {
             if (axis is AxisX) {
                 computeAxisStopsX(currentViewport.left, currentViewport.right, axis)
@@ -62,7 +66,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
             }
         }
         // Draws lib container
-        drawAxisLine(canvas)
+        if (drawAxisLine) drawAxisLine(canvas)
     }
 
     private fun drawAxisLine(canvas: Canvas) {

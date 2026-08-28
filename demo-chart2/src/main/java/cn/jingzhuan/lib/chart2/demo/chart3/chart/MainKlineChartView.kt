@@ -11,6 +11,8 @@ class MainKlineChartView(ctx: Context, attrs: AttributeSet?) : KlineChartView(ct
 
     override fun initChart() {
         super.initChart()
+        isAxisRoundRectEnable = true
+        axisRoundRectRadius = 8f
         highlightThickness = 4
         highlightColor = ContextCompat.getColor(
             context,

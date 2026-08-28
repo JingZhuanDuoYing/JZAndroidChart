@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import cn.jingzhuan.lib.chart.R
@@ -37,6 +38,10 @@ open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
     protected var chartRenderer: AbstractRenderer<T>? = null
 
     private val waterMarkPaint = Paint()
+
+    private val axisRoundRectPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+    }
 
     private lateinit var animator: ChartAnimator
 
@@ -79,7 +84,24 @@ open class BaseChartView<T : AbstractDataSet<*>> @JvmOverloads constructor(
      */
     override fun drawAxis(canvas: Canvas) {
         axisRenderers.values.forEach {
-            it.renderer(canvas)
+            it.renderer(canvas, drawAxisLine = !isAxisRoundRectEnable)
+        }
+
+        if (isAxisRoundRectEnable) {
+            val borderAxis = axisRenderers.values.firstOrNull { it.axis.isEnable }?.axis ?: return
+            val halfThickness = borderAxis.axisThickness * .5f
+            val borderRect = RectF(
+                contentRect.left + halfThickness,
+                contentRect.top + halfThickness,
+                contentRect.right - halfThickness,
+                contentRect.bottom - halfThickness,
+            )
+            val radius = axisRoundRectRadius.coerceAtLeast(0f).coerceAtMost(
+                minOf(borderRect.width(), borderRect.height()) * .5f,
+            )
+            axisRoundRectPaint.strokeWidth = borderAxis.axisThickness
+            axisRoundRectPaint.color = borderAxis.axisColor
+            canvas.drawRoundRect(borderRect, radius, radius, axisRoundRectPaint)
         }
     }
 

@@ -46,6 +46,12 @@ abstract class AbstractChartView<T : AbstractDataSet<*>> @JvmOverloads construct
 
     val axisRenderers: ArrayMap<Int, AxisRenderer<T>> = ArrayMap(4)
 
+    /** 是否将四条坐标轴统一绘制为圆角矩形边框 */
+    var isAxisRoundRectEnable = false
+
+    /** 圆角坐标轴边框的圆角半径 */
+    var axisRoundRectRadius = 4f
+
     protected lateinit var highlightRenderer: HighlightRenderer<T>
 
     protected lateinit var rangeRenderer: RangeRenderer<T>
