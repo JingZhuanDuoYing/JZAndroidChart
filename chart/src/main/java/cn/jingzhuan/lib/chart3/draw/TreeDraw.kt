@@ -80,7 +80,7 @@ class TreeDraw(
         val maxLeafValue = treeValue.maxLeafValue
 
         for (i in 0 until leafCount) {
-            val leaf = treeValue.leafs?.get(i)
+            val leaf = treeValue.leafs?.getOrNull(i)
             if (leaf == null || leaf.high.isNaN()) continue
 
             val leftValue = leaf.leftValue
