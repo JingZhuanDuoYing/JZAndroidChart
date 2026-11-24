@@ -27,6 +27,7 @@ public class AxisRenderer implements Renderer {
     private Axis mAxis;
 
     private final char[] mLabelBuffer = new char[100];
+    private final Rect mLabelTextBounds = new Rect();
 
     private Paint mGridPaint;
     private Paint mLabelTextPaint;
@@ -338,6 +339,7 @@ public class AxisRenderer implements Renderer {
 
         if (mAxis instanceof AxisX) { // X轴
             final float width = mContentRect.width() / ((float) labels.size());
+            final float labelHeight = Math.max(mAxis.getLabelHeight(), mLabelTextPaint.getTextSize());
             for (int i = 0; i < labels.size(); i++) {
 
                 char[] labelCharArray = labels.get(i).toCharArray();
@@ -346,6 +348,7 @@ public class AxisRenderer implements Renderer {
                     mLabelBuffer.length - labelLength, labelLength);
 
                 labelOffset = mLabelBuffer.length - labelLength;
+                mLabelTextPaint.getTextBounds(mLabelBuffer, labelOffset, labelLength, mLabelTextBounds);
 
                 mLabelTextPaint.setTextAlign(Paint.Align.CENTER);
 
@@ -356,7 +359,8 @@ public class AxisRenderer implements Renderer {
 
                 canvas.drawText(mLabelBuffer, labelOffset, labelLength,
                     width * 0.5f + getDrawX(i / ((float) labels.size())),
-                    y + mLabelTextPaint.getTextSize(), mLabelTextPaint);
+                    y + labelHeight * 0.5f - (mLabelTextBounds.top + mLabelTextBounds.bottom) * 0.5f,
+                    mLabelTextPaint);
             }
         } else { // Y轴
 
@@ -437,6 +441,7 @@ public class AxisRenderer implements Renderer {
 
         if (mAxis instanceof AxisX) { // X轴
             final float width = mContentRect.width() / (labels.length - 1F);
+            final float labelHeight = Math.max(mAxis.getLabelHeight(), mLabelTextPaint.getTextSize());
             for (int i = 0; i < labels.length; i++) {
                 ValueFormatter valueFormatter = mAxis.getLabelValueFormatter();
 
@@ -452,6 +457,7 @@ public class AxisRenderer implements Renderer {
                             labelLength);
                 }
                 labelOffset = mLabelBuffer.length - labelLength;
+                mLabelTextPaint.getTextBounds(mLabelBuffer, labelOffset, labelLength, mLabelTextBounds);
 
                 if (i == 0) {
                     mLabelTextPaint.setTextAlign(Paint.Align.LEFT);
@@ -467,7 +473,7 @@ public class AxisRenderer implements Renderer {
 
                 canvas.drawText(mLabelBuffer, labelOffset, labelLength,
                         x + i * width, // - textWidth * 0.5f,
-                        y + mLabelTextPaint.getTextSize(),
+                        y + labelHeight * 0.5f - (mLabelTextBounds.top + mLabelTextBounds.bottom) * 0.5f,
                         mLabelTextPaint);
             }
         } else { // Y轴

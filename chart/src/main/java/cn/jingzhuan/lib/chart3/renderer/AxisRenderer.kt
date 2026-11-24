@@ -3,6 +3,7 @@ package cn.jingzhuan.lib.chart3.renderer
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
+import android.graphics.Rect
 import cn.jingzhuan.lib.chart.utils.FloatUtils
 import cn.jingzhuan.lib.chart3.axis.Axis
 import cn.jingzhuan.lib.chart3.axis.AxisX
@@ -29,6 +30,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
     private lateinit var gridPaint: Paint
 
     private val labelBuffer = CharArray(100)
+    private val labelTextBounds = Rect()
 
     init {
         initPaints()
@@ -205,6 +207,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
         if (axis is AxisX) {
             // X轴
             val width = contentRect.width() / labels.size.toFloat()
+            val labelHeight = maxOf(axis.labelHeight.toFloat(), labelTextPaint.textSize)
             for (i in labels.indices) {
                 val labelCharArray = labels[i].toCharArray()
                 labelLength = labelCharArray.size
@@ -216,6 +219,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
                     labelLength
                 )
                 labelOffset = labelBuffer.size - labelLength
+                labelTextPaint.getTextBounds(labelBuffer, labelOffset, labelLength, labelTextBounds)
                 labelTextPaint.textAlign = Paint.Align.CENTER
                 val colorSetter = axis.labelColorSetter
                 if (colorSetter != null) {
@@ -224,7 +228,8 @@ class AxisRenderer<T : AbstractDataSet<*>>(
                 canvas.drawText(
                     labelBuffer, labelOffset, labelLength,
                     width * 0.5f + getDrawX(i / labels.size.toFloat()),
-                    y + labelTextPaint.textSize, labelTextPaint
+                    y + labelHeight * 0.5f - (labelTextBounds.top + labelTextBounds.bottom) * 0.5f,
+                    labelTextPaint
                 )
             }
         } else {
@@ -306,6 +311,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
 
         if (axis is AxisX) { // X轴
             val width: Float = contentRect.width() / (labels.size - 1f)
+            val labelHeight = maxOf(axis.labelHeight.toFloat(), labelTextPaint.textSize)
             for (i in labels.indices) {
                 val valueFormatter = axis.labelValueFormatter
                 if (valueFormatter == null) {
@@ -316,6 +322,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
                     System.arraycopy(labelCharArray, 0, labelBuffer, labelBuffer.size - labelLength, labelLength)
                 }
                 labelOffset = labelBuffer.size - labelLength
+                labelTextPaint.getTextBounds(labelBuffer, labelOffset, labelLength, labelTextBounds)
 
                 when (i) {
                     0 -> {
@@ -336,7 +343,7 @@ class AxisRenderer<T : AbstractDataSet<*>>(
                 canvas.drawText(
                     labelBuffer, labelOffset, labelLength,
                     x + i * width,  // - textWidth * 0.5f,
-                    y + labelTextPaint.textSize,
+                    y + labelHeight * 0.5f - (labelTextBounds.top + labelTextBounds.bottom) * 0.5f,
                     labelTextPaint
                 )
             }
